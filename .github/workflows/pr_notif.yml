@@ -2,6 +2,7 @@ name: Discord PR Notifications
 
 on:
   pull_request:
+    types: [opened, closed, reopened, synchronize]
     branches:
       - "**"
 
@@ -11,7 +12,7 @@ jobs:
     steps:
       - name: Send Discord Notification
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_FRONTEND_WEBHOOK }}
+          DISCORD_FRONTEND_WEBHOOK: ${{ secrets.DISCORD_FRONTEND_WEBHOOK }}
         run: |
           if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
             STATUS="Merged"
@@ -45,4 +46,3 @@ jobs:
                  }]
                }" \
                $DISCORD_FRONTEND_WEBHOOK
-
