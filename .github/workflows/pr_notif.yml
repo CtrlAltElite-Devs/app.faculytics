@@ -27,6 +27,7 @@ jobs:
                -d "{
                  \"username\": \"Heubert Ferolinux\",
                  \"avatar_url\": \"https://scontent.fceb3-1.fna.fbcdn.net/v/t39.30808-1/283535064_10221157236551714_4449793099043157969_n.jpg?stp=c55.0.1137.1137a_dst-jpg_s200x200_tt6&_nc_cat=105&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeFa--6ekHsExCaxntlXFaOOail8zadG3RRqKXzNp0bdFN7tshye6In02uJ9XLRkfZHiASaXcQGcu_KnCs3KJYrb&_nc_ohc=6Bda6lhwVLQQ7kNvwH5o62f&_nc_oc=Adnp5_SiOD17FCo4-XTl2xX3dMe93PQdXTb6uF_UGpx9-d4uOG1eQmE3wnTl3MhEoI0&_nc_zt=24&_nc_ht=scontent.fceb3-1.fna&_nc_gid=9IUql0xY5flRU4C_AlZicw&oh=00_AfvLH-wwbEaD-HPK0EtZTCHYQrp9nPvxN7Dl75z6p2w35w&oe=699A2490\",
+                 \"content\": \"** My dear developers, naay PR to review ** 😋🚀\",
                  \"embeds\": [{
                    \"title\": \"PR $STATUS\",
                    \"description\": \"**${{ github.event.pull_request.title }}**\",
