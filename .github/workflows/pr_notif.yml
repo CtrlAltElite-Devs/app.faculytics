@@ -41,7 +41,7 @@ jobs:
                      },
                      {
                        \"name\": \"Branch\",
-                       \"value\": \"${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}\",
+                       \"value\": \"${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}\"
                      }
                    ]
                  }]
