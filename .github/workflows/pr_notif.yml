@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Send Discord Notification
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_FRONTEND_WEBHOOK }}
         run: |
           if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
             STATUS="Merged"
@@ -43,5 +43,5 @@ jobs:
                    ]
                  }]
                }" \
-               $DISCORD_WEBHOOK_URL
+               $DISCORD_FRONTEND_WEBHOOK
 
