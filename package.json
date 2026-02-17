@@ -7,12 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "generate:api": "openapi-typescript https://raw.githubusercontent.com/CtrlAltElite-Devs/faculytics-contracts/refs/heads/main/develop/openapi.json -o ./app/schema/index.d.ts"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.564.0",
     "next": "16.1.6",
+    "openapi-fetch": "^0.17.0",
+    "openapi-react-query": "^0.5.4",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
