@@ -1,0 +1,47 @@
+name: Discord PR Notifications
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+            STATUS="Merged"
+          elif [ "${{ github.event.action }}" = "closed" ]; then
+            STATUS="Closed"
+          else
+            STATUS="Opened/Reopened"
+          fi
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{
+                 \"username\": \"GitHub PR Bot\",
+                 \"embeds\": [{
+                   \"title\": \"PR $STATUS\",
+                   \"description\": \"**${{ github.event.pull_request.title }}**\",
+                   \"url\": \"${{ github.event.pull_request.html_url }}\",
+                   \"color\": 5814783,
+                   \"fields\": [
+                     {
+                       \"name\": \"Author\",
+                       \"value\": \"${{ github.event.pull_request.user.login }}\",
+                       \"inline\": true
+                     },
+                     {
+                       \"name\": \"Branch\",
+                       \"value\": \"${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}\",
+                       \"inline\": true
+                     }
+                   ]
+                 }]
+               }" \
+               $DISCORD_WEBHOOK_URL
+
