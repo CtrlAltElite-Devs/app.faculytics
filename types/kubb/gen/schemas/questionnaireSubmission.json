@@ -1,1 +1,1258 @@
-{"type":"object","properties":{"questionnaireVersion":{"type":"object","properties":{"questionnaire":{"type":"object","properties":{"title":{"type":"string"},"status":{"type":"string","default":"DRAFT","enum":["DRAFT","ACTIVE","DEPRECATED"]},"type":{"type":"string","enum":["FACULTY_IN_CLASSROOM","FACULTY_OUT_OF_CLASSROOM","FACULTY_FEEDBACK"]},"versions":{"type":"object","default":[]},"id":{"type":"object","default":"6977dcd8-a506-4832-ad81-2825839e0c3f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.955Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.955Z"},"deletedAt":{"type":"object"}},"required":["title","status","type","versions","id","createdAt","updatedAt"],"x-readme-ref-name":"Questionnaire"},"versionNumber":{"type":"number"},"schemaSnapshot":{"type":"object"},"publishedAt":{"format":"date-time","type":"string"},"isActive":{"type":"boolean","default":false},"status":{"type":"string","default":"DRAFT","enum":["DRAFT","ACTIVE","DEPRECATED"]},"id":{"type":"object","default":"1184eaf1-8c06-4dd1-a4c5-af57e3f3e2a5"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.959Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.959Z"},"deletedAt":{"type":"object"}},"required":["questionnaire","versionNumber","schemaSnapshot","isActive","status","id","createdAt","updatedAt"],"x-readme-ref-name":"QuestionnaireVersion"},"respondent":{"type":"object","properties":{"userName":{"type":"string"},"moodleUserId":{"type":"number"},"password":{"type":"string"},"firstName":{"type":"string"},"lastName":{"type":"string"},"userProfilePicture":{"type":"string"},"fullName":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"department":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"programs":{"type":"object","default":[]},"id":{"type":"object","default":"0f91f3db-6aa1-4419-9699-024a5aeb7bea"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semester","programs","id","createdAt","updatedAt"],"x-readme-ref-name":"Department"},"program":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"department":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"programs":{"type":"object","default":[]},"id":{"type":"object","default":"0f91f3db-6aa1-4419-9699-024a5aeb7bea"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semester","programs","id","createdAt","updatedAt"],"x-readme-ref-name":"Department"},"courses":{"type":"object","default":[]},"id":{"type":"object","default":"ef93306d-0a68-41fa-8351-e34fa7d1cd0c"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","department","courses","id","createdAt","updatedAt"],"x-readme-ref-name":"Program"},"moodleTokens":{"type":"object","default":[]},"enrollments":{"type":"object","default":[]},"institutionalRoles":{"type":"object","default":[]},"lastLoginAt":{"format":"date-time","type":"string"},"isActive":{"type":"boolean"},"roles":{"type":"array","default":[],"items":{"type":"string","enum":["SUPER_ADMIN","ADMIN","DEAN","FACULTY","STUDENT"]}},"id":{"type":"object","default":"fea0d9f1-fc41-4c2b-9fb1-bc94e2e841e0"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["userName","firstName","lastName","userProfilePicture","moodleTokens","enrollments","institutionalRoles","lastLoginAt","isActive","roles","id","createdAt","updatedAt"],"x-readme-ref-name":"User"},"faculty":{"type":"object","properties":{"userName":{"type":"string"},"moodleUserId":{"type":"number"},"password":{"type":"string"},"firstName":{"type":"string"},"lastName":{"type":"string"},"userProfilePicture":{"type":"string"},"fullName":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"department":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"programs":{"type":"object","default":[]},"id":{"type":"object","default":"0f91f3db-6aa1-4419-9699-024a5aeb7bea"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semester","programs","id","createdAt","updatedAt"],"x-readme-ref-name":"Department"},"program":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"department":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"programs":{"type":"object","default":[]},"id":{"type":"object","default":"0f91f3db-6aa1-4419-9699-024a5aeb7bea"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semester","programs","id","createdAt","updatedAt"],"x-readme-ref-name":"Department"},"courses":{"type":"object","default":[]},"id":{"type":"object","default":"ef93306d-0a68-41fa-8351-e34fa7d1cd0c"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","department","courses","id","createdAt","updatedAt"],"x-readme-ref-name":"Program"},"moodleTokens":{"type":"object","default":[]},"enrollments":{"type":"object","default":[]},"institutionalRoles":{"type":"object","default":[]},"lastLoginAt":{"format":"date-time","type":"string"},"isActive":{"type":"boolean"},"roles":{"type":"array","default":[],"items":{"type":"string","enum":["SUPER_ADMIN","ADMIN","DEAN","FACULTY","STUDENT"]}},"id":{"type":"object","default":"fea0d9f1-fc41-4c2b-9fb1-bc94e2e841e0"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["userName","firstName","lastName","userProfilePicture","moodleTokens","enrollments","institutionalRoles","lastLoginAt","isActive","roles","id","createdAt","updatedAt"],"x-readme-ref-name":"User"},"respondentRole":{"type":"string","enum":["STUDENT","DEAN"]},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"course":{"type":"object","properties":{"moodleCourseId":{"type":"number"},"shortname":{"type":"string"},"fullname":{"type":"string"},"program":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"department":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"programs":{"type":"object","default":[]},"id":{"type":"object","default":"0f91f3db-6aa1-4419-9699-024a5aeb7bea"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semester","programs","id","createdAt","updatedAt"],"x-readme-ref-name":"Department"},"courses":{"type":"object","default":[]},"id":{"type":"object","default":"ef93306d-0a68-41fa-8351-e34fa7d1cd0c"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","department","courses","id","createdAt","updatedAt"],"x-readme-ref-name":"Program"},"startDate":{"format":"date-time","type":"string"},"endDate":{"format":"date-time","type":"string"},"isVisible":{"type":"boolean"},"timeModified":{"format":"date-time","type":"string"},"isActive":{"type":"boolean"},"id":{"type":"object","default":"7dbb991b-02fb-4196-b4b7-c13aaba8386c"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.963Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.963Z"},"deletedAt":{"type":"object"}},"required":["moodleCourseId","shortname","fullname","program","startDate","endDate","isVisible","timeModified","isActive","id","createdAt","updatedAt"],"x-readme-ref-name":"Course"},"department":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"programs":{"type":"object","default":[]},"id":{"type":"object","default":"0f91f3db-6aa1-4419-9699-024a5aeb7bea"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semester","programs","id","createdAt","updatedAt"],"x-readme-ref-name":"Department"},"program":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"department":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semester":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"label":{"type":"string"},"academicYear":{"type":"string"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"departments":{"type":"object","default":[]},"description":{"type":"string"},"id":{"type":"object","default":"6a0549b8-5cbc-40b7-a90a-941b726c106f"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","campus","departments","id","createdAt","updatedAt"],"x-readme-ref-name":"Semester"},"programs":{"type":"object","default":[]},"id":{"type":"object","default":"0f91f3db-6aa1-4419-9699-024a5aeb7bea"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semester","programs","id","createdAt","updatedAt"],"x-readme-ref-name":"Department"},"courses":{"type":"object","default":[]},"id":{"type":"object","default":"ef93306d-0a68-41fa-8351-e34fa7d1cd0c"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.962Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","department","courses","id","createdAt","updatedAt"],"x-readme-ref-name":"Program"},"campus":{"type":"object","properties":{"moodleCategoryId":{"type":"number"},"code":{"type":"string"},"name":{"type":"string"},"semesters":{"type":"object","default":[]},"id":{"type":"object","default":"3c94e4b0-8078-4346-bd36-addabdee5edd"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.961Z"},"deletedAt":{"type":"object"}},"required":["moodleCategoryId","code","semesters","id","createdAt","updatedAt"],"x-readme-ref-name":"Campus"},"totalScore":{"type":"number"},"normalizedScore":{"type":"number"},"qualitativeComment":{"type":"string"},"submittedAt":{"format":"date-time","type":"string","default":"2026-02-22T09:55:44.958Z"},"facultyNameSnapshot":{"type":"string"},"facultyEmployeeNumberSnapshot":{"type":"string"},"departmentCodeSnapshot":{"type":"string"},"departmentNameSnapshot":{"type":"string"},"programCodeSnapshot":{"type":"string"},"programNameSnapshot":{"type":"string"},"campusCodeSnapshot":{"type":"string"},"campusNameSnapshot":{"type":"string"},"courseCodeSnapshot":{"type":"string"},"courseTitleSnapshot":{"type":"string"},"semesterCodeSnapshot":{"type":"string"},"semesterLabelSnapshot":{"type":"string"},"academicYearSnapshot":{"type":"string"},"answers":{"type":"object","default":[]},"id":{"type":"object","default":"ae1172ac-ab72-4b00-b076-0d6d888770db"},"createdAt":{"type":"object","default":"2026-02-22T09:55:44.959Z"},"updatedAt":{"type":"object","default":"2026-02-22T09:55:44.959Z"},"deletedAt":{"type":"object"}},"required":["questionnaireVersion","respondent","faculty","respondentRole","semester","department","program","campus","totalScore","normalizedScore","submittedAt","facultyNameSnapshot","departmentCodeSnapshot","departmentNameSnapshot","programCodeSnapshot","programNameSnapshot","campusCodeSnapshot","campusNameSnapshot","semesterCodeSnapshot","semesterLabelSnapshot","academicYearSnapshot","answers","id","createdAt","updatedAt"],"x-readme-ref-name":"QuestionnaireSubmission"}
+{
+  "type": "object",
+  "properties": {
+    "questionnaireVersion": {
+      "type": "object",
+      "properties": {
+        "questionnaire": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "status": {
+              "type": "string",
+              "default": "DRAFT",
+              "enum": ["DRAFT", "ACTIVE", "DEPRECATED"]
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FACULTY_IN_CLASSROOM",
+                "FACULTY_OUT_OF_CLASSROOM",
+                "FACULTY_FEEDBACK"
+              ]
+            },
+            "versions": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "6977dcd8-a506-4832-ad81-2825839e0c3f"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.955Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.955Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "title",
+            "status",
+            "type",
+            "versions",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Questionnaire"
+        },
+        "versionNumber": { "type": "number" },
+        "schemaSnapshot": { "type": "object" },
+        "publishedAt": { "format": "date-time", "type": "string" },
+        "isActive": { "type": "boolean", "default": false },
+        "status": {
+          "type": "string",
+          "default": "DRAFT",
+          "enum": ["DRAFT", "ACTIVE", "DEPRECATED"]
+        },
+        "id": {
+          "type": "object",
+          "default": "1184eaf1-8c06-4dd1-a4c5-af57e3f3e2a5"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.959Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.959Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "questionnaire",
+        "versionNumber",
+        "schemaSnapshot",
+        "isActive",
+        "status",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "QuestionnaireVersion"
+    },
+    "respondent": {
+      "type": "object",
+      "properties": {
+        "userName": { "type": "string" },
+        "moodleUserId": { "type": "number" },
+        "password": { "type": "string" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "userProfilePicture": { "type": "string" },
+        "fullName": { "type": "string" },
+        "campus": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "semesters": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "semesters",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Campus"
+        },
+        "department": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "semester": {
+              "type": "object",
+              "properties": {
+                "moodleCategoryId": { "type": "number" },
+                "code": { "type": "string" },
+                "label": { "type": "string" },
+                "academicYear": { "type": "string" },
+                "campus": {
+                  "type": "object",
+                  "properties": {
+                    "moodleCategoryId": { "type": "number" },
+                    "code": { "type": "string" },
+                    "name": { "type": "string" },
+                    "semesters": { "type": "object", "default": [] },
+                    "id": {
+                      "type": "object",
+                      "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                    },
+                    "createdAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.961Z"
+                    },
+                    "updatedAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.961Z"
+                    },
+                    "deletedAt": { "type": "object" }
+                  },
+                  "required": [
+                    "moodleCategoryId",
+                    "code",
+                    "semesters",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "x-readme-ref-name": "Campus"
+                },
+                "departments": { "type": "object", "default": [] },
+                "description": { "type": "string" },
+                "id": {
+                  "type": "object",
+                  "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                },
+                "createdAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.962Z"
+                },
+                "updatedAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.962Z"
+                },
+                "deletedAt": { "type": "object" }
+              },
+              "required": [
+                "moodleCategoryId",
+                "code",
+                "campus",
+                "departments",
+                "id",
+                "createdAt",
+                "updatedAt"
+              ],
+              "x-readme-ref-name": "Semester"
+            },
+            "programs": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "semester",
+            "programs",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Department"
+        },
+        "program": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "department": {
+              "type": "object",
+              "properties": {
+                "moodleCategoryId": { "type": "number" },
+                "code": { "type": "string" },
+                "name": { "type": "string" },
+                "semester": {
+                  "type": "object",
+                  "properties": {
+                    "moodleCategoryId": { "type": "number" },
+                    "code": { "type": "string" },
+                    "label": { "type": "string" },
+                    "academicYear": { "type": "string" },
+                    "campus": {
+                      "type": "object",
+                      "properties": {
+                        "moodleCategoryId": { "type": "number" },
+                        "code": { "type": "string" },
+                        "name": { "type": "string" },
+                        "semesters": { "type": "object", "default": [] },
+                        "id": {
+                          "type": "object",
+                          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                        },
+                        "createdAt": {
+                          "type": "object",
+                          "default": "2026-02-22T09:55:44.961Z"
+                        },
+                        "updatedAt": {
+                          "type": "object",
+                          "default": "2026-02-22T09:55:44.961Z"
+                        },
+                        "deletedAt": { "type": "object" }
+                      },
+                      "required": [
+                        "moodleCategoryId",
+                        "code",
+                        "semesters",
+                        "id",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "x-readme-ref-name": "Campus"
+                    },
+                    "departments": { "type": "object", "default": [] },
+                    "description": { "type": "string" },
+                    "id": {
+                      "type": "object",
+                      "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                    },
+                    "createdAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.962Z"
+                    },
+                    "updatedAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.962Z"
+                    },
+                    "deletedAt": { "type": "object" }
+                  },
+                  "required": [
+                    "moodleCategoryId",
+                    "code",
+                    "campus",
+                    "departments",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "x-readme-ref-name": "Semester"
+                },
+                "programs": { "type": "object", "default": [] },
+                "id": {
+                  "type": "object",
+                  "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+                },
+                "createdAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "updatedAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "deletedAt": { "type": "object" }
+              },
+              "required": [
+                "moodleCategoryId",
+                "code",
+                "semester",
+                "programs",
+                "id",
+                "createdAt",
+                "updatedAt"
+              ],
+              "x-readme-ref-name": "Department"
+            },
+            "courses": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "department",
+            "courses",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Program"
+        },
+        "moodleTokens": { "type": "object", "default": [] },
+        "enrollments": { "type": "object", "default": [] },
+        "institutionalRoles": { "type": "object", "default": [] },
+        "lastLoginAt": { "format": "date-time", "type": "string" },
+        "isActive": { "type": "boolean" },
+        "roles": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string",
+            "enum": ["SUPER_ADMIN", "ADMIN", "DEAN", "FACULTY", "STUDENT"]
+          }
+        },
+        "id": {
+          "type": "object",
+          "default": "fea0d9f1-fc41-4c2b-9fb1-bc94e2e841e0"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "userName",
+        "firstName",
+        "lastName",
+        "userProfilePicture",
+        "moodleTokens",
+        "enrollments",
+        "institutionalRoles",
+        "lastLoginAt",
+        "isActive",
+        "roles",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "User"
+    },
+    "faculty": {
+      "type": "object",
+      "properties": {
+        "userName": { "type": "string" },
+        "moodleUserId": { "type": "number" },
+        "password": { "type": "string" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "userProfilePicture": { "type": "string" },
+        "fullName": { "type": "string" },
+        "campus": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "semesters": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "semesters",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Campus"
+        },
+        "department": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "semester": {
+              "type": "object",
+              "properties": {
+                "moodleCategoryId": { "type": "number" },
+                "code": { "type": "string" },
+                "label": { "type": "string" },
+                "academicYear": { "type": "string" },
+                "campus": {
+                  "type": "object",
+                  "properties": {
+                    "moodleCategoryId": { "type": "number" },
+                    "code": { "type": "string" },
+                    "name": { "type": "string" },
+                    "semesters": { "type": "object", "default": [] },
+                    "id": {
+                      "type": "object",
+                      "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                    },
+                    "createdAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.961Z"
+                    },
+                    "updatedAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.961Z"
+                    },
+                    "deletedAt": { "type": "object" }
+                  },
+                  "required": [
+                    "moodleCategoryId",
+                    "code",
+                    "semesters",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "x-readme-ref-name": "Campus"
+                },
+                "departments": { "type": "object", "default": [] },
+                "description": { "type": "string" },
+                "id": {
+                  "type": "object",
+                  "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                },
+                "createdAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.962Z"
+                },
+                "updatedAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.962Z"
+                },
+                "deletedAt": { "type": "object" }
+              },
+              "required": [
+                "moodleCategoryId",
+                "code",
+                "campus",
+                "departments",
+                "id",
+                "createdAt",
+                "updatedAt"
+              ],
+              "x-readme-ref-name": "Semester"
+            },
+            "programs": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "semester",
+            "programs",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Department"
+        },
+        "program": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "department": {
+              "type": "object",
+              "properties": {
+                "moodleCategoryId": { "type": "number" },
+                "code": { "type": "string" },
+                "name": { "type": "string" },
+                "semester": {
+                  "type": "object",
+                  "properties": {
+                    "moodleCategoryId": { "type": "number" },
+                    "code": { "type": "string" },
+                    "label": { "type": "string" },
+                    "academicYear": { "type": "string" },
+                    "campus": {
+                      "type": "object",
+                      "properties": {
+                        "moodleCategoryId": { "type": "number" },
+                        "code": { "type": "string" },
+                        "name": { "type": "string" },
+                        "semesters": { "type": "object", "default": [] },
+                        "id": {
+                          "type": "object",
+                          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                        },
+                        "createdAt": {
+                          "type": "object",
+                          "default": "2026-02-22T09:55:44.961Z"
+                        },
+                        "updatedAt": {
+                          "type": "object",
+                          "default": "2026-02-22T09:55:44.961Z"
+                        },
+                        "deletedAt": { "type": "object" }
+                      },
+                      "required": [
+                        "moodleCategoryId",
+                        "code",
+                        "semesters",
+                        "id",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "x-readme-ref-name": "Campus"
+                    },
+                    "departments": { "type": "object", "default": [] },
+                    "description": { "type": "string" },
+                    "id": {
+                      "type": "object",
+                      "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                    },
+                    "createdAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.962Z"
+                    },
+                    "updatedAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.962Z"
+                    },
+                    "deletedAt": { "type": "object" }
+                  },
+                  "required": [
+                    "moodleCategoryId",
+                    "code",
+                    "campus",
+                    "departments",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "x-readme-ref-name": "Semester"
+                },
+                "programs": { "type": "object", "default": [] },
+                "id": {
+                  "type": "object",
+                  "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+                },
+                "createdAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "updatedAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "deletedAt": { "type": "object" }
+              },
+              "required": [
+                "moodleCategoryId",
+                "code",
+                "semester",
+                "programs",
+                "id",
+                "createdAt",
+                "updatedAt"
+              ],
+              "x-readme-ref-name": "Department"
+            },
+            "courses": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "department",
+            "courses",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Program"
+        },
+        "moodleTokens": { "type": "object", "default": [] },
+        "enrollments": { "type": "object", "default": [] },
+        "institutionalRoles": { "type": "object", "default": [] },
+        "lastLoginAt": { "format": "date-time", "type": "string" },
+        "isActive": { "type": "boolean" },
+        "roles": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string",
+            "enum": ["SUPER_ADMIN", "ADMIN", "DEAN", "FACULTY", "STUDENT"]
+          }
+        },
+        "id": {
+          "type": "object",
+          "default": "fea0d9f1-fc41-4c2b-9fb1-bc94e2e841e0"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "userName",
+        "firstName",
+        "lastName",
+        "userProfilePicture",
+        "moodleTokens",
+        "enrollments",
+        "institutionalRoles",
+        "lastLoginAt",
+        "isActive",
+        "roles",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "User"
+    },
+    "respondentRole": { "type": "string", "enum": ["STUDENT", "DEAN"] },
+    "semester": {
+      "type": "object",
+      "properties": {
+        "moodleCategoryId": { "type": "number" },
+        "code": { "type": "string" },
+        "label": { "type": "string" },
+        "academicYear": { "type": "string" },
+        "campus": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "semesters": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "semesters",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Campus"
+        },
+        "departments": { "type": "object", "default": [] },
+        "description": { "type": "string" },
+        "id": {
+          "type": "object",
+          "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.962Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.962Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "moodleCategoryId",
+        "code",
+        "campus",
+        "departments",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "Semester"
+    },
+    "course": {
+      "type": "object",
+      "properties": {
+        "moodleCourseId": { "type": "number" },
+        "shortname": { "type": "string" },
+        "fullname": { "type": "string" },
+        "program": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "department": {
+              "type": "object",
+              "properties": {
+                "moodleCategoryId": { "type": "number" },
+                "code": { "type": "string" },
+                "name": { "type": "string" },
+                "semester": {
+                  "type": "object",
+                  "properties": {
+                    "moodleCategoryId": { "type": "number" },
+                    "code": { "type": "string" },
+                    "label": { "type": "string" },
+                    "academicYear": { "type": "string" },
+                    "campus": {
+                      "type": "object",
+                      "properties": {
+                        "moodleCategoryId": { "type": "number" },
+                        "code": { "type": "string" },
+                        "name": { "type": "string" },
+                        "semesters": { "type": "object", "default": [] },
+                        "id": {
+                          "type": "object",
+                          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                        },
+                        "createdAt": {
+                          "type": "object",
+                          "default": "2026-02-22T09:55:44.961Z"
+                        },
+                        "updatedAt": {
+                          "type": "object",
+                          "default": "2026-02-22T09:55:44.961Z"
+                        },
+                        "deletedAt": { "type": "object" }
+                      },
+                      "required": [
+                        "moodleCategoryId",
+                        "code",
+                        "semesters",
+                        "id",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "x-readme-ref-name": "Campus"
+                    },
+                    "departments": { "type": "object", "default": [] },
+                    "description": { "type": "string" },
+                    "id": {
+                      "type": "object",
+                      "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                    },
+                    "createdAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.962Z"
+                    },
+                    "updatedAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.962Z"
+                    },
+                    "deletedAt": { "type": "object" }
+                  },
+                  "required": [
+                    "moodleCategoryId",
+                    "code",
+                    "campus",
+                    "departments",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "x-readme-ref-name": "Semester"
+                },
+                "programs": { "type": "object", "default": [] },
+                "id": {
+                  "type": "object",
+                  "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+                },
+                "createdAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "updatedAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "deletedAt": { "type": "object" }
+              },
+              "required": [
+                "moodleCategoryId",
+                "code",
+                "semester",
+                "programs",
+                "id",
+                "createdAt",
+                "updatedAt"
+              ],
+              "x-readme-ref-name": "Department"
+            },
+            "courses": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "department",
+            "courses",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Program"
+        },
+        "startDate": { "format": "date-time", "type": "string" },
+        "endDate": { "format": "date-time", "type": "string" },
+        "isVisible": { "type": "boolean" },
+        "timeModified": { "format": "date-time", "type": "string" },
+        "isActive": { "type": "boolean" },
+        "id": {
+          "type": "object",
+          "default": "7dbb991b-02fb-4196-b4b7-c13aaba8386c"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.963Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.963Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "moodleCourseId",
+        "shortname",
+        "fullname",
+        "program",
+        "startDate",
+        "endDate",
+        "isVisible",
+        "timeModified",
+        "isActive",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "Course"
+    },
+    "department": {
+      "type": "object",
+      "properties": {
+        "moodleCategoryId": { "type": "number" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "semester": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "label": { "type": "string" },
+            "academicYear": { "type": "string" },
+            "campus": {
+              "type": "object",
+              "properties": {
+                "moodleCategoryId": { "type": "number" },
+                "code": { "type": "string" },
+                "name": { "type": "string" },
+                "semesters": { "type": "object", "default": [] },
+                "id": {
+                  "type": "object",
+                  "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                },
+                "createdAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "updatedAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.961Z"
+                },
+                "deletedAt": { "type": "object" }
+              },
+              "required": [
+                "moodleCategoryId",
+                "code",
+                "semesters",
+                "id",
+                "createdAt",
+                "updatedAt"
+              ],
+              "x-readme-ref-name": "Campus"
+            },
+            "departments": { "type": "object", "default": [] },
+            "description": { "type": "string" },
+            "id": {
+              "type": "object",
+              "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.962Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "campus",
+            "departments",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Semester"
+        },
+        "programs": { "type": "object", "default": [] },
+        "id": {
+          "type": "object",
+          "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "moodleCategoryId",
+        "code",
+        "semester",
+        "programs",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "Department"
+    },
+    "program": {
+      "type": "object",
+      "properties": {
+        "moodleCategoryId": { "type": "number" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "department": {
+          "type": "object",
+          "properties": {
+            "moodleCategoryId": { "type": "number" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "semester": {
+              "type": "object",
+              "properties": {
+                "moodleCategoryId": { "type": "number" },
+                "code": { "type": "string" },
+                "label": { "type": "string" },
+                "academicYear": { "type": "string" },
+                "campus": {
+                  "type": "object",
+                  "properties": {
+                    "moodleCategoryId": { "type": "number" },
+                    "code": { "type": "string" },
+                    "name": { "type": "string" },
+                    "semesters": { "type": "object", "default": [] },
+                    "id": {
+                      "type": "object",
+                      "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                    },
+                    "createdAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.961Z"
+                    },
+                    "updatedAt": {
+                      "type": "object",
+                      "default": "2026-02-22T09:55:44.961Z"
+                    },
+                    "deletedAt": { "type": "object" }
+                  },
+                  "required": [
+                    "moodleCategoryId",
+                    "code",
+                    "semesters",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "x-readme-ref-name": "Campus"
+                },
+                "departments": { "type": "object", "default": [] },
+                "description": { "type": "string" },
+                "id": {
+                  "type": "object",
+                  "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                },
+                "createdAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.962Z"
+                },
+                "updatedAt": {
+                  "type": "object",
+                  "default": "2026-02-22T09:55:44.962Z"
+                },
+                "deletedAt": { "type": "object" }
+              },
+              "required": [
+                "moodleCategoryId",
+                "code",
+                "campus",
+                "departments",
+                "id",
+                "createdAt",
+                "updatedAt"
+              ],
+              "x-readme-ref-name": "Semester"
+            },
+            "programs": { "type": "object", "default": [] },
+            "id": {
+              "type": "object",
+              "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+            },
+            "createdAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "updatedAt": {
+              "type": "object",
+              "default": "2026-02-22T09:55:44.961Z"
+            },
+            "deletedAt": { "type": "object" }
+          },
+          "required": [
+            "moodleCategoryId",
+            "code",
+            "semester",
+            "programs",
+            "id",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "Department"
+        },
+        "courses": { "type": "object", "default": [] },
+        "id": {
+          "type": "object",
+          "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.962Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.962Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "moodleCategoryId",
+        "code",
+        "department",
+        "courses",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "Program"
+    },
+    "campus": {
+      "type": "object",
+      "properties": {
+        "moodleCategoryId": { "type": "number" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "semesters": { "type": "object", "default": [] },
+        "id": {
+          "type": "object",
+          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T09:55:44.961Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "moodleCategoryId",
+        "code",
+        "semesters",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "Campus"
+    },
+    "totalScore": { "type": "number" },
+    "normalizedScore": { "type": "number" },
+    "qualitativeComment": { "type": "string" },
+    "submittedAt": {
+      "format": "date-time",
+      "type": "string",
+      "default": "2026-02-22T09:55:44.958Z"
+    },
+    "facultyNameSnapshot": { "type": "string" },
+    "facultyEmployeeNumberSnapshot": { "type": "string" },
+    "departmentCodeSnapshot": { "type": "string" },
+    "departmentNameSnapshot": { "type": "string" },
+    "programCodeSnapshot": { "type": "string" },
+    "programNameSnapshot": { "type": "string" },
+    "campusCodeSnapshot": { "type": "string" },
+    "campusNameSnapshot": { "type": "string" },
+    "courseCodeSnapshot": { "type": "string" },
+    "courseTitleSnapshot": { "type": "string" },
+    "semesterCodeSnapshot": { "type": "string" },
+    "semesterLabelSnapshot": { "type": "string" },
+    "academicYearSnapshot": { "type": "string" },
+    "answers": { "type": "object", "default": [] },
+    "id": {
+      "type": "object",
+      "default": "ae1172ac-ab72-4b00-b076-0d6d888770db"
+    },
+    "createdAt": { "type": "object", "default": "2026-02-22T09:55:44.959Z" },
+    "updatedAt": { "type": "object", "default": "2026-02-22T09:55:44.959Z" },
+    "deletedAt": { "type": "object" }
+  },
+  "required": [
+    "questionnaireVersion",
+    "respondent",
+    "faculty",
+    "respondentRole",
+    "semester",
+    "department",
+    "program",
+    "campus",
+    "totalScore",
+    "normalizedScore",
+    "submittedAt",
+    "facultyNameSnapshot",
+    "departmentCodeSnapshot",
+    "departmentNameSnapshot",
+    "programCodeSnapshot",
+    "programNameSnapshot",
+    "campusCodeSnapshot",
+    "campusNameSnapshot",
+    "semesterCodeSnapshot",
+    "semesterLabelSnapshot",
+    "academicYearSnapshot",
+    "answers",
+    "id",
+    "createdAt",
+    "updatedAt"
+  ],
+  "x-readme-ref-name": "QuestionnaireSubmission"
+}

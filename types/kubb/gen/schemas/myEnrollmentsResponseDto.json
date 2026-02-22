@@ -1,1 +1,48 @@
-{"type":"object","properties":{"data":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"role":{"type":"string"},"course":{"type":"object","properties":{"id":{"type":"string"},"moodleCourseId":{"type":"number"},"shortname":{"type":"string"},"fullname":{"type":"string"}},"required":["id","moodleCourseId","shortname","fullname"],"x-readme-ref-name":"CourseShortResponseDto"}},"required":["id","role","course"],"x-readme-ref-name":"EnrollmentResponseDto"}},"meta":{"type":"object","properties":{"totalItems":{"type":"number"},"itemCount":{"type":"number"},"itemsPerPage":{"type":"number"},"totalPages":{"type":"number"},"currentPage":{"type":"number"}},"required":["totalItems","itemCount","itemsPerPage","totalPages","currentPage"],"x-readme-ref-name":"PaginationMeta"}},"required":["data","meta"],"x-readme-ref-name":"MyEnrollmentsResponseDto"}
+{
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "role": { "type": "string" },
+          "course": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "moodleCourseId": { "type": "number" },
+              "shortname": { "type": "string" },
+              "fullname": { "type": "string" }
+            },
+            "required": ["id", "moodleCourseId", "shortname", "fullname"],
+            "x-readme-ref-name": "CourseShortResponseDto"
+          }
+        },
+        "required": ["id", "role", "course"],
+        "x-readme-ref-name": "EnrollmentResponseDto"
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "totalItems": { "type": "number" },
+        "itemCount": { "type": "number" },
+        "itemsPerPage": { "type": "number" },
+        "totalPages": { "type": "number" },
+        "currentPage": { "type": "number" }
+      },
+      "required": [
+        "totalItems",
+        "itemCount",
+        "itemsPerPage",
+        "totalPages",
+        "currentPage"
+      ],
+      "x-readme-ref-name": "PaginationMeta"
+    }
+  },
+  "required": ["data", "meta"],
+  "x-readme-ref-name": "MyEnrollmentsResponseDto"
+}
