@@ -21,17 +21,17 @@ export type Campus = {
    */
   semesters: object;
   /**
-   * @default "3c94e4b0-8078-4346-bd36-addabdee5edd"
+   * @default "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T09:55:44.961Z"
+   * @default "2026-02-22T11:54:36.284Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T09:55:44.961Z"
+   * @default "2026-02-22T11:54:36.284Z"
    * @type object
    */
   updatedAt: object;

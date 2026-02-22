@@ -24,15 +24,15 @@
             "versions": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "6977dcd8-a506-4832-ad81-2825839e0c3f"
+              "default": "a62add82-7b76-4f6c-97a2-f312b2d1d96d"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.955Z"
+              "default": "2026-02-22T11:54:36.278Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.955Z"
+              "default": "2026-02-22T11:54:36.278Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -58,15 +58,15 @@
         },
         "id": {
           "type": "object",
-          "default": "1184eaf1-8c06-4dd1-a4c5-af57e3f3e2a5"
+          "default": "1446bcff-58d3-4583-aeb7-616e9048cc0e"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.959Z"
+          "default": "2026-02-22T11:54:36.282Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.959Z"
+          "default": "2026-02-22T11:54:36.282Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -101,15 +101,15 @@
             "semesters": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+              "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.284Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.284Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -145,15 +145,15 @@
                     "semesters": { "type": "object", "default": [] },
                     "id": {
                       "type": "object",
-                      "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                      "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                     },
                     "createdAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.961Z"
+                      "default": "2026-02-22T11:54:36.284Z"
                     },
                     "updatedAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.961Z"
+                      "default": "2026-02-22T11:54:36.284Z"
                     },
                     "deletedAt": { "type": "object" }
                   },
@@ -171,15 +171,15 @@
                 "description": { "type": "string" },
                 "id": {
                   "type": "object",
-                  "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                  "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.962Z"
+                  "default": "2026-02-22T11:54:36.286Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.962Z"
+                  "default": "2026-02-22T11:54:36.286Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -197,15 +197,15 @@
             "programs": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+              "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.285Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.285Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -248,15 +248,15 @@
                         "semesters": { "type": "object", "default": [] },
                         "id": {
                           "type": "object",
-                          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                          "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                         },
                         "createdAt": {
                           "type": "object",
-                          "default": "2026-02-22T09:55:44.961Z"
+                          "default": "2026-02-22T11:54:36.284Z"
                         },
                         "updatedAt": {
                           "type": "object",
-                          "default": "2026-02-22T09:55:44.961Z"
+                          "default": "2026-02-22T11:54:36.284Z"
                         },
                         "deletedAt": { "type": "object" }
                       },
@@ -274,15 +274,15 @@
                     "description": { "type": "string" },
                     "id": {
                       "type": "object",
-                      "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                      "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
                     },
                     "createdAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.962Z"
+                      "default": "2026-02-22T11:54:36.286Z"
                     },
                     "updatedAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.962Z"
+                      "default": "2026-02-22T11:54:36.286Z"
                     },
                     "deletedAt": { "type": "object" }
                   },
@@ -300,15 +300,15 @@
                 "programs": { "type": "object", "default": [] },
                 "id": {
                   "type": "object",
-                  "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+                  "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.285Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.285Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -326,15 +326,15 @@
             "courses": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+              "default": "979c85cf-9788-4304-b87d-b5cf6b403b91"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.287Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.287Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -364,15 +364,15 @@
         },
         "id": {
           "type": "object",
-          "default": "fea0d9f1-fc41-4c2b-9fb1-bc94e2e841e0"
+          "default": "9407e6b0-9cd1-4d6e-b504-d948095fdb53"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.284Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.284Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -412,15 +412,15 @@
             "semesters": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+              "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.284Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.284Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -456,15 +456,15 @@
                     "semesters": { "type": "object", "default": [] },
                     "id": {
                       "type": "object",
-                      "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                      "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                     },
                     "createdAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.961Z"
+                      "default": "2026-02-22T11:54:36.284Z"
                     },
                     "updatedAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.961Z"
+                      "default": "2026-02-22T11:54:36.284Z"
                     },
                     "deletedAt": { "type": "object" }
                   },
@@ -482,15 +482,15 @@
                 "description": { "type": "string" },
                 "id": {
                   "type": "object",
-                  "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                  "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.962Z"
+                  "default": "2026-02-22T11:54:36.286Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.962Z"
+                  "default": "2026-02-22T11:54:36.286Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -508,15 +508,15 @@
             "programs": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+              "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.285Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.285Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -559,15 +559,15 @@
                         "semesters": { "type": "object", "default": [] },
                         "id": {
                           "type": "object",
-                          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                          "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                         },
                         "createdAt": {
                           "type": "object",
-                          "default": "2026-02-22T09:55:44.961Z"
+                          "default": "2026-02-22T11:54:36.284Z"
                         },
                         "updatedAt": {
                           "type": "object",
-                          "default": "2026-02-22T09:55:44.961Z"
+                          "default": "2026-02-22T11:54:36.284Z"
                         },
                         "deletedAt": { "type": "object" }
                       },
@@ -585,15 +585,15 @@
                     "description": { "type": "string" },
                     "id": {
                       "type": "object",
-                      "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                      "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
                     },
                     "createdAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.962Z"
+                      "default": "2026-02-22T11:54:36.286Z"
                     },
                     "updatedAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.962Z"
+                      "default": "2026-02-22T11:54:36.286Z"
                     },
                     "deletedAt": { "type": "object" }
                   },
@@ -611,15 +611,15 @@
                 "programs": { "type": "object", "default": [] },
                 "id": {
                   "type": "object",
-                  "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+                  "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.285Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.285Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -637,15 +637,15 @@
             "courses": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+              "default": "979c85cf-9788-4304-b87d-b5cf6b403b91"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.287Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.287Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -675,15 +675,15 @@
         },
         "id": {
           "type": "object",
-          "default": "fea0d9f1-fc41-4c2b-9fb1-bc94e2e841e0"
+          "default": "9407e6b0-9cd1-4d6e-b504-d948095fdb53"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.284Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.284Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -721,15 +721,15 @@
             "semesters": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+              "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.284Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.284Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -747,15 +747,15 @@
         "description": { "type": "string" },
         "id": {
           "type": "object",
-          "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+          "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.962Z"
+          "default": "2026-02-22T11:54:36.286Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.962Z"
+          "default": "2026-02-22T11:54:36.286Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -804,15 +804,15 @@
                         "semesters": { "type": "object", "default": [] },
                         "id": {
                           "type": "object",
-                          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                          "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                         },
                         "createdAt": {
                           "type": "object",
-                          "default": "2026-02-22T09:55:44.961Z"
+                          "default": "2026-02-22T11:54:36.284Z"
                         },
                         "updatedAt": {
                           "type": "object",
-                          "default": "2026-02-22T09:55:44.961Z"
+                          "default": "2026-02-22T11:54:36.284Z"
                         },
                         "deletedAt": { "type": "object" }
                       },
@@ -830,15 +830,15 @@
                     "description": { "type": "string" },
                     "id": {
                       "type": "object",
-                      "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                      "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
                     },
                     "createdAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.962Z"
+                      "default": "2026-02-22T11:54:36.286Z"
                     },
                     "updatedAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.962Z"
+                      "default": "2026-02-22T11:54:36.286Z"
                     },
                     "deletedAt": { "type": "object" }
                   },
@@ -856,15 +856,15 @@
                 "programs": { "type": "object", "default": [] },
                 "id": {
                   "type": "object",
-                  "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+                  "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.285Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.285Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -882,15 +882,15 @@
             "courses": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+              "default": "979c85cf-9788-4304-b87d-b5cf6b403b91"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.287Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.287Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -912,15 +912,15 @@
         "isActive": { "type": "boolean" },
         "id": {
           "type": "object",
-          "default": "7dbb991b-02fb-4196-b4b7-c13aaba8386c"
+          "default": "98c37851-08db-475d-af03-84fdf06f6507"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.963Z"
+          "default": "2026-02-22T11:54:36.288Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.963Z"
+          "default": "2026-02-22T11:54:36.288Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -962,15 +962,15 @@
                 "semesters": { "type": "object", "default": [] },
                 "id": {
                   "type": "object",
-                  "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                  "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.284Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.284Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -988,15 +988,15 @@
             "description": { "type": "string" },
             "id": {
               "type": "object",
-              "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+              "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.286Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.286Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -1014,15 +1014,15 @@
         "programs": { "type": "object", "default": [] },
         "id": {
           "type": "object",
-          "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+          "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.285Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.285Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -1065,15 +1065,15 @@
                     "semesters": { "type": "object", "default": [] },
                     "id": {
                       "type": "object",
-                      "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                      "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                     },
                     "createdAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.961Z"
+                      "default": "2026-02-22T11:54:36.284Z"
                     },
                     "updatedAt": {
                       "type": "object",
-                      "default": "2026-02-22T09:55:44.961Z"
+                      "default": "2026-02-22T11:54:36.284Z"
                     },
                     "deletedAt": { "type": "object" }
                   },
@@ -1091,15 +1091,15 @@
                 "description": { "type": "string" },
                 "id": {
                   "type": "object",
-                  "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+                  "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.962Z"
+                  "default": "2026-02-22T11:54:36.286Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.962Z"
+                  "default": "2026-02-22T11:54:36.286Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -1117,15 +1117,15 @@
             "programs": { "type": "object", "default": [] },
             "id": {
               "type": "object",
-              "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+              "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.285Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.961Z"
+              "default": "2026-02-22T11:54:36.285Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -1143,15 +1143,15 @@
         "courses": { "type": "object", "default": [] },
         "id": {
           "type": "object",
-          "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+          "default": "979c85cf-9788-4304-b87d-b5cf6b403b91"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.962Z"
+          "default": "2026-02-22T11:54:36.287Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.962Z"
+          "default": "2026-02-22T11:54:36.287Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -1175,15 +1175,15 @@
         "semesters": { "type": "object", "default": [] },
         "id": {
           "type": "object",
-          "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+          "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.284Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.284Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -1203,7 +1203,7 @@
     "submittedAt": {
       "format": "date-time",
       "type": "string",
-      "default": "2026-02-22T09:55:44.958Z"
+      "default": "2026-02-22T11:54:36.281Z"
     },
     "facultyNameSnapshot": { "type": "string" },
     "facultyEmployeeNumberSnapshot": { "type": "string" },
@@ -1221,10 +1221,10 @@
     "answers": { "type": "object", "default": [] },
     "id": {
       "type": "object",
-      "default": "ae1172ac-ab72-4b00-b076-0d6d888770db"
+      "default": "fedb992d-09ac-4e06-92c2-52d2d3c39cfa"
     },
-    "createdAt": { "type": "object", "default": "2026-02-22T09:55:44.959Z" },
-    "updatedAt": { "type": "object", "default": "2026-02-22T09:55:44.959Z" },
+    "createdAt": { "type": "object", "default": "2026-02-22T11:54:36.282Z" },
+    "updatedAt": { "type": "object", "default": "2026-02-22T11:54:36.282Z" },
     "deletedAt": { "type": "object" }
   },
   "required": [

@@ -69,7 +69,7 @@ export type QuestionnaireSubmission = {
    */
   qualitativeComment?: string;
   /**
-   * @default "2026-02-22T09:55:44.958Z"
+   * @default "2026-02-22T11:54:36.281Z"
    * @type string, date-time
    */
   submittedAt: string;
@@ -130,17 +130,17 @@ export type QuestionnaireSubmission = {
    */
   answers: object;
   /**
-   * @default "ae1172ac-ab72-4b00-b076-0d6d888770db"
+   * @default "fedb992d-09ac-4e06-92c2-52d2d3c39cfa"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T09:55:44.959Z"
+   * @default "2026-02-22T11:54:36.282Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T09:55:44.959Z"
+   * @default "2026-02-22T11:54:36.282Z"
    * @type object
    */
   updatedAt: object;

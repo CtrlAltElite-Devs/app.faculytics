@@ -33,8 +33,8 @@ export const userSchema = z.object({
   roles: z.array(
     z.enum(["SUPER_ADMIN", "ADMIN", "DEAN", "FACULTY", "STUDENT"]),
   ),
-  id: z.object({}).default("fea0d9f1-fc41-4c2b-9fb1-bc94e2e841e0"),
-  createdAt: z.object({}).default("2026-02-22T09:55:44.961Z"),
-  updatedAt: z.object({}).default("2026-02-22T09:55:44.961Z"),
+  id: z.object({}).default("9407e6b0-9cd1-4d6e-b504-d948095fdb53"),
+  createdAt: z.object({}).default("2026-02-22T11:54:36.284Z"),
+  updatedAt: z.object({}).default("2026-02-22T11:54:36.284Z"),
   deletedAt: z.optional(z.object({})),
 });

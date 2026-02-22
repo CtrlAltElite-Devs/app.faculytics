@@ -6,7 +6,7 @@ import { pluginZod } from '@kubb/plugin-zod'
 export default defineConfig({
   root: '.',
   input: {
-    path: './schema/index.yaml',
+    path: 'https://raw.githubusercontent.com/CtrlAltElite-Devs/faculytics-contracts/main/develop/openapi.yaml',
   },
   output: {
     path: './types/kubb/gen',

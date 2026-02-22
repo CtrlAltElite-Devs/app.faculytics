@@ -26,15 +26,15 @@
                 "semesters": { "type": "object", "default": [] },
                 "id": {
                   "type": "object",
-                  "default": "3c94e4b0-8078-4346-bd36-addabdee5edd"
+                  "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
                 },
                 "createdAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.284Z"
                 },
                 "updatedAt": {
                   "type": "object",
-                  "default": "2026-02-22T09:55:44.961Z"
+                  "default": "2026-02-22T11:54:36.284Z"
                 },
                 "deletedAt": { "type": "object" }
               },
@@ -52,15 +52,15 @@
             "description": { "type": "string" },
             "id": {
               "type": "object",
-              "default": "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+              "default": "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
             },
             "createdAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.286Z"
             },
             "updatedAt": {
               "type": "object",
-              "default": "2026-02-22T09:55:44.962Z"
+              "default": "2026-02-22T11:54:36.286Z"
             },
             "deletedAt": { "type": "object" }
           },
@@ -78,15 +78,15 @@
         "programs": { "type": "object", "default": [] },
         "id": {
           "type": "object",
-          "default": "0f91f3db-6aa1-4419-9699-024a5aeb7bea"
+          "default": "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
         },
         "createdAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.285Z"
         },
         "updatedAt": {
           "type": "object",
-          "default": "2026-02-22T09:55:44.961Z"
+          "default": "2026-02-22T11:54:36.285Z"
         },
         "deletedAt": { "type": "object" }
       },
@@ -104,10 +104,10 @@
     "courses": { "type": "object", "default": [] },
     "id": {
       "type": "object",
-      "default": "ef93306d-0a68-41fa-8351-e34fa7d1cd0c"
+      "default": "979c85cf-9788-4304-b87d-b5cf6b403b91"
     },
-    "createdAt": { "type": "object", "default": "2026-02-22T09:55:44.962Z" },
-    "updatedAt": { "type": "object", "default": "2026-02-22T09:55:44.962Z" },
+    "createdAt": { "type": "object", "default": "2026-02-22T11:54:36.287Z" },
+    "updatedAt": { "type": "object", "default": "2026-02-22T11:54:36.287Z" },
     "deletedAt": { "type": "object" }
   },
   "required": [

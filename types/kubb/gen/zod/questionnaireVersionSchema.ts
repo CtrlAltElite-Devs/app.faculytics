@@ -15,8 +15,8 @@ export const questionnaireVersionSchema = z.object({
   publishedAt: z.optional(z.iso.datetime()),
   isActive: z.boolean().default(false),
   status: z.enum(["DRAFT", "ACTIVE", "DEPRECATED"]).default("DRAFT"),
-  id: z.object({}).default("1184eaf1-8c06-4dd1-a4c5-af57e3f3e2a5"),
-  createdAt: z.object({}).default("2026-02-22T09:55:44.959Z"),
-  updatedAt: z.object({}).default("2026-02-22T09:55:44.959Z"),
+  id: z.object({}).default("1446bcff-58d3-4583-aeb7-616e9048cc0e"),
+  createdAt: z.object({}).default("2026-02-22T11:54:36.282Z"),
+  updatedAt: z.object({}).default("2026-02-22T11:54:36.282Z"),
   deletedAt: z.optional(z.object({})),
 });

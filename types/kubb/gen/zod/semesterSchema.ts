@@ -16,8 +16,8 @@ export const semesterSchema = z.object({
   },
   departments: z.object({}),
   description: z.optional(z.string()),
-  id: z.object({}).default("6a0549b8-5cbc-40b7-a90a-941b726c106f"),
-  createdAt: z.object({}).default("2026-02-22T09:55:44.962Z"),
-  updatedAt: z.object({}).default("2026-02-22T09:55:44.962Z"),
+  id: z.object({}).default("2c0016c6-4d2d-434a-af0c-a1adcf8b33df"),
+  createdAt: z.object({}).default("2026-02-22T11:54:36.286Z"),
+  updatedAt: z.object({}).default("2026-02-22T11:54:36.286Z"),
   deletedAt: z.optional(z.object({})),
 });

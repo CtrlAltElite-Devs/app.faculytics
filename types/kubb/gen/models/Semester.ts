@@ -35,17 +35,17 @@ export type Semester = {
    */
   description?: string;
   /**
-   * @default "6a0549b8-5cbc-40b7-a90a-941b726c106f"
+   * @default "2c0016c6-4d2d-434a-af0c-a1adcf8b33df"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T09:55:44.962Z"
+   * @default "2026-02-22T11:54:36.286Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T09:55:44.962Z"
+   * @default "2026-02-22T11:54:36.286Z"
    * @type object
    */
   updatedAt: object;
