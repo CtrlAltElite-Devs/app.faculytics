@@ -1,0 +1,1 @@
+{"type":"object","properties":{"totalItems":{"type":"number"},"itemCount":{"type":"number"},"itemsPerPage":{"type":"number"},"totalPages":{"type":"number"},"currentPage":{"type":"number"}},"required":["totalItems","itemCount","itemsPerPage","totalPages","currentPage"],"x-readme-ref-name":"PaginationMeta"}

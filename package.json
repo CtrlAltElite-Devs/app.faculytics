@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate:api": "openapi-typescript https://raw.githubusercontent.com/CtrlAltElite-Devs/faculytics-contracts/refs/heads/main/develop/openapi.json -o ./app/schema/index.d.ts"
+    "generate:api": "openapi-typescript https://raw.githubusercontent.com/CtrlAltElite-Devs/faculytics-contracts/refs/heads/main/develop/openapi.json -o ./schema/index.yaml"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.21",
@@ -23,6 +23,12 @@
     "tailwind-merge": "^3.4.1"
   },
   "devDependencies": {
+    "@kubb/agent": "^4.27.1",
+    "@kubb/cli": "^4.27.1",
+    "@kubb/core": "^4.27.1",
+    "@kubb/plugin-oas": "^4.27.1",
+    "@kubb/plugin-ts": "^4.27.1",
+    "@kubb/plugin-zod": "^4.27.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
