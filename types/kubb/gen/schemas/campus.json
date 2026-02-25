@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "moodleCategoryId": { "type": "number" },
+    "code": { "type": "string" },
+    "name": { "type": "string" },
+    "semesters": { "type": "object", "default": [] },
+    "id": {
+      "type": "object",
+      "default": "cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"
+    },
+    "createdAt": { "type": "object", "default": "2026-02-22T11:54:36.284Z" },
+    "updatedAt": { "type": "object", "default": "2026-02-22T11:54:36.284Z" },
+    "deletedAt": { "type": "object" }
+  },
+  "required": [
+    "moodleCategoryId",
+    "code",
+    "semesters",
+    "id",
+    "createdAt",
+    "updatedAt"
+  ],
+  "x-readme-ref-name": "Campus"
+}

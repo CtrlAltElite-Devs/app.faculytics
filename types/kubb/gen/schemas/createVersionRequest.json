@@ -1,0 +1,6 @@
+{
+  "type": "object",
+  "properties": { "schema": { "type": "object" } },
+  "required": ["schema"],
+  "x-readme-ref-name": "CreateVersionRequest"
+}

@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "versionId": { "type": "string", "format": "uuid" },
+    "respondentId": { "type": "string", "format": "uuid" },
+    "facultyId": { "type": "string", "format": "uuid" },
+    "semesterId": { "type": "string", "format": "uuid" },
+    "courseId": { "type": "string", "format": "uuid" },
+    "answers": { "type": "object", "example": { "q1": 5, "q2": 4 } },
+    "qualitativeComment": { "type": "string" }
+  },
+  "required": [
+    "versionId",
+    "respondentId",
+    "facultyId",
+    "semesterId",
+    "answers"
+  ],
+  "x-readme-ref-name": "SubmitQuestionnaireRequest"
+}

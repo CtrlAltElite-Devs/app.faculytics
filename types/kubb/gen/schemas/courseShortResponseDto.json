@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "moodleCourseId": { "type": "number" },
+    "shortname": { "type": "string" },
+    "fullname": { "type": "string" }
+  },
+  "required": ["id", "moodleCourseId", "shortname", "fullname"],
+  "x-readme-ref-name": "CourseShortResponseDto"
+}

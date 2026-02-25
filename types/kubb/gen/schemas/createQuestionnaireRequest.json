@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "type": {
+      "enum": [
+        "FACULTY_IN_CLASSROOM",
+        "FACULTY_OUT_OF_CLASSROOM",
+        "FACULTY_FEEDBACK"
+      ],
+      "type": "string"
+    }
+  },
+  "required": ["title", "type"],
+  "x-readme-ref-name": "CreateQuestionnaireRequest"
+}

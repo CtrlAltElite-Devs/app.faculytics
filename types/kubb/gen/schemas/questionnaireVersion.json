@@ -1,0 +1,75 @@
+{
+  "type": "object",
+  "properties": {
+    "questionnaire": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "status": {
+          "type": "string",
+          "default": "DRAFT",
+          "enum": ["DRAFT", "ACTIVE", "DEPRECATED"]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "FACULTY_IN_CLASSROOM",
+            "FACULTY_OUT_OF_CLASSROOM",
+            "FACULTY_FEEDBACK"
+          ]
+        },
+        "versions": { "type": "object", "default": [] },
+        "id": {
+          "type": "object",
+          "default": "a62add82-7b76-4f6c-97a2-f312b2d1d96d"
+        },
+        "createdAt": {
+          "type": "object",
+          "default": "2026-02-22T11:54:36.278Z"
+        },
+        "updatedAt": {
+          "type": "object",
+          "default": "2026-02-22T11:54:36.278Z"
+        },
+        "deletedAt": { "type": "object" }
+      },
+      "required": [
+        "title",
+        "status",
+        "type",
+        "versions",
+        "id",
+        "createdAt",
+        "updatedAt"
+      ],
+      "x-readme-ref-name": "Questionnaire"
+    },
+    "versionNumber": { "type": "number" },
+    "schemaSnapshot": { "type": "object" },
+    "publishedAt": { "format": "date-time", "type": "string" },
+    "isActive": { "type": "boolean", "default": false },
+    "status": {
+      "type": "string",
+      "default": "DRAFT",
+      "enum": ["DRAFT", "ACTIVE", "DEPRECATED"]
+    },
+    "id": {
+      "type": "object",
+      "default": "1446bcff-58d3-4583-aeb7-616e9048cc0e"
+    },
+    "createdAt": { "type": "object", "default": "2026-02-22T11:54:36.282Z" },
+    "updatedAt": { "type": "object", "default": "2026-02-22T11:54:36.282Z" },
+    "deletedAt": { "type": "object" }
+  },
+  "required": [
+    "questionnaire",
+    "versionNumber",
+    "schemaSnapshot",
+    "isActive",
+    "status",
+    "id",
+    "createdAt",
+    "updatedAt"
+  ],
+  "x-readme-ref-name": "QuestionnaireVersion"
+}

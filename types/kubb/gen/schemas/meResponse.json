@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "userName": { "type": "string" },
+    "moodleUserId": { "type": "number" },
+    "firstName": { "type": "string" },
+    "lastName": { "type": "string" },
+    "userProfilePicture": { "type": "string" },
+    "fullName": { "type": "string" },
+    "roles": { "type": "array", "items": { "type": "string" } },
+    "campus": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" }
+      },
+      "required": ["id", "code"]
+    }
+  },
+  "required": [
+    "id",
+    "userName",
+    "firstName",
+    "lastName",
+    "userProfilePicture",
+    "fullName",
+    "roles"
+  ],
+  "x-readme-ref-name": "MeResponse"
+}
