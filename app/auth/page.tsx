@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 export default function AuthPage() {
   const { mutate, isPending } = useLogin();
@@ -27,15 +28,40 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="h-screen grid grid-cols-2">
+    <div className="h-screen grid grid-cols-10">
 
       {/* Hero Section */}
-      <div className="bg-primary">
-
+      <div className="relative overflow-hidden col-span-7">
+        <BackgroundGradientAnimation
+          gradientBackgroundStart="rgb(44, 58, 208)"
+          gradientBackgroundEnd="rgb(30, 40, 150)"
+          firstColor="60, 100, 255"
+          secondColor="80, 130, 255"
+          thirdColor="40, 80, 220"
+          fourthColor="70, 120, 255"
+          fifthColor="100, 150, 255"
+          pointerColor="60, 100, 255"
+          size="70%"
+          containerClassName="h-full w-full"
+        >
+          <div className="absolute z-50 inset-0 flex flex-col justify-end p-16 text-white pointer-events-none">
+            <div className="space-y-6 mb-16">
+              <h1 className="text-5xl font-playfair font-semibold leading-tight">
+                Data-driven decisions for better education
+              </h1>
+              <p className="text-xl opacity-90 font-medium max-w-lg">
+                Powered by artificial intelligence to deliver real-time insights and smart recommendations.
+              </p>
+            </div>
+            <div className="text-sm opacity-70">
+              2026 Faculytics. All rights reserved.
+            </div>
+          </div>
+        </BackgroundGradientAnimation>
       </div>
 
       {/* Form Section */}
-      <div className="bg-secondary flex flex-col">
+      <div className="bg-brand-neutral flex flex-col col-span-3">
         <div className="p-8">
           <h3 className="text-xl font-playfair font-semibold">Faculytics 2.0</h3>
         </div>
@@ -107,7 +133,7 @@ export default function AuthPage() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-brand-yellow hover:bg-brand-yellow/90 text-black font-semibold cursor-pointer"
                 disabled={isPending}
               >
                 {isPending ? "Logging in..." : "Login"}
