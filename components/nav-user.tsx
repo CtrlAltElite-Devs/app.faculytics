@@ -1,13 +1,11 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 
 import {
   Avatar,
@@ -17,12 +15,13 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useLogout } from "@/hooks/api/use-logout"
+import { clearSession } from "@/lib/auth-storage"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -35,11 +34,30 @@ export function NavUser({
 }: {
   user: {
     name: string
-    email: string
+    email?: string
     avatar: string
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+  const { mutate, isPending } = useLogout()
+  const initials = useMemo(() => {
+    const parts = user.name.trim().split(/\s+/).filter(Boolean)
+    if (parts.length === 0) return "?"
+    return parts
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("")
+  }, [user.name])
+
+  const handleLogout = () => {
+    mutate(undefined, {
+      onSettled: () => {
+        clearSession()
+        router.replace("/auth")
+      },
+    })
+  }
 
   return (
     <SidebarMenu>
@@ -52,11 +70,13 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                {user.email ? (
+                  <span className="truncate text-xs">{user.email}</span>
+                ) : null}
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -71,40 +91,20 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  {user.email ? (
+                    <span className="truncate text-xs">{user.email}</span>
+                  ) : null}
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} disabled={isPending}>
               <LogOut />
-              Log out
+              {isPending ? "Logging out..." : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
