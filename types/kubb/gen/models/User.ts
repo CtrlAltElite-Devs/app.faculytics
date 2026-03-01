@@ -84,17 +84,17 @@ export type User = {
    */
   roles: UserRolesEnumKey[];
   /**
-   * @default "9407e6b0-9cd1-4d6e-b504-d948095fdb53"
+   * @default "efafb475-b750-467c-b9ac-b737ef50926f"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T11:54:36.284Z"
+   * @default "2026-03-01T04:31:25.805Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T11:54:36.284Z"
+   * @default "2026-03-01T04:31:25.805Z"
    * @type object
    */
   updatedAt: object;

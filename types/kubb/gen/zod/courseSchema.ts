@@ -18,8 +18,8 @@ export const courseSchema = z.object({
   isVisible: z.boolean(),
   timeModified: z.iso.datetime(),
   isActive: z.boolean(),
-  id: z.object({}).default("98c37851-08db-475d-af03-84fdf06f6507"),
-  createdAt: z.object({}).default("2026-02-22T11:54:36.288Z"),
-  updatedAt: z.object({}).default("2026-02-22T11:54:36.288Z"),
+  id: z.object({}).default("d8bc3a92-7336-43c0-99b0-acbed106fabd"),
+  createdAt: z.object({}).default("2026-03-01T04:31:25.809Z"),
+  updatedAt: z.object({}).default("2026-03-01T04:31:25.809Z"),
   deletedAt: z.optional(z.object({})),
 });

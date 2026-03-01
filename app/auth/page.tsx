@@ -1,16 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks/api/use-login"
 import { LoginRequest, loginRequestSchema } from "@/types/kubb/gen";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+import { fetchMe } from "@/lib/auth-api";
+import { clearSession, hasStoredSession, setSession } from "@/lib/auth-storage";
+import { resolveHomePathFromRoles } from "@/lib/auth-roles";
 
 export default function AuthPage() {
+  const router = useRouter();
   const { mutate, isPending } = useLogin();
+  const [isBootstrapping, setIsBootstrapping] = useState(true);
 
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
@@ -20,10 +27,58 @@ export default function AuthPage() {
     }
   });
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const bootstrapSession = async () => {
+      if (!hasStoredSession()) {
+        if (!cancelled) setIsBootstrapping(false);
+        return;
+      }
+
+      const me = await fetchMe();
+      if (cancelled) return;
+
+      if (me) {
+        router.replace(resolveHomePathFromRoles(me.roles));
+        return;
+      }
+
+      clearSession();
+      setIsBootstrapping(false);
+    };
+
+    void bootstrapSession();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
   function onSubmit(values: LoginRequest) {
     mutate({
       body: values,
+    }, {
+      onSuccess: async (response) => {
+        setSession(response);
+        const me = await fetchMe();
+
+        if (me) {
+          router.replace(resolveHomePathFromRoles(me.roles));
+          return;
+        }
+
+        clearSession();
+      },
     });
+  }
+
+  if (isBootstrapping) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+        Checking session...
+      </div>
+    );
   }
 
   return (
@@ -133,7 +188,7 @@ export default function AuthPage() {
               <Button
                 type="submit"
                 className="w-full bg-brand-yellow hover:bg-brand-yellow/90 text-black font-semibold cursor-pointer"
-                disabled={isPending}
+                disabled={isPending || isBootstrapping}
               >
                 {isPending ? "Logging in..." : "Login"}
               </Button>

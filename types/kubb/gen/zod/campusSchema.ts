@@ -10,8 +10,8 @@ export const campusSchema = z.object({
   code: z.string(),
   name: z.optional(z.string()),
   semesters: z.object({}),
-  id: z.object({}).default("cf1a1f09-0df9-4e25-b6b2-451dadacb6d2"),
-  createdAt: z.object({}).default("2026-02-22T11:54:36.284Z"),
-  updatedAt: z.object({}).default("2026-02-22T11:54:36.284Z"),
+  id: z.object({}).default("91ffeac4-8cbd-46ce-b84a-a3fd9ccae9de"),
+  createdAt: z.object({}).default("2026-03-01T04:31:25.806Z"),
+  updatedAt: z.object({}).default("2026-03-01T04:31:25.806Z"),
   deletedAt: z.optional(z.object({})),
 });

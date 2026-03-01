@@ -42,17 +42,17 @@ export type QuestionnaireVersion = {
    */
   status: QuestionnaireVersionStatusEnumKey;
   /**
-   * @default "1446bcff-58d3-4583-aeb7-616e9048cc0e"
+   * @default "a383a697-0924-4545-88a1-8fbfb44c6aa3"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T11:54:36.282Z"
+   * @default "2026-03-01T04:31:25.804Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T11:54:36.282Z"
+   * @default "2026-03-01T04:31:25.804Z"
    * @type object
    */
   updatedAt: object;

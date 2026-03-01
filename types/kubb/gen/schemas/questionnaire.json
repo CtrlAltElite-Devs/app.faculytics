@@ -18,10 +18,10 @@
     "versions": { "type": "object", "default": [] },
     "id": {
       "type": "object",
-      "default": "a62add82-7b76-4f6c-97a2-f312b2d1d96d"
+      "default": "8501db1c-09a3-4664-b350-225403e53709"
     },
-    "createdAt": { "type": "object", "default": "2026-02-22T11:54:36.278Z" },
-    "updatedAt": { "type": "object", "default": "2026-02-22T11:54:36.278Z" },
+    "createdAt": { "type": "object", "default": "2026-03-01T04:31:25.799Z" },
+    "updatedAt": { "type": "object", "default": "2026-03-01T04:31:25.799Z" },
     "deletedAt": { "type": "object" }
   },
   "required": [
