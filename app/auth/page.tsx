@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "@/hooks/api/use-login"
 import { LoginRequest, loginRequestSchema } from "@/types/kubb/gen";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
