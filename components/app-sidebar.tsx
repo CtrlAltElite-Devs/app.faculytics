@@ -5,9 +5,12 @@ import { BarChart3, BookOpen, GraduationCap } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+import { useMe } from "@/hooks/api/use-me"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -46,9 +49,11 @@ const facultyNavItems: NavItem[] = [
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
+  const { data } = useMe()
   const isFaculty = pathname.startsWith("/faculty")
   const roleLabel = isFaculty ? "Faculty" : "Student"
   const navItems = isFaculty ? facultyNavItems : studentNavItems
+  const userName = data?.fullName?.trim() || data?.userName || "User"
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -86,6 +91,15 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser
+          user={{
+            name: userName,
+            email: data?.userName,
+            avatar: data?.userProfilePicture ?? "",
+          }}
+        />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
