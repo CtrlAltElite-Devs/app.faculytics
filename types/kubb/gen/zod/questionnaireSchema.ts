@@ -14,8 +14,8 @@ export const questionnaireSchema = z.object({
     "FACULTY_FEEDBACK",
   ]),
   versions: z.object({}),
-  id: z.object({}).default("a62add82-7b76-4f6c-97a2-f312b2d1d96d"),
-  createdAt: z.object({}).default("2026-02-22T11:54:36.278Z"),
-  updatedAt: z.object({}).default("2026-02-22T11:54:36.278Z"),
+  id: z.object({}).default("8501db1c-09a3-4664-b350-225403e53709"),
+  createdAt: z.object({}).default("2026-03-01T04:31:25.799Z"),
+  updatedAt: z.object({}).default("2026-03-01T04:31:25.799Z"),
   deletedAt: z.optional(z.object({})),
 });

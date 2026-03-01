@@ -43,17 +43,17 @@ export type Course = {
    */
   isActive: boolean;
   /**
-   * @default "98c37851-08db-475d-af03-84fdf06f6507"
+   * @default "d8bc3a92-7336-43c0-99b0-acbed106fabd"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T11:54:36.288Z"
+   * @default "2026-03-01T04:31:25.809Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T11:54:36.288Z"
+   * @default "2026-03-01T04:31:25.809Z"
    * @type object
    */
   updatedAt: object;

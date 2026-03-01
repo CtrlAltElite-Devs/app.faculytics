@@ -339,11 +339,11 @@ export interface components {
             type: "FACULTY_IN_CLASSROOM" | "FACULTY_OUT_OF_CLASSROOM" | "FACULTY_FEEDBACK";
             /** @default [] */
             versions: Record<string, never>;
-            /** @default a62add82-7b76-4f6c-97a2-f312b2d1d96d */
+            /** @default 8501db1c-09a3-4664-b350-225403e53709 */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.278Z */
+            /** @default 2026-03-01T04:31:25.799Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.278Z */
+            /** @default 2026-03-01T04:31:25.799Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -383,11 +383,11 @@ export interface components {
              * @enum {string}
              */
             status: "DRAFT" | "ACTIVE" | "DEPRECATED";
-            /** @default 1446bcff-58d3-4583-aeb7-616e9048cc0e */
+            /** @default a383a697-0924-4545-88a1-8fbfb44c6aa3 */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.282Z */
+            /** @default 2026-03-01T04:31:25.804Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.282Z */
+            /** @default 2026-03-01T04:31:25.804Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -397,11 +397,11 @@ export interface components {
             name?: string;
             /** @default [] */
             semesters: Record<string, never>;
-            /** @default cf1a1f09-0df9-4e25-b6b2-451dadacb6d2 */
+            /** @default 91ffeac4-8cbd-46ce-b84a-a3fd9ccae9de */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.284Z */
+            /** @default 2026-03-01T04:31:25.806Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.284Z */
+            /** @default 2026-03-01T04:31:25.806Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -414,11 +414,11 @@ export interface components {
             /** @default [] */
             departments: Record<string, never>;
             description?: string;
-            /** @default 2c0016c6-4d2d-434a-af0c-a1adcf8b33df */
+            /** @default f1ab63a0-118b-4b45-8018-36fcd63b7979 */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.286Z */
+            /** @default 2026-03-01T04:31:25.807Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.286Z */
+            /** @default 2026-03-01T04:31:25.807Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -429,11 +429,11 @@ export interface components {
             semester: components["schemas"]["Semester"];
             /** @default [] */
             programs: Record<string, never>;
-            /** @default c19c3ddd-42f3-4b25-a884-aeb39744cc28 */
+            /** @default 7022074a-a1f1-468b-8b07-b28d14bd1f26 */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.285Z */
+            /** @default 2026-03-01T04:31:25.807Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.285Z */
+            /** @default 2026-03-01T04:31:25.807Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -444,11 +444,11 @@ export interface components {
             department: components["schemas"]["Department"];
             /** @default [] */
             courses: Record<string, never>;
-            /** @default 979c85cf-9788-4304-b87d-b5cf6b403b91 */
+            /** @default d5e8ed98-da14-4dbd-b30e-3d2c9db112d9 */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.287Z */
+            /** @default 2026-03-01T04:31:25.808Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.287Z */
+            /** @default 2026-03-01T04:31:25.808Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -474,11 +474,11 @@ export interface components {
             isActive: boolean;
             /** @default [] */
             roles: ("SUPER_ADMIN" | "ADMIN" | "DEAN" | "FACULTY" | "STUDENT")[];
-            /** @default 9407e6b0-9cd1-4d6e-b504-d948095fdb53 */
+            /** @default efafb475-b750-467c-b9ac-b737ef50926f */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.284Z */
+            /** @default 2026-03-01T04:31:25.805Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.284Z */
+            /** @default 2026-03-01T04:31:25.805Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -495,11 +495,11 @@ export interface components {
             /** Format: date-time */
             timeModified: string;
             isActive: boolean;
-            /** @default 98c37851-08db-475d-af03-84fdf06f6507 */
+            /** @default d8bc3a92-7336-43c0-99b0-acbed106fabd */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.288Z */
+            /** @default 2026-03-01T04:31:25.809Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.288Z */
+            /** @default 2026-03-01T04:31:25.809Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };
@@ -519,7 +519,7 @@ export interface components {
             qualitativeComment?: string;
             /**
              * Format: date-time
-             * @default 2026-02-22T11:54:36.281Z
+             * @default 2026-03-01T04:31:25.803Z
              */
             submittedAt: string;
             facultyNameSnapshot: string;
@@ -537,11 +537,11 @@ export interface components {
             academicYearSnapshot: string;
             /** @default [] */
             answers: Record<string, never>;
-            /** @default fedb992d-09ac-4e06-92c2-52d2d3c39cfa */
+            /** @default f033fb6e-763c-4e39-812b-96cea8184b4d */
             id: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.282Z */
+            /** @default 2026-03-01T04:31:25.803Z */
             createdAt: Record<string, never>;
-            /** @default 2026-02-22T11:54:36.282Z */
+            /** @default 2026-03-01T04:31:25.803Z */
             updatedAt: Record<string, never>;
             deletedAt?: Record<string, never>;
         };

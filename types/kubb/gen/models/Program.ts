@@ -27,17 +27,17 @@ export type Program = {
    */
   courses: object;
   /**
-   * @default "979c85cf-9788-4304-b87d-b5cf6b403b91"
+   * @default "d5e8ed98-da14-4dbd-b30e-3d2c9db112d9"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T11:54:36.287Z"
+   * @default "2026-03-01T04:31:25.808Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T11:54:36.287Z"
+   * @default "2026-03-01T04:31:25.808Z"
    * @type object
    */
   updatedAt: object;

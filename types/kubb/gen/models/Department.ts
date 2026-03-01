@@ -27,17 +27,17 @@ export type Department = {
    */
   programs: object;
   /**
-   * @default "c19c3ddd-42f3-4b25-a884-aeb39744cc28"
+   * @default "7022074a-a1f1-468b-8b07-b28d14bd1f26"
    * @type object
    */
   id: object;
   /**
-   * @default "2026-02-22T11:54:36.285Z"
+   * @default "2026-03-01T04:31:25.807Z"
    * @type object
    */
   createdAt: object;
   /**
-   * @default "2026-02-22T11:54:36.285Z"
+   * @default "2026-03-01T04:31:25.807Z"
    * @type object
    */
   updatedAt: object;
