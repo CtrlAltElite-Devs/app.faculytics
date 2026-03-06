@@ -1,0 +1,101 @@
+import { Endpoints } from "@/network/endpoints";
+import { useAuthStore } from "@/stores/auth-store";
+import type { LoginResponse } from "@/types/response/auth";
+import axios, { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+
+type RetriableRequestConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean;
+};
+
+function isAuthEndpoint(url?: string) {
+  if (!url) return false;
+  return [Endpoints.login, Endpoints.refresh, Endpoints.logout].some((endpoint) => url.includes(endpoint));
+}
+
+function handleUnauthorized() {
+  const { clearSession } = useAuthStore.getState();
+  clearSession();
+
+  if (typeof window !== "undefined" && window.location.pathname !== "/auth") {
+    window.location.replace("/auth");
+  }
+}
+
+export const apiClient = axios.create({
+  baseURL: BACKEND_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const refreshClient = axios.create({
+  baseURL: BACKEND_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+let refreshPromise: Promise<LoginResponse> | null = null;
+
+function refreshAccessToken(refreshToken: string) {
+  if (!refreshPromise) {
+    refreshPromise = refreshClient
+      .post<LoginResponse>(Endpoints.refresh, { refreshToken })
+      .then((response) => response.data)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+}
+
+apiClient.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token;
+  const headers = AxiosHeaders.from(config.headers);
+
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  config.headers = headers;
+  return config;
+});
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetriableRequestConfig | undefined;
+    const isUnauthorized = error.response?.status === 401;
+
+    if (!originalRequest || !isUnauthorized || originalRequest._retry || isAuthEndpoint(originalRequest.url)) {
+      return Promise.reject(error);
+    }
+
+    const { refreshToken, setSession } = useAuthStore.getState();
+    if (!refreshToken) {
+      handleUnauthorized();
+      return Promise.reject(error);
+    }
+
+    originalRequest._retry = true;
+
+    try {
+      const refreshedSession = await refreshAccessToken(refreshToken);
+      const { token, refreshToken: nextRefreshToken } = refreshedSession;
+
+      setSession(token, nextRefreshToken);
+
+      const retryHeaders = AxiosHeaders.from(originalRequest.headers);
+      retryHeaders.set("Authorization", `Bearer ${token}`);
+      originalRequest.headers = retryHeaders;
+
+      return apiClient(originalRequest);
+    } catch (refreshError) {
+      handleUnauthorized();
+      return Promise.reject(refreshError);
+    }
+  },
+);

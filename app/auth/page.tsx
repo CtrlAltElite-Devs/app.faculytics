@@ -5,12 +5,14 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useLogin } from "@/hooks/auth/use-login";
 import { loginRequestSchema } from "@/schemas/auth";
 import { LoginRequest } from "@/types/request/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
 export default function AuthPage() {
+  const { mutate, isPending } = useLogin();
 
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
@@ -20,9 +22,8 @@ export default function AuthPage() {
     }
   });
 
-  // to change
-  const onSubmit = async (values: LoginRequest) => {
-    console.log(values);
+  const onSubmit = (values: LoginRequest) => {
+    mutate({password: values.password, username: values.username})
   };
 
   return (
@@ -132,9 +133,10 @@ export default function AuthPage() {
 
               <Button
                 type="submit"
+                disabled={isPending}
                 className="w-full bg-brand-blue hover:bg-brand-blue/90 text-secondary font-semibold cursor-pointer"
               >
-                Login
+                {isPending ? "Logging in..." : "Login"}
               </Button>
             </form>
             <div className="flex gap-2 text-sm justify-center">
