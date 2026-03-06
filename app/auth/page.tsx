@@ -6,13 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/hooks/auth/use-login";
+import { useMe } from "@/hooks/auth/use-me";
+import { resolveHomeFromRoles } from "@/lib/auth/role-route";
 import { loginRequestSchema } from "@/schemas/auth";
+import { useAuthStore } from "@/stores/auth-store";
 import { LoginRequest } from "@/types/request/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export default function AuthPage() {
+  const router = useRouter();
   const { mutate, isPending } = useLogin();
+  const { data: me, isPending: isMePending, isError: isMeError } = useMe();
+  const clearSession = useAuthStore((state) => state.clearSession);
+  const token = useAuthStore((state) => state.token);
 
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
@@ -25,6 +34,33 @@ export default function AuthPage() {
   const onSubmit = (values: LoginRequest) => {
     mutate({password: values.password, username: values.username})
   };
+
+  useEffect(() => {
+    if (!token || isMePending) return;
+
+    if (isMeError) {
+      clearSession();
+      return;
+    }
+
+    const nextPath = resolveHomeFromRoles(me?.roles);
+    if (nextPath) {
+      router.replace(nextPath);
+      return;
+    }
+
+    if (me) {
+      clearSession();
+    }
+  }, [clearSession, isMeError, isMePending, me, router, token]);
+
+  if (token && isMePending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
+        Redirecting...
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen grid grid-cols-1 lg:grid-cols-10">

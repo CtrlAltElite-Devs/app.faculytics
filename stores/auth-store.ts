@@ -5,6 +5,8 @@ type AuthStore = {
   token: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  hydrated: boolean;
+  setHydrated: (hydrated: boolean) => void;
   setSession: (token: string, refreshToken: string) => void;
   clearSession: () => void;
 };
@@ -15,18 +17,22 @@ export const useAuthStore = create<AuthStore>()(
       token: null,
       refreshToken: null,
       isAuthenticated: false,
+      hydrated: false,
+      setHydrated: (hydrated) => set({ hydrated }),
 
       setSession: (token, refreshToken) =>
         set({
           token,
           refreshToken,
           isAuthenticated: Boolean(token),
+          hydrated: true,
         }),
       clearSession: () =>
         set({
           token: null,
           refreshToken: null,
           isAuthenticated: false,
+          hydrated: true,
         }),
     }),
     {
@@ -37,6 +43,9 @@ export const useAuthStore = create<AuthStore>()(
         refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true);
+      },
     },
   ),
 );
