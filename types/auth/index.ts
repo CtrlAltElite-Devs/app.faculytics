@@ -1,3 +1,11 @@
+export type LoginRequest = {
+  username: string;
+  password: string;
+};
+
+export type RefreshTokenRequestBody = {
+  refreshToken: string;
+};
 export type LoginResponse = {
   token: string;
   refreshToken: string;

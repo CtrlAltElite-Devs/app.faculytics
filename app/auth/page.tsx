@@ -10,7 +10,7 @@ import { useMe } from "@/hooks/auth/use-me";
 import { resolveHomeFromRoles } from "@/lib/auth/role-route";
 import { loginRequestSchema } from "@/schemas/auth";
 import { useAuthStore } from "@/stores/auth-store";
-import { LoginRequest } from "@/types/request/auth";
+import { LoginRequest } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

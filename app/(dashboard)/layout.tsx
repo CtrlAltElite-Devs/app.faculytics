@@ -1,7 +1,7 @@
 "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import { AuthGuard } from "@/components/auth/auth-guard";
+import { AuthGuard } from "@/app/(dashboard)/_guards/auth-guard";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Breadcrumb,

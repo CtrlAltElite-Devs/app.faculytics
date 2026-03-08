@@ -1,4 +1,4 @@
-import { RoleGuard } from "@/components/auth/role-guard";
+import { RoleGuard } from "@/app/(dashboard)/_guards/role-guard";
 import type { ReactNode } from "react";
 
 type StudentLayoutProps = {

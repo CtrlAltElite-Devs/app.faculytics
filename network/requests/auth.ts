@@ -1,8 +1,8 @@
 import { apiClient } from "@/network/axios";
 import { Endpoints } from "@/network/endpoints";
 
-import type { LoginRequest, RefreshTokenRequestBody } from "@/types/request/auth";
-import type { LoginResponse, MeResponse } from "@/types/response/auth";
+import type { LoginRequest, RefreshTokenRequestBody } from "@/types/auth";
+import type { LoginResponse, MeResponse } from "@/types/auth";
 
 /**
  * Login a user with username and password.
