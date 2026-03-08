@@ -4,4 +4,7 @@ export enum Endpoints {
   me = "/api/v1/auth/me",
   refresh = "/api/v1/auth/refresh",
   logout = "/api/v1/auth/logout",
+
+  // Student
+  enrollmentsMe = "/api/v1/enrollments/me",
 }
