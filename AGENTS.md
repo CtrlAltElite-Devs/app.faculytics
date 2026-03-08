@@ -46,3 +46,11 @@
 ## Security & Configuration Tips
 - Keep secrets in `.env.local`; never commit env files with credentials.
 - `NEXT_PUBLIC_API_BASE_URL` controls backend target for `network/axios.ts`.
+
+## Product Context
+- Faculytics serves multiple roles in one faculty-evaluation workflow:
+  - Student: submits faculty feedback tied to enrolled courses.
+  - Faculty: views feedback outcomes and limited analytics.
+  - Dean and higher roles: view broader faculty feedback results and analytics.
+- Student feedback entry point is the course-level `Give Feedback` flow.
+- Questionnaire content is planned to become dynamic via a future `SUPER_ADMIN` questionnaire builder feature.

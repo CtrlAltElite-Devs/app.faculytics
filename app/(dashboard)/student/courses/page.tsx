@@ -1,12 +1,14 @@
 "use client";
 
 import CourseCard from "@/components/faculytics/course-card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useMyEnrollments } from "@/hooks/enrollments/use-my-enrollments";
+import { useSelectedCourseStore } from "@/stores/selected-course-store";
+import { Loader2 } from "lucide-react";
 
 const TEACHER_PLACEHOLDER = "Teacher unavailable";
 
 export default function StudentCoursesPage() {
+  const setSelectedCourse = useSelectedCourseStore((state) => state.setSelectedCourse);
   const { data, isLoading, isError } = useMyEnrollments({ page: 1, limit: 100 });
   const enrolledCourses = data?.data ?? [];
 
@@ -18,10 +20,12 @@ export default function StudentCoursesPage() {
         semester
       </p>
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {isLoading &&
-          Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={`course-skeleton-${index}`} className="h-90 w-full" />
-          ))}
+        {isLoading && (
+          <div className="col-span-full flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground">
+            <Loader2 className="size-5 animate-spin" />
+            <p className="text-sm">Fetching your enrolled courses...</p>
+          </div>
+        )}
         {isError && (
           <p className="text-sm text-destructive">
             Unable to load enrolled courses right now.
@@ -35,6 +39,8 @@ export default function StudentCoursesPage() {
               shortname={enrollment.course.shortname}
               fullname={enrollment.course.fullname}
               teacherName={TEACHER_PLACEHOLDER}
+              feedbackHref={`/student/courses/${enrollment.course.id}/evaluation`}
+              onGiveFeedback={() => setSelectedCourse(enrollment.course)}
             />
           ))}
       </div>
