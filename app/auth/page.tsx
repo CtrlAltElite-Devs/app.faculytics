@@ -12,8 +12,9 @@ import { loginRequestSchema } from "@/schemas/auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { LoginRequest } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export default function AuthPage() {
@@ -23,6 +24,7 @@ export default function AuthPage() {
   const { roleHome } = useActiveRole();
   const clearSession = useAuthStore((state) => state.clearSession);
   const token = useAuthStore((state) => state.token);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
@@ -152,11 +154,24 @@ export default function AuthPage() {
                           Forgot Password?
                         </FieldLabel>
                       </div>
-                      <Input
-                        {...field}
-                        id="password"
-                        type="password"
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          className="pr-10"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          className="absolute right-1 top-1/2 -translate-y-1/2"
+                          onClick={() => setShowPassword((current) => !current)}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                        </Button>
+                      </div>
                       {fieldState.error && (
                         <FieldError>
                           {fieldState.error.message}
