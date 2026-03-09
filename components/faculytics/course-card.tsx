@@ -33,6 +33,7 @@ export default function CourseCard({
           src={resolvedImageSrc}
           alt={`${fullname} course image`}
           fill
+          loading="eager"
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
         />

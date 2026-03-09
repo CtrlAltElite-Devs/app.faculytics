@@ -50,12 +50,12 @@ export function NavUser() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <div className="flex items-center gap-2 rounded-md p-2">
-          <Avatar className="h-8 w-8 rounded-lg">
+        <div className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1">
+          <Avatar className="h-8 w-8 rounded-lg group-data-[collapsible=icon]:-translate-x-1">
             {userAvatar ? <AvatarImage src={userAvatar} alt={userName} /> : null}
             <AvatarFallback className="rounded-lg">{userInitials || "U"}</AvatarFallback>
           </Avatar>
-          <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
+          <div className="grid min-w-0 flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
             <span className="truncate font-medium">{userName}</span>
             <span className="truncate text-xs">{userEmail}</span>
           </div>
@@ -63,7 +63,7 @@ export function NavUser() {
             variant="ghost"
             size="icon"
             onClick={handleLogout}
-            className="cursor-pointer"
+            className="cursor-pointer shrink-0 group-data-[collapsible=icon]:hidden"
             aria-label="Log out"
           >
             <LogOut className="size-4" />
