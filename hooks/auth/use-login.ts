@@ -1,5 +1,6 @@
 "use client";
 
+import { persistSidebarOpenState } from "@/components/ui/sidebar";
 import { login } from "@/network/requests/auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { useMutation } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: login,
     onSuccess: (data) => {
+      persistSidebarOpenState(false);
       setSession(data.token, data.refreshToken);
     },
   });
