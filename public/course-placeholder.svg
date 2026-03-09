@@ -1,0 +1,30 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="coursePlaceholderTitle coursePlaceholderDesc">
+  <title id="coursePlaceholderTitle">Course image placeholder</title>
+  <desc id="coursePlaceholderDesc">Abstract placeholder graphic for courses without custom cover images.</desc>
+  <defs>
+    <linearGradient id="bg" x1="120" y1="40" x2="1160" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF2FF"/>
+      <stop offset="1" stop-color="#D6E6FF"/>
+    </linearGradient>
+    <linearGradient id="shape" x1="334" y1="202" x2="950" y2="518" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1E40AF"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#bg)"/>
+
+  <circle cx="1108" cy="138" r="122" fill="#BFDBFE" fill-opacity="0.6"/>
+  <circle cx="196" cy="612" r="164" fill="#BFDBFE" fill-opacity="0.45"/>
+
+  <rect x="248" y="154" width="784" height="412" rx="36" fill="white" fill-opacity="0.9"/>
+  <rect x="286" y="192" width="708" height="336" rx="24" fill="url(#shape)"/>
+
+  <path d="M400 304H646" stroke="white" stroke-width="26" stroke-linecap="round"/>
+  <path d="M400 368H882" stroke="white" stroke-opacity="0.85" stroke-width="20" stroke-linecap="round"/>
+  <path d="M400 426H776" stroke="white" stroke-opacity="0.75" stroke-width="20" stroke-linecap="round"/>
+
+  <rect x="864" y="270" width="84" height="84" rx="18" fill="white" fill-opacity="0.2"/>
+  <path d="M898 306H914" stroke="white" stroke-width="12" stroke-linecap="round"/>
+  <path d="M906 298V314" stroke="white" stroke-width="12" stroke-linecap="round"/>
+</svg>

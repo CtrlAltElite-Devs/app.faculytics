@@ -20,15 +20,21 @@ import React from "react";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
+  const idLikeSegmentPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-  const crumbs = segments.map((segment, index) => {
-    const href = `/${segments.slice(0, index + 1).join("/")}`;
-    const label = segment
-      .split("-")
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(" ");
-    return { href, label };
-  });
+  const crumbs = segments
+    .map((segment, index) => {
+      const href = `/${segments.slice(0, index + 1).join("/")}`;
+      const isIdLikeSegment = idLikeSegmentPattern.test(segment) || segment.length > 24;
+      if (isIdLikeSegment) return null;
+
+      const label = segment
+        .split("-")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+      return { href, label };
+    })
+    .filter((crumb): crumb is { href: string; label: string } => Boolean(crumb));
 
   return (
     <AuthGuard>

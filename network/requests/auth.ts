@@ -9,16 +9,18 @@ import type { LoginResponse, MeResponse } from "@/types/auth";
  * @param payload Login credentials
  * @returns Login response containing access and refresh tokens
  */
-export function login(payload: LoginRequest) {
-  return apiClient.post<LoginResponse>(Endpoints.login, payload).then((response) => response.data);
+export async function login(payload: LoginRequest) {
+  const response = await apiClient.post<LoginResponse>(Endpoints.login, payload);
+  return response.data;
 }
 
 /**
  * Fetch current user profile from active session token.
  * @returns User profile information
  */
-export function fetchMe() {
-  return apiClient.get<MeResponse>(Endpoints.me).then((response) => response.data);
+export async function fetchMe() {
+  const response = await apiClient.get<MeResponse>(Endpoints.me);
+  return response.data;
 }
 
 /**
@@ -26,14 +28,16 @@ export function fetchMe() {
  * @param payload Refresh token payload
  * @returns Next access and refresh tokens
  */
-export function refreshToken(payload: RefreshTokenRequestBody) {
-  return apiClient.post<LoginResponse>(Endpoints.refresh, payload).then((response) => response.data);
+export async function refreshToken(payload: RefreshTokenRequestBody) {
+  const response = await apiClient.post<LoginResponse>(Endpoints.refresh, payload);
+  return response.data;
 }
 
 /**
  * Logout the current authenticated session.
  * @returns Empty response when logout succeeds
  */
-export function logout() {
-  return apiClient.post<void>(Endpoints.logout).then((response) => response.data);
+export async function logout() {
+  const response = await apiClient.post<void>(Endpoints.logout);
+  return response.data;
 }
