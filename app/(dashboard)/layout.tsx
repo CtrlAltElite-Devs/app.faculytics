@@ -10,7 +10,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <AppSidebar />
         <SidebarInset>
           <DashboardHeader />
-          <div className="flex flex-1 flex-col">{children}</div>
+          <div className="flex flex-1 flex-col px-4 py-4 md:px-0 md:py-0">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </AuthGuard>

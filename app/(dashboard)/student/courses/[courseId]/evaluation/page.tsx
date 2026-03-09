@@ -39,7 +39,7 @@ export default function FacultyEvaluationPage() {
   const facultyId = selectedFaculty?.id || null;
 
   return (
-    <section className="px-16 py-12">
+    <section className="md:px-16 md:py-12">
       <h1 className="font-playfair text-3xl font-bold">Faculty Evaluation Questionnaire</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Your honest feedback helps improve the quality of education.
