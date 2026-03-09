@@ -2,6 +2,7 @@
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { AuthGuard } from "@/app/(dashboard)/_guards/auth-guard";
+import { RoleSwitcher } from "@/components/role-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Breadcrumb,
@@ -66,7 +67,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   })}
                 </BreadcrumbList>
               </Breadcrumb>
-              <ThemeToggle />
+              <div className="flex items-center gap-2">
+                <RoleSwitcher />
+                <ThemeToggle />
+              </div>
             </div>
           </header>
           <div className="flex flex-1 flex-col">{children}</div>

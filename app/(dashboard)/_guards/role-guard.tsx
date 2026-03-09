@@ -1,11 +1,11 @@
 "use client";
 
+import { useActiveRole } from "@/hooks/auth/use-active-role";
 import { useMe } from "@/hooks/auth/use-me";
-import { resolveHomeFromRoles } from "@/lib/auth/role-route";
 import { useAuthStore } from "@/stores/auth-store";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 type RoleGuardProps = {
   allowedRoles: string[];
@@ -14,12 +14,13 @@ type RoleGuardProps = {
 
 export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const clearSession = useAuthStore((state) => state.clearSession);
   const { data: me, isPending: isMePending, isError: isMeError } = useMe();
-
-  const roles = useMemo(() => me?.roles ?? [], [me?.roles]);
-  const roleHome = resolveHomeFromRoles(roles);
-  const isAllowed = roles.some((role) => allowedRoles.includes(role));
+  const { activeRole, roleHome } = useActiveRole();
+  const roles = me?.roles ?? [];
+  const hasAnyAllowedRole = roles.some((role) => allowedRoles.includes(role));
+  const isAllowed = Boolean(activeRole && allowedRoles.includes(activeRole));
 
   useEffect(() => {
     if (isMePending) return;
@@ -36,10 +37,15 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
       return;
     }
 
-    if (!isAllowed) {
+    if (!hasAnyAllowedRole) {
+      router.replace(roleHome);
+      return;
+    }
+
+    if (!isAllowed && pathname !== roleHome) {
       router.replace(roleHome);
     }
-  }, [clearSession, isAllowed, isMeError, isMePending, roleHome, router]);
+  }, [clearSession, hasAnyAllowedRole, isAllowed, isMeError, isMePending, pathname, roleHome, router]);
 
   if (isMePending || isMeError || !roleHome || !isAllowed) {
     return null;

@@ -1,11 +1,11 @@
 "use client";
 
+import { useActiveRole } from "@/hooks/auth/use-active-role";
 import { useMe } from "@/hooks/auth/use-me";
-import { resolveHomeFromRoles } from "@/lib/auth/role-route";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 type AuthGuardProps = {
   children: ReactNode;
@@ -16,8 +16,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const hydrated = useAuthStore((state) => state.hydrated);
   const token = useAuthStore((state) => state.token);
   const clearSession = useAuthStore((state) => state.clearSession);
-  const { data: me, isPending: isMePending, isError: isMeError } = useMe();
-  const roleHome = useMemo(() => resolveHomeFromRoles(me?.roles), [me?.roles]);
+  const { isPending: isMePending, isError: isMeError } = useMe();
+  const { activeRole, roleHome } = useActiveRole();
 
   useEffect(() => {
     if (!hydrated) return;
@@ -34,12 +34,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
       return;
     }
 
-    if (!roleHome) {
+    if (!activeRole || !roleHome) {
       clearSession();
     }
-  }, [clearSession, hydrated, isMeError, isMePending, roleHome, router, token]);
+  }, [activeRole, clearSession, hydrated, isMeError, isMePending, roleHome, router, token]);
 
-  if (!hydrated || !token || isMePending || isMeError || !roleHome) {
+  if (!hydrated || !token || isMePending || isMeError || !activeRole || !roleHome) {
     return null;
   }
 

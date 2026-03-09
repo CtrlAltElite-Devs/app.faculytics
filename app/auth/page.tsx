@@ -5,9 +5,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useActiveRole } from "@/hooks/auth/use-active-role";
 import { useLogin } from "@/hooks/auth/use-login";
 import { useMe } from "@/hooks/auth/use-me";
-import { resolveHomeFromRoles } from "@/lib/auth/role-route";
 import { loginRequestSchema } from "@/schemas/auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { LoginRequest } from "@/types/auth";
@@ -20,6 +20,7 @@ export default function AuthPage() {
   const router = useRouter();
   const { mutate, isPending } = useLogin();
   const { data: me, isPending: isMePending, isError: isMeError } = useMe();
+  const { roleHome } = useActiveRole();
   const clearSession = useAuthStore((state) => state.clearSession);
   const token = useAuthStore((state) => state.token);
 
@@ -43,16 +44,15 @@ export default function AuthPage() {
       return;
     }
 
-    const nextPath = resolveHomeFromRoles(me?.roles);
-    if (nextPath) {
-      router.replace(nextPath);
+    if (roleHome) {
+      router.replace(roleHome);
       return;
     }
 
     if (me) {
       clearSession();
     }
-  }, [clearSession, isMeError, isMePending, me, router, token]);
+  }, [clearSession, isMeError, isMePending, me, roleHome, router, token]);
 
   if (token && isMePending) {
     return (
