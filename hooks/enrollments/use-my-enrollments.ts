@@ -20,7 +20,7 @@ export function useMyEnrollments(
   const isEnabled = options?.enabled ?? true;
 
   return useQuery({
-    queryKey: ["enrollments", "me", page, limit],
+    queryKey: ["enrollments", "me", token, page, limit],
     enabled: Boolean(token) && isEnabled,
     queryFn: () => fetchMyEnrollments({ page, limit }),
   });
