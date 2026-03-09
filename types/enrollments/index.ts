@@ -8,6 +8,7 @@ export type CourseShortResponseDto = {
   moodleCourseId: number;
   shortname: string;
   fullname: string;
+  courseImage?: string;
 };
 
 export type FacultyShortResponseDto = {

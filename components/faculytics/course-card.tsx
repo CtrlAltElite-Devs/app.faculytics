@@ -1,14 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { UserRound } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export type CourseCardProps = {
   shortname: string;
   fullname: string;
   teacherName: string;
+  teacherImageSrc?: string;
   feedbackHref: string;
   onGiveFeedback?: () => void;
   imageSrc?: string;
@@ -18,6 +19,7 @@ export default function CourseCard({
   shortname,
   fullname,
   teacherName,
+  teacherImageSrc,
   feedbackHref,
   onGiveFeedback,
   imageSrc,
@@ -25,6 +27,12 @@ export default function CourseCard({
   const titleSizeClass =
     fullname.length > 64 ? "text-base" : fullname.length > 40 ? "text-lg" : "text-xl";
   const resolvedImageSrc = imageSrc?.trim() ? imageSrc : "/course-placeholder.svg";
+  const teacherInitials = teacherName
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <Card className="overflow-hidden py-0 gap-0 h-full">
@@ -47,10 +55,13 @@ export default function CourseCard({
             {fullname}
           </h2>
         </div>
-        <p className="my-2 flex items-center gap-2 text-sm text-muted-foreground">
-          <UserRound className="size-4" />
-          {teacherName}
-        </p>
+        <div className="my-2 flex items-center gap-2 text-sm text-muted-foreground">
+          <Avatar className="size-7">
+            {teacherImageSrc ? <AvatarImage src={teacherImageSrc} alt={teacherName} /> : null}
+            <AvatarFallback className="text-[10px]">{teacherInitials || "T"}</AvatarFallback>
+          </Avatar>
+          <p className="line-clamp-1">{teacherName}</p>
+        </div>
         <Button
           asChild
           className="mt-auto w-full bg-brand-blue hover:bg-brand-blue/90 cursor-pointer"

@@ -37,6 +37,8 @@ export default function StudentCoursesPage() {
               shortname={enrollment.course.shortname}
               fullname={enrollment.course.fullname}
               teacherName={enrollment.faculty?.fullName ?? "Teacher unavailable"}
+              teacherImageSrc={enrollment.faculty?.profilePicture}
+              imageSrc={enrollment.course.courseImage}
               feedbackHref={`/student/courses/${enrollment.course.id}/evaluation`}
               onGiveFeedback={() => setSelectedCourse(enrollment)}
             />
