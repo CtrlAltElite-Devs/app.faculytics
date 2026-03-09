@@ -5,8 +5,6 @@ import { useMyEnrollments } from "@/hooks/enrollments/use-my-enrollments";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 import { Loader2 } from "lucide-react";
 
-const TEACHER_PLACEHOLDER = "Teacher unavailable";
-
 export default function StudentCoursesPage() {
   const setSelectedCourse = useSelectedCourseStore((state) => state.setSelectedCourse);
   const { data, isLoading, isError } = useMyEnrollments({ page: 1, limit: 100 });
@@ -38,9 +36,9 @@ export default function StudentCoursesPage() {
               key={enrollment.id}
               shortname={enrollment.course.shortname}
               fullname={enrollment.course.fullname}
-              teacherName={TEACHER_PLACEHOLDER}
+              teacherName={enrollment.faculty?.fullName ?? "Teacher unavailable"}
               feedbackHref={`/student/courses/${enrollment.course.id}/evaluation`}
-              onGiveFeedback={() => setSelectedCourse(enrollment.course)}
+              onGiveFeedback={() => setSelectedCourse(enrollment)}
             />
           ))}
       </div>

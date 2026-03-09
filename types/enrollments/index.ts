@@ -10,10 +10,18 @@ export type CourseShortResponseDto = {
   fullname: string;
 };
 
+export type FacultyShortResponseDto = {
+  id: string;
+  fullName: string;
+  employeeNumber?: string;
+  profilePicture?: string;
+};
+
 export type EnrollmentResponseDto = {
   id: string;
   role: string;
   course: CourseShortResponseDto;
+  faculty?: FacultyShortResponseDto | null;
 };
 
 export type PaginationMeta = {

@@ -1,10 +1,10 @@
 import { create } from "zustand";
 
-import type { CourseShortResponseDto } from "@/types/enrollments";
+import type { EnrollmentResponseDto } from "@/types/enrollments";
 
 type SelectedCourseStore = {
-  selectedCourse: CourseShortResponseDto | null;
-  setSelectedCourse: (course: CourseShortResponseDto) => void;
+  selectedCourse: EnrollmentResponseDto | null;
+  setSelectedCourse: (course: EnrollmentResponseDto) => void;
 };
 
 export const useSelectedCourseStore = create<SelectedCourseStore>((set) => ({

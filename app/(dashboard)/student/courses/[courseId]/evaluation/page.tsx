@@ -8,25 +8,22 @@ import { ClipboardList, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-/*
-  TODO: Populate with instructor data from the course
-*/
 export default function FacultyEvaluationPage() {
   const params = useParams<{ courseId: string }>();
   const courseId = params.courseId;
   const selectedCourseFromStore = useSelectedCourseStore((state) => state.selectedCourse);
-  const hasStoreMatch = selectedCourseFromStore?.id === courseId;
+  const hasStoreMatch = selectedCourseFromStore?.course.id === courseId;
   const { data, isLoading, isError } = useMyEnrollments(
     { page: 1, limit: 100 },
     { enabled: !hasStoreMatch }
   );
 
-  const selectedCourse = hasStoreMatch
+  const selectedEnrollment = hasStoreMatch
     ? selectedCourseFromStore
-    : data?.data.find((enrollment) => enrollment.course.id === courseId)?.course;
+    : data?.data.find((enrollment) => enrollment.course.id === courseId);
 
   const contextState =
-    hasStoreMatch || selectedCourse
+    hasStoreMatch || selectedEnrollment
       ? "ready"
       : isLoading
         ? "loading"
@@ -34,8 +31,12 @@ export default function FacultyEvaluationPage() {
           ? "error"
           : "missing";
 
+  const selectedCourse = selectedEnrollment?.course;
+  const selectedFaculty = selectedEnrollment?.faculty;
   const shortname = selectedCourse?.shortname || "Course";
   const fullname = selectedCourse?.fullname || "Selected course";
+  const facultyName = selectedFaculty?.fullName || "Instructor unavailable";
+  const facultyId = selectedFaculty?.id || null;
 
   return (
     <section className="px-16 py-12">
@@ -51,10 +52,10 @@ export default function FacultyEvaluationPage() {
               Instructor
             </p>
             <p className="mt-2 font-playfair text-lg font-semibold">
-              Instructor name here
+              {facultyName}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Instructor details will be shown once backend data is available.
+              {facultyId ? `Faculty ID: ${facultyId}` : "Faculty ID unavailable."}
             </p>
           </div>
           <div>
