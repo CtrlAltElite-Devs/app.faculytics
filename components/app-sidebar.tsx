@@ -1,10 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { BarChart3, BookOpen, Building2, GraduationCap } from "lucide-react"
+import { GraduationCap } from "lucide-react"
 import Link from "next/link"
 
-import { useMe } from "@/hooks/auth/use-me"
+import { useActiveRole } from "@/hooks/auth/use-active-role"
+import { getNavItemsForRole, getRoleConfig } from "@/lib/auth/role-route"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import {
@@ -18,35 +19,11 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-const data = {
-  navMain: [
-    {
-      title: "Courses",
-      url: "/student/courses",
-      allowedRoles: ["STUDENT", "FACULTY"],
-      icon: BookOpen,
-    },
-    {
-      title: "Analytics",
-      url: "/faculty/analytics",
-      allowedRoles: ["FACULTY"],
-      icon: BarChart3,
-    },
-    {
-      title: "Faculties",
-      url: "/dean/faculties",
-      allowedRoles: ["DEAN"],
-      icon: Building2,
-    },
-  ],
-}
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: me } = useMe()
-  const roles = me?.roles ?? []
-  const navItems = data.navMain.filter((item) =>
-    item.allowedRoles.some((role) => roles.includes(role)),
-  )
+  const { activeRole, roleHome } = useActiveRole()
+  const navItems = getNavItemsForRole(activeRole)
+  const logoHref = roleHome ?? "/"
+  const roleLabel = activeRole ? getRoleConfig(activeRole).label : null
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -54,12 +31,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/student/courses">
+              <Link href={logoHref}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-brand-blue text-sidebar-primary-foreground">
                   <GraduationCap className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="truncate font-semibold">Faculytics</span>
+                  {roleLabel ? (
+                    <span className="truncate text-xs text-muted-foreground">{roleLabel} Mode</span>
+                  ) : null}
                 </div>
               </Link>
             </SidebarMenuButton>

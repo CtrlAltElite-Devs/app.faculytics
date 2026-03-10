@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-const SIDEBAR_COOKIE_NAME = "sidebar_state"
+export const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
@@ -53,6 +53,30 @@ function useSidebar() {
   return context
 }
 
+function getSidebarOpenFromCookie() {
+  if (typeof document === "undefined") {
+    return undefined
+  }
+
+  const sidebarCookie = document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith(`${SIDEBAR_COOKIE_NAME}=`))
+
+  if (!sidebarCookie) {
+    return undefined
+  }
+
+  return sidebarCookie.split("=")[1] === "true"
+}
+
+export function persistSidebarOpenState(open: boolean) {
+  if (typeof document === "undefined") {
+    return
+  }
+
+  document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+}
+
 function SidebarProvider({
   defaultOpen = true,
   open: openProp,
@@ -67,11 +91,11 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void
 }) {
   const isMobile = useIsMobile()
-  const [openMobile, setOpenMobile] = React.useState(false)
+  const [openMobile, setOpenMobile] = React.useState(() => getSidebarOpenFromCookie() ?? false)
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(defaultOpen)
+  const [_open, _setOpen] = React.useState(() => getSidebarOpenFromCookie() ?? defaultOpen)
   const open = openProp ?? _open
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
@@ -81,12 +105,14 @@ function SidebarProvider({
       } else {
         _setOpen(openState)
       }
-
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
     },
     [setOpenProp, open]
   )
+
+  React.useEffect(() => {
+    const persistedOpen = isMobile ? openMobile : open
+    persistSidebarOpenState(persistedOpen)
+  }, [isMobile, open, openMobile])
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {

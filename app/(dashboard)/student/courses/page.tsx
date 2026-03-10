@@ -11,7 +11,7 @@ export default function StudentCoursesPage() {
   const enrolledCourses = data?.data ?? [];
 
   return (
-    <section className="px-16 py-12">
+    <section className="md:px-16 md:py-12">
       <h1 className="text-3xl font-bold font-playfair">Courses</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         You are currently enrolled in {enrolledCourses.length} courses this
@@ -37,6 +37,8 @@ export default function StudentCoursesPage() {
               shortname={enrollment.course.shortname}
               fullname={enrollment.course.fullname}
               teacherName={enrollment.faculty?.fullName ?? "Teacher unavailable"}
+              teacherImageSrc={enrollment.faculty?.profilePicture}
+              imageSrc={enrollment.course.courseImage}
               feedbackHref={`/student/courses/${enrollment.course.id}/evaluation`}
               onGiveFeedback={() => setSelectedCourse(enrollment)}
             />

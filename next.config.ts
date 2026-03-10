@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "moodle.faculytics.ctr3.org",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

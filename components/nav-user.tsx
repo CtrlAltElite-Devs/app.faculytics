@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 
 import { useMe } from "@/hooks/auth/use-me"
 import { logout } from "@/network/requests/auth"
+import { useSelectedCourseStore } from "@/stores/selected-course-store"
 import { useAuthStore } from "@/stores/auth-store"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,6 +24,7 @@ export function NavUser() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const clearSession = useAuthStore((state) => state.clearSession)
+  const clearSelectedCourse = useSelectedCourseStore((state) => state.clearSelectedCourse)
   const { data: me } = useMe()
 
   const userName = me?.fullName || me?.userName || "User"
@@ -42,7 +44,9 @@ export function NavUser() {
       // Proceed with local logout even if API logout fails.
     } finally {
       clearSession()
-      queryClient.removeQueries({ queryKey: ["auth", "me"] })
+      clearSelectedCourse()
+      queryClient.removeQueries({ queryKey: ["auth"] })
+      queryClient.removeQueries({ queryKey: ["enrollments"] })
       router.replace("/auth")
     }
   }
