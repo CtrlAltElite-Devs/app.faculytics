@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useDeferredValue, useState } from "react";
+import { FilePenLine } from "lucide-react";
 
 import { QuestionnaireEmptyState } from "@/components/faculytics/questionnaires/questionnaire-empty-state";
 import { QuestionnaireErrorState } from "@/components/faculytics/questionnaires/questionnaire-error-state";
@@ -9,6 +11,7 @@ import { QuestionnaireSearchInput } from "@/components/faculytics/questionnaires
 import { QuestionnaireStatusFilter } from "@/components/faculytics/questionnaires/questionnaire-status-filter";
 import { QuestionnaireTable } from "@/components/faculytics/questionnaires/questionnaire-table";
 import { QuestionnaireTypeButtonGroup } from "@/components/faculytics/questionnaires/questionnaire-type-button-group";
+import { Button } from "@/components/ui/button";
 import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
 import { useQuestionnaireVersions } from "@/hooks/questionnaires/use-questionnaire-versions";
 import {
@@ -84,6 +87,12 @@ export default function SuperAdminQuestionnairesPage() {
           onValueChange={setStatusFilter}
           className="w-full justify-between gap-3"
         />
+        <Button asChild className="w-full bg-brand-blue text-white hover:bg-brand-blue/90">
+          <Link href="/superadmin/questionnaires/new">
+            <FilePenLine />
+            Create draft questionnaire
+          </Link>
+        </Button>
         <QuestionnaireSearchInput
           value={searchValue}
           onChange={setSearchValue}
@@ -99,7 +108,18 @@ export default function SuperAdminQuestionnairesPage() {
         />
 
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
-          <QuestionnaireSearchInput value={searchValue} onChange={setSearchValue} />
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
+            <Button
+              asChild
+              className="bg-brand-blue/80 text-white hover:bg-brand-blue/70 sm:self-stretch"
+            >
+              <Link href="/superadmin/questionnaires/new">
+                <FilePenLine />
+                Create draft questionnaire
+              </Link>
+            </Button>
+            <QuestionnaireSearchInput value={searchValue} onChange={setSearchValue} />
+          </div>
           <QuestionnaireStatusFilter value={statusFilter} onValueChange={setStatusFilter} />
         </div>
       </div>
