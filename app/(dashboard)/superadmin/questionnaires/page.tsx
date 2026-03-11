@@ -115,17 +115,15 @@ export default function SuperAdminQuestionnairesPage() {
         />
       ) : !hasQuestionnaire ? (
         <QuestionnaireEmptyState
-          title="No questionnaire has been created for this type yet"
-          description="Select another questionnaire type or add the first questionnaire for this area once the builder flow is ready."
+          description="No questionnaire for this type yet."
         />
       ) : !hasVersions ? (
         <QuestionnaireEmptyState
-          title="No questionnaire versions available"
-          description="This questionnaire exists, but no versions were returned for the selected type yet."
+          description="No versions yet."
         />
       ) : filteredRows.length === 0 && hasFilters ? (
         <QuestionnaireEmptyState
-          title="No versions match the current filters."
+          description="No matching versions."
           actionLabel="Clear filters"
           onAction={() => {
             setSearchValue("");

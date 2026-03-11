@@ -6,7 +6,7 @@ export function QuestionnaireLoadingState() {
   return (
     <div className="flex min-h-44 flex-col items-center justify-center px-6 text-center">
       <Loader2 className="size-6 animate-spin text-muted-foreground" />
-      <p className="mt-3 text-sm font-medium text-foreground">Fetching data</p>
+      <p className="mt-3 text-sm text-muted-foreground">Loading questionnaires...</p>
     </div>
   );
 }
