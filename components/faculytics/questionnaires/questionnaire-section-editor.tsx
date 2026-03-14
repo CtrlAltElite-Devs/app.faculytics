@@ -3,7 +3,6 @@
 import { AlertTriangle } from "lucide-react";
 
 import { QuestionnaireQuestionEditor } from "@/components/faculytics/questionnaires/questionnaire-question-editor";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -84,7 +83,6 @@ export function QuestionnaireSectionEditor({
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{isLeaf ? "Leaf section" : "Parent section"}</Badge>
             <Button type="button" variant="outline" size="sm" onClick={() => onMove(section.id, "up")}>
               Move up
             </Button>
@@ -96,7 +94,12 @@ export function QuestionnaireSectionEditor({
             >
               Move down
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => onAddChild(section.id)}>
+            <Button
+              type="button"
+              size="sm"
+              className="bg-brand-blue/80 text-white hover:bg-brand-blue/70"
+              onClick={() => onAddChild(section.id)}
+            >
               Add subsection
             </Button>
             <Button type="button" variant="destructive" size="sm" onClick={() => onRemove(section.id)}>
@@ -106,48 +109,48 @@ export function QuestionnaireSectionEditor({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor={`section-title-${section.id}`}>Section title</Label>
-          <Input
-            id={`section-title-${section.id}`}
-            value={section.title}
-            aria-invalid={Boolean(titleIssue)}
-            onChange={(event) =>
-              onUpdateSection(section.id, {
-                title: event.target.value,
-              })
-            }
-          />
-          {titleIssue && <p className="text-sm text-destructive">{titleIssue.message}</p>}
-        </div>
-
-        {isLeaf ? (
+        <div className={isLeaf ? "grid gap-4 md:grid-cols-[minmax(0,1fr)_180px] md:items-start" : "space-y-6"}>
           <div className="space-y-2">
-            <Label htmlFor={`section-weight-${section.id}`}>Weight</Label>
+            <Label htmlFor={`section-title-${section.id}`}>Section title</Label>
             <Input
-              id={`section-weight-${section.id}`}
-              type="number"
-              min={1}
-              max={100}
-              step={1}
-              value={section.weight ?? ""}
-              aria-invalid={Boolean(weightIssue)}
+              id={`section-title-${section.id}`}
+              value={section.title}
+              aria-invalid={Boolean(titleIssue)}
               onChange={(event) =>
                 onUpdateSection(section.id, {
-                  weight: event.target.value === "" ? null : Number(event.target.value),
+                  title: event.target.value,
                 })
               }
             />
-            <p className="text-sm text-muted-foreground">
-              Leaf section weights must total 100 across the questionnaire.
-            </p>
-            {weightIssue && <p className="text-sm text-destructive">{weightIssue.message}</p>}
+            {titleIssue && <p className="text-sm text-destructive">{titleIssue.message}</p>}
           </div>
-        ) : (
+
+          {isLeaf ? (
+            <div className="space-y-2">
+              <Label htmlFor={`section-weight-${section.id}`}>Weight</Label>
+              <Input
+                id={`section-weight-${section.id}`}
+                type="number"
+                min={1}
+                max={100}
+                step={1}
+                value={section.weight ?? ""}
+                aria-invalid={Boolean(weightIssue)}
+                onChange={(event) =>
+                  onUpdateSection(section.id, {
+                    weight: event.target.value === "" ? null : Number(event.target.value),
+                  })
+                }
+              />
+            </div>
+          ) : null}
+        </div>
+
+        {!isLeaf ? (
           <div className="rounded-xl border border-dashed px-4 py-5 text-sm text-muted-foreground">
             Parent sections do not carry weights or direct questions. Add child sections instead.
           </div>
-        )}
+        ) : null}
 
         {structureIssue && (
           <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">

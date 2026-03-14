@@ -22,6 +22,14 @@ type QuestionnaireOutlinePanelProps = {
   onRemove: (sectionId: string) => void;
 };
 
+function countDescendantSections(node: QuestionnaireBuilderSectionNode): number {
+  return node.children.reduce((total, child) => total + 1 + countDescendantSections(child), 0);
+}
+
+function countNestedQuestions(node: QuestionnaireBuilderSectionNode): number {
+  return node.questions.length + node.children.reduce((total, child) => total + countNestedQuestions(child), 0);
+}
+
 function OutlineNode({
   depth,
   node,
@@ -44,6 +52,8 @@ function OutlineNode({
   const issueCount = sectionIssues[node.id]?.length ?? 0;
   const isSelected = node.id === selectedSectionId;
   const isLeaf = node.children.length === 0;
+  const totalSubsections = isLeaf ? 0 : countDescendantSections(node);
+  const totalQuestions = isLeaf ? node.questions.length : countNestedQuestions(node);
 
   return (
     <div className="space-y-2">
@@ -64,15 +74,19 @@ function OutlineNode({
             <p className="truncate text-sm font-medium">{node.title || "Untitled section"}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{isLeaf ? "Leaf" : "Parent"}</Badge>
             {isLeaf && (
               <Badge variant="outline">
                 Weight {node.weight ?? "Unset"}
               </Badge>
             )}
             <Badge variant="outline">
-              {node.questions.length} question{node.questions.length === 1 ? "" : "s"}
+              {totalQuestions} question{totalQuestions === 1 ? "" : "s"}
             </Badge>
+            {!isLeaf && (
+              <Badge variant="outline">
+                {totalSubsections} subsection{totalSubsections === 1 ? "" : "s"}
+              </Badge>
+            )}
             {issueCount > 0 && (
               <Badge variant="destructive">
                 {issueCount} issue{issueCount === 1 ? "" : "s"}
@@ -163,7 +177,12 @@ export function QuestionnaireOutlinePanel({
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="font-playfair text-lg">Structure</CardTitle>
-        <Button type="button" size="sm" onClick={onAddRoot}>
+        <Button
+          type="button"
+          size="sm"
+          className="bg-brand-blue/80 text-white hover:bg-brand-blue/70"
+          onClick={onAddRoot}
+        >
           <Plus />
           Add root section
         </Button>

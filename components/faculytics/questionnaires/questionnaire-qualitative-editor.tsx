@@ -1,8 +1,8 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,6 +32,18 @@ export function QuestionnaireQualitativeEditor({
     (issue) => issue.target.type === "qualitative" && issue.target.field === "placeholder"
   );
 
+  if (!value.enabled) {
+    return (
+      <button
+        type="button"
+        className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-muted-foreground/40 px-5 py-8 text-center transition-colors hover:border-foreground/40 hover:bg-muted/30"
+        onClick={() => onChange({ enabled: true })}
+      >
+        <span className="font-playfair text-lg">Add comment section</span>
+      </button>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -41,75 +53,62 @@ export function QuestionnaireQualitativeEditor({
             This optional block renders after all quantitative sections.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{value.enabled ? "Enabled" : "Optional"}</Badge>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="qualitative-required"
+              checked={value.required}
+              onCheckedChange={(checked) => onChange({ required: checked === true })}
+            />
+            <Label htmlFor="qualitative-required">Required response</Label>
+          </div>
           <Button
             type="button"
-            variant={value.enabled ? "outline" : "default"}
+            variant="destructive"
             size="sm"
-            onClick={() => onChange({ enabled: !value.enabled })}
+            onClick={() => onChange({ enabled: false })}
           >
-            {value.enabled ? "Disable" : "Enable"}
+            Remove section
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!value.enabled ? (
-          <div className="rounded-xl border border-dashed px-4 py-5 text-sm text-muted-foreground">
-            Enable the final comment section if students should be able to leave qualitative
-            feedback after the scored questions.
-          </div>
-        ) : (
-          <>
-            <div className="space-y-2">
-              <Label htmlFor="qualitative-title">Section title</Label>
-              <Input
-                id="qualitative-title"
-                value={value.title}
-                aria-invalid={Boolean(titleIssue)}
-                onChange={(event) => onChange({ title: event.target.value })}
-              />
-              {titleIssue && <p className="text-sm text-destructive">{titleIssue.message}</p>}
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="qualitative-title">Section title</Label>
+          <Input
+            id="qualitative-title"
+            value={value.title}
+            aria-invalid={Boolean(titleIssue)}
+            onChange={(event) => onChange({ title: event.target.value })}
+          />
+          {titleIssue && <p className="text-sm text-destructive">{titleIssue.message}</p>}
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="qualitative-description">Helper text</Label>
-              <Textarea
-                id="qualitative-description"
-                value={value.description}
-                aria-invalid={Boolean(descriptionIssue)}
-                onChange={(event) => onChange({ description: event.target.value })}
-              />
-              {descriptionIssue && (
-                <p className="text-sm text-destructive">{descriptionIssue.message}</p>
-              )}
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="qualitative-description">Section Description</Label>
+          <Textarea
+            id="qualitative-description"
+            value={value.description}
+            aria-invalid={Boolean(descriptionIssue)}
+            onChange={(event) => onChange({ description: event.target.value })}
+          />
+          {descriptionIssue && (
+            <p className="text-sm text-destructive">{descriptionIssue.message}</p>
+          )}
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="qualitative-placeholder">Placeholder</Label>
-              <Input
-                id="qualitative-placeholder"
-                value={value.placeholder}
-                aria-invalid={Boolean(placeholderIssue)}
-                onChange={(event) => onChange({ placeholder: event.target.value })}
-              />
-              {placeholderIssue && (
-                <p className="text-sm text-destructive">{placeholderIssue.message}</p>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant={value.required ? "default" : "outline"}
-                size="sm"
-                onClick={() => onChange({ required: !value.required })}
-              >
-                {value.required ? "Required response" : "Optional response"}
-              </Button>
-            </div>
-          </>
-        )}
+        <div className="space-y-2">
+          <Label htmlFor="qualitative-placeholder">Placeholder</Label>
+          <Input
+            id="qualitative-placeholder"
+            value={value.placeholder}
+            aria-invalid={Boolean(placeholderIssue)}
+            onChange={(event) => onChange({ placeholder: event.target.value })}
+          />
+          {placeholderIssue && (
+            <p className="text-sm text-destructive">{placeholderIssue.message}</p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

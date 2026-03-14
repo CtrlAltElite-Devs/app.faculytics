@@ -136,15 +136,31 @@ export function QuestionnaireBuilderShell({
                 />
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline">{rootExists ? "Existing root" : "New root"}</Badge>
-                <Badge variant="outline">
-                  {serverContext.versions.length} version{serverContext.versions.length === 1 ? "" : "s"}
-                </Badge>
-                <Badge variant="outline">
-                  {leafSections.length} leaf section{leafSections.length === 1 ? "" : "s"}
-                </Badge>
-                <Badge variant="outline">Weight total {validation.totalLeafWeight}</Badge>
+              <div className="flex flex-col gap-3 xl:items-end">
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap xl:justify-end">
+                  <Button asChild variant="outline">
+                    <Link href={`/superadmin/questionnaires/new/preview?type=${previewModel.type}`}>
+                      Open preview
+                    </Link>
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(true)}>
+                    Discard draft
+                  </Button>
+                  <Button
+                    type="button"
+                    className="bg-brand-blue/80 text-white hover:bg-brand-blue/70"
+                    disabled={isPending}
+                    onClick={() => void save()}
+                  >
+                    {isPending ? "Saving..." : "Save draft"}
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 xl:justify-end">
+                  <Badge variant="outline">
+                    {serverContext.versions.length} version{serverContext.versions.length === 1 ? "" : "s"}
+                  </Badge>
+                  <Badge variant="outline">Weight total {validation.totalLeafWeight}</Badge>
+                </div>
               </div>
             </div>
           </CardHeader>
@@ -185,19 +201,6 @@ export function QuestionnaireBuilderShell({
               </div>
             )}
 
-            <div className="flex flex-wrap gap-3">
-              <Button asChild variant="outline">
-                <Link href={`/superadmin/questionnaires/new/preview?type=${previewModel.type}`}>
-                  Open preview
-                </Link>
-              </Button>
-              <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(true)}>
-                Discard draft
-              </Button>
-              <Button type="button" disabled={isPending} onClick={() => void save()}>
-                {isPending ? "Saving..." : "Save draft"}
-              </Button>
-            </div>
           </CardContent>
         </Card>
 
