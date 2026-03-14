@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { FilePenLine } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 import { QuestionnaireEmptyState } from "@/components/faculytics/questionnaires/questionnaire-empty-state";
 import { QuestionnaireErrorState } from "@/components/faculytics/questionnaires/questionnaire-error-state";
@@ -22,11 +24,21 @@ import {
   type QuestionnaireType,
 } from "@/types/questionnaires";
 
+function resolveSelectedType(value: string | null): QuestionnaireType {
+  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
+    return value as QuestionnaireType;
+  }
+
+  return DEFAULT_QUESTIONNAIRE_TYPE;
+}
+
 export default function SuperAdminQuestionnairesPage() {
-  const [selectedType, setSelectedType] = useState<QuestionnaireType>(DEFAULT_QUESTIONNAIRE_TYPE);
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const deferredSearchValue = useDeferredValue(searchValue);
+  const selectedType = resolveSelectedType(searchParams.get("type"));
 
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const typeSummaries = questionnaireTypesQuery.data ?? [];
@@ -42,10 +54,35 @@ export default function SuperAdminQuestionnairesPage() {
     enabled: questionnaireTypesQuery.isSuccess,
   });
 
+  useEffect(() => {
+    const builderStatus = searchParams.get("builder");
+
+    if (!builderStatus) {
+      return;
+    }
+
+    if (builderStatus === "saved") {
+      toast.success("Questionnaire draft saved successfully.");
+    }
+
+    if (builderStatus === "conflict") {
+      toast.error("A draft version already exists for that questionnaire type.");
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("builder");
+
+    router.replace(
+      params.toString().length > 0
+        ? `/superadmin/questionnaires?${params.toString()}`
+        : "/superadmin/questionnaires"
+    );
+  }, [router, searchParams]);
+
   const handleTypeChange = (nextType: QuestionnaireType) => {
-    setSelectedType(nextType);
     setSearchValue("");
     setStatusFilter("ALL");
+    router.replace(`/superadmin/questionnaires?type=${nextType}`);
   };
 
   const selectedSummary = typeSummaries.find((summary) => summary.type === activeType);
@@ -89,7 +126,7 @@ export default function SuperAdminQuestionnairesPage() {
           className="w-full justify-between gap-3"
         />
         <Button asChild className="w-full bg-brand-blue text-white hover:bg-brand-blue/90">
-          <Link href="/superadmin/questionnaires/new">
+          <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
             <FilePenLine />
             Create draft questionnaire
           </Link>
@@ -114,7 +151,7 @@ export default function SuperAdminQuestionnairesPage() {
               asChild
               className="bg-brand-blue/80 text-white hover:bg-brand-blue/70 sm:self-stretch"
             >
-              <Link href="/superadmin/questionnaires/new">
+              <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
                 <FilePenLine />
                 Create draft questionnaire
               </Link>

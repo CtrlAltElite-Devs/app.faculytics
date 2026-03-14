@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryProvider } from "@/providers/query-provider";
 import { ReactNode } from "react";
+import { Toaster } from "sonner";
 
 export function AppProvider({ children }: { children: ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         >
           {children}
         </ThemeProvider>
+        <Toaster />
       </TooltipProvider>
     </QueryProvider>
   );

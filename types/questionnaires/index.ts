@@ -35,6 +35,38 @@ export type QuestionnaireVersionsResponse = {
   versions: QuestionnaireVersionItem[];
 };
 
+export type CreateQuestionnaireRequest = {
+  title: string;
+  type: QuestionnaireType;
+};
+
+export type Questionnaire = {
+  id: string;
+  title: string;
+  status: QuestionnaireStatus;
+  type: QuestionnaireType;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+};
+
+export type CreateQuestionnaireVersionRequest = {
+  schema: import("@/types/questionnaires/builder").QuestionnaireVersionSchema;
+};
+
+export type QuestionnaireVersion = {
+  id: string;
+  questionnaire: Questionnaire;
+  versionNumber: number;
+  schemaSnapshot: import("@/types/questionnaires/builder").QuestionnaireVersionSchema;
+  publishedAt?: string | null;
+  isActive: boolean;
+  status: QuestionnaireStatus;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+};
+
 export const DEFAULT_QUESTIONNAIRE_TYPE: QuestionnaireType = "FACULTY_FEEDBACK";
 
 export const QUESTIONNAIRE_TYPE_LABELS: Record<QuestionnaireType, string> = {
@@ -49,3 +81,5 @@ export const QUESTIONNAIRE_STATUS_FILTER_LABELS: Record<QuestionnaireStatusFilte
   ACTIVE: "Active",
   DEPRECATED: "Deprecated",
 };
+
+export * from "@/types/questionnaires/builder";
