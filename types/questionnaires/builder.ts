@@ -4,6 +4,7 @@ import type {
 } from "@/types/questionnaires";
 
 export const BUILDER_QUESTION_TYPES = ["LIKERT_1_5", "YES_NO"] as const;
+export const MAX_SECTION_NESTING_LEVEL = 4;
 
 export type BuilderQuestionType = (typeof BUILDER_QUESTION_TYPES)[number];
 
@@ -20,16 +21,15 @@ export type QuestionnaireBuilderSectionNode = {
   title: string;
   order: number;
   weight: number | null;
+  questionType: BuilderQuestionType;
   questions: QuestionnaireBuilderQuestionNode[];
   children: QuestionnaireBuilderSectionNode[];
 };
 
 export type QuestionnaireBuilderQualitativeConfig = {
   enabled: boolean;
-  title: string;
-  description: string;
-  placeholder: string;
   required: boolean;
+  maxLength: number;
 };
 
 export type QuestionnaireBuilderMetadata = {
@@ -107,14 +107,10 @@ export type QuestionnaireSchemaLeafSection = {
   questions: QuestionnaireSchemaQuestion[];
 };
 
-export type QuestionnaireSchemaQualitativeSection = {
-  id: string;
-  order: number;
-  title: string;
-  description: string;
-  placeholder: string;
+export type QuestionnaireSchemaQualitativeFeedback = {
+  enabled: boolean;
   required: boolean;
-  type: "QUALITATIVE_COMMENT";
+  maxLength: number;
 };
 
 export type QuestionnaireVersionSchema = {
@@ -126,7 +122,7 @@ export type QuestionnaireVersionSchema = {
   };
   sectionTree?: QuestionnaireSchemaSectionTreeNode[];
   sections: QuestionnaireSchemaLeafSection[];
-  qualitativeSection?: QuestionnaireSchemaQualitativeSection;
+  qualitativeFeedback?: QuestionnaireSchemaQualitativeFeedback;
 };
 
 export type QuestionnaireBuilderValidationIssue = {
@@ -149,7 +145,7 @@ export type QuestionnaireBuilderValidationIssue = {
       }
     | {
         type: "qualitative";
-        field?: "title" | "description" | "placeholder";
+        field?: "maxLength";
       };
 };
 

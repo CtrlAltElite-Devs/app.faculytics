@@ -1,25 +1,42 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, MoreVertical, Trash2 } from "lucide-react";
 
+import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/questionnaire-add-action-button";
 import { QuestionnaireQuestionEditor } from "@/components/faculytics/questionnaires/questionnaire-question-editor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { InlineEditInput } from "@/components/ui/inline-edit-input";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import type {
+  BuilderQuestionType,
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderValidationIssue,
 } from "@/types/questionnaires";
+import { MAX_SECTION_NESTING_LEVEL } from "@/types/questionnaires";
 
 type QuestionnaireSectionEditorProps = {
-  section: QuestionnaireBuilderSectionNode | null;
+  section: QuestionnaireBuilderSectionNode;
   sectionIssues: QuestionnaireBuilderValidationIssue[];
   questionIssues: Record<string, QuestionnaireBuilderValidationIssue[]>;
+  allSectionIssues: Record<string, QuestionnaireBuilderValidationIssue[]>;
+  selectedSectionId: string | null;
+  isSelected?: boolean;
+  depth?: number;
   onUpdateSection: (
     sectionId: string,
-    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight">>
+    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight" | "questionType">>
   ) => void;
   onAddChild: (sectionId: string) => void;
   onMove: (sectionId: string, direction: "up" | "down") => void;
@@ -33,10 +50,19 @@ type QuestionnaireSectionEditorProps = {
   onRemoveQuestion: (sectionId: string, questionId: string) => void;
 };
 
+const QUESTION_TYPE_LABELS: Record<BuilderQuestionType, string> = {
+  LIKERT_1_5: "Likert Scale",
+  YES_NO: "Yes / No",
+};
+
 export function QuestionnaireSectionEditor({
   section,
   sectionIssues,
   questionIssues,
+  allSectionIssues,
+  selectedSectionId,
+  isSelected = false,
+  depth = 0,
   onUpdateSection,
   onAddChild,
   onMove,
@@ -45,22 +71,8 @@ export function QuestionnaireSectionEditor({
   onUpdateQuestion,
   onRemoveQuestion,
 }: QuestionnaireSectionEditorProps) {
-  if (!section) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-playfair text-lg">Section editor</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">
-            Select a section from the outline to edit its title, weight, and questions.
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   const isLeaf = section.children.length === 0;
+  const canAddChild = depth + 1 < MAX_SECTION_NESTING_LEVEL;
   const titleIssue = sectionIssues.find(
     (issue) => issue.target.type === "section" && issue.target.field === "title"
   );
@@ -72,62 +84,76 @@ export function QuestionnaireSectionEditor({
   );
 
   return (
-    <Card>
+    <Card
+      id={`section-editor-${section.id}`}
+      className={cn(
+        "scroll-mt-6 gap-4",
+        isSelected && "border-brand-blue/60 ring-1 ring-brand-blue/30"
+      )}
+    >
       <CardHeader className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <CardTitle className="font-playfair text-lg">Section editor</CardTitle>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Parent sections organize subsections. Only leaf sections can keep weights and direct
-              questions.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => onMove(section.id, "up")}>
-              Move up
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => onMove(section.id, "down")}
-            >
-              Move down
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              className="bg-brand-blue/80 text-white hover:bg-brand-blue/70"
-              onClick={() => onAddChild(section.id)}
-            >
-              Add subsection
-            </Button>
-            <Button type="button" variant="destructive" size="sm" onClick={() => onRemove(section.id)}>
-              Remove
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className={isLeaf ? "grid gap-4 md:grid-cols-[minmax(0,1fr)_180px] md:items-start" : "space-y-6"}>
-          <div className="space-y-2">
-            <Label htmlFor={`section-title-${section.id}`}>Section title</Label>
-            <Input
-              id={`section-title-${section.id}`}
-              value={section.title}
-              aria-invalid={Boolean(titleIssue)}
-              onChange={(event) =>
-                onUpdateSection(section.id, {
-                  title: event.target.value,
-                })
-              }
-            />
-            {titleIssue && <p className="text-sm text-destructive">{titleIssue.message}</p>}
+        <div
+          className={cn(
+            "grid items-start gap-4",
+            isLeaf
+              ? "grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[minmax(0,1fr)_minmax(150px,0.85fr)_minmax(110px,0.45fr)_auto]"
+              : "grid-cols-[minmax(0,1fr)_auto]"
+          )}
+        >
+          <div className="min-w-0">
+            <CardTitle className="font-playfair text-lg font-semibold">
+              <InlineEditInput
+                id={`section-title-${section.id}`}
+                value={section.title}
+                ariaInvalid={Boolean(titleIssue)}
+                placeholder={depth > 0 ? "Enter subsection title" : "Enter section title"}
+                textClassName="font-playfair text-lg font-semibold"
+                inputClassName="font-playfair text-lg font-semibold"
+                onChange={(value) =>
+                  onUpdateSection(section.id, {
+                    title: value,
+                  })
+                }
+              />
+            </CardTitle>
           </div>
 
           {isLeaf ? (
-            <div className="space-y-2">
-              <Label htmlFor={`section-weight-${section.id}`}>Weight</Label>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  id={`section-question-type-${section.id}`}
+                  type="button"
+                  variant="outline"
+                  className="col-span-2 min-w-0 w-full justify-between gap-3 md:col-span-1"
+                  aria-label="Section question type"
+                >
+                  {QUESTION_TYPE_LABELS[section.questionType]}
+                  <ChevronDown className="size-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-48">
+                <DropdownMenuRadioGroup
+                  value={section.questionType}
+                  onValueChange={(value) =>
+                    onUpdateSection(section.id, {
+                      questionType: value as BuilderQuestionType,
+                    })
+                  }
+                >
+                  <DropdownMenuRadioItem value="LIKERT_1_5">
+                    {QUESTION_TYPE_LABELS.LIKERT_1_5}
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="YES_NO">
+                    {QUESTION_TYPE_LABELS.YES_NO}
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+
+          {isLeaf ? (
+            <div className="col-span-2 min-w-0 space-y-2 md:col-span-1">
               <Input
                 id={`section-weight-${section.id}`}
                 type="number"
@@ -142,15 +168,80 @@ export function QuestionnaireSectionEditor({
                   })
                 }
               />
+              <p className="text-xs text-muted-foreground">Weight</p>
             </div>
           ) : null}
-        </div>
 
-        {!isLeaf ? (
-          <div className="rounded-xl border border-dashed px-4 py-5 text-sm text-muted-foreground">
-            Parent sections do not carry weights or direct questions. Add child sections instead.
+          <div className="col-start-2 row-start-1 flex items-center justify-end md:col-start-auto md:row-start-auto">
+            <div className="hidden items-center gap-1 lg:flex">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="size-9 p-0"
+                onClick={() => onMove(section.id, "up")}
+                aria-label="Move section up"
+              >
+                <ArrowUp className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="size-9 p-0"
+                onClick={() => onMove(section.id, "down")}
+                aria-label="Move section down"
+              >
+                <ArrowDown className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="size-9 p-0"
+                onClick={() => onRemove(section.id)}
+                aria-label="Delete section"
+              >
+                <Trash2 className="size-4 text-destructive" />
+              </Button>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="size-9 shrink-0 p-0 lg:hidden"
+                  aria-label="Section actions"
+                >
+                  <MoreVertical className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onMove(section.id, "up")}>
+                  <ArrowUp className="size-4" />
+                  Move Up
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onMove(section.id, "down")}>
+                  <ArrowDown className="size-4" />
+                  Move Down
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => onRemove(section.id)}
+                >
+                  <Trash2 className="size-4" />
+                  Delete Section
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        ) : null}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {titleIssue && <p className="text-sm text-destructive">{titleIssue.message}</p>}
 
         {structureIssue && (
           <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
@@ -163,11 +254,51 @@ export function QuestionnaireSectionEditor({
           <QuestionnaireQuestionEditor
             questions={section.questions}
             questionIssues={questionIssues}
-            onAddQuestion={() => onAddQuestion(section.id)}
             onUpdateQuestion={(questionId, updates) => onUpdateQuestion(section.id, questionId, updates)}
             onRemoveQuestion={(questionId) => onRemoveQuestion(section.id, questionId)}
           />
         ) : null}
+
+        {section.children.length > 0 ? (
+          <div className="space-y-4 border-t pt-6">
+            {section.children.map((childSection) => (
+              <QuestionnaireSectionEditor
+                key={childSection.id}
+                section={childSection}
+                sectionIssues={allSectionIssues[childSection.id] ?? []}
+                allSectionIssues={allSectionIssues}
+                questionIssues={questionIssues}
+                selectedSectionId={selectedSectionId}
+                isSelected={childSection.id === selectedSectionId}
+                depth={depth + 1}
+                onUpdateSection={onUpdateSection}
+                onAddChild={onAddChild}
+                onMove={onMove}
+                onRemove={onRemove}
+                onAddQuestion={onAddQuestion}
+                onUpdateQuestion={onUpdateQuestion}
+                onRemoveQuestion={onRemoveQuestion}
+              />
+            ))}
+          </div>
+        ) : null}
+
+        <div className={cn("grid gap-3", isLeaf ? "sm:grid-cols-2" : "grid-cols-1")}>
+          {isLeaf ? (
+            <QuestionnaireAddActionButton
+              className="rounded-xl"
+              label="Add Question"
+              onClick={() => onAddQuestion(section.id)}
+            />
+          ) : null}
+
+          <QuestionnaireAddActionButton
+            className="rounded-xl"
+            disabled={!canAddChild}
+            label="Add Subsection"
+            onClick={() => onAddChild(section.id)}
+          />
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,5 +1,4 @@
 import {
-  collectLeafSections,
   isLeafSection,
   sortSections,
 } from "@/lib/questionnaires/builder-validator";
@@ -9,26 +8,53 @@ import type {
   QuestionnaireBuilderPreviewSection,
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
+  QuestionnaireType,
   QuestionnaireSchemaQuestion,
   QuestionnaireSchemaSectionTreeNode,
   QuestionnaireVersionSchema,
 } from "@/types/questionnaires";
 
-function serializeQuestion(question: QuestionnaireBuilderQuestionNode): QuestionnaireSchemaQuestion {
+function getQuestionnaireTypeCode(type: QuestionnaireType): string {
+  switch (type) {
+    case "FACULTY_IN_CLASSROOM":
+      return "ic";
+    case "FACULTY_OUT_OF_CLASSROOM":
+      return "oc";
+    case "FACULTY_FEEDBACK":
+    default:
+      return "ff";
+  }
+}
+
+function buildSchemaSectionId(typeCode: string, path: number[]): string {
+  return `sec-${typeCode}-${path.join("-")}`;
+}
+
+function buildSchemaQuestionId(typeCode: string, sectionPath: number[], questionOrder: number): string {
+  return `q-${typeCode}-${[...sectionPath, questionOrder].join("-")}`;
+}
+
+function serializeQuestion(
+  question: QuestionnaireBuilderQuestionNode,
+  schemaQuestionId: string,
+  questionType: QuestionnaireBuilderQuestionNode["type"]
+): QuestionnaireSchemaQuestion {
   return {
-    id: question.id,
+    id: schemaQuestionId,
     text: question.prompt.trim(),
-    type: question.type,
+    type: questionType,
     order: question.order,
     required: question.required,
   };
 }
 
 function serializeSectionTree(
-  section: QuestionnaireBuilderSectionNode
+  section: QuestionnaireBuilderSectionNode,
+  typeCode: string,
+  path: number[]
 ): QuestionnaireSchemaSectionTreeNode {
   const base: QuestionnaireSchemaSectionTreeNode = {
-    id: section.id,
+    id: buildSchemaSectionId(typeCode, path),
     order: section.order,
     title: section.title.trim(),
   };
@@ -38,9 +64,17 @@ function serializeSectionTree(
     base.questions = section.questions
       .slice()
       .sort((left, right) => left.order - right.order)
-      .map(serializeQuestion);
+      .map((question, index) =>
+        serializeQuestion(
+          question,
+          buildSchemaQuestionId(typeCode, path, index + 1),
+          section.questionType
+        )
+      );
   } else {
-    base.sections = sortSections(section.children).map(serializeSectionTree);
+    base.sections = sortSections(section.children).map((child, index) =>
+      serializeSectionTree(child, typeCode, [...path, index + 1])
+    );
   }
 
   return base;
@@ -49,47 +83,62 @@ function serializeSectionTree(
 export function buildQuestionnaireSectionTree(
   draft: QuestionnaireBuilderDraft
 ): QuestionnaireSchemaSectionTreeNode[] {
-  return sortSections(draft.sections).map(serializeSectionTree);
+  const typeCode = getQuestionnaireTypeCode(draft.metadata.type);
+
+  return sortSections(draft.sections).map((section, index) =>
+    serializeSectionTree(section, typeCode, [index + 1])
+  );
 }
 
 export function serializeQuestionnaireBuilderDraft(
   draft: QuestionnaireBuilderDraft
 ): QuestionnaireVersionSchema {
-  const sections = collectLeafSections(draft.sections).map((section, index) => {
-    const parentPath: string[] = [];
+  const typeCode = getQuestionnaireTypeCode(draft.metadata.type);
+  const leafEntries: Array<{
+    section: QuestionnaireBuilderSectionNode;
+    path: number[];
+    parentPath: string[];
+  }> = [];
 
-    const walk = (
-      nodes: QuestionnaireBuilderSectionNode[],
-      ancestors: string[]
-    ): boolean => {
-      for (const node of nodes) {
-        if (node.id === section.id) {
-          parentPath.push(...ancestors);
-          return true;
-        }
+  const walkSections = (
+    nodes: QuestionnaireBuilderSectionNode[],
+    ancestorPaths: number[][]
+  ) => {
+    sortSections(nodes).forEach((node, index) => {
+      const path = [...(ancestorPaths.at(-1) ?? []), index + 1];
 
-        if (walk(node.children, [...ancestors, node.id])) {
-          return true;
-        }
+      if (isLeafSection(node)) {
+        leafEntries.push({
+          section: node,
+          path,
+          parentPath: ancestorPaths.map((ancestorPath) => buildSchemaSectionId(typeCode, ancestorPath)),
+        });
+        return;
       }
 
-      return false;
-    };
+      walkSections(node.children, [...ancestorPaths, path]);
+    });
+  };
 
-    walk(draft.sections, []);
+  walkSections(draft.sections, []);
 
-    return {
-      id: section.id,
-      order: index + 1,
-      title: section.title.trim(),
-      weight: section.weight ?? 0,
-      parentPath,
-      questions: section.questions
-        .slice()
-        .sort((left, right) => left.order - right.order)
-        .map(serializeQuestion),
-    };
-  });
+  const sections = leafEntries.map(({ section, path, parentPath }, index) => ({
+    id: buildSchemaSectionId(typeCode, path),
+    order: index + 1,
+    title: section.title.trim(),
+    weight: section.weight ?? 0,
+    parentPath,
+    questions: section.questions
+      .slice()
+      .sort((left, right) => left.order - right.order)
+      .map((question, questionIndex) =>
+        serializeQuestion(
+          question,
+          buildSchemaQuestionId(typeCode, path, questionIndex + 1),
+          section.questionType
+        )
+      ),
+  }));
 
   return {
     meta: {
@@ -99,19 +148,11 @@ export function serializeQuestionnaireBuilderDraft(
       questionnaireType: draft.metadata.type,
     },
     sections,
-    ...(draft.qualitative.enabled
-      ? {
-          qualitativeSection: {
-            id: "qualitative-comment",
-            order: sections.length + 1,
-            title: draft.qualitative.title.trim(),
-            description: draft.qualitative.description.trim(),
-            placeholder: draft.qualitative.placeholder.trim(),
-            required: draft.qualitative.required,
-            type: "QUALITATIVE_COMMENT" as const,
-          },
-        }
-      : {}),
+    qualitativeFeedback: {
+      enabled: draft.qualitative.enabled,
+      required: draft.qualitative.required,
+      maxLength: draft.qualitative.maxLength ?? 1000,
+    },
   };
 }
 
@@ -133,7 +174,7 @@ function buildPreviewSection(
       .map((question) => ({
         id: question.id,
         prompt: question.prompt,
-        type: question.type,
+        type: section.questionType,
         required: question.required,
         order: question.order,
       })),

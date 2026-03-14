@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import {
   findSectionById,
+  getSectionLevel,
   hasMeaningfulDraftContent,
   isLeafSection,
   sortSections,
@@ -15,6 +16,7 @@ import type {
   QuestionnaireBuilderServerContext,
   QuestionnaireType,
 } from "@/types/questionnaires";
+import { MAX_SECTION_NESTING_LEVEL } from "@/types/questionnaires";
 
 type QuestionnaireBuilderStore = {
   hydrated: boolean;
@@ -30,7 +32,7 @@ type QuestionnaireBuilderStore = {
   addChildSection: (parentSectionId: string) => void;
   updateSection: (
     sectionId: string,
-    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight">>
+    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight" | "questionType">>
   ) => void;
   removeSection: (sectionId: string) => void;
   moveSection: (sectionId: string, direction: "up" | "down") => void;
@@ -54,32 +56,71 @@ function createId(prefix: string) {
 function createEmptyQualitativeConfig(): QuestionnaireBuilderQualitativeConfig {
   return {
     enabled: false,
-    title: "Additional comments",
-    description: "Share any comments that could help improve the questionnaire or teaching experience.",
-    placeholder: "Add your observations here.",
     required: false,
+    maxLength: 1000,
+  };
+}
+
+function normalizeQualitativeConfig(
+  qualitative?: Partial<QuestionnaireBuilderQualitativeConfig>
+): QuestionnaireBuilderQualitativeConfig {
+  return {
+    ...createEmptyQualitativeConfig(),
+    ...qualitative,
+    maxLength: qualitative?.maxLength ?? 1000,
   };
 }
 
 function createSection(order: number): QuestionnaireBuilderSectionNode {
+  const questionType: QuestionnaireBuilderQuestionNode["type"] = "LIKERT_1_5";
+
   return {
     id: createId("section"),
     title: `Section ${order}`,
     order,
     weight: null,
-    questions: [],
+    questionType,
+    questions: [createQuestion(1, questionType)],
     children: [],
   };
 }
 
-function createQuestion(order: number): QuestionnaireBuilderQuestionNode {
+function createQuestion(order: number, type: QuestionnaireBuilderQuestionNode["type"]): QuestionnaireBuilderQuestionNode {
   return {
     id: createId("question"),
     prompt: "",
-    type: "LIKERT_1_5",
+    type,
     order,
     required: true,
   };
+}
+
+function normalizeSections(
+  sections: QuestionnaireBuilderSectionNode[]
+): QuestionnaireBuilderSectionNode[] {
+  return sections.map((section) => {
+    const questionType =
+      section.questionType ??
+      section.questions
+        .slice()
+        .sort((left, right) => left.order - right.order)[0]?.type ??
+      "LIKERT_1_5";
+
+    return {
+      ...section,
+      questionType,
+      questions: resequenceQuestions(
+        section.questions
+          .slice()
+          .sort((left, right) => left.order - right.order)
+          .map((question) => ({
+            ...question,
+            type: questionType,
+          }))
+      ),
+      children: normalizeSections(section.children),
+    };
+  });
 }
 
 function createDraft(
@@ -95,8 +136,8 @@ function createDraft(
       questionnaireTitle: null,
       ...overrides?.metadata,
     },
-    sections: overrides?.sections ?? [],
-    qualitative: overrides?.qualitative ?? createEmptyQualitativeConfig(),
+    sections: normalizeSections(overrides?.sections ?? []),
+    qualitative: normalizeQualitativeConfig(overrides?.qualitative),
     selectedSectionId: overrides?.selectedSectionId ?? null,
     hydratedFromServer: overrides?.hydratedFromServer ?? false,
   };
@@ -307,7 +348,9 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
         set((state) =>
           replaceActiveDraft(state, (draft) => {
             const parent = findSectionById(draft.sections, parentSectionId);
-            if (!parent) {
+            const parentLevel = getSectionLevel(draft.sections, parentSectionId);
+
+            if (!parent || parentLevel === null || parentLevel >= MAX_SECTION_NESTING_LEVEL) {
               return draft;
             }
 
@@ -342,11 +385,22 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
               updateSections(draft.sections, sectionId, (section) => ({
                 ...section,
                 ...updates,
+                questionType:
+                  updates.questionType === undefined ? section.questionType : updates.questionType,
                 weight: isLeafSection(section)
                   ? updates.weight === undefined
                     ? section.weight
                     : updates.weight
                   : null,
+                questions:
+                  updates.questionType === undefined
+                    ? section.questions
+                    : resequenceQuestions(
+                        section.questions.map((question) => ({
+                          ...question,
+                          type: updates.questionType ?? section.questionType,
+                        }))
+                      ),
               }))
             ),
           }))
@@ -384,7 +438,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
                   ...section,
                   questions: resequenceQuestions([
                     ...section.questions,
-                    createQuestion(section.questions.length + 1),
+                    createQuestion(section.questions.length + 1, section.questionType),
                   ]),
                 };
               })
@@ -431,8 +485,9 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
           replaceActiveDraft(state, (draft) => ({
             ...draft,
             qualitative: {
-              ...draft.qualitative,
+              ...normalizeQualitativeConfig(draft.qualitative),
               ...updates,
+              maxLength: updates.maxLength ?? draft.qualitative.maxLength ?? 1000,
             },
           }))
         ),

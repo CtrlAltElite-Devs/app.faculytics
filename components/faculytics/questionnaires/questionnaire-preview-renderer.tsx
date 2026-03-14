@@ -5,7 +5,7 @@ import Link from "next/link";
 import { QuestionnaireRatingScaleInstructions } from "@/components/faculytics/questionnaires/questionnaire-rating-scale-instructions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
@@ -113,16 +113,19 @@ export function QuestionnairePreviewRenderer({
       </div>
 
       {model.qualitative.enabled ? (
-        <Card>
+        <Card className="gap-3">
           <CardHeader>
-            <CardTitle className="font-playfair text-lg">{model.qualitative.title}</CardTitle>
-            <CardDescription>{model.qualitative.description}</CardDescription>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle className="font-playfair text-lg">Comments</CardTitle>
+              {model.qualitative.required ? <Badge variant="outline">Required</Badge> : null}
+            </div>
           </CardHeader>
           <CardContent>
             <Textarea
               disabled
-              placeholder={model.qualitative.placeholder}
+              placeholder="Add your comments here."
               aria-required={model.qualitative.required}
+              maxLength={model.qualitative.maxLength}
             />
           </CardContent>
         </Card>

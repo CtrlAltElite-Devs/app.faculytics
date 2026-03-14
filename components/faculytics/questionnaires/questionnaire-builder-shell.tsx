@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/questionnaire-add-action-button";
 import { QuestionnaireOutlinePanel } from "@/components/faculytics/questionnaires/questionnaire-outline-panel";
 import { QuestionnaireQualitativeEditor } from "@/components/faculytics/questionnaires/questionnaire-qualitative-editor";
 import { QuestionnaireSectionEditor } from "@/components/faculytics/questionnaires/questionnaire-section-editor";
@@ -18,13 +19,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { InlineEditInput } from "@/components/ui/inline-edit-input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { buildQuestionnairePreviewModel } from "@/lib/questionnaires/builder-serializer";
 import {
   canConvertSectionToParent,
-  collectLeafSections,
   findSectionById,
+  getSectionLevel,
   validateQuestionnaireBuilderDraft,
 } from "@/lib/questionnaires/builder-validator";
 import { useSaveQuestionnaireBuilder } from "@/hooks/questionnaires/use-save-questionnaire-builder";
@@ -35,6 +37,7 @@ import type {
   QuestionnaireType,
   QuestionnaireVersionsResponse,
 } from "@/types/questionnaires";
+import { MAX_SECTION_NESTING_LEVEL } from "@/types/questionnaires";
 
 type QuestionnaireBuilderShellProps = {
   availableTypes: QuestionnaireType[];
@@ -81,17 +84,19 @@ export function QuestionnaireBuilderShell({
   }
 
   const validation = validateQuestionnaireBuilderDraft(draft);
-  const selectedSection = findSectionById(draft.sections, draft.selectedSectionId);
   const previewModel = buildQuestionnairePreviewModel(draft);
-  const leafSections = collectLeafSections(draft.sections);
-  const rootExists = Boolean(draft.metadata.questionnaireId ?? serverContext.questionnaireId);
   const pendingConversionState = canConvertSectionToParent(
     pendingParentId ? findSectionById(draft.sections, pendingParentId) : null
   );
 
   const requestAddChild = (sectionId: string) => {
     const section = findSectionById(draft.sections, sectionId);
+    const sectionLevel = getSectionLevel(draft.sections, sectionId);
     const conversionState = canConvertSectionToParent(section);
+
+    if (sectionLevel === null || sectionLevel >= MAX_SECTION_NESTING_LEVEL) {
+      return;
+    }
 
     if (conversionState.requiresConfirmation) {
       setPendingParentId(sectionId);
@@ -103,7 +108,7 @@ export function QuestionnaireBuilderShell({
 
   const handleUpdateSection = (
     sectionId: string,
-    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight">>
+    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight" | "questionType">>
   ) => {
     updateSection(sectionId, updates);
   };
@@ -114,6 +119,14 @@ export function QuestionnaireBuilderShell({
     updates: Partial<Pick<QuestionnaireBuilderQuestionNode, "prompt" | "type">>
   ) => {
     updateQuestion(sectionId, questionId, updates);
+  };
+
+  const handleSelectSection = (sectionId: string) => {
+    selectSection(sectionId);
+    const targetId =
+      sectionId === "qualitative" ? "qualitative-editor" : `section-editor-${sectionId}`;
+
+    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -180,11 +193,13 @@ export function QuestionnaireBuilderShell({
               ) : (
                 <>
                   <Label htmlFor="questionnaire-title">Questionnaire title</Label>
-                  <Input
+                  <InlineEditInput
                     id="questionnaire-title"
                     value={draft.metadata.title}
                     placeholder="Enter the questionnaire title"
-                    onChange={(event) => updateTitle(event.target.value)}
+                    textClassName="min-h-10 border border-input bg-background font-medium"
+                    inputClassName="font-medium"
+                    onChange={updateTitle}
                   />
                 </>
               )}
@@ -204,39 +219,65 @@ export function QuestionnaireBuilderShell({
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-          <QuestionnaireOutlinePanel
-            sections={draft.sections}
-            selectedSectionId={draft.selectedSectionId}
-            sectionIssues={validation.sectionIssues}
-            onSelect={selectSection}
-            onAddRoot={addRootSection}
-            onAddChild={requestAddChild}
-            onMove={moveSection}
-            onRemove={removeSection}
-          />
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,2.2fr)]">
+          <div className="lg:sticky lg:top-4">
+            <QuestionnaireOutlinePanel
+              sections={draft.sections}
+              selectedSectionId={draft.selectedSectionId}
+              sectionIssues={validation.sectionIssues}
+              qualitative={draft.qualitative}
+              qualitativeIssues={validation.qualitativeIssues}
+              onSelect={handleSelectSection}
+              onAddRoot={addRootSection}
+              onAddChild={requestAddChild}
+              onMove={moveSection}
+              onRemove={removeSection}
+            />
+          </div>
 
-          <QuestionnaireSectionEditor
-            section={selectedSection}
-            sectionIssues={
-              selectedSection ? validation.sectionIssues[selectedSection.id] ?? [] : []
-            }
-            questionIssues={validation.questionIssues}
-            onUpdateSection={handleUpdateSection}
-            onAddChild={requestAddChild}
-            onMove={moveSection}
-            onRemove={removeSection}
-            onAddQuestion={addQuestion}
-            onUpdateQuestion={handleUpdateQuestion}
-            onRemoveQuestion={removeQuestion}
-          />
+          <div className="space-y-6">
+            {draft.sections.length === 0 ? (
+              <QuestionnaireAddActionButton
+                label="Add Section"
+                onClick={addRootSection}
+              />
+            ) : (
+              <>
+                {draft.sections.map((section) => (
+                  <QuestionnaireSectionEditor
+                    key={section.id}
+                    section={section}
+                    sectionIssues={validation.sectionIssues[section.id] ?? []}
+                    allSectionIssues={validation.sectionIssues}
+                    questionIssues={validation.questionIssues}
+                    selectedSectionId={draft.selectedSectionId}
+                    isSelected={section.id === draft.selectedSectionId}
+                    onUpdateSection={handleUpdateSection}
+                    onAddChild={requestAddChild}
+                    onMove={moveSection}
+                    onRemove={removeSection}
+                    onAddQuestion={addQuestion}
+                    onUpdateQuestion={handleUpdateQuestion}
+                    onRemoveQuestion={removeQuestion}
+                  />
+                ))}
+                <QuestionnaireAddActionButton
+                  label="Add Section"
+                  onClick={addRootSection}
+                />
+              </>
+            )}
+
+            <div className="space-y-4 pt-2">
+              <Separator />
+              <QuestionnaireQualitativeEditor
+                value={draft.qualitative}
+                issues={validation.qualitativeIssues}
+                onChange={updateQualitative}
+              />
+            </div>
+          </div>
         </div>
-
-        <QuestionnaireQualitativeEditor
-          value={draft.qualitative}
-          issues={validation.qualitativeIssues}
-          onChange={updateQualitative}
-        />
       </div>
 
       <Dialog open={discardDialogOpen} onOpenChange={setDiscardDialogOpen}>
@@ -269,16 +310,16 @@ export function QuestionnaireBuilderShell({
       <Dialog open={Boolean(pendingParentId)} onOpenChange={(open) => !open && setPendingParentId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Convert this leaf section into a parent?</DialogTitle>
+            <DialogTitle>Convert this section into a parent section?</DialogTitle>
             <DialogDescription>
-              Adding a subsection will remove the current leaf-specific content from this section.
+              Adding a subsection will remove the questions currently created in this section.
               {pendingConversionState.questionCount > 0
-                ? ` ${pendingConversionState.questionCount} direct question${
+                ? ` ${pendingConversionState.questionCount} question${
                     pendingConversionState.questionCount === 1 ? "" : "s"
                   } will be removed.`
                 : ""}
               {pendingConversionState.hasWeight
-                ? " The current leaf weight will also be cleared."
+                ? " This section weight will also be cleared."
                 : ""}
             </DialogDescription>
           </DialogHeader>

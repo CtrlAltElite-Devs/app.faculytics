@@ -1,5 +1,6 @@
 "use client";
 
+import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/questionnaire-add-action-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,35 +23,27 @@ export function QuestionnaireQualitativeEditor({
   issues,
   onChange,
 }: QuestionnaireQualitativeEditorProps) {
-  const titleIssue = issues.find(
-    (issue) => issue.target.type === "qualitative" && issue.target.field === "title"
-  );
-  const descriptionIssue = issues.find(
-    (issue) => issue.target.type === "qualitative" && issue.target.field === "description"
-  );
-  const placeholderIssue = issues.find(
-    (issue) => issue.target.type === "qualitative" && issue.target.field === "placeholder"
+  const maxLength = value.maxLength ?? 1000;
+  const maxLengthIssue = issues.find(
+    (issue) => issue.target.type === "qualitative" && issue.target.field === "maxLength"
   );
 
   if (!value.enabled) {
     return (
-      <button
-        type="button"
-        className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-muted-foreground/40 px-5 py-8 text-center transition-colors hover:border-foreground/40 hover:bg-muted/30"
+      <QuestionnaireAddActionButton
+        label="Add Comment Section"
         onClick={() => onChange({ enabled: true })}
-      >
-        <span className="font-playfair text-lg">Add comment section</span>
-      </button>
+      />
     );
   }
 
   return (
-    <Card>
+    <Card id="qualitative-editor">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <div>
-          <CardTitle className="font-playfair text-lg">Final comment section</CardTitle>
+        <div className="min-w-0 flex-1">
+          <CardTitle className="font-playfair text-lg font-semibold">Comments</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            This optional block renders after all quantitative sections.
+            Please provide additional comments
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -73,41 +66,35 @@ export function QuestionnaireQualitativeEditor({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="qualitative-title">Section title</Label>
-          <Input
-            id="qualitative-title"
-            value={value.title}
-            aria-invalid={Boolean(titleIssue)}
-            onChange={(event) => onChange({ title: event.target.value })}
-          />
-          {titleIssue && <p className="text-sm text-destructive">{titleIssue.message}</p>}
-        </div>
+        <Textarea
+          disabled
+          placeholder="Add your comments here."
+          aria-required={value.required}
+          maxLength={maxLength}
+          className="min-h-28 bg-muted/20"
+        />
 
-        <div className="space-y-2">
-          <Label htmlFor="qualitative-description">Section Description</Label>
-          <Textarea
-            id="qualitative-description"
-            value={value.description}
-            aria-invalid={Boolean(descriptionIssue)}
-            onChange={(event) => onChange({ description: event.target.value })}
-          />
-          {descriptionIssue && (
-            <p className="text-sm text-destructive">{descriptionIssue.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="qualitative-placeholder">Placeholder</Label>
-          <Input
-            id="qualitative-placeholder"
-            value={value.placeholder}
-            aria-invalid={Boolean(placeholderIssue)}
-            onChange={(event) => onChange({ placeholder: event.target.value })}
-          />
-          {placeholderIssue && (
-            <p className="text-sm text-destructive">{placeholderIssue.message}</p>
-          )}
+        <div className="flex justify-end">
+          <div className="w-full max-w-40 space-y-2">
+            <Label htmlFor="qualitative-max-length" className="text-right">
+              Maximum length
+            </Label>
+            <Input
+              id="qualitative-max-length"
+              type="number"
+              min={1}
+              max={5000}
+              step={1}
+              value={maxLength}
+              aria-invalid={Boolean(maxLengthIssue)}
+              onChange={(event) =>
+                onChange({
+                  maxLength: event.target.value === "" ? 1000 : Number(event.target.value),
+                })
+              }
+            />
+            {maxLengthIssue && <p className="text-sm text-destructive">{maxLengthIssue.message}</p>}
+          </div>
         </div>
       </CardContent>
     </Card>

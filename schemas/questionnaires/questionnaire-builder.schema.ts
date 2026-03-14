@@ -38,18 +38,10 @@ export const questionnaireQuestionInputSchema = z.object({
 
 export const questionnaireQualitativeConfigSchema = z.object({
   enabled: z.boolean(),
-  title: z
-    .string()
-    .trim()
-    .min(3, "Comment section title must be at least 3 characters.")
-    .max(120, "Comment section title must be 120 characters or fewer."),
-  description: z
-    .string()
-    .trim()
-    .max(500, "Comment section description must be 500 characters or fewer."),
-  placeholder: z
-    .string()
-    .trim()
-    .max(200, "Comment placeholder must be 200 characters or fewer."),
   required: z.boolean(),
+  maxLength: z
+    .number()
+    .int("Maximum length must be a whole number.")
+    .min(1, "Maximum length must be at least 1.")
+    .max(5000, "Maximum length must be 5000 characters or fewer."),
 });

@@ -40,6 +40,29 @@ export function findSectionById(
   return null;
 }
 
+export function getSectionLevel(
+  sections: QuestionnaireBuilderSectionNode[],
+  sectionId: string | null,
+  currentLevel = 1
+): number | null {
+  if (!sectionId) {
+    return null;
+  }
+
+  for (const section of sections) {
+    if (section.id === sectionId) {
+      return currentLevel;
+    }
+
+    const nestedLevel = getSectionLevel(section.children, sectionId, currentLevel + 1);
+    if (nestedLevel !== null) {
+      return nestedLevel;
+    }
+  }
+
+  return null;
+}
+
 export function collectLeafSections(
   sections: QuestionnaireBuilderSectionNode[]
 ): QuestionnaireBuilderSectionNode[] {
@@ -276,12 +299,7 @@ export function validateQuestionnaireBuilderDraft(
           message: zodIssue.message,
           target: {
             type: "qualitative",
-            field:
-              zodIssue.path[0] === "placeholder"
-                ? "placeholder"
-                : zodIssue.path[0] === "description"
-                  ? "description"
-                  : "title",
+            field: "maxLength",
           },
         };
 
