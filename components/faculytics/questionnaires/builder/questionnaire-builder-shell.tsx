@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/questionnaire-add-action-button";
-import { QuestionnaireOutlinePanel } from "@/components/faculytics/questionnaires/questionnaire-outline-panel";
-import { QuestionnaireQualitativeEditor } from "@/components/faculytics/questionnaires/questionnaire-qualitative-editor";
-import { QuestionnaireSectionEditor } from "@/components/faculytics/questionnaires/questionnaire-section-editor";
+import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/builder/questionnaire-add-action-button";
+import { QuestionnaireOutlinePanel } from "@/components/faculytics/questionnaires/builder/questionnaire-outline-panel";
+import { QuestionnaireQualitativeEditor } from "@/components/faculytics/questionnaires/builder/questionnaire-qualitative-editor";
+import { QuestionnaireSectionEditor } from "@/components/faculytics/questionnaires/builder/questionnaire-section-editor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

@@ -2,8 +2,8 @@
 
 import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, MoreVertical, Trash2 } from "lucide-react";
 
-import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/questionnaire-add-action-button";
-import { QuestionnaireQuestionEditor } from "@/components/faculytics/questionnaires/questionnaire-question-editor";
+import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/builder/questionnaire-add-action-button";
+import { QuestionnaireQuestionEditor } from "@/components/faculytics/questionnaires/builder/questionnaire-question-editor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

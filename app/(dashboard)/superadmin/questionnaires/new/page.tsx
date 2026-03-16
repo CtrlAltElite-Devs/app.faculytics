@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { QuestionnaireBuilderShell } from "@/components/faculytics/questionnaires/questionnaire-builder-shell";
+import { QuestionnaireBuilderShell } from "@/components/faculytics/questionnaires/builder/questionnaire-builder-shell";
 import { QuestionnaireEmptyState } from "@/components/faculytics/questionnaires/questionnaire-empty-state";
 import { QuestionnaireErrorState } from "@/components/faculytics/questionnaires/questionnaire-error-state";
 import { QuestionnaireLoadingState } from "@/components/faculytics/questionnaires/questionnaire-loading-state";
