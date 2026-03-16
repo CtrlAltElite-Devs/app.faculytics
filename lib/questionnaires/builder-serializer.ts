@@ -147,6 +147,7 @@ export function serializeQuestionnaireBuilderDraft(
       scoringModel: "SECTION_WEIGHTED",
       questionnaireType: draft.metadata.type,
     },
+    sectionTree: buildQuestionnaireSectionTree(draft),
     sections,
     qualitativeFeedback: {
       enabled: draft.qualitative.enabled,

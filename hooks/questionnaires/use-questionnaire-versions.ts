@@ -2,9 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchQuestionnaireVersionsByType } from "@/network/requests/questionnaires";
+import {
+  fetchQuestionnaireVersionById,
+  fetchQuestionnaireVersionsByType,
+} from "@/network/requests/questionnaires";
 import { useAuthStore } from "@/stores/auth-store";
-import type { QuestionnaireType } from "@/types/questionnaires";
+import type { QuestionnaireBuilderServerContext, QuestionnaireType } from "@/types/questionnaires";
 
 type UseQuestionnaireVersionsOptions = {
   enabled?: boolean;
@@ -20,12 +23,21 @@ export function useQuestionnaireVersions(
   return useQuery({
     queryKey: ["questionnaires", "types", type, "versions", token],
     enabled: Boolean(token) && Boolean(type) && isEnabled,
-    queryFn: () => {
+    queryFn: async (): Promise<QuestionnaireBuilderServerContext> => {
       if (!type) {
         throw new Error("Questionnaire type is required.");
       }
 
-      return fetchQuestionnaireVersionsByType(type);
+      const versionsResponse = await fetchQuestionnaireVersionsByType(type);
+      const draftVersionSummary = versionsResponse.versions.find((version) => version.status === "DRAFT");
+      const draftVersion = draftVersionSummary
+        ? await fetchQuestionnaireVersionById(draftVersionSummary.id)
+        : null;
+
+      return {
+        ...versionsResponse,
+        draftVersion,
+      };
     },
   });
 }

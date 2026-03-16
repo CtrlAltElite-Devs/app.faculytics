@@ -1,5 +1,6 @@
 import type {
   QuestionnaireType,
+  QuestionnaireVersionDetail,
   QuestionnaireVersionItem,
 } from "@/types/questionnaires";
 
@@ -36,6 +37,7 @@ export type QuestionnaireBuilderMetadata = {
   type: QuestionnaireType;
   title: string;
   questionnaireId: string | null;
+  versionId: string | null;
   titleLocked: boolean;
   questionnaireTitle: string | null;
 };
@@ -53,6 +55,7 @@ export type QuestionnaireBuilderServerContext = {
   questionnaireId: string | null;
   questionnaireTitle: string | null;
   versions: QuestionnaireVersionItem[];
+  draftVersion: QuestionnaireVersionDetail | null;
 };
 
 export type QuestionnaireBuilderPreviewQuestion = {

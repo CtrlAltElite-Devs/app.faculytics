@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { deserializeQuestionnaireVersionToDraft } from "@/lib/questionnaires/builder-deserializer";
 import {
   findSectionById,
   getSectionLevel,
@@ -132,6 +133,7 @@ function createDraft(
       type,
       title: "",
       questionnaireId: null,
+      versionId: null,
       titleLocked: false,
       questionnaireTitle: null,
       ...overrides?.metadata,
@@ -283,26 +285,54 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
       loadDraftFromServer: (context) =>
         set((state) => {
           const existingDraft = state.drafts[context.type];
-          const nextTitle =
-            context.questionnaireId !== null
-              ? context.questionnaireTitle ?? existingDraft?.metadata.title ?? ""
-              : existingDraft?.metadata.title ?? "";
-
-          const nextDraft = createDraft(context.type, {
-            ...existingDraft,
-            metadata: {
-              type: context.type,
-              title: nextTitle,
-              questionnaireId: context.questionnaireId,
-              titleLocked: Boolean(context.questionnaireId),
-              questionnaireTitle: context.questionnaireTitle,
-            },
-            selectedSectionId:
-              existingDraft?.selectedSectionId ??
-              sortSections(existingDraft?.sections ?? [])[0]?.id ??
-              null,
-            hydratedFromServer: true,
-          });
+          const shouldPreserveLocalDraft = hasMeaningfulDraftContent(existingDraft ?? null);
+          const serverDraft = context.draftVersion
+            ? deserializeQuestionnaireVersionToDraft(context.draftVersion)
+            : null;
+          const nextDraft = shouldPreserveLocalDraft
+            ? createDraft(context.type, {
+                ...existingDraft,
+                metadata: {
+                  type: context.type,
+                  title:
+                    context.questionnaireId !== null
+                      ? context.questionnaireTitle ?? existingDraft?.metadata.title ?? ""
+                      : existingDraft?.metadata.title ?? "",
+                  questionnaireId: context.questionnaireId,
+                  versionId:
+                    existingDraft?.metadata.versionId ??
+                    context.draftVersion?.id ??
+                    null,
+                  titleLocked: Boolean(context.questionnaireId),
+                  questionnaireTitle: context.questionnaireTitle,
+                },
+                selectedSectionId:
+                  existingDraft?.selectedSectionId ??
+                  sortSections(existingDraft?.sections ?? [])[0]?.id ??
+                  null,
+                hydratedFromServer: true,
+              })
+            : createDraft(context.type, {
+                ...(serverDraft ?? existingDraft),
+                metadata: {
+                  type: context.type,
+                  title:
+                    serverDraft?.metadata.title ??
+                    (context.questionnaireId !== null
+                      ? context.questionnaireTitle ?? existingDraft?.metadata.title ?? ""
+                      : existingDraft?.metadata.title ?? ""),
+                  questionnaireId: context.questionnaireId,
+                  versionId: serverDraft?.metadata.versionId ?? null,
+                  titleLocked: Boolean(context.questionnaireId),
+                  questionnaireTitle: context.questionnaireTitle,
+                },
+                selectedSectionId:
+                  serverDraft?.selectedSectionId ??
+                  existingDraft?.selectedSectionId ??
+                  sortSections(serverDraft?.sections ?? existingDraft?.sections ?? [])[0]?.id ??
+                  null,
+                hydratedFromServer: true,
+              });
 
           return {
             activeType: context.type,

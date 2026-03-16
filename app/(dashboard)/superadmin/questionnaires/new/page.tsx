@@ -81,12 +81,7 @@ export default function QuestionnaireBuilderPage() {
       return;
     }
 
-    loadDraftFromServer({
-      type: questionnaireVersionsQuery.data.type,
-      questionnaireId: questionnaireVersionsQuery.data.questionnaireId,
-      questionnaireTitle: questionnaireVersionsQuery.data.questionnaireTitle,
-      versions: questionnaireVersionsQuery.data.versions,
-    });
+    loadDraftFromServer(questionnaireVersionsQuery.data);
   }, [loadDraftFromServer, questionnaireVersionsQuery.data]);
 
   useEffect(() => {

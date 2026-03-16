@@ -1,3 +1,5 @@
+import type { QuestionnaireVersionSchema } from "@/types/questionnaires/builder";
+
 export const QUESTIONNAIRE_TYPES = [
   "FACULTY_FEEDBACK",
   "FACULTY_IN_CLASSROOM",
@@ -35,6 +37,20 @@ export type QuestionnaireVersionsResponse = {
   versions: QuestionnaireVersionItem[];
 };
 
+export type QuestionnaireVersionDetail = {
+  id: string;
+  questionnaireId: string;
+  questionnaireTitle: string;
+  questionnaireType: QuestionnaireType;
+  versionNumber: number;
+  status: QuestionnaireStatus;
+  isActive: boolean;
+  schemaSnapshot: QuestionnaireVersionSchema;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type CreateQuestionnaireRequest = {
   title: string;
   type: QuestionnaireType;
@@ -51,14 +67,19 @@ export type Questionnaire = {
 };
 
 export type CreateQuestionnaireVersionRequest = {
-  schema: import("@/types/questionnaires/builder").QuestionnaireVersionSchema;
+  schema: QuestionnaireVersionSchema;
+};
+
+export type UpdateQuestionnaireVersionRequest = {
+  schema: QuestionnaireVersionSchema;
+  title?: string;
 };
 
 export type QuestionnaireVersion = {
   id: string;
   questionnaire: Questionnaire;
   versionNumber: number;
-  schemaSnapshot: import("@/types/questionnaires/builder").QuestionnaireVersionSchema;
+  schemaSnapshot: QuestionnaireVersionSchema;
   publishedAt?: string | null;
   isActive: boolean;
   status: QuestionnaireStatus;

@@ -8,12 +8,14 @@ import { serializeQuestionnaireBuilderDraft } from "@/lib/questionnaires/builder
 import { validateQuestionnaireBuilderDraft } from "@/lib/questionnaires/builder-validator";
 import { useCreateQuestionnaire } from "@/hooks/questionnaires/use-create-questionnaire";
 import { useCreateQuestionnaireVersion } from "@/hooks/questionnaires/use-create-questionnaire-version";
+import { useUpdateQuestionnaireVersion } from "@/hooks/questionnaires/use-update-questionnaire-version";
 import { useQuestionnaireBuilderStore } from "@/stores/questionnaire-builder-store";
 
 export function useSaveQuestionnaireBuilder() {
   const router = useRouter();
   const createQuestionnaireMutation = useCreateQuestionnaire();
   const createQuestionnaireVersionMutation = useCreateQuestionnaireVersion();
+  const updateQuestionnaireVersionMutation = useUpdateQuestionnaireVersion();
   const clearDraftForType = useQuestionnaireBuilderStore((state) => state.clearDraftForType);
   const setQuestionnaireRootMetadata = useQuestionnaireBuilderStore(
     (state) => state.setQuestionnaireRootMetadata
@@ -54,12 +56,21 @@ export function useSaveQuestionnaireBuilder() {
         setQuestionnaireRootMetadata(createdQuestionnaire.id, createdQuestionnaire.title);
       }
 
-      await createQuestionnaireVersionMutation.mutateAsync({
-        questionnaireId,
-        payload: {
-          schema: payload,
-        },
-      });
+      if (draft.metadata.versionId) {
+        await updateQuestionnaireVersionMutation.mutateAsync({
+          versionId: draft.metadata.versionId,
+          payload: {
+            schema: payload,
+          },
+        });
+      } else {
+        await createQuestionnaireVersionMutation.mutateAsync({
+          questionnaireId,
+          payload: {
+            schema: payload,
+          },
+        });
+      }
 
       clearDraftForType(draft.metadata.type);
       toast.success("Questionnaire draft saved.");
@@ -78,6 +89,8 @@ export function useSaveQuestionnaireBuilder() {
   return {
     save,
     isPending:
-      createQuestionnaireMutation.isPending || createQuestionnaireVersionMutation.isPending,
+      createQuestionnaireMutation.isPending ||
+      createQuestionnaireVersionMutation.isPending ||
+      updateQuestionnaireVersionMutation.isPending,
   };
 }
