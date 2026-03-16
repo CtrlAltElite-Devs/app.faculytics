@@ -1,4 +1,4 @@
-import { DeanFacultyCard } from "@/components/faculytics/dean-faculty-card";
+import { DeanFacultyTable } from "@/components/faculytics/dean-faculty-table";
 import { DeanSentimentCharts } from "@/components/faculytics/dean-sentiment-charts";
 import { deanAnalyticsMock } from "@/mocks/dean-analytics";
 
@@ -61,17 +61,7 @@ export default function DeanDashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {deanAnalyticsMock.facultyCards.map((faculty) => (
-            <DeanFacultyCard
-              key={faculty.name}
-              name={faculty.name}
-              imageSrc={faculty.imageSrc}
-              subjects={faculty.subjects}
-              analysisHref={faculty.analysisHref}
-            />
-          ))}
-        </div>
+        <DeanFacultyTable rows={deanAnalyticsMock.facultyRows} />
       </section>
     </section>
   );

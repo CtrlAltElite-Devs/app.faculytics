@@ -32,17 +32,21 @@ export const deanAnalyticsMock = {
     { label: "Neutral", value: 8, fill: "#B8BDC7" },
     { label: "Negative", value: 6, fill: "var(--color-brand-yellow)" },
   ],
-  facultyCards: [
+  facultyRows: [
     {
       name: "Dr. Amelia Reyes",
       imageSrc: "/mocks/faculty-placeholder.svg",
       subjects: ["Data Structures", "Algorithms", "Discrete Mathematics", "Automata Theory"],
+      positiveRate: "89.4%",
+      responses: "412",
       analysisHref: "/dean",
     },
     {
       name: "Prof. Marcus Dela Cruz",
       imageSrc: "/mocks/faculty-placeholder.svg",
       subjects: ["Operating Systems", "Computer Networks", "Cybersecurity"],
+      positiveRate: "85.1%",
+      responses: "376",
       analysisHref: "/dean",
     },
     {
@@ -55,6 +59,8 @@ export const deanAnalyticsMock = {
         "Information Management",
         "Research Methods",
       ],
+      positiveRate: "91.8%",
+      responses: "508",
       analysisHref: "/dean",
     },
   ],
