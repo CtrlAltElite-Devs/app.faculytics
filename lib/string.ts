@@ -28,3 +28,4 @@ export function resolveCourseImageSrc(imageSrc?: string): string {
 
   return trimmedImageSrc;
 }
+

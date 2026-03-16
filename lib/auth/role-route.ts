@@ -33,9 +33,12 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
   },
   DEAN: {
     label: "Dean",
-    homePath: "/dean/faculties",
+    homePath: "/dean",
     routePrefix: "/dean",
-    navItems: [{ title: "Faculties", url: "/dean/faculties", icon: Building2 }],
+    navItems: [
+      { title: "Analytics", url: "/dean", icon: BarChart3 },
+      { title: "Faculties", url: "/dean/faculties", icon: Building2 },
+    ],
   },
   ADMIN: {
     label: "Admin",
