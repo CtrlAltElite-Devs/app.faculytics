@@ -2,6 +2,7 @@
 
 import { QuestionnaireRatingScaleInstructions } from "@/components/faculytics/questionnaires/questionnaire-rating-scale-instructions";
 import { useMyEnrollments } from "@/hooks/enrollments/use-my-enrollments";
+import { decodeHtmlEntities } from "@/lib/string";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,9 +35,9 @@ export default function FacultyEvaluationPage() {
 
   const selectedCourse = selectedEnrollment?.course;
   const selectedFaculty = selectedEnrollment?.faculty;
-  const shortname = selectedCourse?.shortname || "Course";
-  const fullname = selectedCourse?.fullname || "Selected course";
-  const facultyName = selectedFaculty?.fullName || "Instructor unavailable";
+  const shortname = decodeHtmlEntities(selectedCourse?.shortname || "Course");
+  const fullname = decodeHtmlEntities(selectedCourse?.fullname || "Selected course");
+  const facultyName = decodeHtmlEntities(selectedFaculty?.fullName || "Instructor unavailable");
   const facultyId = selectedFaculty?.id || null;
 
   return (

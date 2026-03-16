@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { decodeHtmlEntities, resolveCourseImageSrc } from "@/lib/string";
+
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -24,10 +27,17 @@ export default function CourseCard({
   onGiveFeedback,
   imageSrc,
 }: CourseCardProps) {
+  const decodedShortname = decodeHtmlEntities(shortname);
+  const decodedFullname = decodeHtmlEntities(fullname);
+  const decodedTeacherName = decodeHtmlEntities(teacherName);
   const titleSizeClass =
-    fullname.length > 64 ? "text-base" : fullname.length > 40 ? "text-lg" : "text-xl";
-  const resolvedImageSrc = imageSrc?.trim() ? imageSrc : "/course-placeholder.svg";
-  const teacherInitials = teacherName
+    decodedFullname.length > 64
+      ? "text-base"
+      : decodedFullname.length > 40
+        ? "text-lg"
+        : "text-xl";
+  const resolvedImageSrc = resolveCourseImageSrc(imageSrc);
+  const teacherInitials = decodedTeacherName
     .split(" ")
     .map((part) => part[0])
     .join("")
@@ -39,28 +49,28 @@ export default function CourseCard({
       <div className="relative aspect-video w-full">
         <Image
           src={resolvedImageSrc}
-          alt={`${fullname} course image`}
+          alt={`${decodedFullname} course image`}
           fill
           loading="eager"
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
         />
       </div>
-      <CardContent className="flex h-full flex-col p-2 sm:p-3">
-        <div className="inline-flex w-fit self-start items-center rounded-md bg-brand-blue/25 px-2 py-1 text-sm font-medium text-brand-blue">
-          {shortname}
-        </div>
-        <div className="mt-2 flex items-center gap-2">
+      <CardContent className="flex h-full flex-col gap-3 p-3 sm:gap-4 sm:p-4">
+        <Badge className="self-start rounded-md bg-brand-blue/25 px-2 py-1 text-sm font-medium text-brand-blue hover:bg-brand-blue/25">
+          {decodedShortname}
+        </Badge>
+        <div className="flex items-center gap-2">
           <h2 className={`font-playfair leading-snug text-foreground ${titleSizeClass} `}>
-            {fullname}
+            {decodedFullname}
           </h2>
         </div>
-        <div className="my-2 flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
           <Avatar className="size-7">
-            {teacherImageSrc ? <AvatarImage src={teacherImageSrc} alt={teacherName} /> : null}
+            {teacherImageSrc ? <AvatarImage src={teacherImageSrc} alt={decodedTeacherName} /> : null}
             <AvatarFallback className="text-[10px]">{teacherInitials || "T"}</AvatarFallback>
           </Avatar>
-          <p className="line-clamp-1">{teacherName}</p>
+          <p className="line-clamp-1">{decodedTeacherName}</p>
         </div>
         <Button
           asChild
