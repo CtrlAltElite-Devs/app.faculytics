@@ -68,11 +68,11 @@ export function QuestionnaireTable({ rows, onEditDraft, onViewVersion }: Questio
               </TableCell>
               <TableCell>
                 {row.status === "DRAFT" && onEditDraft ? (
-                  <Button type="button" variant="ghost" size="sm" onClick={() => onEditDraft(row)}>
+                  <Button type="button" variant="outline" size="sm" onClick={() => onEditDraft(row)}>
                     Edit
                   </Button>
                 ) : row.status !== "DRAFT" && onViewVersion ? (
-                  <Button type="button" variant="ghost" size="sm" onClick={() => onViewVersion(row)}>
+                  <Button type="button" variant="outline" size="sm" onClick={() => onViewVersion(row)}>
                     View
                   </Button>
                 ) : null}

@@ -100,6 +100,20 @@ export default function QuestionnaireBuilderPage() {
     }
   }, [activeType, clearDraftForType, requestedType, requestedTypeUnavailable, setActiveType]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!useQuestionnaireBuilderStore.getState().hasUnsavedChanges()) {
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
   const isLoading =
     questionnaireTypesQuery.isLoading ||
     questionnaireVersionsQuery.isLoading ||

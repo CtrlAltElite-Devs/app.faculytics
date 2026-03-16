@@ -53,18 +53,10 @@ type QuestionnaireBuilderStore = {
   hasUnsavedChanges: () => boolean;
 };
 
-const DEFAULT_BACKEND_URL = "http://localhost:3000";
+const QUESTIONNAIRE_BUILDER_STORAGE_KEY = "questionnaire-builder-storage";
 
 function createId(prefix: string) {
   return `${prefix}-${crypto.randomUUID()}`;
-}
-
-function getQuestionnaireBuilderStorageKey() {
-  const backendUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || DEFAULT_BACKEND_URL)
-    .trim()
-    .replace(/\/+$/, "");
-
-  return `questionnaire-builder-storage:${encodeURIComponent(backendUrl)}`;
 }
 
 function createEmptyQualitativeConfig(): QuestionnaireBuilderQualitativeConfig {
@@ -636,7 +628,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
       },
     }),
     {
-      name: getQuestionnaireBuilderStorageKey(),
+      name: QUESTIONNAIRE_BUILDER_STORAGE_KEY,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         activeType: state.activeType,
