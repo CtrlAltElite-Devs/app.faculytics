@@ -32,4 +32,30 @@ export const deanAnalyticsMock = {
     { label: "Neutral", value: 8, fill: "#B8BDC7" },
     { label: "Negative", value: 6, fill: "var(--color-brand-yellow)" },
   ],
+  facultyCards: [
+    {
+      name: "Dr. Amelia Reyes",
+      imageSrc: "/mocks/faculty-placeholder.svg",
+      subjects: ["Data Structures", "Algorithms", "Discrete Mathematics", "Automata Theory"],
+      analysisHref: "/dean",
+    },
+    {
+      name: "Prof. Marcus Dela Cruz",
+      imageSrc: "/mocks/faculty-placeholder.svg",
+      subjects: ["Operating Systems", "Computer Networks", "Cybersecurity"],
+      analysisHref: "/dean",
+    },
+    {
+      name: "Dr. Sofia Mendoza",
+      imageSrc: "/mocks/faculty-placeholder.svg",
+      subjects: [
+        "Human Computer Interaction",
+        "Software Engineering",
+        "Capstone Project",
+        "Information Management",
+        "Research Methods",
+      ],
+      analysisHref: "/dean",
+    },
+  ],
 };

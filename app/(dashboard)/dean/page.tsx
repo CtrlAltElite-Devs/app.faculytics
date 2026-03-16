@@ -1,3 +1,4 @@
+import { DeanFacultyCard } from "@/components/faculytics/dean-faculty-card";
 import { DeanSentimentCharts } from "@/components/faculytics/dean-sentiment-charts";
 import { deanAnalyticsMock } from "@/mocks/dean-analytics";
 
@@ -6,7 +7,7 @@ export default function DeanDashboardPage() {
     <section className="space-y-6 p-4 md:p-8">
       <div className="space-y-2">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="space-y-2">
+          <div className="space-y-4">
             <h1 className="font-playfair text-3xl font-semibold tracking-tight">
               Department Performance Overview
             </h1>
@@ -51,6 +52,27 @@ export default function DeanDashboardPage() {
         barChartData={deanAnalyticsMock.sentimentBarChartData}
         pieChartData={deanAnalyticsMock.sentimentPieChartData}
       />
+
+      <section className="space-y-5">
+        <div className="space-y-2">
+          <h2 className="font-playfair text-2xl font-semibold tracking-tight">Faculty Analysis</h2>
+          <p className="text-sm text-muted-foreground">
+            Review faculty-specific subject coverage and jump directly to individual analysis.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {deanAnalyticsMock.facultyCards.map((faculty) => (
+            <DeanFacultyCard
+              key={faculty.name}
+              name={faculty.name}
+              imageSrc={faculty.imageSrc}
+              subjects={faculty.subjects}
+              analysisHref={faculty.analysisHref}
+            />
+          ))}
+        </div>
+      </section>
     </section>
   );
 }

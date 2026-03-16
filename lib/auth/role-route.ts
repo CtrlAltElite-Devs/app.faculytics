@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, Building2, Shield, type LucideIcon } from "lucide-react";
+import { BarChart3, BookOpen, Building2, LayoutDashboard, Shield, type LucideIcon } from "lucide-react";
 
 import { ROLES, type AppRole } from "@/constants/roles";
 
@@ -36,7 +36,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     homePath: "/dean",
     routePrefix: "/dean",
     navItems: [
-      { title: "Analytics", url: "/dean", icon: BarChart3 },
+      { title: "Dashboard", url: "/dean", icon: LayoutDashboard },
       { title: "Faculties", url: "/dean/faculties", icon: Building2 },
     ],
   },
