@@ -1,12 +1,13 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
+
 import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/questionnaire-add-action-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import type {
   QuestionnaireBuilderQualitativeConfig,
   QuestionnaireBuilderValidationIssue,
@@ -38,16 +39,13 @@ export function QuestionnaireQualitativeEditor({
   }
 
   return (
-    <Card id="qualitative-editor">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+    <Card id="qualitative-editor" className="min-w-0">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 gap-3">
         <div className="min-w-0 flex-1">
           <CardTitle className="font-playfair text-lg font-semibold">Comments</CardTitle>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Please provide additional comments
-          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-3">
+          <div className="hidden min-w-0 items-center gap-2 sm:flex">
             <Checkbox
               id="qualitative-required"
               checked={value.required}
@@ -57,28 +55,32 @@ export function QuestionnaireQualitativeEditor({
           </div>
           <Button
             type="button"
-            variant="destructive"
+            variant="ghost"
             size="sm"
+            className="size-9 p-0"
+            aria-label="Remove comment section"
             onClick={() => onChange({ enabled: false })}
           >
-            Remove section
+            <Trash2 className="size-4 text-destructive" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <Textarea
-          disabled
-          placeholder="Add your comments here."
-          aria-required={value.required}
-          maxLength={maxLength}
-          className="min-h-28 bg-muted/20"
-        />
-
-        <div className="flex justify-end">
-          <div className="w-full max-w-40 space-y-2">
-            <Label htmlFor="qualitative-max-length" className="text-right">
-              Maximum length
-            </Label>
+      <CardContent className="flex flex-col gap-4">
+        <div className="order-2 rounded-xl border bg-muted/20 px-4 py-3 sm:order-1">
+          <p className="text-sm text-muted-foreground">
+            The comment field is rendered in the student preview only.
+          </p>
+        </div>
+        <div className="order-1 flex flex-col gap-4 sm:order-2 sm:flex-row sm:items-start sm:justify-end">
+          <div className="flex items-center gap-2 sm:hidden">
+            <Checkbox
+              id="qualitative-required-mobile"
+              checked={value.required}
+              onCheckedChange={(checked) => onChange({ required: checked === true })}
+            />
+            <Label htmlFor="qualitative-required-mobile">Required response</Label>
+          </div>
+          <div className="w-full space-y-2 sm:w-36">
             <Input
               id="qualitative-max-length"
               type="number"
@@ -93,9 +95,12 @@ export function QuestionnaireQualitativeEditor({
                 })
               }
             />
-            {maxLengthIssue && <p className="text-sm text-destructive">{maxLengthIssue.message}</p>}
+            <Label htmlFor="qualitative-max-length" className="text-xs text-muted-foreground">
+              Maximum length
+            </Label>
           </div>
         </div>
+        {maxLengthIssue && <p className="text-sm text-destructive">{maxLengthIssue.message}</p>}
       </CardContent>
     </Card>
   );

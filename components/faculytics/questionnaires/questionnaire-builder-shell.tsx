@@ -60,6 +60,7 @@ export function QuestionnaireBuilderShell({
   const { save, isPending } = useSaveQuestionnaireBuilder();
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
   const [pendingParentId, setPendingParentId] = useState<string | null>(null);
+  const [pendingScrollToSection, setPendingScrollToSection] = useState(false);
 
   useEffect(() => {
     if (!draft || draft.selectedSectionId || draft.sections.length === 0) {
@@ -68,6 +69,22 @@ export function QuestionnaireBuilderShell({
 
     selectSection(draft.sections[0]?.id ?? null);
   }, [draft, selectSection]);
+
+  useEffect(() => {
+    if (!draft?.selectedSectionId || !pendingScrollToSection) {
+      return;
+    }
+
+    const targetId =
+      draft.selectedSectionId === "qualitative"
+        ? "qualitative-editor"
+        : `section-editor-${draft.selectedSectionId}`;
+
+    requestAnimationFrame(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setPendingScrollToSection(false);
+    });
+  }, [draft?.selectedSectionId, pendingScrollToSection]);
 
   if (!isHydrated || !draft) {
     return <Card className="p-6 text-sm text-muted-foreground">Loading builder draft...</Card>;
@@ -93,7 +110,13 @@ export function QuestionnaireBuilderShell({
       return;
     }
 
+    setPendingScrollToSection(true);
     addChildSection(sectionId);
+  };
+
+  const handleAddRootSection = () => {
+    setPendingScrollToSection(true);
+    addRootSection();
   };
 
   const handleUpdateSection = (
@@ -184,8 +207,8 @@ export function QuestionnaireBuilderShell({
           </CardContent>
       </Card>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,2.2fr)]">
-        <div className="lg:sticky lg:top-4">
+      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,2.2fr)]">
+        <div className="min-w-0 lg:sticky lg:top-4">
           <QuestionnaireOutlinePanel
             sections={draft.sections}
             totalLeafWeight={validation.totalLeafWeight}
@@ -194,18 +217,18 @@ export function QuestionnaireBuilderShell({
             qualitative={draft.qualitative}
             qualitativeIssues={validation.qualitativeIssues}
             onSelect={handleSelectSection}
-            onAddRoot={addRootSection}
+            onAddRoot={handleAddRootSection}
             onAddChild={requestAddChild}
             onMove={moveSection}
             onRemove={removeSection}
           />
         </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {draft.sections.length === 0 ? (
             <QuestionnaireAddActionButton
               label="Add Section"
-              onClick={addRootSection}
+              onClick={handleAddRootSection}
             />
           ) : (
             <>
@@ -229,7 +252,7 @@ export function QuestionnaireBuilderShell({
               ))}
               <QuestionnaireAddActionButton
                 label="Add Section"
-                onClick={addRootSection}
+                onClick={handleAddRootSection}
               />
             </>
           )}
@@ -296,6 +319,7 @@ export function QuestionnaireBuilderShell({
               type="button"
               onClick={() => {
                 if (pendingParentId) {
+                  setPendingScrollToSection(true);
                   addChildSection(pendingParentId);
                 }
                 setPendingParentId(null);

@@ -87,17 +87,17 @@ export function QuestionnaireSectionEditor({
     <Card
       id={`section-editor-${section.id}`}
       className={cn(
-        "scroll-mt-6 gap-4",
+        "scroll-mt-6 gap-4 min-w-0",
         isSelected && "border-brand-blue/60 ring-1 ring-brand-blue/30"
       )}
     >
       <CardHeader className="space-y-4">
         <div
           className={cn(
-            "grid items-start gap-4",
+            "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 gap-y-4",
             isLeaf
-              ? "grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[minmax(0,1fr)_minmax(150px,0.85fr)_minmax(110px,0.45fr)_auto]"
-              : "grid-cols-[minmax(0,1fr)_auto]"
+              ? "md:grid-cols-[minmax(0,1fr)_minmax(112px,0.44fr)_88px_auto]"
+              : "md:grid-cols-[minmax(0,1fr)_auto]"
           )}
         >
           <div className="min-w-0">

@@ -124,7 +124,7 @@ export default function QuestionnaireBuilderPage() {
     questionnaireVersionQuery.isError;
 
   return (
-    <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
+    <section className="space-y-6 px-0 py-5 sm:px-6 md:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-playfair text-2xl font-semibold">Questionnaire Builder</h1>

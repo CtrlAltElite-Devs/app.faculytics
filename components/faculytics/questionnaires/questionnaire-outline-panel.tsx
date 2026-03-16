@@ -65,7 +65,7 @@ function OutlineNode({
     <div className="space-y-2">
       <div
         className={cn(
-          "flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition hover:border-brand-blue/40 hover:bg-accent/30",
+          "flex w-full min-w-0 items-start justify-between gap-2 rounded-xl border px-3 py-3 text-left transition hover:border-brand-blue/40 hover:bg-accent/30",
           isSelected && "border-brand-blue bg-brand-blue/5"
         )}
       >
@@ -99,7 +99,7 @@ function OutlineNode({
             )}
           </div>
         </button>
-        <div className="ml-3 flex shrink-0 items-center gap-1">
+        <div className="ml-1 flex shrink-0 flex-wrap items-center justify-end gap-1 sm:ml-3">
           <Button
             type="button"
             variant="ghost"
@@ -187,9 +187,9 @@ export function QuestionnaireOutlinePanel({
   onRemove,
 }: QuestionnaireOutlinePanelProps) {
   return (
-    <Card className="h-full lg:max-h-[75vh]">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <div className="flex items-center gap-2">
+    <Card className="h-full min-w-0 lg:max-h-[75vh]">
+      <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <CardTitle className="font-playfair text-lg">Structure</CardTitle>
           <Badge variant="outline">Weight total {totalLeafWeight}</Badge>
         </div>
@@ -197,6 +197,7 @@ export function QuestionnaireOutlinePanel({
           type="button"
           variant="brand"
           size="sm"
+          className="w-full sm:w-auto"
           onClick={onAddRoot}
         >
           Add Section
@@ -224,7 +225,7 @@ export function QuestionnaireOutlinePanel({
         {qualitative.enabled ? (
           <div
             className={cn(
-              "flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition hover:border-brand-blue/40 hover:bg-accent/30",
+              "flex w-full min-w-0 items-start justify-between gap-2 rounded-xl border px-3 py-3 text-left transition hover:border-brand-blue/40 hover:bg-accent/30",
               selectedSectionId === "qualitative" && "border-brand-blue bg-brand-blue/5"
             )}
           >
