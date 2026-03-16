@@ -25,6 +25,7 @@ export default function AuthPage() {
   const clearSession = useAuthStore((state) => state.clearSession);
   const token = useAuthStore((state) => state.token);
   const [showPassword, setShowPassword] = useState(false);
+  const isSigningIn = isPending || (Boolean(token) && isMePending);
 
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
@@ -55,14 +56,6 @@ export default function AuthPage() {
       clearSession();
     }
   }, [clearSession, isMeError, isMePending, me, roleHome, router, token]);
-
-  if (token && isMePending) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
-        Redirecting...
-      </div>
-    );
-  }
 
   return (
     <div className="h-screen grid grid-cols-1 lg:grid-cols-10">
@@ -131,6 +124,7 @@ export default function AuthPage() {
                         id="username"
                         type="text"
                         placeholder="john@gmail.com"
+                        disabled={isSigningIn}
                       />
                       {fieldState.error && (
                         <FieldError>
@@ -160,6 +154,7 @@ export default function AuthPage() {
                           id="password"
                           type={showPassword ? "text" : "password"}
                           className="pr-10"
+                          disabled={isSigningIn}
                         />
                         <Button
                           type="button"
@@ -168,6 +163,7 @@ export default function AuthPage() {
                           className="absolute right-1 top-1/2 -translate-y-1/2"
                           onClick={() => setShowPassword((current) => !current)}
                           aria-label={showPassword ? "Hide password" : "Show password"}
+                          disabled={isSigningIn}
                         >
                           {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                         </Button>
@@ -184,10 +180,10 @@ export default function AuthPage() {
 
               <Button
                 type="submit"
-                disabled={isPending}
+                disabled={isSigningIn}
                 className="w-full bg-brand-blue hover:bg-brand-blue/90 text-secondary font-semibold cursor-pointer"
               >
-                {isPending ? "Logging in..." : "Login"}
+                {isSigningIn ? "Signing in..." : "Login"}
               </Button>
             </form>
             <div className="flex gap-2 text-sm justify-center">

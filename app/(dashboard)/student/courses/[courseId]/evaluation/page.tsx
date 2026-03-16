@@ -1,9 +1,10 @@
 "use client";
 
+import { QuestionnaireRatingScaleInstructions } from "@/components/faculytics/questionnaires/questionnaire-rating-scale-instructions";
 import { useMyEnrollments } from "@/hooks/enrollments/use-my-enrollments";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClipboardList, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -68,44 +69,9 @@ export default function FacultyEvaluationPage() {
         </CardContent>
       </Card>
 
-      <Card className="mt-8 bg-brand-yellow/30 border border-brand-yellow/90">
-        <CardHeader>
-          <CardTitle className="text-lg font-playfair">Rating Scale Instructions</CardTitle>
-          <CardDescription className="text-primary">Please rate each statement using the following scale:</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-5">
-          <div>
-            <p className="font-medium">1 - Strongly Disagree</p>
-            <p className="mt-1 text-primary">
-              Performance does not conform with University of Cebu standards.
-            </p>
-          </div>
-          <div>
-            <p className="font-medium">2 - Disagree</p>
-            <p className="mt-1 text-primary">
-              Performance is below University of Cebu standards.
-            </p>
-          </div>
-          <div>
-            <p className="font-medium">3 - Neutral</p>
-            <p className="mt-1 text-primary">
-              Performance is within standards in many instances.
-            </p>
-          </div>
-          <div>
-            <p className="font-medium">4 - Agree</p>
-            <p className="mt-1 text-primary">
-              Performance is within standards in most cases.
-            </p>
-          </div>
-          <div>
-            <p className="font-medium">5 - Strongly Agree</p>
-            <p className="mt-1 text-primary">
-              Performance exceeds University of Cebu standards consistently.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="mt-8">
+        <QuestionnaireRatingScaleInstructions />
+      </div>
 
       <Card className="mt-8">
         <CardHeader>

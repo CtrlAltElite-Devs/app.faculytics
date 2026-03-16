@@ -45,9 +45,9 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
   },
   SUPER_ADMIN: {
     label: "Super Admin",
-    homePath: "/superadmin",
+    homePath: "/superadmin/questionnaires",
     routePrefix: "/superadmin",
-    navItems: [{ title: "Super Admin", url: "/superadmin", icon: Shield }],
+    navItems: [{ title: "Questionnaires", url: "/superadmin/questionnaires", icon: Shield }],
   },
 };
 

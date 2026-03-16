@@ -7,4 +7,11 @@ export enum Endpoints {
 
   // Student
   enrollmentsMe = "/api/v1/enrollments/me",
+
+  // Questionnaires
+  questionnaires = "/api/v1/questionnaires",
+  questionnaireTypes = "/api/v1/questionnaires/types",
+  questionnaireTypeVersions = "/api/v1/questionnaires/types/:type/versions",
+  questionnaireVersions = "/api/v1/questionnaires/:id/versions",
+  questionnaireVersionById = "/api/v1/questionnaires/versions/:versionId",
 }
