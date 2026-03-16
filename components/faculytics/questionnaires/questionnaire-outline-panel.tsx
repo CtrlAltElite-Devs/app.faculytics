@@ -15,6 +15,7 @@ import { MAX_SECTION_NESTING_LEVEL } from "@/types/questionnaires";
 
 type QuestionnaireOutlinePanelProps = {
   sections: QuestionnaireBuilderSectionNode[];
+  totalLeafWeight: number;
   selectedSectionId: string | null;
   sectionIssues: Record<string, QuestionnaireBuilderValidationIssue[]>;
   qualitative: QuestionnaireBuilderQualitativeConfig;
@@ -174,6 +175,7 @@ function OutlineNode({
 
 export function QuestionnaireOutlinePanel({
   sections,
+  totalLeafWeight,
   selectedSectionId,
   sectionIssues,
   qualitative,
@@ -187,7 +189,10 @@ export function QuestionnaireOutlinePanel({
   return (
     <Card className="h-full lg:max-h-[75vh]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="font-playfair text-lg">Structure</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="font-playfair text-lg">Structure</CardTitle>
+          <Badge variant="outline">Weight total {totalLeafWeight}</Badge>
+        </div>
         <Button
           type="button"
           variant="brand"

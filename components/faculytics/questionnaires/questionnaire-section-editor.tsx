@@ -108,7 +108,7 @@ export function QuestionnaireSectionEditor({
                 ariaInvalid={Boolean(titleIssue)}
                 placeholder={depth > 0 ? "Enter subsection title" : "Enter section title"}
                 textClassName="font-playfair text-lg font-semibold"
-                inputClassName="font-playfair text-lg font-semibold"
+                inputClassName="text-lg font-semibold"
                 onChange={(value) =>
                   onUpdateSection(section.id, {
                     title: value,

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useDeferredValue, useEffect, useState } from "react";
-import { FilePenLine } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -138,8 +137,7 @@ export default function SuperAdminQuestionnairesPage() {
         {!hasDraftVersion ? (
           <Button asChild variant="brand" className="w-full">
             <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
-              <FilePenLine />
-              Create draft questionnaire
+              Create Draft
             </Link>
           </Button>
         ) : null}
@@ -166,8 +164,7 @@ export default function SuperAdminQuestionnairesPage() {
                 className="sm:self-stretch"
               >
                 <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
-                  <FilePenLine />
-                  Create draft questionnaire
+                  Create Draft
                 </Link>
               </Button>
             ) : null}

@@ -1,20 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { QuestionnaireBuilderShell } from "@/components/faculytics/questionnaires/questionnaire-builder-shell";
 import { QuestionnaireEmptyState } from "@/components/faculytics/questionnaires/questionnaire-empty-state";
 import { QuestionnaireErrorState } from "@/components/faculytics/questionnaires/questionnaire-error-state";
 import { QuestionnaireLoadingState } from "@/components/faculytics/questionnaires/questionnaire-loading-state";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
 import {
@@ -41,11 +34,9 @@ export default function QuestionnaireBuilderPage() {
   const searchParams = useSearchParams();
   const requestedType = resolveRequestedType(searchParams.get("type"));
   const requestedVersionId = searchParams.get("versionId");
-  const [pendingType, setPendingType] = useState<QuestionnaireType | null>(null);
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const hydrated = useQuestionnaireBuilderStore((state) => state.hydrated);
   const activeType = useQuestionnaireBuilderStore((state) => state.activeType);
-  const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
   const loadDraftFromServer = useQuestionnaireBuilderStore((state) => state.loadDraftFromServer);
   const clearDraftForType = useQuestionnaireBuilderStore((state) => state.clearDraftForType);
   const setActiveType = useQuestionnaireBuilderStore((state) => state.setActiveType);
@@ -109,19 +100,6 @@ export default function QuestionnaireBuilderPage() {
     }
   }, [activeType, clearDraftForType, requestedType, requestedTypeUnavailable, setActiveType]);
 
-  const handleTypeChange = (nextType: QuestionnaireType) => {
-    if (nextType === activePageType) {
-      return;
-    }
-
-    if (activeType === activePageType && hasUnsavedChanges()) {
-      setPendingType(nextType);
-      return;
-    }
-
-    router.replace(`/superadmin/questionnaires/new?type=${nextType}`);
-  };
-
   const isLoading =
     questionnaireTypesQuery.isLoading ||
     questionnaireVersionsQuery.isLoading ||
@@ -132,8 +110,8 @@ export default function QuestionnaireBuilderPage() {
     questionnaireVersionQuery.isError;
 
   return (
-    <>
-      <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
+    <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-playfair text-2xl font-semibold">Questionnaire Builder</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -141,71 +119,45 @@ export default function QuestionnaireBuilderPage() {
             save it as a draft version.
           </p>
         </div>
+        <Button asChild variant="outline" className="sm:self-start">
+          <Link href={`/superadmin/questionnaires?type=${activePageType}`}>
+            Back to questionnaires
+          </Link>
+        </Button>
+      </div>
 
-        {isLoading ? (
-          <QuestionnaireLoadingState />
-        ) : isError ? (
-          <QuestionnaireErrorState
-            onRetry={() => {
-              void questionnaireTypesQuery.refetch();
-              void questionnaireVersionsQuery.refetch();
-              if (resolvedVersionId) {
-                void questionnaireVersionQuery.refetch();
-              }
-            }}
-          />
-        ) : availableTypes.length === 0 ? (
-          <QuestionnaireEmptyState description="No questionnaire types are available right now." />
-        ) : requestedTypeUnavailable ? (
-          <QuestionnaireEmptyState
-            description="That questionnaire type is no longer available. The stale local draft for it was discarded."
-            actionLabel="Open available type"
-            onAction={() => {
-              if (availableTypes[0]) {
-                router.replace(`/superadmin/questionnaires/new?type=${availableTypes[0]}`);
-              }
-            }}
-          />
-        ) : !questionnaireVersionsQuery.data ? (
-          <QuestionnaireLoadingState />
-        ) : (
-          <QuestionnaireBuilderShell
-            availableTypes={availableTypes}
-            activeType={activePageType}
-            onTypeChange={handleTypeChange}
-            serverContext={questionnaireVersionsQuery.data}
-            isHydrated={hydrated}
-          />
-        )}
-      </section>
-
-      <Dialog open={Boolean(pendingType)} onOpenChange={(open) => !open && setPendingType(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Switch questionnaire type?</DialogTitle>
-            <DialogDescription>
-              The current draft has unsaved changes. Switching types will discard changes that
-              have not been saved to the backend.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setPendingType(null)}>
-              Stay here
-            </Button>
-            <Button
-              type="button"
-              onClick={() => {
-                if (pendingType) {
-                  router.replace(`/superadmin/questionnaires/new?type=${pendingType}`);
-                }
-                setPendingType(null);
-              }}
-            >
-              Switch type
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+      {isLoading ? (
+        <QuestionnaireLoadingState />
+      ) : isError ? (
+        <QuestionnaireErrorState
+          onRetry={() => {
+            void questionnaireTypesQuery.refetch();
+            void questionnaireVersionsQuery.refetch();
+            if (resolvedVersionId) {
+              void questionnaireVersionQuery.refetch();
+            }
+          }}
+        />
+      ) : availableTypes.length === 0 ? (
+        <QuestionnaireEmptyState description="No questionnaire types are available right now." />
+      ) : requestedTypeUnavailable ? (
+        <QuestionnaireEmptyState
+          description="That questionnaire type is no longer available. The stale local draft for it was discarded."
+          actionLabel="Open available type"
+          onAction={() => {
+            if (availableTypes[0]) {
+              router.replace(`/superadmin/questionnaires/new?type=${availableTypes[0]}`);
+            }
+          }}
+        />
+      ) : !questionnaireVersionsQuery.data ? (
+        <QuestionnaireLoadingState />
+      ) : (
+        <QuestionnaireBuilderShell
+          activeType={activePageType}
+          isHydrated={hydrated}
+        />
+      )}
+    </section>
   );
 }

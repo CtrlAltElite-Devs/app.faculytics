@@ -49,7 +49,7 @@ export function InlineEditInput({
         aria-invalid={ariaInvalid}
         data-slot="inline-edit-input"
         className={cn(
-          "h-9 w-full rounded-none border-0 border-b border-input bg-transparent px-3 py-1 text-base shadow-none outline-none transition-[color,box-shadow] placeholder:text-muted-foreground md:text-sm",
+          "h-9 w-full min-w-0 truncate whitespace-nowrap rounded-none border-0 border-b border-input bg-transparent px-3 py-1 font-sans text-base shadow-none outline-none transition-[color,box-shadow] placeholder:text-muted-foreground md:text-sm",
           "focus-visible:border-b-ring",
           "aria-invalid:border-destructive",
           inputClassName
@@ -70,7 +70,7 @@ export function InlineEditInput({
       type="button"
       disabled={disabled}
       className={cn(
-        "h-9 w-full rounded-md bg-muted/60 px-3 py-1 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "h-9 w-full min-w-0 truncate whitespace-nowrap rounded-md bg-muted/20 px-3 py-1 text-left font-playfair transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         !value && "text-muted-foreground",
         ariaInvalid && "text-destructive",
         textClassName
