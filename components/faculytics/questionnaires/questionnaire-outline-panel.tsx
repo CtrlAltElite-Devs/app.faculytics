@@ -190,8 +190,8 @@ export function QuestionnaireOutlinePanel({
         <CardTitle className="font-playfair text-lg">Structure</CardTitle>
         <Button
           type="button"
+          variant="brand"
           size="sm"
-          className="bg-brand-blue/80 text-white hover:bg-brand-blue/70"
           onClick={onAddRoot}
         >
           Add Section

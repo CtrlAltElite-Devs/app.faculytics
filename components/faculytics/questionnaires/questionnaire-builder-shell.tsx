@@ -161,7 +161,7 @@ export function QuestionnaireBuilderShell({
                   </Button>
                   <Button
                     type="button"
-                    className="bg-brand-blue/80 text-white hover:bg-brand-blue/70"
+                    variant="brand"
                     disabled={isPending}
                     onClick={() => void save()}
                   >

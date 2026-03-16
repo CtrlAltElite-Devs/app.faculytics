@@ -109,7 +109,7 @@ export default function FacultyEvaluationPage() {
             <Button asChild variant="outline">
               <Link href="/student/courses">Back to Courses</Link>
             </Button>
-            <Button className="bg-brand-blue/80 hover:bg-brand-blue/60">Submit Evaluation</Button>
+            <Button variant="brand">Submit Evaluation</Button>
           </div>
         </CardContent>
       </Card>

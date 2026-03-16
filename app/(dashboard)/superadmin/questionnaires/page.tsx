@@ -136,7 +136,7 @@ export default function SuperAdminQuestionnairesPage() {
           className="w-full justify-between gap-3"
         />
         {!hasDraftVersion ? (
-          <Button asChild className="w-full bg-brand-blue text-white hover:bg-brand-blue/90">
+          <Button asChild variant="brand" className="w-full">
             <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
               <FilePenLine />
               Create draft questionnaire
@@ -162,7 +162,8 @@ export default function SuperAdminQuestionnairesPage() {
             {!hasDraftVersion ? (
               <Button
                 asChild
-                className="bg-brand-blue/80 text-white hover:bg-brand-blue/70 sm:self-stretch"
+                variant="brand"
+                className="sm:self-stretch"
               >
                 <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
                   <FilePenLine />

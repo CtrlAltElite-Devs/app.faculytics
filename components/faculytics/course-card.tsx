@@ -74,7 +74,8 @@ export default function CourseCard({
         </div>
         <Button
           asChild
-          className="mt-auto w-full bg-brand-blue hover:bg-brand-blue/90 cursor-pointer"
+          variant="brand"
+          className="mt-auto w-full"
         >
           <Link href={feedbackHref} onClick={onGiveFeedback}>
             Give Feedback
