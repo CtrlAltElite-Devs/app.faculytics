@@ -14,6 +14,7 @@ import type { QuestionnaireVersionItem } from "@/types/questionnaires";
 type QuestionnaireTableProps = {
   rows: QuestionnaireVersionItem[];
   onEditDraft?: (row: QuestionnaireVersionItem) => void;
+  onViewVersion?: (row: QuestionnaireVersionItem) => void;
 };
 
 const STATUS_BADGE_CLASS_NAMES = {
@@ -34,7 +35,7 @@ function formatDate(value?: string | null) {
   }).format(new Date(value));
 }
 
-export function QuestionnaireTable({ rows, onEditDraft }: QuestionnaireTableProps) {
+export function QuestionnaireTable({ rows, onEditDraft, onViewVersion }: QuestionnaireTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border bg-background">
       <Table>
@@ -67,8 +68,12 @@ export function QuestionnaireTable({ rows, onEditDraft }: QuestionnaireTableProp
               </TableCell>
               <TableCell>
                 {row.status === "DRAFT" && onEditDraft ? (
-                  <Button type="button" size="sm" onClick={() => onEditDraft(row)}>
-                    Edit draft
+                  <Button type="button" variant="ghost" size="sm" onClick={() => onEditDraft(row)}>
+                    Edit
+                  </Button>
+                ) : row.status !== "DRAFT" && onViewVersion ? (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => onViewVersion(row)}>
+                    View
                   </Button>
                 ) : null}
               </TableCell>

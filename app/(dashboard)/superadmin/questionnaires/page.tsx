@@ -90,6 +90,10 @@ export default function SuperAdminQuestionnairesPage() {
     router.push(`/superadmin/questionnaires/new?type=${activeType}&versionId=${row.id}`);
   };
 
+  const handleViewVersion = (row: QuestionnaireVersionItem) => {
+    router.push(`/superadmin/questionnaires/preview?versionId=${row.id}`);
+  };
+
   const selectedSummary = typeSummaries.find((summary) => summary.type === activeType);
   const normalizedSearch = deferredSearchValue.trim().toLowerCase();
   const versionRows = questionnaireVersionsQuery.data?.versions ?? [];
@@ -109,6 +113,7 @@ export default function SuperAdminQuestionnairesPage() {
   const hasQuestionnaire = Boolean(selectedSummary?.questionnaireId);
   const hasVersions = versionRows.length > 0;
   const hasFilters = normalizedSearch.length > 0 || statusFilter !== "ALL";
+  const hasDraftVersion = versionRows.some((row) => row.status === "DRAFT");
 
   return (
     <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
@@ -130,12 +135,14 @@ export default function SuperAdminQuestionnairesPage() {
           onValueChange={setStatusFilter}
           className="w-full justify-between gap-3"
         />
-        <Button asChild className="w-full bg-brand-blue text-white hover:bg-brand-blue/90">
-          <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
-            <FilePenLine />
-            Create draft questionnaire
-          </Link>
-        </Button>
+        {!hasDraftVersion ? (
+          <Button asChild className="w-full bg-brand-blue text-white hover:bg-brand-blue/90">
+            <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
+              <FilePenLine />
+              Create draft questionnaire
+            </Link>
+          </Button>
+        ) : null}
         <QuestionnaireSearchInput
           value={searchValue}
           onChange={setSearchValue}
@@ -152,15 +159,17 @@ export default function SuperAdminQuestionnairesPage() {
 
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
-            <Button
-              asChild
-              className="bg-brand-blue/80 text-white hover:bg-brand-blue/70 sm:self-stretch"
-            >
-              <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
-                <FilePenLine />
-                Create draft questionnaire
-              </Link>
-            </Button>
+            {!hasDraftVersion ? (
+              <Button
+                asChild
+                className="bg-brand-blue/80 text-white hover:bg-brand-blue/70 sm:self-stretch"
+              >
+                <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
+                  <FilePenLine />
+                  Create draft questionnaire
+                </Link>
+              </Button>
+            ) : null}
             <QuestionnaireSearchInput value={searchValue} onChange={setSearchValue} />
           </div>
           <QuestionnaireStatusFilter value={statusFilter} onValueChange={setStatusFilter} />
@@ -195,7 +204,11 @@ export default function SuperAdminQuestionnairesPage() {
         />
       ) : (
         <div className="space-y-4">
-          <QuestionnaireTable rows={filteredRows} onEditDraft={handleEditDraft} />
+          <QuestionnaireTable
+            rows={filteredRows}
+            onEditDraft={handleEditDraft}
+            onViewVersion={handleViewVersion}
+          />
 
           <div className="flex justify-end">
             <p className="text-sm text-muted-foreground">
