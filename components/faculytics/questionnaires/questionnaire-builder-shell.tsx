@@ -283,10 +283,10 @@ export function QuestionnaireBuilderShell({
       <Dialog open={discardDialogOpen} onOpenChange={setDiscardDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Discard this local draft?</DialogTitle>
+            <DialogTitle>Discard unsaved changes?</DialogTitle>
             <DialogDescription>
-              This clears the saved builder draft for the active questionnaire type and resets the
-              authoring surface to a clean state.
+              This discards changes that have not been saved to the backend and restores the last
+              synced draft state for this questionnaire type.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

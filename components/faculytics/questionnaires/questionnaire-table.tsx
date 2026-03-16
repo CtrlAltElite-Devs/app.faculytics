@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -12,6 +13,7 @@ import type { QuestionnaireVersionItem } from "@/types/questionnaires";
 
 type QuestionnaireTableProps = {
   rows: QuestionnaireVersionItem[];
+  onEditDraft?: (row: QuestionnaireVersionItem) => void;
 };
 
 const STATUS_BADGE_CLASS_NAMES = {
@@ -32,24 +34,23 @@ function formatDate(value?: string | null) {
   }).format(new Date(value));
 }
 
-// TODO: Add quick actions on rows
-// such as preview, deprecate, publish
-export function QuestionnaireTable({ rows }: QuestionnaireTableProps) {
+export function QuestionnaireTable({ rows, onEditDraft }: QuestionnaireTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border bg-background">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="px-4">Version</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Published</TableHead>
-            <TableHead className="pr-4">Created</TableHead>
+            <TableHead className="w-[18%] px-4">Version</TableHead>
+            <TableHead className="w-[22%]">Status</TableHead>
+            <TableHead className="w-[20%]">Published</TableHead>
+            <TableHead className="w-[20%]">Created</TableHead>
+            <TableHead className="w-[20%] pl-4">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell className="px-4 font-medium">v{row.versionNumber}</TableCell>
+              <TableCell className="px-4 font-medium tabular-nums">v{row.versionNumber}</TableCell>
               <TableCell>
                 <Badge
                   variant="ghost"
@@ -58,8 +59,19 @@ export function QuestionnaireTable({ rows }: QuestionnaireTableProps) {
                   {row.status}
                 </Badge>
               </TableCell>
-              <TableCell>{formatDate(row.publishedAt)}</TableCell>
-              <TableCell className="pr-4">{formatDate(row.createdAt)}</TableCell>
+              <TableCell className="whitespace-nowrap text-muted-foreground">
+                {formatDate(row.publishedAt)}
+              </TableCell>
+              <TableCell className="whitespace-nowrap text-muted-foreground">
+                {formatDate(row.createdAt)}
+              </TableCell>
+              <TableCell>
+                {row.status === "DRAFT" && onEditDraft ? (
+                  <Button type="button" size="sm" onClick={() => onEditDraft(row)}>
+                    Edit draft
+                  </Button>
+                ) : null}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

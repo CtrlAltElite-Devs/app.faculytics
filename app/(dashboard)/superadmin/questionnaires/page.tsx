@@ -20,6 +20,7 @@ import { useQuestionnaireVersions } from "@/hooks/questionnaires/use-questionnai
 import {
   DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
+  type QuestionnaireVersionItem,
   type QuestionnaireStatusFilter as StatusFilter,
   type QuestionnaireType,
 } from "@/types/questionnaires";
@@ -83,6 +84,10 @@ export default function SuperAdminQuestionnairesPage() {
     setSearchValue("");
     setStatusFilter("ALL");
     router.replace(`/superadmin/questionnaires?type=${nextType}`);
+  };
+
+  const handleEditDraft = (row: QuestionnaireVersionItem) => {
+    router.push(`/superadmin/questionnaires/new?type=${activeType}&versionId=${row.id}`);
   };
 
   const selectedSummary = typeSummaries.find((summary) => summary.type === activeType);
@@ -190,7 +195,7 @@ export default function SuperAdminQuestionnairesPage() {
         />
       ) : (
         <div className="space-y-4">
-          <QuestionnaireTable rows={filteredRows} />
+          <QuestionnaireTable rows={filteredRows} onEditDraft={handleEditDraft} />
 
           <div className="flex justify-end">
             <p className="text-sm text-muted-foreground">

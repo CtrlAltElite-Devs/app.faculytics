@@ -9,6 +9,7 @@ import { validateQuestionnaireBuilderDraft } from "@/lib/questionnaires/builder-
 import { useCreateQuestionnaire } from "@/hooks/questionnaires/use-create-questionnaire";
 import { useCreateQuestionnaireVersion } from "@/hooks/questionnaires/use-create-questionnaire-version";
 import { useUpdateQuestionnaireVersion } from "@/hooks/questionnaires/use-update-questionnaire-version";
+import { fetchQuestionnaireVersionById } from "@/network/requests/questionnaires";
 import { useQuestionnaireBuilderStore } from "@/stores/questionnaire-builder-store";
 
 export function useSaveQuestionnaireBuilder() {
@@ -16,10 +17,10 @@ export function useSaveQuestionnaireBuilder() {
   const createQuestionnaireMutation = useCreateQuestionnaire();
   const createQuestionnaireVersionMutation = useCreateQuestionnaireVersion();
   const updateQuestionnaireVersionMutation = useUpdateQuestionnaireVersion();
-  const clearDraftForType = useQuestionnaireBuilderStore((state) => state.clearDraftForType);
   const setQuestionnaireRootMetadata = useQuestionnaireBuilderStore(
     (state) => state.setQuestionnaireRootMetadata
   );
+  const syncDraftVersion = useQuestionnaireBuilderStore((state) => state.syncDraftVersion);
 
   const save = async () => {
     const storeState = useQuestionnaireBuilderStore.getState();
@@ -46,6 +47,7 @@ export function useSaveQuestionnaireBuilder() {
 
     try {
       let questionnaireId = draft.metadata.questionnaireId;
+      let savedVersionId = draft.metadata.versionId;
 
       if (!questionnaireId) {
         const createdQuestionnaire = await createQuestionnaireMutation.mutateAsync({
@@ -57,22 +59,28 @@ export function useSaveQuestionnaireBuilder() {
       }
 
       if (draft.metadata.versionId) {
-        await updateQuestionnaireVersionMutation.mutateAsync({
+        const updatedVersion = await updateQuestionnaireVersionMutation.mutateAsync({
           versionId: draft.metadata.versionId,
           payload: {
             schema: payload,
           },
         });
+        savedVersionId = updatedVersion.id;
       } else {
-        await createQuestionnaireVersionMutation.mutateAsync({
+        const createdVersion = await createQuestionnaireVersionMutation.mutateAsync({
           questionnaireId,
           payload: {
             schema: payload,
           },
         });
+        savedVersionId = createdVersion.id;
       }
 
-      clearDraftForType(draft.metadata.type);
+      if (savedVersionId) {
+        const savedVersion = await fetchQuestionnaireVersionById(savedVersionId);
+        syncDraftVersion(savedVersion);
+      }
+
       toast.success("Questionnaire draft saved.");
       router.push(`/superadmin/questionnaires?builder=saved&type=${draft.metadata.type}`);
     } catch (error) {

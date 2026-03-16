@@ -16,9 +16,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { hasMeaningfulDraftContent } from "@/lib/questionnaires/builder-validator";
 import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
-import { useQuestionnaireVersions } from "@/hooks/questionnaires/use-questionnaire-versions";
+import {
+  useQuestionnaireVersion,
+  useQuestionnaireVersions,
+} from "@/hooks/questionnaires/use-questionnaire-versions";
 import { useQuestionnaireBuilderStore } from "@/stores/questionnaire-builder-store";
 import {
   DEFAULT_QUESTIONNAIRE_TYPE,
@@ -38,13 +40,12 @@ export default function QuestionnaireBuilderPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedType = resolveRequestedType(searchParams.get("type"));
+  const requestedVersionId = searchParams.get("versionId");
   const [pendingType, setPendingType] = useState<QuestionnaireType | null>(null);
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const hydrated = useQuestionnaireBuilderStore((state) => state.hydrated);
   const activeType = useQuestionnaireBuilderStore((state) => state.activeType);
-  const activeDraft = useQuestionnaireBuilderStore((state) =>
-    state.activeType ? state.drafts[state.activeType] ?? null : null
-  );
+  const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
   const loadDraftFromServer = useQuestionnaireBuilderStore((state) => state.loadDraftFromServer);
   const clearDraftForType = useQuestionnaireBuilderStore((state) => state.clearDraftForType);
   const setActiveType = useQuestionnaireBuilderStore((state) => state.setActiveType);
@@ -65,6 +66,15 @@ export default function QuestionnaireBuilderPage() {
   const questionnaireVersionsQuery = useQuestionnaireVersions(requestedType, {
     enabled: questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable,
   });
+  const defaultDraftVersionId =
+    questionnaireVersionsQuery.data?.versions.find((version) => version.status === "DRAFT")?.id ?? null;
+  const resolvedVersionId = requestedVersionId ?? defaultDraftVersionId;
+  const questionnaireVersionQuery = useQuestionnaireVersion(resolvedVersionId, {
+    enabled:
+      questionnaireTypesQuery.isSuccess &&
+      !requestedTypeUnavailable &&
+      Boolean(resolvedVersionId),
+  });
 
   useEffect(() => {
     if (searchParams.get("type") === activePageType) {
@@ -81,8 +91,11 @@ export default function QuestionnaireBuilderPage() {
       return;
     }
 
-    loadDraftFromServer(questionnaireVersionsQuery.data);
-  }, [loadDraftFromServer, questionnaireVersionsQuery.data]);
+    loadDraftFromServer({
+      ...questionnaireVersionsQuery.data,
+      draftVersion: questionnaireVersionQuery.data ?? null,
+    });
+  }, [loadDraftFromServer, questionnaireVersionQuery.data, questionnaireVersionsQuery.data]);
 
   useEffect(() => {
     if (!requestedTypeUnavailable) {
@@ -101,10 +114,7 @@ export default function QuestionnaireBuilderPage() {
       return;
     }
 
-    const hasUnsavedChanges =
-      activeType === activePageType && hasMeaningfulDraftContent(activeDraft);
-
-    if (hasUnsavedChanges) {
+    if (activeType === activePageType && hasUnsavedChanges()) {
       setPendingType(nextType);
       return;
     }
@@ -112,8 +122,14 @@ export default function QuestionnaireBuilderPage() {
     router.replace(`/superadmin/questionnaires/new?type=${nextType}`);
   };
 
-  const isLoading = questionnaireTypesQuery.isLoading || questionnaireVersionsQuery.isLoading;
-  const isError = questionnaireTypesQuery.isError || questionnaireVersionsQuery.isError;
+  const isLoading =
+    questionnaireTypesQuery.isLoading ||
+    questionnaireVersionsQuery.isLoading ||
+    questionnaireVersionQuery.isLoading;
+  const isError =
+    questionnaireTypesQuery.isError ||
+    questionnaireVersionsQuery.isError ||
+    questionnaireVersionQuery.isError;
 
   return (
     <>
@@ -133,6 +149,9 @@ export default function QuestionnaireBuilderPage() {
             onRetry={() => {
               void questionnaireTypesQuery.refetch();
               void questionnaireVersionsQuery.refetch();
+              if (resolvedVersionId) {
+                void questionnaireVersionQuery.refetch();
+              }
             }}
           />
         ) : availableTypes.length === 0 ? (
@@ -165,8 +184,8 @@ export default function QuestionnaireBuilderPage() {
           <DialogHeader>
             <DialogTitle>Switch questionnaire type?</DialogTitle>
             <DialogDescription>
-              The current draft has unsaved changes. Switching types will keep this draft in local
-              storage, but the builder will load a different type context.
+              The current draft has unsaved changes. Switching types will discard changes that
+              have not been saved to the backend.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
