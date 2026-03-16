@@ -1,3 +1,4 @@
+import { DeanSentimentCharts } from "@/components/faculytics/dean-sentiment-charts";
 import { deanAnalyticsMock } from "@/mocks/dean-analytics";
 
 export default function DeanDashboardPage() {
@@ -46,54 +47,10 @@ export default function DeanDashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
-        <div className="rounded-2xl border bg-card p-6 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-semibold tracking-tight">Sentiment snapshot</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Visual placeholder for aggregate dean-level sentiment across all faculties.
-              </p>
-            </div>
-            <div className="rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-600">
-              Overall positive
-            </div>
-          </div>
-
-          <div className="mt-8 space-y-5">
-            {deanAnalyticsMock.sentimentBands.map((band) => (
-              <div key={band.label} className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium">{band.label}</span>
-                  <span className="text-muted-foreground">{band.value}</span>
-                </div>
-                <div className="h-3 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full bg-brand-blue"
-                    style={{ width: band.width }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border bg-card p-6 shadow-sm">
-          <h2 className="text-xl font-semibold tracking-tight">Department highlights</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Key talking points for dean review meetings and weekly reporting.
-          </p>
-
-          <div className="mt-6 space-y-4">
-            {deanAnalyticsMock.departmentHighlights.map((item) => (
-              <div key={item.label} className="rounded-xl border bg-background/60 p-4">
-                <p className="text-sm text-muted-foreground">{item.label}</p>
-                <p className="mt-2 text-base font-medium">{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <DeanSentimentCharts
+        barChartData={deanAnalyticsMock.sentimentBarChartData}
+        pieChartData={deanAnalyticsMock.sentimentPieChartData}
+      />
     </section>
   );
 }

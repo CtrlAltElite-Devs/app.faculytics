@@ -22,14 +22,14 @@ export const deanAnalyticsMock = {
       hint: "Courses currently handled by the department",
     },
   ],
-  departmentHighlights: [
-    { label: "Top-performing faculty group", value: "College of Computing" },
-    { label: "Most active response window", value: "Weeks 10 to 12" },
-    { label: "Coverage rate", value: "91% of active classes evaluated" },
+  sentimentBarChartData: [
+    { sentiment: "Positive", firstSemester: 84, secondSemester: 88 },
+    { sentiment: "Negative", firstSemester: 9, secondSemester: 6 },
+    { sentiment: "Neutral", firstSemester: 7, secondSemester: 6 },
   ],
-  sentimentBands: [
-    { label: "Positive", value: "84.6%", width: "84.6%" },
-    { label: "Neutral", value: "10.8%", width: "10.8%" },
-    { label: "Needs attention", value: "4.6%", width: "4.6%" },
+  sentimentPieChartData: [
+    { label: "Positive", value: 86, fill: "var(--color-brand-blue)" },
+    { label: "Neutral", value: 8, fill: "#B8BDC7" },
+    { label: "Negative", value: 6, fill: "var(--color-brand-yellow)" },
   ],
 };
