@@ -1,9 +1,10 @@
 "use client";
 
-import CourseCard from "@/components/faculytics/course-card";
-import { useMyEnrollments } from "@/hooks/enrollments/use-my-enrollments";
+import { useMyEnrollments } from "@/features/enrollments/hooks/use-my-enrollments";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 import { Loader2 } from "lucide-react";
+
+import CourseCard from "./_components/course-card";
 
 export default function StudentCoursesPage() {
   const setSelectedCourse = useSelectedCourseStore((state) => state.setSelectedCourse);

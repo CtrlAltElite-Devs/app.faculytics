@@ -1,7 +1,7 @@
 "use client";
 
-import { useActiveRole } from "@/hooks/auth/use-active-role";
-import { useMe } from "@/hooks/auth/use-me";
+import { useActiveRole } from "@/features/auth/hooks/use-active-role";
+import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";

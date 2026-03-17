@@ -1,7 +1,7 @@
 "use client";
 
-import { QuestionnaireRatingScaleInstructions } from "@/components/faculytics/questionnaires/questionnaire-rating-scale-instructions";
-import { useMyEnrollments } from "@/hooks/enrollments/use-my-enrollments";
+import { QuestionnaireRatingScaleInstructions } from "@/features/questionnaires/components/questionnaire-rating-scale-instructions";
+import { useMyEnrollments } from "@/features/enrollments/hooks/use-my-enrollments";
 import { decodeHtmlEntities } from "@/lib/string";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 import { Button } from "@/components/ui/button";

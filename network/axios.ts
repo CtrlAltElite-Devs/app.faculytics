@@ -1,6 +1,6 @@
 import { Endpoints } from "@/network/endpoints";
+import type { LoginResponse } from "@/features/auth/types";
 import { useAuthStore } from "@/stores/auth-store";
-import type { LoginResponse } from "@/types/auth";
 import axios, { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";

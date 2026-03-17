@@ -3,21 +3,21 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { QuestionnaireActionDialog } from "@/components/faculytics/questionnaires/questionnaire-action-dialog";
-import { QuestionnaireAsyncContent } from "@/components/faculytics/questionnaires/questionnaire-async-content";
-import { QuestionnaireBuilderShell } from "@/components/faculytics/questionnaires/builder/questionnaire-builder-shell";
+import { QuestionnaireActionDialog } from "@/features/questionnaires/components/questionnaire-action-dialog";
+import { QuestionnaireAsyncContent } from "@/features/questionnaires/components/questionnaire-async-content";
+import { QuestionnaireBuilderShell } from "@/features/questionnaires/components/builder/questionnaire-builder-shell";
 import { Button } from "@/components/ui/button";
-import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import {
   useQuestionnaireVersion,
   useQuestionnaireVersions,
-} from "@/hooks/questionnaires/use-questionnaire-versions";
-import { useQuestionnaireBuilderStore } from "@/stores/questionnaire-builder-store";
+} from "@/features/questionnaires/hooks/use-questionnaire-versions";
+import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import {
   DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
   type QuestionnaireType,
-} from "@/types/questionnaires";
+} from "@/features/questionnaires/types";
 
 function resolveRequestedType(value: string | null): QuestionnaireType {
   if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {

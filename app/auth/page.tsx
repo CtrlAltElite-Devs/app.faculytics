@@ -1,16 +1,16 @@
 "use client";
 
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useActiveRole } from "@/hooks/auth/use-active-role";
-import { useLogin } from "@/hooks/auth/use-login";
-import { useMe } from "@/hooks/auth/use-me";
-import { loginRequestSchema } from "@/schemas/auth";
+import { useActiveRole } from "@/features/auth/hooks/use-active-role";
+import { useLogin } from "@/features/auth/hooks/use-login";
+import { useMe } from "@/features/auth/hooks/use-me";
+import { loginRequestSchema } from "@/features/auth/schemas";
+import type { LoginRequest } from "@/features/auth/types";
 import { useAuthStore } from "@/stores/auth-store";
-import { LoginRequest } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -31,12 +31,12 @@ export default function AuthPage() {
     resolver: zodResolver(loginRequestSchema),
     defaultValues: {
       username: "",
-      password: ""
-    }
+      password: "",
+    },
   });
 
   const onSubmit = (values: LoginRequest) => {
-    mutate({password: values.password, username: values.username})
+    mutate({ password: values.password, username: values.username });
   };
 
   useEffect(() => {
@@ -58,9 +58,7 @@ export default function AuthPage() {
   }, [clearSession, isMeError, isMePending, me, roleHome, router, token]);
 
   return (
-    <div className="h-screen grid grid-cols-1 lg:grid-cols-10">
-
-      {/* Hero Section */}
+    <div className="grid h-screen grid-cols-1 lg:grid-cols-10">
       <div className="relative overflow-hidden hidden lg:block lg:col-span-7">
         <BackgroundGradientAnimation
           gradientBackgroundStart="rgb(44, 58, 208)"
@@ -90,7 +88,6 @@ export default function AuthPage() {
         </BackgroundGradientAnimation>
       </div>
 
-      {/* Form Section */}
       <div className="flex flex-col col-span-1 lg:col-span-3">
         <div className="flex items-center justify-between p-4 sm:p-6 lg:p-8">
           <h3 className="text-xl font-playfair font-semibold">Faculytics 2.0</h3>
@@ -195,5 +192,5 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

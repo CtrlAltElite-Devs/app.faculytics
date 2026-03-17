@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-import { QuestionnairePreviewRenderer } from "@/components/faculytics/questionnaires/builder/questionnaire-preview-renderer";
+import { QuestionnairePreviewRenderer } from "@/features/questionnaires/components/builder/questionnaire-preview-renderer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { deserializeQuestionnaireVersionToDraft } from "@/lib/questionnaires/builder-deserializer";
-import { buildQuestionnairePreviewModel } from "@/lib/questionnaires/builder-serializer";
-import { useQuestionnaireVersion } from "@/hooks/questionnaires/use-questionnaire-versions";
+import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
+import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
+import { useQuestionnaireVersion } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 
 export default function QuestionnaireVersionPreviewPage() {
   const searchParams = useSearchParams();

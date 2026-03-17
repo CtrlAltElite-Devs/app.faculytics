@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-import { QuestionnairePreviewRenderer } from "@/components/faculytics/questionnaires/builder/questionnaire-preview-renderer";
+import { QuestionnairePreviewRenderer } from "@/features/questionnaires/components/builder/questionnaire-preview-renderer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { buildQuestionnairePreviewModel } from "@/lib/questionnaires/builder-serializer";
-import { useQuestionnaireBuilderStore } from "@/stores/questionnaire-builder-store";
+import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
+import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import {
   DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
   type QuestionnaireType,
-} from "@/types/questionnaires";
+} from "@/features/questionnaires/types";
 
 function resolveRequestedType(value: string | null): QuestionnaireType {
   if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {

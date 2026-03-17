@@ -4,11 +4,11 @@ import { useDeferredValue, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import { QuestionnaireAsyncContent } from "@/components/faculytics/questionnaires/questionnaire-async-content";
-import { QuestionnaireListToolbar } from "@/components/faculytics/questionnaires/questionnaire-list-toolbar";
-import { QuestionnaireTable } from "@/components/faculytics/questionnaires/questionnaire-table";
-import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
-import { useQuestionnaireVersions } from "@/hooks/questionnaires/use-questionnaire-versions";
+import { QuestionnaireAsyncContent } from "@/features/questionnaires/components/questionnaire-async-content";
+import { QuestionnaireListToolbar } from "@/features/questionnaires/components/questionnaire-list-toolbar";
+import { QuestionnaireTable } from "@/features/questionnaires/components/questionnaire-table";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import { useQuestionnaireVersions } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 
 import {
   DEFAULT_QUESTIONNAIRE_TYPE,
@@ -16,7 +16,7 @@ import {
   type QuestionnaireVersionItem,
   type QuestionnaireStatusFilter as StatusFilter,
   type QuestionnaireType,
-} from "@/types/questionnaires";
+} from "@/features/questionnaires/types";
 
 function resolveSelectedType(value: string | null): QuestionnaireType {
   if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
