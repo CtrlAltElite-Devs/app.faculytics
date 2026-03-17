@@ -55,6 +55,7 @@ export default function QuestionnaireBuilderPage() {
   const activePageType = availableTypes.includes(requestedType)
     ? requestedType
     : (availableTypes[0] ?? DEFAULT_QUESTIONNAIRE_TYPE);
+  const currentDraft = useQuestionnaireBuilderStore((state) => state.drafts[activePageType] ?? null);
   const questionnaireVersionsQuery = useQuestionnaireVersions(requestedType, {
     enabled: questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable,
   });
@@ -123,8 +124,11 @@ export default function QuestionnaireBuilderPage() {
           },
         }
       : null;
+  const hasLocalBuilderDraft = hydrated && Boolean(currentDraft);
   const showBuilderLoading =
-    isLoading || (!requestedTypeUnavailable && availableTypes.length > 0 && !questionnaireVersionsQuery.data);
+    !hasLocalBuilderDraft &&
+    (isLoading || (!requestedTypeUnavailable && availableTypes.length > 0 && !questionnaireVersionsQuery.data));
+  const showBuilderError = !hasLocalBuilderDraft && isError;
 
   const handleBackToQuestionnaires = () => {
     if (!hasUnsavedChanges()) {
@@ -157,7 +161,7 @@ export default function QuestionnaireBuilderPage() {
 
       <QuestionnaireAsyncContent
         isLoading={showBuilderLoading}
-        isError={isError}
+        isError={showBuilderError}
         emptyState={emptyState}
         onRetry={() => {
           void questionnaireTypesQuery.refetch();

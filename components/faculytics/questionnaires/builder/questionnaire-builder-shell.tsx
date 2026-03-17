@@ -124,7 +124,7 @@ export function QuestionnaireBuilderShell({
                   </Button>
                   {isDirty ? (
                     <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(true)}>
-                      Discard draft
+                      Discard changes
                     </Button>
                   ) : null}
                   <Button
@@ -221,7 +221,7 @@ export function QuestionnaireBuilderShell({
         title="Discard unsaved changes?"
         description="This discards changes that have not been saved to the backend and restores the last synced draft state for this questionnaire type."
         cancelLabel="Keep editing"
-        confirmLabel="Discard draft"
+        confirmLabel="Discard changes"
         confirmVariant="destructive"
         onConfirm={handleDiscardDraft}
       />
