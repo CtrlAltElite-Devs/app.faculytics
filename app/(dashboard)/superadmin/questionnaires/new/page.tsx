@@ -3,19 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { QuestionnaireActionDialog } from "@/components/faculytics/questionnaires/questionnaire-action-dialog";
+import { QuestionnaireAsyncContent } from "@/components/faculytics/questionnaires/questionnaire-async-content";
 import { QuestionnaireBuilderShell } from "@/components/faculytics/questionnaires/builder/questionnaire-builder-shell";
-import { QuestionnaireEmptyState } from "@/components/faculytics/questionnaires/questionnaire-empty-state";
-import { QuestionnaireErrorState } from "@/components/faculytics/questionnaires/questionnaire-error-state";
-import { QuestionnaireLoadingState } from "@/components/faculytics/questionnaires/questionnaire-loading-state";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
 import {
   useQuestionnaireVersion,
@@ -110,20 +101,6 @@ export default function QuestionnaireBuilderPage() {
     }
   }, [activeType, clearDraftForType, requestedType, requestedTypeUnavailable, setActiveType]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (!useQuestionnaireBuilderStore.getState().hasUnsavedChanges()) {
-        return;
-      }
-
-      event.preventDefault();
-      event.returnValue = "";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
-
   const isLoading =
     questionnaireTypesQuery.isLoading ||
     questionnaireVersionsQuery.isLoading ||
@@ -133,6 +110,21 @@ export default function QuestionnaireBuilderPage() {
     questionnaireVersionsQuery.isError ||
     questionnaireVersionQuery.isError;
   const questionnaireListHref = `/superadmin/questionnaires?type=${activePageType}`;
+  const emptyState = availableTypes.length === 0
+    ? { description: "No questionnaire types are available right now." }
+    : requestedTypeUnavailable
+      ? {
+          description: "That questionnaire type is no longer available. The stale local draft for it was discarded.",
+          actionLabel: "Open available type",
+          onAction: () => {
+            if (availableTypes[0]) {
+              router.replace(`/superadmin/questionnaires/new?type=${availableTypes[0]}`);
+            }
+          },
+        }
+      : null;
+  const showBuilderLoading =
+    isLoading || (!requestedTypeUnavailable && availableTypes.length > 0 && !questionnaireVersionsQuery.data);
 
   const handleBackToQuestionnaires = () => {
     if (!hasUnsavedChanges()) {
@@ -163,65 +155,38 @@ export default function QuestionnaireBuilderPage() {
         </Button>
       </div>
 
-      {isLoading ? (
-        <QuestionnaireLoadingState />
-      ) : isError ? (
-        <QuestionnaireErrorState
-          onRetry={() => {
-            void questionnaireTypesQuery.refetch();
-            void questionnaireVersionsQuery.refetch();
-            if (resolvedVersionId) {
-              void questionnaireVersionQuery.refetch();
-            }
-          }}
-        />
-      ) : availableTypes.length === 0 ? (
-        <QuestionnaireEmptyState description="No questionnaire types are available right now." />
-      ) : requestedTypeUnavailable ? (
-        <QuestionnaireEmptyState
-          description="That questionnaire type is no longer available. The stale local draft for it was discarded."
-          actionLabel="Open available type"
-          onAction={() => {
-            if (availableTypes[0]) {
-              router.replace(`/superadmin/questionnaires/new?type=${availableTypes[0]}`);
-            }
-          }}
-        />
-      ) : !questionnaireVersionsQuery.data ? (
-        <QuestionnaireLoadingState />
-      ) : (
+      <QuestionnaireAsyncContent
+        isLoading={showBuilderLoading}
+        isError={isError}
+        emptyState={emptyState}
+        onRetry={() => {
+          void questionnaireTypesQuery.refetch();
+          void questionnaireVersionsQuery.refetch();
+          if (resolvedVersionId) {
+            void questionnaireVersionQuery.refetch();
+          }
+        }}
+      >
         <QuestionnaireBuilderShell
           activeType={activePageType}
           isHydrated={hydrated}
         />
-      )}
+      </QuestionnaireAsyncContent>
 
-      <Dialog open={discardDialogOpen} onOpenChange={setDiscardDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Discard unsaved changes?</DialogTitle>
-            <DialogDescription>
-              Going back to questionnaires will discard the unsaved changes in this builder.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(false)}>
-              Keep editing
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => {
-                resetActiveDraft();
-                setDiscardDialogOpen(false);
-                router.push(questionnaireListHref);
-              }}
-            >
-              Discard changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <QuestionnaireActionDialog
+        open={discardDialogOpen}
+        onOpenChange={setDiscardDialogOpen}
+        title="Discard unsaved changes?"
+        description="Going back to questionnaires will discard the unsaved changes in this builder."
+        cancelLabel="Keep editing"
+        confirmLabel="Discard changes"
+        confirmVariant="destructive"
+        onConfirm={() => {
+          resetActiveDraft();
+          setDiscardDialogOpen(false);
+          router.push(questionnaireListHref);
+        }}
+      />
     </section>
   );
 }
