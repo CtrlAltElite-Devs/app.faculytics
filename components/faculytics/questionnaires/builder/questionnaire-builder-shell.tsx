@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { QuestionnaireAddActionButton } from "@/components/faculytics/questionnaires/builder/questionnaire-add-action-button";
 import { QuestionnaireOutlinePanel } from "@/components/faculytics/questionnaires/builder/questionnaire-outline-panel";
 import { QuestionnaireQualitativeEditor } from "@/components/faculytics/questionnaires/builder/questionnaire-qualitative-editor";
 import { QuestionnaireSectionEditor } from "@/components/faculytics/questionnaires/builder/questionnaire-section-editor";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -44,6 +46,8 @@ export function QuestionnaireBuilderShell({
   activeType,
   isHydrated,
 }: QuestionnaireBuilderShellProps) {
+  const router = useRouter();
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const draft = useQuestionnaireBuilderStore((state) => state.drafts[activeType] ?? null);
   const updateTitle = useQuestionnaireBuilderStore((state) => state.updateTitle);
   const selectSection = useQuestionnaireBuilderStore((state) => state.selectSection);
@@ -57,6 +61,7 @@ export function QuestionnaireBuilderShell({
   const removeQuestion = useQuestionnaireBuilderStore((state) => state.removeQuestion);
   const updateQualitative = useQuestionnaireBuilderStore((state) => state.updateQualitative);
   const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
+  const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
   const { save, isPending } = useSaveQuestionnaireBuilder();
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
   const [pendingParentId, setPendingParentId] = useState<string | null>(null);
@@ -92,6 +97,8 @@ export function QuestionnaireBuilderShell({
 
   const validation = validateQuestionnaireBuilderDraft(draft);
   const previewModel = buildQuestionnairePreviewModel(draft);
+  const isDirty = hasUnsavedChanges();
+  const isSaved = !isDirty && Boolean(draft.metadata.versionId);
   const pendingConversionState = canConvertSectionToParent(
     pendingParentId ? findSectionById(draft.sections, pendingParentId) : null
   );
@@ -142,6 +149,34 @@ export function QuestionnaireBuilderShell({
     document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const handleSave = async () => {
+    const result = await save();
+
+    if (result?.status === "saved") {
+      setSaveDialogOpen(true);
+    }
+  };
+
+  const renderStatusBadge = () => {
+    if (isDirty) {
+      return (
+        <Badge variant="ghost" className="font-medium badge-status-draft">
+          Unsaved Changes
+        </Badge>
+      );
+    }
+
+    if (isSaved) {
+      return (
+        <Badge variant="ghost" className="font-medium badge-status-active">
+          Saved
+        </Badge>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -150,23 +185,29 @@ export function QuestionnaireBuilderShell({
               <div className="space-y-4">
                 {draft.metadata.titleLocked ? (
                   <div>
-                    <CardTitle className="font-playfair text-xl">
-                      {draft.metadata.questionnaireTitle || "Untitled questionnaire"}
-                    </CardTitle>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <CardTitle className="font-playfair text-xl">
+                        {draft.metadata.questionnaireTitle || "Untitled questionnaire"}
+                      </CardTitle>
+                      {renderStatusBadge()}
+                    </div>
                     <p className="mt-1 text-sm text-muted-foreground">
                       This title is inherited from the questionnaire root and cannot be renamed
                       from the version builder.
                     </p>
                   </div>
                 ) : (
-                  <InlineEditInput
-                    id="questionnaire-title"
-                    value={draft.metadata.title}
-                    placeholder="Enter the questionnaire title"
-                    textClassName="min-h-11 bg-transparent px-0 text-xl font-semibold hover:bg-transparent"
-                    inputClassName="h-11 px-0 text-xl font-semibold"
-                    onChange={updateTitle}
-                  />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <InlineEditInput
+                      id="questionnaire-title"
+                      value={draft.metadata.title}
+                      placeholder="Enter the questionnaire title"
+                      textClassName="min-h-11 bg-transparent px-0 text-xl font-semibold hover:bg-transparent"
+                      inputClassName="h-11 px-0 text-xl font-semibold"
+                      onChange={updateTitle}
+                    />
+                    {renderStatusBadge()}
+                  </div>
                 )}
               </div>
 
@@ -177,14 +218,16 @@ export function QuestionnaireBuilderShell({
                       Open preview
                     </Link>
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(true)}>
-                    Discard draft
-                  </Button>
+                  {isDirty ? (
+                    <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(true)}>
+                      Discard draft
+                    </Button>
+                  ) : null}
                   <Button
                     type="button"
                     variant="brand"
                     disabled={isPending}
-                    onClick={() => void save()}
+                    onClick={() => void handleSave()}
                   >
                     {isPending ? "Saving..." : "Save draft"}
                   </Button>
@@ -326,6 +369,31 @@ export function QuestionnaireBuilderShell({
               }}
             >
               Convert section
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Questionnaire draft saved</DialogTitle>
+            <DialogDescription>
+              Your changes were saved successfully. You can keep editing here or go back to the questionnaire list.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setSaveDialogOpen(false)}>
+              Keep editing
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setSaveDialogOpen(false);
+                router.push(`/superadmin/questionnaires?builder=saved&type=${activeType}`);
+              }}
+            >
+              Go back to questionnaires
             </Button>
           </DialogFooter>
         </DialogContent>

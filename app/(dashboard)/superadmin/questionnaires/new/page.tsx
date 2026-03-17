@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { QuestionnaireBuilderShell } from "@/components/faculytics/questionnaires/builder/questionnaire-builder-shell";
@@ -9,6 +8,14 @@ import { QuestionnaireEmptyState } from "@/components/faculytics/questionnaires/
 import { QuestionnaireErrorState } from "@/components/faculytics/questionnaires/questionnaire-error-state";
 import { QuestionnaireLoadingState } from "@/components/faculytics/questionnaires/questionnaire-loading-state";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
 import {
   useQuestionnaireVersion,
@@ -32,6 +39,7 @@ function resolveRequestedType(value: string | null): QuestionnaireType {
 export default function QuestionnaireBuilderPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
   const requestedType = resolveRequestedType(searchParams.get("type"));
   const requestedVersionId = searchParams.get("versionId");
   const questionnaireTypesQuery = useQuestionnaireTypes();
@@ -40,6 +48,8 @@ export default function QuestionnaireBuilderPage() {
   const loadDraftFromServer = useQuestionnaireBuilderStore((state) => state.loadDraftFromServer);
   const clearDraftForType = useQuestionnaireBuilderStore((state) => state.clearDraftForType);
   const setActiveType = useQuestionnaireBuilderStore((state) => state.setActiveType);
+  const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
+  const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
 
   const typeSummaries = questionnaireTypesQuery.data ?? [];
   const fetchedTypes = typeSummaries.map((summary) => summary.type);
@@ -122,6 +132,16 @@ export default function QuestionnaireBuilderPage() {
     questionnaireTypesQuery.isError ||
     questionnaireVersionsQuery.isError ||
     questionnaireVersionQuery.isError;
+  const questionnaireListHref = `/superadmin/questionnaires?type=${activePageType}`;
+
+  const handleBackToQuestionnaires = () => {
+    if (!hasUnsavedChanges()) {
+      router.push(questionnaireListHref);
+      return;
+    }
+
+    setDiscardDialogOpen(true);
+  };
 
   return (
     <section className="space-y-6 px-0 py-5 sm:px-6 md:p-8">
@@ -133,10 +153,13 @@ export default function QuestionnaireBuilderPage() {
             save it as a draft version.
           </p>
         </div>
-        <Button asChild variant="outline" className="sm:self-start">
-          <Link href={`/superadmin/questionnaires?type=${activePageType}`}>
-            Back to questionnaires
-          </Link>
+        <Button
+          type="button"
+          variant="outline"
+          className="sm:self-start"
+          onClick={handleBackToQuestionnaires}
+        >
+          Back to questionnaires
         </Button>
       </div>
 
@@ -172,6 +195,33 @@ export default function QuestionnaireBuilderPage() {
           isHydrated={hydrated}
         />
       )}
+
+      <Dialog open={discardDialogOpen} onOpenChange={setDiscardDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Discard unsaved changes?</DialogTitle>
+            <DialogDescription>
+              Going back to questionnaires will discard the unsaved changes in this builder.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(false)}>
+              Keep editing
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                resetActiveDraft();
+                setDiscardDialogOpen(false);
+                router.push(questionnaireListHref);
+              }}
+            >
+              Discard changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { isAxiosError } from "axios";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { serializeQuestionnaireBuilderDraft } from "@/lib/questionnaires/builder-serializer";
@@ -13,7 +12,6 @@ import { fetchQuestionnaireVersionById } from "@/network/requests/questionnaires
 import { useQuestionnaireBuilderStore } from "@/stores/questionnaire-builder-store";
 
 export function useSaveQuestionnaireBuilder() {
-  const router = useRouter();
   const createQuestionnaireMutation = useCreateQuestionnaire();
   const createQuestionnaireVersionMutation = useCreateQuestionnaireVersion();
   const updateQuestionnaireVersionMutation = useUpdateQuestionnaireVersion();
@@ -82,15 +80,15 @@ export function useSaveQuestionnaireBuilder() {
       }
 
       toast.success("Questionnaire draft saved.");
-      router.push(`/superadmin/questionnaires?builder=saved&type=${draft.metadata.type}`);
+      return { status: "saved" as const, type: draft.metadata.type };
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 409) {
         toast.error("A draft version already exists for this questionnaire type.");
-        router.push(`/superadmin/questionnaires?builder=conflict&type=${draft.metadata.type}`);
-        return;
+        return { status: "conflict" as const, type: draft.metadata.type };
       }
 
       toast.error("Unable to save the questionnaire draft right now.");
+      return { status: "error" as const, type: draft.metadata.type };
     }
   };
 

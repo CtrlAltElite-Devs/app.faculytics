@@ -186,6 +186,16 @@ function createComparableDraftSnapshot(draft: QuestionnaireBuilderDraft | null) 
   };
 }
 
+function draftsMatch(
+  left: QuestionnaireBuilderDraft | null | undefined,
+  right: QuestionnaireBuilderDraft | null | undefined
+) {
+  return (
+    JSON.stringify(createComparableDraftSnapshot(left ?? null)) ===
+    JSON.stringify(createComparableDraftSnapshot(right ?? null))
+  );
+}
+
 function getActiveDraft(state: QuestionnaireBuilderStore) {
   if (!state.activeType) {
     return null;
@@ -344,6 +354,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
         }),
       loadDraftFromServer: (context) =>
         set((state) => {
+          const persistedDraft = state.drafts[context.type] ?? null;
           const persistedSyncedDraft = state.syncedDrafts[context.type];
           const serverDraft = context.draftVersion
             ? createDraft(
@@ -366,6 +377,8 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             serverDraft ?? fallbackDraft,
             context.type
           );
+          const hasPersistedUnsavedChanges =
+            persistedDraft !== null && !draftsMatch(persistedDraft, persistedSyncedDraft ?? null);
           const nextSyncedDrafts = { ...state.syncedDrafts };
 
           if (context.draftVersion) {
@@ -374,11 +387,15 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             delete nextSyncedDrafts[context.type];
           }
 
+          const shouldKeepPersistedDraft =
+            hasPersistedUnsavedChanges &&
+            (!context.draftVersion || draftsMatch(nextDraft, persistedSyncedDraft ?? null));
+
           return {
             activeType: context.type,
             drafts: {
               ...state.drafts,
-              [context.type]: nextDraft,
+              [context.type]: shouldKeepPersistedDraft ? persistedDraft : nextDraft,
             },
             syncedDrafts: nextSyncedDrafts,
           };
@@ -632,6 +649,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         activeType: state.activeType,
+        drafts: state.drafts,
         syncedDrafts: state.syncedDrafts,
       }),
       onRehydrateStorage: () => (state) => {
