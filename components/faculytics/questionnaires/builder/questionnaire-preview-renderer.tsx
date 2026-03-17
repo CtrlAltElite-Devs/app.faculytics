@@ -87,8 +87,12 @@ function PreviewSection({ section }: { section: QuestionnaireBuilderPreviewSecti
 
 export function QuestionnairePreviewRenderer({
   model,
+  backHref = `/superadmin/questionnaires/new?type=${model.type}`,
+  backLabel = "Back to builder",
 }: {
   model: QuestionnaireBuilderPreviewModel;
+  backHref?: string;
+  backLabel?: string;
 }) {
   return (
     <section className="space-y-8">
@@ -100,7 +104,7 @@ export function QuestionnairePreviewRenderer({
           </p>
         </div>
         <Button asChild variant="outline">
-          <Link href={`/superadmin/questionnaires/new?type=${model.type}`}>Back to builder</Link>
+          <Link href={backHref}>{backLabel}</Link>
         </Button>
       </div>
 

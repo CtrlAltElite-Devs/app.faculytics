@@ -180,8 +180,9 @@ export default function AuthPage() {
 
               <Button
                 type="submit"
+                variant="brand"
                 disabled={isSigningIn}
-                className="w-full bg-brand-blue hover:bg-brand-blue/90 text-secondary font-semibold cursor-pointer"
+                className="w-full text-secondary font-semibold"
               >
                 {isSigningIn ? "Signing in..." : "Login"}
               </Button>

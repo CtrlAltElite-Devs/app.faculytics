@@ -1,25 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useDeferredValue, useEffect, useState } from "react";
-import { FilePenLine } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import { QuestionnaireEmptyState } from "@/components/faculytics/questionnaires/questionnaire-empty-state";
-import { QuestionnaireErrorState } from "@/components/faculytics/questionnaires/questionnaire-error-state";
-import { QuestionnaireLoadingState } from "@/components/faculytics/questionnaires/questionnaire-loading-state";
-import { QuestionnaireSearchInput } from "@/components/faculytics/questionnaires/questionnaire-search-input";
-import { QuestionnaireStatusFilter } from "@/components/faculytics/questionnaires/questionnaire-status-filter";
+import { QuestionnaireAsyncContent } from "@/components/faculytics/questionnaires/questionnaire-async-content";
+import { QuestionnaireListToolbar } from "@/components/faculytics/questionnaires/questionnaire-list-toolbar";
 import { QuestionnaireTable } from "@/components/faculytics/questionnaires/questionnaire-table";
-import { QuestionnaireTypeButtonGroup } from "@/components/faculytics/questionnaires/questionnaire-type-button-group";
-import { Button } from "@/components/ui/button";
 import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
 import { useQuestionnaireVersions } from "@/hooks/questionnaires/use-questionnaire-versions";
 
 import {
   DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
+  type QuestionnaireVersionItem,
   type QuestionnaireStatusFilter as StatusFilter,
   type QuestionnaireType,
 } from "@/types/questionnaires";
@@ -85,6 +79,14 @@ export default function SuperAdminQuestionnairesPage() {
     router.replace(`/superadmin/questionnaires?type=${nextType}`);
   };
 
+  const handleEditDraft = (row: QuestionnaireVersionItem) => {
+    router.push(`/superadmin/questionnaires/new?type=${activeType}&versionId=${row.id}`);
+  };
+
+  const handleViewVersion = (row: QuestionnaireVersionItem) => {
+    router.push(`/superadmin/questionnaires/preview?versionId=${row.id}`);
+  };
+
   const selectedSummary = typeSummaries.find((summary) => summary.type === activeType);
   const normalizedSearch = deferredSearchValue.trim().toLowerCase();
   const versionRows = questionnaireVersionsQuery.data?.versions ?? [];
@@ -104,6 +106,25 @@ export default function SuperAdminQuestionnairesPage() {
   const hasQuestionnaire = Boolean(selectedSummary?.questionnaireId);
   const hasVersions = versionRows.length > 0;
   const hasFilters = normalizedSearch.length > 0 || statusFilter !== "ALL";
+  const hasDraftVersion = versionRows.some((row) => row.status === "DRAFT");
+  const emptyState = !hasQuestionnaire
+    ? {
+        description: "No questionnaire for this type yet.",
+      }
+    : !hasVersions
+      ? {
+          description: "No versions yet.",
+        }
+      : filteredRows.length === 0 && hasFilters
+        ? {
+            description: "No matching versions.",
+            actionLabel: "Clear filters",
+            onAction: () => {
+              setSearchValue("");
+              setStatusFilter("ALL");
+            },
+          }
+        : null;
 
   return (
     <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
@@ -114,83 +135,32 @@ export default function SuperAdminQuestionnairesPage() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 md:hidden">
-        <QuestionnaireTypeButtonGroup
-          types={availableTypes}
-          value={activeType}
-          onValueChange={handleTypeChange}
-        />
-        <QuestionnaireStatusFilter
-          value={statusFilter}
-          onValueChange={setStatusFilter}
-          className="w-full justify-between gap-3"
-        />
-        <Button asChild className="w-full bg-brand-blue text-white hover:bg-brand-blue/90">
-          <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
-            <FilePenLine />
-            Create draft questionnaire
-          </Link>
-        </Button>
-        <QuestionnaireSearchInput
-          value={searchValue}
-          onChange={setSearchValue}
-          className="relative w-full"
-        />
-      </div>
+      <QuestionnaireListToolbar
+        availableTypes={availableTypes}
+        activeType={activeType}
+        statusFilter={statusFilter}
+        searchValue={searchValue}
+        hasDraftVersion={hasDraftVersion}
+        onTypeChange={handleTypeChange}
+        onStatusFilterChange={setStatusFilter}
+        onSearchChange={setSearchValue}
+      />
 
-      <div className="hidden md:flex md:flex-col md:gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <QuestionnaireTypeButtonGroup
-          types={availableTypes}
-          value={activeType}
-          onValueChange={handleTypeChange}
-        />
-
-        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
-          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
-            <Button
-              asChild
-              className="bg-brand-blue/80 text-white hover:bg-brand-blue/70 sm:self-stretch"
-            >
-              <Link href={`/superadmin/questionnaires/new?type=${activeType}`}>
-                <FilePenLine />
-                Create draft questionnaire
-              </Link>
-            </Button>
-            <QuestionnaireSearchInput value={searchValue} onChange={setSearchValue} />
-          </div>
-          <QuestionnaireStatusFilter value={statusFilter} onValueChange={setStatusFilter} />
-        </div>
-      </div>
-
-      {isLoading ? (
-        <QuestionnaireLoadingState />
-      ) : isError ? (
-        <QuestionnaireErrorState
-          onRetry={() => {
-            void questionnaireTypesQuery.refetch();
-            void questionnaireVersionsQuery.refetch();
-          }}
-        />
-      ) : !hasQuestionnaire ? (
-        <QuestionnaireEmptyState
-          description="No questionnaire for this type yet."
-        />
-      ) : !hasVersions ? (
-        <QuestionnaireEmptyState
-          description="No versions yet."
-        />
-      ) : filteredRows.length === 0 && hasFilters ? (
-        <QuestionnaireEmptyState
-          description="No matching versions."
-          actionLabel="Clear filters"
-          onAction={() => {
-            setSearchValue("");
-            setStatusFilter("ALL");
-          }}
-        />
-      ) : (
+      <QuestionnaireAsyncContent
+        isLoading={isLoading}
+        isError={isError}
+        emptyState={emptyState}
+        onRetry={() => {
+          void questionnaireTypesQuery.refetch();
+          void questionnaireVersionsQuery.refetch();
+        }}
+      >
         <div className="space-y-4">
-          <QuestionnaireTable rows={filteredRows} />
+          <QuestionnaireTable
+            rows={filteredRows}
+            onEditDraft={handleEditDraft}
+            onViewVersion={handleViewVersion}
+          />
 
           <div className="flex justify-end">
             <p className="text-sm text-muted-foreground">
@@ -199,7 +169,7 @@ export default function SuperAdminQuestionnairesPage() {
             </p>
           </div>
         </div>
-      )}
+      </QuestionnaireAsyncContent>
     </section>
   );
 }

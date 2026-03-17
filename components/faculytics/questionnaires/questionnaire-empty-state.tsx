@@ -17,8 +17,9 @@ export function QuestionnaireEmptyState({
       {actionLabel && onAction ? (
         <Button
           type="button"
+          variant="brand"
           size={"sm"}
-          className="mt-5 bg-brand-blue/80 text-white hover:bg-brand-blue/70 cursor-pointer"
+          className="mt-5"
           onClick={onAction}
         >
           {actionLabel}

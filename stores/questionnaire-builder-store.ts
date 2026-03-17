@@ -16,6 +16,7 @@ import type {
   QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderServerContext,
   QuestionnaireType,
+  QuestionnaireVersionDetail,
 } from "@/types/questionnaires";
 import { MAX_SECTION_NESTING_LEVEL } from "@/types/questionnaires";
 
@@ -23,8 +24,10 @@ type QuestionnaireBuilderStore = {
   hydrated: boolean;
   activeType: QuestionnaireType | null;
   drafts: Partial<Record<QuestionnaireType, QuestionnaireBuilderDraft>>;
+  syncedDrafts: Partial<Record<QuestionnaireType, QuestionnaireBuilderDraft>>;
   setHydrated: (hydrated: boolean) => void;
   loadDraftFromServer: (context: QuestionnaireBuilderServerContext) => void;
+  syncDraftVersion: (version: QuestionnaireVersionDetail) => void;
   setActiveType: (type: QuestionnaireType | null) => void;
   setQuestionnaireRootMetadata: (questionnaireId: string, title: string) => void;
   updateTitle: (title: string) => void;
@@ -49,6 +52,8 @@ type QuestionnaireBuilderStore = {
   clearDraftForType: (type: QuestionnaireType) => void;
   hasUnsavedChanges: () => boolean;
 };
+
+const QUESTIONNAIRE_BUILDER_STORAGE_KEY = "questionnaire-builder-storage";
 
 function createId(prefix: string) {
   return `${prefix}-${crypto.randomUUID()}`;
@@ -143,6 +148,52 @@ function createDraft(
     selectedSectionId: overrides?.selectedSectionId ?? null,
     hydratedFromServer: overrides?.hydratedFromServer ?? false,
   };
+}
+
+function createSyncedDraftSnapshot(
+  draft: QuestionnaireBuilderDraft,
+  type: QuestionnaireType = draft.metadata.type
+): QuestionnaireBuilderDraft {
+  return createDraft(type, {
+    metadata: {
+      ...draft.metadata,
+      type,
+    },
+    sections: draft.sections,
+    qualitative: draft.qualitative,
+    selectedSectionId:
+      draft.selectedSectionId ?? sortSections(draft.sections)[0]?.id ?? null,
+    hydratedFromServer: true,
+  });
+}
+
+function createComparableDraftSnapshot(draft: QuestionnaireBuilderDraft | null) {
+  if (!draft) {
+    return null;
+  }
+
+  return {
+    metadata: {
+      type: draft.metadata.type,
+      title: draft.metadata.title,
+      questionnaireId: draft.metadata.questionnaireId,
+      versionId: draft.metadata.versionId,
+      titleLocked: draft.metadata.titleLocked,
+      questionnaireTitle: draft.metadata.questionnaireTitle,
+    },
+    sections: draft.sections,
+    qualitative: draft.qualitative,
+  };
+}
+
+function draftsMatch(
+  left: QuestionnaireBuilderDraft | null | undefined,
+  right: QuestionnaireBuilderDraft | null | undefined
+) {
+  return (
+    JSON.stringify(createComparableDraftSnapshot(left ?? null)) ===
+    JSON.stringify(createComparableDraftSnapshot(right ?? null))
+  );
 }
 
 function getActiveDraft(state: QuestionnaireBuilderStore) {
@@ -267,6 +318,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
       hydrated: false,
       activeType: null,
       drafts: {},
+      syncedDrafts: {},
       setHydrated: (hydrated) => set({ hydrated }),
       setActiveType: (type) => set({ activeType: type }),
       setQuestionnaireRootMetadata: (questionnaireId, title) =>
@@ -282,64 +334,70 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             },
           }))
         ),
+      syncDraftVersion: (version) =>
+        set((state) => {
+          const syncedDraft = createSyncedDraftSnapshot(
+            createDraft(version.questionnaireType, deserializeQuestionnaireVersionToDraft(version))
+          );
+
+          return {
+            activeType: version.questionnaireType,
+            drafts: {
+              ...state.drafts,
+              [version.questionnaireType]: syncedDraft,
+            },
+            syncedDrafts: {
+              ...state.syncedDrafts,
+              [version.questionnaireType]: syncedDraft,
+            },
+          };
+        }),
       loadDraftFromServer: (context) =>
         set((state) => {
-          const existingDraft = state.drafts[context.type];
-          const shouldPreserveLocalDraft = hasMeaningfulDraftContent(existingDraft ?? null);
+          const persistedDraft = state.drafts[context.type] ?? null;
+          const persistedSyncedDraft = state.syncedDrafts[context.type];
           const serverDraft = context.draftVersion
-            ? deserializeQuestionnaireVersionToDraft(context.draftVersion)
+            ? createDraft(
+                context.type,
+                deserializeQuestionnaireVersionToDraft(context.draftVersion)
+              )
             : null;
-          const nextDraft = shouldPreserveLocalDraft
-            ? createDraft(context.type, {
-                ...existingDraft,
-                metadata: {
-                  type: context.type,
-                  title:
-                    context.questionnaireId !== null
-                      ? context.questionnaireTitle ?? existingDraft?.metadata.title ?? ""
-                      : existingDraft?.metadata.title ?? "",
-                  questionnaireId: context.questionnaireId,
-                  versionId:
-                    existingDraft?.metadata.versionId ??
-                    context.draftVersion?.id ??
-                    null,
-                  titleLocked: Boolean(context.questionnaireId),
-                  questionnaireTitle: context.questionnaireTitle,
-                },
-                selectedSectionId:
-                  existingDraft?.selectedSectionId ??
-                  sortSections(existingDraft?.sections ?? [])[0]?.id ??
-                  null,
-                hydratedFromServer: true,
-              })
-            : createDraft(context.type, {
-                ...(serverDraft ?? existingDraft),
-                metadata: {
-                  type: context.type,
-                  title:
-                    serverDraft?.metadata.title ??
-                    (context.questionnaireId !== null
-                      ? context.questionnaireTitle ?? existingDraft?.metadata.title ?? ""
-                      : existingDraft?.metadata.title ?? ""),
-                  questionnaireId: context.questionnaireId,
-                  versionId: serverDraft?.metadata.versionId ?? null,
-                  titleLocked: Boolean(context.questionnaireId),
-                  questionnaireTitle: context.questionnaireTitle,
-                },
-                selectedSectionId:
-                  serverDraft?.selectedSectionId ??
-                  existingDraft?.selectedSectionId ??
-                  sortSections(serverDraft?.sections ?? existingDraft?.sections ?? [])[0]?.id ??
-                  null,
-                hydratedFromServer: true,
-              });
+          const fallbackDraft = createDraft(context.type, {
+            metadata: {
+              type: context.type,
+              title: context.questionnaireId !== null ? context.questionnaireTitle ?? "" : "",
+              questionnaireId: context.questionnaireId,
+              versionId: null,
+              titleLocked: Boolean(context.questionnaireId),
+              questionnaireTitle: context.questionnaireTitle,
+            },
+            hydratedFromServer: true,
+          });
+          const nextDraft = createSyncedDraftSnapshot(
+            serverDraft ?? fallbackDraft,
+            context.type
+          );
+          const hasPersistedUnsavedChanges =
+            persistedDraft !== null && !draftsMatch(persistedDraft, persistedSyncedDraft ?? null);
+          const nextSyncedDrafts = { ...state.syncedDrafts };
+
+          if (context.draftVersion) {
+            nextSyncedDrafts[context.type] = nextDraft;
+          } else if (persistedSyncedDraft) {
+            delete nextSyncedDrafts[context.type];
+          }
+
+          const shouldKeepPersistedDraft =
+            hasPersistedUnsavedChanges &&
+            (!context.draftVersion || draftsMatch(nextDraft, persistedSyncedDraft ?? null));
 
           return {
             activeType: context.type,
             drafts: {
               ...state.drafts,
-              [context.type]: nextDraft,
+              [context.type]: shouldKeepPersistedDraft ? persistedDraft : nextDraft,
             },
+            syncedDrafts: nextSyncedDrafts,
           };
         }),
       updateTitle: (title) =>
@@ -528,6 +586,17 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             return state;
           }
 
+          const syncedDraft = state.syncedDrafts[state.activeType];
+          if (syncedDraft) {
+            return {
+              ...state,
+              drafts: {
+                ...state.drafts,
+                [state.activeType]: createSyncedDraftSnapshot(syncedDraft, state.activeType),
+              },
+            };
+          }
+
           return {
             ...state,
             drafts: {
@@ -547,20 +616,41 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
       clearDraftForType: (type) =>
         set((state) => {
           const nextDrafts = { ...state.drafts };
+          const nextSyncedDrafts = { ...state.syncedDrafts };
           delete nextDrafts[type];
+          delete nextSyncedDrafts[type];
 
           return {
             drafts: nextDrafts,
+            syncedDrafts: nextSyncedDrafts,
           };
         }),
-      hasUnsavedChanges: () => hasMeaningfulDraftContent(getActiveDraft(get())),
+      hasUnsavedChanges: () => {
+        const state = get();
+        const activeDraft = getActiveDraft(state);
+
+        if (!activeDraft) {
+          return false;
+        }
+
+        const syncedDraft = state.activeType ? state.syncedDrafts[state.activeType] ?? null : null;
+        if (!syncedDraft) {
+          return hasMeaningfulDraftContent(activeDraft);
+        }
+
+        return (
+          JSON.stringify(createComparableDraftSnapshot(activeDraft)) !==
+          JSON.stringify(createComparableDraftSnapshot(syncedDraft))
+        );
+      },
     }),
     {
-      name: "questionnaire-builder-storage",
+      name: QUESTIONNAIRE_BUILDER_STORAGE_KEY,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         activeType: state.activeType,
         drafts: state.drafts,
+        syncedDrafts: state.syncedDrafts,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);

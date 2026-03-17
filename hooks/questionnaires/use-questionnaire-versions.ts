@@ -7,7 +7,7 @@ import {
   fetchQuestionnaireVersionsByType,
 } from "@/network/requests/questionnaires";
 import { useAuthStore } from "@/stores/auth-store";
-import type { QuestionnaireBuilderServerContext, QuestionnaireType } from "@/types/questionnaires";
+import type { QuestionnaireType } from "@/types/questionnaires";
 
 type UseQuestionnaireVersionsOptions = {
   enabled?: boolean;
@@ -23,21 +23,29 @@ export function useQuestionnaireVersions(
   return useQuery({
     queryKey: ["questionnaires", "types", type, "versions", token],
     enabled: Boolean(token) && Boolean(type) && isEnabled,
-    queryFn: async (): Promise<QuestionnaireBuilderServerContext> => {
+    queryFn: async () => {
       if (!type) {
         throw new Error("Questionnaire type is required.");
       }
 
-      const versionsResponse = await fetchQuestionnaireVersionsByType(type);
-      const draftVersionSummary = versionsResponse.versions.find((version) => version.status === "DRAFT");
-      const draftVersion = draftVersionSummary
-        ? await fetchQuestionnaireVersionById(draftVersionSummary.id)
-        : null;
+      return fetchQuestionnaireVersionsByType(type);
+    },
+  });
+}
 
-      return {
-        ...versionsResponse,
-        draftVersion,
-      };
+export function useQuestionnaireVersion(versionId: string | null, options?: UseQuestionnaireVersionsOptions) {
+  const token = useAuthStore((state) => state.token);
+  const isEnabled = options?.enabled ?? true;
+
+  return useQuery({
+    queryKey: ["questionnaires", "versions", versionId, token],
+    enabled: Boolean(token) && Boolean(versionId) && isEnabled,
+    queryFn: async () => {
+      if (!versionId) {
+        throw new Error("Questionnaire version is required.");
+      }
+
+      return fetchQuestionnaireVersionById(versionId);
     },
   });
 }

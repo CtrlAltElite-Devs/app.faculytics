@@ -285,7 +285,7 @@ export function validateQuestionnaireBuilderDraft(
   if (leafSectionCount > 0 && totalLeafWeight !== 100) {
     appendIssue(issues, {
       code: "weights.total.invalid",
-      message: `Leaf section weights must total exactly 100. Current total: ${totalLeafWeight}.`,
+      message: `Weights must total exactly 100. Current total: ${totalLeafWeight}.`,
       target: { type: "global" },
     });
   }
