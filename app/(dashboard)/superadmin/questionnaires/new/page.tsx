@@ -10,28 +10,20 @@ import {
 } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import {
-  DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
-  type QuestionnaireType,
+  DEFAULT_QUESTIONNAIRE_TYPE,
+  resolveQuestionnaireType,
 } from "@/features/questionnaires/types";
 
 import { QuestionnaireBuilderDiscardDialog } from "./_components/questionnaire-builder-discard-dialog";
 import { QuestionnaireBuilderPageHeader } from "./_components/questionnaire-builder-page-header";
 import { QuestionnaireBuilderScreen } from "./_components/questionnaire-builder-screen";
 
-function resolveRequestedType(value: string | null): QuestionnaireType {
-  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
-    return value as QuestionnaireType;
-  }
-
-  return DEFAULT_QUESTIONNAIRE_TYPE;
-}
-
 export default function QuestionnaireBuilderPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
-  const requestedType = resolveRequestedType(searchParams.get("type"));
+  const requestedType = resolveQuestionnaireType(searchParams.get("type"));
   const requestedVersionId = searchParams.get("versionId");
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const hydrated = useQuestionnaireBuilderStore((state) => state.hydrated);
@@ -69,9 +61,7 @@ export default function QuestionnaireBuilderPage() {
       Boolean(resolvedVersionId),
   });
   const shouldDelayDraftHydration = Boolean(resolvedVersionId) && questionnaireVersionQuery.isLoading;
-  const draftHydrationToken = shouldDelayDraftHydration
-    ? "loading"
-    : (questionnaireVersionQuery.data?.id ?? resolvedVersionId ?? "none");
+  const draftVersion = questionnaireVersionQuery.data ?? null;
 
   useEffect(() => {
     if (searchParams.get("type") === activePageType) {
@@ -94,9 +84,9 @@ export default function QuestionnaireBuilderPage() {
 
     loadDraftFromServer({
       ...questionnaireVersionsQuery.data,
-      draftVersion: questionnaireVersionQuery.data ?? null,
+      draftVersion,
     });
-  }, [draftHydrationToken, loadDraftFromServer, questionnaireVersionsQuery.data]);
+  }, [draftVersion, loadDraftFromServer, questionnaireVersionsQuery.data, shouldDelayDraftHydration]);
 
   useEffect(() => {
     if (!requestedTypeUnavailable) {

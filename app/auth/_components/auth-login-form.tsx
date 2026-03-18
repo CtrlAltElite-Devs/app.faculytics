@@ -1,5 +1,6 @@
 "use client";
 
+import type { AxiosError } from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -10,14 +11,15 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/features/auth/hooks/use-login";
 import { loginRequestSchema } from "@/features/auth/schemas";
-import type { LoginRequest } from "@/features/auth/types";
+import type { AuthErrorResponse, LoginRequest } from "@/features/auth/types";
 
 type AuthLoginFormProps = {
   isAuthenticating: boolean;
+  statusMessage?: string | null;
 };
 
-export function AuthLoginForm({ isAuthenticating }: AuthLoginFormProps) {
-  const { mutate, isPending } = useLogin();
+export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginFormProps) {
+  const { mutate, isPending, error } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
@@ -27,6 +29,8 @@ export function AuthLoginForm({ isAuthenticating }: AuthLoginFormProps) {
     },
   });
   const isBusy = isPending || isAuthenticating;
+  const loginErrorMessage = (error as AxiosError<AuthErrorResponse> | null)?.response?.data?.message ?? null;
+  const feedbackMessage = loginErrorMessage ?? statusMessage;
 
   const onSubmit = (values: LoginRequest) => {
     mutate({ password: values.password, username: values.username });
@@ -38,6 +42,12 @@ export function AuthLoginForm({ isAuthenticating }: AuthLoginFormProps) {
         <h2 className="font-playfair text-3xl font-bold">Welcome</h2>
         <p className="mt-2 text-sm">Sign in using your student portal account</p>
       </div>
+
+      {feedbackMessage ? (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-center text-sm text-destructive">
+          {feedbackMessage}
+        </div>
+      ) : null}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FieldGroup>

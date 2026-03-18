@@ -11,6 +11,12 @@ export type LoginResponse = {
   refreshToken: string;
 };
 
+export type AuthErrorResponse = {
+  message: string;
+  error: string;
+  statusCode: number;
+};
+
 export type Campus = {
   id: string;
   name?: string;

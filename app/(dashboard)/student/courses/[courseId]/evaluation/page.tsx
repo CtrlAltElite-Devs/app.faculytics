@@ -28,7 +28,7 @@ export default function FacultyEvaluationPage() {
     : data?.data.find((enrollment) => enrollment.course.id === courseId);
 
   const contextState =
-    hasStoreMatch || selectedEnrollment
+    selectedEnrollment
       ? "ready"
       : isLoading
         ? "loading"

@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { useQuestionnaireVersions } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 import {
-  DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
+  DEFAULT_QUESTIONNAIRE_TYPE,
+  resolveQuestionnaireType,
   type QuestionnaireVersionItem,
   type QuestionnaireType,
 } from "@/features/questionnaires/types";
@@ -16,18 +17,10 @@ import {
 import { QuestionnaireListScreen } from "./_components/questionnaire-list-screen";
 import { QuestionnairePageHeader } from "./_components/questionnaire-page-header";
 
-function resolveSelectedType(value: string | null): QuestionnaireType {
-  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
-    return value as QuestionnaireType;
-  }
-
-  return DEFAULT_QUESTIONNAIRE_TYPE;
-}
-
 export default function SuperAdminQuestionnairesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const selectedType = resolveSelectedType(searchParams.get("type"));
+  const selectedType = resolveQuestionnaireType(searchParams.get("type"));
 
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const typeSummaries = questionnaireTypesQuery.data ?? [];

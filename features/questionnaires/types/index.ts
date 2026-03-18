@@ -90,6 +90,14 @@ export type QuestionnaireVersion = {
 
 export const DEFAULT_QUESTIONNAIRE_TYPE: QuestionnaireType = "FACULTY_FEEDBACK";
 
+export function resolveQuestionnaireType(value: string | null): QuestionnaireType {
+  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
+    return value as QuestionnaireType;
+  }
+
+  return DEFAULT_QUESTIONNAIRE_TYPE;
+}
+
 export const QUESTIONNAIRE_TYPE_LABELS: Record<QuestionnaireType, string> = {
   FACULTY_IN_CLASSROOM: "Faculty In Classroom",
   FACULTY_OUT_OF_CLASSROOM: "Faculty Out of Classroom",

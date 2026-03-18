@@ -90,16 +90,3 @@ export function getRoleLabel(role: AppRole) {
 export function getNavItemsForRole(role: AppRole | null) {
   return role ? ROLE_CONFIG[role].navItems : [];
 }
-
-export function getRoutePrefixForRole(role: AppRole) {
-  return ROLE_CONFIG[role].routePrefix;
-}
-
-export function getRoleFromPathname(pathname: string): AppRole | null {
-  const match = ROLES.find((role) => {
-    const routePrefix = ROLE_CONFIG[role].routePrefix;
-    return pathname === routePrefix || pathname.startsWith(`${routePrefix}/`);
-  });
-
-  return match ?? null;
-}

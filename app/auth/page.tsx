@@ -5,18 +5,28 @@ import { BackgroundGradientAnimation } from "@/components/ui/background-gradient
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/stores/auth-store";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { startTransition, useEffect, useState } from "react";
 
 import { AuthLoginForm } from "./_components/auth-login-form";
 
 export default function AuthPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: me, isPending: isMePending, isError: isMeError } = useMe();
   const { roleHome } = useActiveRole();
   const clearSession = useAuthStore((state) => state.clearSession);
   const token = useAuthStore((state) => state.token);
+  const [unsupportedRoleMessage, setUnsupportedRoleMessage] = useState<string | null>(null);
   const isAuthenticating = Boolean(token) && isMePending;
+  const authError = searchParams.get("error");
+  const statusMessage =
+    unsupportedRoleMessage ??
+    (authError === "me-failed"
+      ? "We could not restore your session. Please sign in again."
+      : authError === "no-role"
+        ? "Your account does not have a supported role for this app yet. Contact your administrator."
+        : null);
 
   useEffect(() => {
     if (!token || isMePending) return;
@@ -27,11 +37,19 @@ export default function AuthPage() {
     }
 
     if (roleHome) {
+      startTransition(() => {
+        setUnsupportedRoleMessage(null);
+      });
       router.replace(roleHome);
       return;
     }
 
     if (me) {
+      startTransition(() => {
+        setUnsupportedRoleMessage(
+          "Your account does not have a supported role for this app yet. Contact your administrator.",
+        );
+      });
       clearSession();
     }
   }, [clearSession, isMeError, isMePending, me, roleHome, router, token]);
@@ -73,7 +91,7 @@ export default function AuthPage() {
         </div>
 
         <div className="flex grow items-center justify-center px-6 sm:px-10 lg:px-12">
-          <AuthLoginForm isAuthenticating={isAuthenticating} />
+          <AuthLoginForm isAuthenticating={isAuthenticating} statusMessage={statusMessage} />
         </div>
       </div>
     </div>

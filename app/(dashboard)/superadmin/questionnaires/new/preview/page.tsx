@@ -5,25 +5,15 @@ import { QuestionnairePreviewRenderer } from "@/features/questionnaires/componen
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import {
-  DEFAULT_QUESTIONNAIRE_TYPE,
-  QUESTIONNAIRE_TYPES,
-  type QuestionnaireType,
+  resolveQuestionnaireType,
 } from "@/features/questionnaires/types";
 
 import { QuestionnairePreviewLoadingCard } from "../../_components/questionnaire-preview-loading-card";
 import { QuestionnairePreviewStateCard } from "../../_components/questionnaire-preview-state-card";
 
-function resolveRequestedType(value: string | null): QuestionnaireType {
-  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
-    return value as QuestionnaireType;
-  }
-
-  return DEFAULT_QUESTIONNAIRE_TYPE;
-}
-
 export default function QuestionnaireBuilderPreviewPage() {
   const searchParams = useSearchParams();
-  const requestedType = resolveRequestedType(searchParams.get("type"));
+  const requestedType = resolveQuestionnaireType(searchParams.get("type"));
   const hydrated = useQuestionnaireBuilderStore((state) => state.hydrated);
   const draft = useQuestionnaireBuilderStore((state) => state.drafts[requestedType] ?? null);
   const hasPreviewContent =
