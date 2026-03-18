@@ -1,7 +1,7 @@
 "use client";
 
-import { useActiveRole } from "@/hooks/auth/use-active-role";
-import { useMe } from "@/hooks/auth/use-me";
+import { useActiveRole } from "@/features/auth/hooks/use-active-role";
+import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -31,11 +31,13 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     if (isMeError) {
       clearSession();
+      router.replace("/auth?error=me-failed");
       return;
     }
 
     if (!activeRole || !roleHome) {
       clearSession();
+      router.replace("/auth?error=no-role");
     }
   }, [activeRole, clearSession, hydrated, isMeError, isMePending, roleHome, router, token]);
 

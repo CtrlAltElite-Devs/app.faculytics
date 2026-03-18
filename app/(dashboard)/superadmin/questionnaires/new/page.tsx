@@ -3,35 +3,27 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { QuestionnaireActionDialog } from "@/components/faculytics/questionnaires/questionnaire-action-dialog";
-import { QuestionnaireAsyncContent } from "@/components/faculytics/questionnaires/questionnaire-async-content";
-import { QuestionnaireBuilderShell } from "@/components/faculytics/questionnaires/builder/questionnaire-builder-shell";
-import { Button } from "@/components/ui/button";
-import { useQuestionnaireTypes } from "@/hooks/questionnaires/use-questionnaire-types";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import {
   useQuestionnaireVersion,
   useQuestionnaireVersions,
-} from "@/hooks/questionnaires/use-questionnaire-versions";
-import { useQuestionnaireBuilderStore } from "@/stores/questionnaire-builder-store";
+} from "@/features/questionnaires/hooks/use-questionnaire-versions";
+import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import {
-  DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
-  type QuestionnaireType,
-} from "@/types/questionnaires";
+  DEFAULT_QUESTIONNAIRE_TYPE,
+  resolveQuestionnaireType,
+} from "@/features/questionnaires/types";
 
-function resolveRequestedType(value: string | null): QuestionnaireType {
-  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
-    return value as QuestionnaireType;
-  }
-
-  return DEFAULT_QUESTIONNAIRE_TYPE;
-}
+import { QuestionnaireBuilderDiscardDialog } from "./_components/questionnaire-builder-discard-dialog";
+import { QuestionnaireBuilderPageHeader } from "./_components/questionnaire-builder-page-header";
+import { QuestionnaireBuilderScreen } from "./_components/questionnaire-builder-screen";
 
 export default function QuestionnaireBuilderPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
-  const requestedType = resolveRequestedType(searchParams.get("type"));
+  const requestedType = resolveQuestionnaireType(searchParams.get("type"));
   const requestedVersionId = searchParams.get("versionId");
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const hydrated = useQuestionnaireBuilderStore((state) => state.hydrated);
@@ -68,6 +60,8 @@ export default function QuestionnaireBuilderPage() {
       !requestedTypeUnavailable &&
       Boolean(resolvedVersionId),
   });
+  const shouldDelayDraftHydration = Boolean(resolvedVersionId) && questionnaireVersionQuery.isLoading;
+  const draftVersion = questionnaireVersionQuery.data ?? null;
 
   useEffect(() => {
     if (searchParams.get("type") === activePageType) {
@@ -84,11 +78,15 @@ export default function QuestionnaireBuilderPage() {
       return;
     }
 
+    if (shouldDelayDraftHydration) {
+      return;
+    }
+
     loadDraftFromServer({
       ...questionnaireVersionsQuery.data,
-      draftVersion: questionnaireVersionQuery.data ?? null,
+      draftVersion,
     });
-  }, [loadDraftFromServer, questionnaireVersionQuery.data, questionnaireVersionsQuery.data]);
+  }, [draftVersion, loadDraftFromServer, questionnaireVersionsQuery.data, shouldDelayDraftHydration]);
 
   useEffect(() => {
     if (!requestedTypeUnavailable) {
@@ -141,25 +139,11 @@ export default function QuestionnaireBuilderPage() {
 
   return (
     <section className="space-y-6 px-0 py-5 sm:px-6 md:p-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="font-playfair text-2xl font-semibold">Questionnaire Builder</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Build a quantitative questionnaire, add an optional final comment section, and
-            save it as a draft version.
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          className="sm:self-start"
-          onClick={handleBackToQuestionnaires}
-        >
-          Back to questionnaires
-        </Button>
-      </div>
+      <QuestionnaireBuilderPageHeader onBack={handleBackToQuestionnaires} />
 
-      <QuestionnaireAsyncContent
+      <QuestionnaireBuilderScreen
+        activeType={activePageType}
+        isHydrated={hydrated}
         isLoading={showBuilderLoading}
         isError={showBuilderError}
         emptyState={emptyState}
@@ -170,21 +154,11 @@ export default function QuestionnaireBuilderPage() {
             void questionnaireVersionQuery.refetch();
           }
         }}
-      >
-        <QuestionnaireBuilderShell
-          activeType={activePageType}
-          isHydrated={hydrated}
-        />
-      </QuestionnaireAsyncContent>
+      />
 
-      <QuestionnaireActionDialog
+      <QuestionnaireBuilderDiscardDialog
         open={discardDialogOpen}
         onOpenChange={setDiscardDialogOpen}
-        title="Discard unsaved changes?"
-        description="Going back to questionnaires will discard the unsaved changes in this builder."
-        cancelLabel="Keep editing"
-        confirmLabel="Discard changes"
-        confirmVariant="destructive"
         onConfirm={() => {
           resetActiveDraft();
           setDiscardDialogOpen(false);

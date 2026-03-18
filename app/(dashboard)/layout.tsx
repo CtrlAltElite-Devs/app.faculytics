@@ -1,6 +1,6 @@
-import { AppSidebar } from "@/components/app-sidebar";
 import { AuthGuard } from "@/app/(dashboard)/_guards/auth-guard";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

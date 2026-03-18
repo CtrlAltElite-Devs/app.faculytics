@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { EnrollmentResponseDto } from "@/types/enrollments";
+import type { EnrollmentResponseDto } from "@/features/enrollments/types";
 
 type SelectedCourseStore = {
   selectedCourse: EnrollmentResponseDto | null;
