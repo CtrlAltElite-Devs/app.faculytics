@@ -1,9 +1,11 @@
 "use client";
 
+import { AppBrand } from "@/components/layout/app-brand";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useMe } from "@/features/auth/hooks/use-me";
+import { APP_COPYRIGHT } from "@/lib/branding";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter, useSearchParams } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
@@ -79,14 +81,19 @@ export default function AuthPage() {
                 recommendations.
               </p>
             </div>
-            <div className="text-sm opacity-70">2026 Faculytics. All rights reserved.</div>
+            <div className="text-sm opacity-70">{APP_COPYRIGHT}</div>
           </div>
         </BackgroundGradientAnimation>
       </div>
 
       <div className="col-span-1 flex flex-col lg:col-span-3">
         <div className="flex items-center justify-between p-4 sm:p-6 lg:p-8">
-          <h3 className="text-xl font-playfair font-semibold">Faculytics 2.0</h3>
+          <AppBrand
+            priority
+            className="gap-3"
+            logoClassName="size-6"
+            textClassName="text-base font-playfair font-semibold"
+          />
           <ThemeToggle />
         </div>
 
