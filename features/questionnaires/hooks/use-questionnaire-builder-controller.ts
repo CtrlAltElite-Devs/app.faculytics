@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { useSaveQuestionnaireBuilder } from "@/features/questionnaires/hooks/use-save-questionnaire-builder";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import {
@@ -16,7 +17,6 @@ import type {
   QuestionnaireBuilderSectionNode,
   QuestionnaireType,
 } from "@/features/questionnaires/types";
-import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/types";
 
 type UseQuestionnaireBuilderControllerOptions = {
   activeType: QuestionnaireType;

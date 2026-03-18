@@ -1,11 +1,14 @@
+import {
+  BUILDER_QUESTION_TYPES,
+  DEFAULT_BUILDER_QUESTION_TYPE,
+  DEFAULT_QUALITATIVE_MAX_LENGTH,
+  MAX_SECTION_NESTING_LEVEL,
+} from "@/features/questionnaires/constants/builder";
 import type {
   QuestionnaireType,
   QuestionnaireVersionDetail,
   QuestionnaireVersionItem,
 } from "@/features/questionnaires/types";
-
-export const BUILDER_QUESTION_TYPES = ["LIKERT_1_5", "YES_NO"] as const;
-export const MAX_SECTION_NESTING_LEVEL = 4;
 
 export type BuilderQuestionType = (typeof BUILDER_QUESTION_TYPES)[number];
 
@@ -160,4 +163,11 @@ export type QuestionnaireBuilderValidationResult = {
   qualitativeIssues: QuestionnaireBuilderValidationIssue[];
   totalLeafWeight: number;
   leafSectionCount: number;
+};
+
+export {
+  BUILDER_QUESTION_TYPES,
+  DEFAULT_BUILDER_QUESTION_TYPE,
+  DEFAULT_QUALITATIVE_MAX_LENGTH,
+  MAX_SECTION_NESTING_LEVEL,
 };

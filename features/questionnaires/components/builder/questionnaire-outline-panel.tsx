@@ -2,6 +2,7 @@
 
 import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 
+import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,6 @@ import type {
   QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderValidationIssue,
 } from "@/features/questionnaires/types";
-import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/types";
 
 type QuestionnaireOutlinePanelProps = {
   sections: QuestionnaireBuilderSectionNode[];

@@ -1,3 +1,7 @@
+import {
+  DEFAULT_BUILDER_QUESTION_TYPE,
+  DEFAULT_QUALITATIVE_MAX_LENGTH,
+} from "@/features/questionnaires/constants/builder";
 import type {
   BuilderQuestionType,
   QuestionnaireBuilderDraft,
@@ -10,15 +14,13 @@ import type {
   QuestionnaireVersionSchema,
 } from "@/features/questionnaires/types";
 
-const DEFAULT_QUESTION_TYPE: BuilderQuestionType = "LIKERT_1_5";
-
 function normalizeQualitativeConfig(
   qualitative?: Partial<QuestionnaireBuilderQualitativeConfig>
 ): QuestionnaireBuilderQualitativeConfig {
   return {
     enabled: qualitative?.enabled ?? false,
     required: qualitative?.required ?? false,
-    maxLength: qualitative?.maxLength ?? 1000,
+    maxLength: qualitative?.maxLength ?? DEFAULT_QUALITATIVE_MAX_LENGTH,
   };
 }
 
@@ -42,7 +44,7 @@ function mapQuestion(
 
 function inferQuestionType(section: QuestionnaireBuilderSectionNode): BuilderQuestionType {
   if (section.questions.length > 0) {
-    return section.questions[0]?.type ?? DEFAULT_QUESTION_TYPE;
+    return section.questions[0]?.type ?? DEFAULT_BUILDER_QUESTION_TYPE;
   }
 
   for (const child of section.children) {
@@ -52,7 +54,7 @@ function inferQuestionType(section: QuestionnaireBuilderSectionNode): BuilderQue
     }
   }
 
-  return DEFAULT_QUESTION_TYPE;
+  return DEFAULT_BUILDER_QUESTION_TYPE;
 }
 
 function mapSectionTreeNode(node: QuestionnaireSchemaSectionTreeNode): QuestionnaireBuilderSectionNode {
@@ -63,7 +65,8 @@ function mapSectionTreeNode(node: QuestionnaireSchemaSectionTreeNode): Questionn
         mapQuestion(question, index + 1, question.type)
       )
     : [];
-  const questionType = questions[0]?.type ?? children[0]?.questionType ?? DEFAULT_QUESTION_TYPE;
+  const questionType =
+    questions[0]?.type ?? children[0]?.questionType ?? DEFAULT_BUILDER_QUESTION_TYPE;
 
   return {
     id: node.id,
@@ -83,7 +86,7 @@ function buildSectionsFromFlatSchema(
     const questions = sortByOrder(section.questions).map((question, questionIndex) =>
       mapQuestion(question, questionIndex + 1, question.type)
     );
-    const questionType = questions[0]?.type ?? DEFAULT_QUESTION_TYPE;
+    const questionType = questions[0]?.type ?? DEFAULT_BUILDER_QUESTION_TYPE;
 
     return {
       id: section.id,

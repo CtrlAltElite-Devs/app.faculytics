@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import { BUILDER_QUESTION_TYPES, QUESTIONNAIRE_TYPES } from "@/features/questionnaires/types";
+import { QUESTIONNAIRE_TYPES } from "@/features/questionnaires/constants";
+import { BUILDER_QUESTION_TYPES } from "@/features/questionnaires/constants/builder";
 
 export const questionnaireBuilderMetadataSchema = z.object({
   title: z

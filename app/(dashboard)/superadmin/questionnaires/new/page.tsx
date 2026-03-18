@@ -3,17 +3,17 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import {
+  DEFAULT_QUESTIONNAIRE_TYPE,
+  QUESTIONNAIRE_TYPES,
+} from "@/features/questionnaires/constants";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import {
   useQuestionnaireVersion,
   useQuestionnaireVersions,
 } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
-import {
-  QUESTIONNAIRE_TYPES,
-  DEFAULT_QUESTIONNAIRE_TYPE,
-  resolveQuestionnaireType,
-} from "@/features/questionnaires/types";
+import { resolveQuestionnaireType } from "@/features/questionnaires/types";
 
 import { QuestionnaireBuilderDiscardDialog } from "./_components/questionnaire-builder-discard-dialog";
 import { QuestionnaireBuilderPageHeader } from "./_components/questionnaire-builder-page-header";

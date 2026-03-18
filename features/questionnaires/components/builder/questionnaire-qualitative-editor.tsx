@@ -3,6 +3,7 @@
 import { Trash2 } from "lucide-react";
 
 import { QuestionnaireAddActionButton } from "@/features/questionnaires/components/builder/questionnaire-add-action-button";
+import { DEFAULT_QUALITATIVE_MAX_LENGTH } from "@/features/questionnaires/constants/builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,7 +25,7 @@ export function QuestionnaireQualitativeEditor({
   issues,
   onChange,
 }: QuestionnaireQualitativeEditorProps) {
-  const maxLength = value.maxLength ?? 1000;
+  const maxLength = value.maxLength ?? DEFAULT_QUALITATIVE_MAX_LENGTH;
   const maxLengthIssue = issues.find(
     (issue) => issue.target.type === "qualitative" && issue.target.field === "maxLength"
   );
@@ -91,7 +92,10 @@ export function QuestionnaireQualitativeEditor({
               aria-invalid={Boolean(maxLengthIssue)}
               onChange={(event) =>
                 onChange({
-                  maxLength: event.target.value === "" ? 1000 : Number(event.target.value),
+                  maxLength:
+                    event.target.value === ""
+                      ? DEFAULT_QUALITATIVE_MAX_LENGTH
+                      : Number(event.target.value),
                 })
               }
             />

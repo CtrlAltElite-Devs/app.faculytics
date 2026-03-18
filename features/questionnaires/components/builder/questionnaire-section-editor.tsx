@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, MoreVertical, Trash2 } 
 
 import { QuestionnaireAddActionButton } from "@/features/questionnaires/components/builder/questionnaire-add-action-button";
 import { QuestionnaireQuestionEditor } from "@/features/questionnaires/components/builder/questionnaire-question-editor";
+import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -24,7 +25,6 @@ import type {
   QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderValidationIssue,
 } from "@/features/questionnaires/types";
-import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/types";
 
 type QuestionnaireSectionEditorProps = {
   section: QuestionnaireBuilderSectionNode;
