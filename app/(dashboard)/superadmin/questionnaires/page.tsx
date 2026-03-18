@@ -1,22 +1,20 @@
 "use client";
 
-import { useDeferredValue, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import { QuestionnaireAsyncContent } from "@/features/questionnaires/components/questionnaire-async-content";
-import { QuestionnaireListToolbar } from "@/features/questionnaires/components/questionnaire-list-toolbar";
-import { QuestionnaireTable } from "@/features/questionnaires/components/questionnaire-table";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { useQuestionnaireVersions } from "@/features/questionnaires/hooks/use-questionnaire-versions";
-
 import {
   DEFAULT_QUESTIONNAIRE_TYPE,
   QUESTIONNAIRE_TYPES,
   type QuestionnaireVersionItem,
-  type QuestionnaireStatusFilter as StatusFilter,
   type QuestionnaireType,
 } from "@/features/questionnaires/types";
+
+import { QuestionnaireListScreen } from "./_components/questionnaire-list-screen";
+import { QuestionnairePageHeader } from "./_components/questionnaire-page-header";
 
 function resolveSelectedType(value: string | null): QuestionnaireType {
   if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
@@ -29,9 +27,6 @@ function resolveSelectedType(value: string | null): QuestionnaireType {
 export default function SuperAdminQuestionnairesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
-  const deferredSearchValue = useDeferredValue(searchValue);
   const selectedType = resolveSelectedType(searchParams.get("type"));
 
   const questionnaireTypesQuery = useQuestionnaireTypes();
@@ -74,8 +69,6 @@ export default function SuperAdminQuestionnairesPage() {
   }, [router, searchParams]);
 
   const handleTypeChange = (nextType: QuestionnaireType) => {
-    setSearchValue("");
-    setStatusFilter("ALL");
     router.replace(`/superadmin/questionnaires?type=${nextType}`);
   };
 
@@ -88,88 +81,36 @@ export default function SuperAdminQuestionnairesPage() {
   };
 
   const selectedSummary = typeSummaries.find((summary) => summary.type === activeType);
-  const normalizedSearch = deferredSearchValue.trim().toLowerCase();
   const versionRows = questionnaireVersionsQuery.data?.versions ?? [];
-  const filteredRows = versionRows.filter((row) => {
-    const matchesStatus = statusFilter === "ALL" || row.status === statusFilter;
-    const matchesSearch =
-      normalizedSearch.length === 0 ||
-      `v${row.versionNumber}`.toLowerCase().includes(normalizedSearch) ||
-      row.status.toLowerCase().includes(normalizedSearch) ||
-      (row.isActive ? "active" : "inactive").includes(normalizedSearch);
-
-    return matchesStatus && matchesSearch;
-  });
 
   const isLoading = questionnaireTypesQuery.isLoading || questionnaireVersionsQuery.isLoading;
   const isError = questionnaireTypesQuery.isError || questionnaireVersionsQuery.isError;
   const hasQuestionnaire = Boolean(selectedSummary?.questionnaireId);
-  const hasVersions = versionRows.length > 0;
-  const hasFilters = normalizedSearch.length > 0 || statusFilter !== "ALL";
   const hasDraftVersion = versionRows.some((row) => row.status === "DRAFT");
-  const emptyState = !hasQuestionnaire
-    ? {
-        description: "No questionnaire for this type yet.",
-      }
-    : !hasVersions
-      ? {
-          description: "No versions yet.",
-        }
-      : filteredRows.length === 0 && hasFilters
-        ? {
-            description: "No matching versions.",
-            actionLabel: "Clear filters",
-            onAction: () => {
-              setSearchValue("");
-              setStatusFilter("ALL");
-            },
-          }
-        : null;
 
   return (
     <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
-      <div>
-        <h1 className="font-playfair text-2xl font-semibold">Questionnaires</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Browse questionnaire types, search versions, and filter by lifecycle status.
-        </p>
-      </div>
-
-      <QuestionnaireListToolbar
-        availableTypes={availableTypes}
-        activeType={activeType}
-        statusFilter={statusFilter}
-        searchValue={searchValue}
-        hasDraftVersion={hasDraftVersion}
-        onTypeChange={handleTypeChange}
-        onStatusFilterChange={setStatusFilter}
-        onSearchChange={setSearchValue}
+      <QuestionnairePageHeader
+        title="Questionnaires"
+        description="Browse questionnaire types, search versions, and filter by lifecycle status."
       />
 
-      <QuestionnaireAsyncContent
+      <QuestionnaireListScreen
+        availableTypes={availableTypes}
+        activeType={activeType}
+        hasDraftVersion={hasDraftVersion}
+        hasQuestionnaire={hasQuestionnaire}
+        rows={versionRows}
+        onTypeChange={handleTypeChange}
         isLoading={isLoading}
         isError={isError}
-        emptyState={emptyState}
         onRetry={() => {
           void questionnaireTypesQuery.refetch();
           void questionnaireVersionsQuery.refetch();
         }}
-      >
-        <div className="space-y-4">
-          <QuestionnaireTable
-            rows={filteredRows}
-            onEditDraft={handleEditDraft}
-            onViewVersion={handleViewVersion}
-          />
-
-          <div className="flex justify-end">
-            <p className="text-sm text-muted-foreground">
-              {filteredRows.length} of {versionRows.length} version
-              {versionRows.length === 1 ? "" : "s"}
-            </p>
-          </div>
-        </div>
-      </QuestionnaireAsyncContent>
+        onEditDraft={handleEditDraft}
+        onViewVersion={handleViewVersion}
+      />
     </section>
   );
 }

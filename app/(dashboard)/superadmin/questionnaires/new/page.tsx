@@ -3,10 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { QuestionnaireActionDialog } from "@/features/questionnaires/components/questionnaire-action-dialog";
-import { QuestionnaireAsyncContent } from "@/features/questionnaires/components/questionnaire-async-content";
-import { QuestionnaireBuilderShell } from "@/features/questionnaires/components/builder/questionnaire-builder-shell";
-import { Button } from "@/components/ui/button";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import {
   useQuestionnaireVersion,
@@ -18,6 +14,10 @@ import {
   QUESTIONNAIRE_TYPES,
   type QuestionnaireType,
 } from "@/features/questionnaires/types";
+
+import { QuestionnaireBuilderDiscardDialog } from "./_components/questionnaire-builder-discard-dialog";
+import { QuestionnaireBuilderPageHeader } from "./_components/questionnaire-builder-page-header";
+import { QuestionnaireBuilderScreen } from "./_components/questionnaire-builder-screen";
 
 function resolveRequestedType(value: string | null): QuestionnaireType {
   if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
@@ -68,6 +68,10 @@ export default function QuestionnaireBuilderPage() {
       !requestedTypeUnavailable &&
       Boolean(resolvedVersionId),
   });
+  const shouldDelayDraftHydration = Boolean(resolvedVersionId) && questionnaireVersionQuery.isLoading;
+  const draftHydrationToken = shouldDelayDraftHydration
+    ? "loading"
+    : (questionnaireVersionQuery.data?.id ?? resolvedVersionId ?? "none");
 
   useEffect(() => {
     if (searchParams.get("type") === activePageType) {
@@ -84,11 +88,15 @@ export default function QuestionnaireBuilderPage() {
       return;
     }
 
+    if (shouldDelayDraftHydration) {
+      return;
+    }
+
     loadDraftFromServer({
       ...questionnaireVersionsQuery.data,
       draftVersion: questionnaireVersionQuery.data ?? null,
     });
-  }, [loadDraftFromServer, questionnaireVersionQuery.data, questionnaireVersionsQuery.data]);
+  }, [draftHydrationToken, loadDraftFromServer, questionnaireVersionsQuery.data]);
 
   useEffect(() => {
     if (!requestedTypeUnavailable) {
@@ -141,25 +149,11 @@ export default function QuestionnaireBuilderPage() {
 
   return (
     <section className="space-y-6 px-0 py-5 sm:px-6 md:p-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="font-playfair text-2xl font-semibold">Questionnaire Builder</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Build a quantitative questionnaire, add an optional final comment section, and
-            save it as a draft version.
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          className="sm:self-start"
-          onClick={handleBackToQuestionnaires}
-        >
-          Back to questionnaires
-        </Button>
-      </div>
+      <QuestionnaireBuilderPageHeader onBack={handleBackToQuestionnaires} />
 
-      <QuestionnaireAsyncContent
+      <QuestionnaireBuilderScreen
+        activeType={activePageType}
+        isHydrated={hydrated}
         isLoading={showBuilderLoading}
         isError={showBuilderError}
         emptyState={emptyState}
@@ -170,21 +164,11 @@ export default function QuestionnaireBuilderPage() {
             void questionnaireVersionQuery.refetch();
           }
         }}
-      >
-        <QuestionnaireBuilderShell
-          activeType={activePageType}
-          isHydrated={hydrated}
-        />
-      </QuestionnaireAsyncContent>
+      />
 
-      <QuestionnaireActionDialog
+      <QuestionnaireBuilderDiscardDialog
         open={discardDialogOpen}
         onOpenChange={setDiscardDialogOpen}
-        title="Discard unsaved changes?"
-        description="Going back to questionnaires will discard the unsaved changes in this builder."
-        cancelLabel="Keep editing"
-        confirmLabel="Discard changes"
-        confirmVariant="destructive"
         onConfirm={() => {
           resetActiveDraft();
           setDiscardDialogOpen(false);

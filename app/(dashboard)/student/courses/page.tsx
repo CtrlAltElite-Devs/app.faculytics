@@ -2,9 +2,11 @@
 
 import { useMyEnrollments } from "@/features/enrollments/hooks/use-my-enrollments";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
-import { Loader2 } from "lucide-react";
 
-import CourseCard from "./_components/course-card";
+import { CourseGrid } from "./_components/course-grid";
+import { CoursesEmptyState } from "./_components/courses-empty-state";
+import { CoursesErrorState } from "./_components/courses-error-state";
+import { CoursesLoadingState } from "./_components/courses-loading-state";
 
 export default function StudentCoursesPage() {
   const setSelectedCourse = useSelectedCourseStore((state) => state.setSelectedCourse);
@@ -15,41 +17,16 @@ export default function StudentCoursesPage() {
     <section className="md:px-16 md:py-12">
       <h1 className="text-3xl font-bold font-playfair">Courses</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        You are currently enrolled in {enrolledCourses.length} courses this
-        semester
+        You are currently enrolled in {enrolledCourses.length} courses this semester
       </p>
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {isLoading && (
-          <div className="col-span-full flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground">
-            <Loader2 className="size-5 animate-spin" />
-            <p className="text-sm">Fetching your enrolled courses...</p>
-          </div>
-        )}
-        {isError && (
-          <p className="text-sm text-destructive">
-            Unable to load enrolled courses right now.
-          </p>
-        )}
-        {!isLoading &&
-          !isError &&
-          enrolledCourses.map((enrollment) => (
-            <CourseCard
-              key={enrollment.id}
-              shortname={enrollment.course.shortname}
-              fullname={enrollment.course.fullname}
-              teacherName={enrollment.faculty?.fullName ?? "Teacher unavailable"}
-              teacherImageSrc={enrollment.faculty?.profilePicture}
-              imageSrc={enrollment.course.courseImage}
-              feedbackHref={`/student/courses/${enrollment.course.id}/evaluation`}
-              onGiveFeedback={() => setSelectedCourse(enrollment)}
-            />
-          ))}
+        {isLoading ? <CoursesLoadingState /> : null}
+        {isError ? <CoursesErrorState /> : null}
+        {!isLoading && !isError ? (
+          <CourseGrid enrollments={enrolledCourses} onSelectCourse={setSelectedCourse} />
+        ) : null}
       </div>
-      {!isLoading && !isError && enrolledCourses.length === 0 && (
-        <p className="mt-2 text-sm text-muted-foreground">
-          You are not enrolled in any courses yet.
-        </p>
-      )}
+      {!isLoading && !isError && enrolledCourses.length === 0 ? <CoursesEmptyState /> : null}
     </section>
   );
 }

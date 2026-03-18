@@ -1,14 +1,13 @@
 "use client";
-
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { QuestionnairePreviewRenderer } from "@/features/questionnaires/components/builder/questionnaire-preview-renderer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import { useQuestionnaireVersion } from "@/features/questionnaires/hooks/use-questionnaire-versions";
+
+import { QuestionnairePreviewLoadingCard } from "../_components/questionnaire-preview-loading-card";
+import { QuestionnairePreviewStateCard } from "../_components/questionnaire-preview-state-card";
 
 export default function QuestionnaireVersionPreviewPage() {
   const searchParams = useSearchParams();
@@ -20,19 +19,12 @@ export default function QuestionnaireVersionPreviewPage() {
   if (!versionId) {
     return (
       <section className="space-y-4 px-4 py-5 sm:px-6 md:p-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-playfair text-xl">Preview unavailable</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              No questionnaire version was selected for preview.
-            </p>
-            <Button asChild variant="outline">
-              <Link href="/superadmin/questionnaires">Back to questionnaires</Link>
-            </Button>
-          </CardContent>
-        </Card>
+        <QuestionnairePreviewStateCard
+          title="Preview unavailable"
+          description="No questionnaire version was selected for preview."
+          backHref="/superadmin/questionnaires"
+          backLabel="Back to questionnaires"
+        />
       </section>
     );
   }
@@ -40,11 +32,7 @@ export default function QuestionnaireVersionPreviewPage() {
   if (versionQuery.isLoading) {
     return (
       <section className="space-y-4 px-4 py-5 sm:px-6 md:p-8">
-        <Card>
-          <CardContent className="p-6 text-sm text-muted-foreground">
-            Loading questionnaire preview...
-          </CardContent>
-        </Card>
+        <QuestionnairePreviewLoadingCard message="Loading questionnaire preview..." />
       </section>
     );
   }
@@ -52,19 +40,12 @@ export default function QuestionnaireVersionPreviewPage() {
   if (versionQuery.isError || !versionQuery.data) {
     return (
       <section className="space-y-4 px-4 py-5 sm:px-6 md:p-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-playfair text-xl">Preview unavailable</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              The requested questionnaire version could not be loaded.
-            </p>
-            <Button asChild variant="outline">
-              <Link href="/superadmin/questionnaires">Back to questionnaires</Link>
-            </Button>
-          </CardContent>
-        </Card>
+        <QuestionnairePreviewStateCard
+          title="Preview unavailable"
+          description="The requested questionnaire version could not be loaded."
+          backHref="/superadmin/questionnaires"
+          backLabel="Back to questionnaires"
+        />
       </section>
     );
   }

@@ -45,6 +45,9 @@ The current feature slices are:
 Route-local UI is allowed when a component is used by exactly one route. Example:
 
 - `app/(dashboard)/student/courses/_components/course-card.tsx`
+- `app/auth/_components/*`
+- `app/(dashboard)/superadmin/questionnaires/_components/*`
+- `app/(dashboard)/superadmin/questionnaires/new/_components/*`
 
 ---
 
@@ -56,6 +59,7 @@ app/
   page.tsx
   globals.css
   auth/
+    _components/
     layout.tsx
     page.tsx
   (dashboard)/
@@ -75,6 +79,14 @@ app/
     dean/
     superadmin/
       questionnaires/
+        _components/
+        preview/
+          page.tsx
+        new/
+          _components/
+          preview/
+            page.tsx
+          page.tsx
 
 components/
   layout/
@@ -166,6 +178,7 @@ stores/
 - route-local redirects
 - route-local `_components/`
 - route-only composition and wiring
+- route-level navigation, redirect, and URL-state orchestration
 
 **Does not own**
 
@@ -173,6 +186,9 @@ stores/
 - feature-wide serializers or validators
 - shared UI
 - reusable feature components used by multiple routes
+- component-local form state
+- component-local filter/search state
+- purely presentational UI toggles such as show/hide, modal visibility, or inline editing state unless that state directly controls route flow
 
 ### `components/ui/`
 
@@ -302,10 +318,29 @@ Examples:
 - the UI is only used by one route
 - the component is tightly coupled to one page’s behavior
 - extracting a full feature slice would be heavier than the actual reuse justifies
+- the UI needs local form state, local filter state, or small interaction state that does not affect routing, redirects, or shared data ownership
+
+### State placement rule
+
+Put state in the lowest component that actually owns the behavior.
+
+- keep component-local UI state inside the component that renders and uses it
+- keep route pages focused on composition, URL params, redirects, and feature hook wiring
+- move `useForm`, input visibility toggles, search text, status filters, and similar local interaction state into route-local or feature components when only that component uses them
+- keep state in the page only when it coordinates route transitions, unsaved-changes guards, query-param synchronization, or cross-component orchestration within the route
+
+Examples:
+
+- `app/auth/_components/auth-login-form.tsx` should own its login form state and password visibility toggle
+- `app/(dashboard)/superadmin/questionnaires/_components/questionnaire-list-screen.tsx` should own its local search and status filter state
+- `app/(dashboard)/superadmin/questionnaires/new/page.tsx` may keep back-navigation/discard-confirmation state because it coordinates route exit behavior
 
 Current example:
 
 - `app/(dashboard)/student/courses/_components/course-card.tsx`
+- `app/auth/_components/auth-login-form.tsx`
+- `app/(dashboard)/superadmin/questionnaires/_components/questionnaire-list-screen.tsx`
+- `app/(dashboard)/superadmin/questionnaires/new/_components/questionnaire-builder-screen.tsx`
 
 ---
 
@@ -353,9 +388,10 @@ backend data
 
 ### Preferred rules
 
-- use `@/*` absolute imports across folders
+- default to `@/*` absolute imports for any import that crosses folders or feature boundaries
 - import from `features/<feature>/...` for feature internals
-- use route-local relative imports inside the same route folder when it keeps things simple
+- allow relative imports only for tightly colocated route-local files, such as `./_components/...` or `../_components/...` inside the same route subtree
+- do not use deep relative imports like `../../../` across features, shared folders, or app sections
 - keep external imports first, internal imports second
 
 ### Barrel export rule
@@ -383,12 +419,14 @@ Do:
 - keep route files focused on composition
 - keep guards under route-local folders
 - use `_components/` for route-only UI
+- keep local form/filter/toggle state out of page files unless it affects route orchestration
 
 Don't:
 
 - put request functions in `app/`
 - put feature-wide business logic in pages
 - let page files grow into feature dumping grounds
+- lift component-local interaction state into pages without a route-level reason
 
 ### Components
 
@@ -398,12 +436,14 @@ Do:
 - keep `components/layout/` shell-only
 - keep feature UI inside its feature slice
 - keep route-only UI near its route
+- let route-local and feature components own the interaction state they directly render
 
 Don't:
 
 - call feature request modules directly from presentation components
 - place domain-specific UI in `components/ui/`
 - keep old root-level domain component folders once a feature slice exists
+- pass down `useForm` instances, local filter state, or simple visibility toggles from pages when the child component is the only consumer
 
 ### Hooks
 
@@ -525,6 +565,14 @@ The migration away from root-level feature folders is complete for the tracked d
 - `auth`
 - `enrollments`
 - app shell
+
+The route-thinning pass is in place for the highest-weight routes through route-local `_components/`
+folders in:
+
+- `app/auth`
+- `app/(dashboard)/student/courses`
+- `app/(dashboard)/superadmin/questionnaires`
+- `app/(dashboard)/superadmin/questionnaires/new`
 
 The remaining work is operational, not structural:
 
