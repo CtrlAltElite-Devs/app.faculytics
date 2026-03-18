@@ -1,12 +1,11 @@
+import {
+  DEFAULT_QUESTIONNAIRE_TYPE,
+  QUESTIONNAIRE_STATUSES,
+  QUESTIONNAIRE_STATUS_FILTER_LABELS,
+  QUESTIONNAIRE_TYPES,
+  QUESTIONNAIRE_TYPE_LABELS,
+} from "@/features/questionnaires/constants";
 import type { QuestionnaireVersionSchema } from "@/features/questionnaires/types/builder";
-
-export const QUESTIONNAIRE_TYPES = [
-  "FACULTY_FEEDBACK",
-  "FACULTY_IN_CLASSROOM",
-  "FACULTY_OUT_OF_CLASSROOM",
-] as const;
-
-export const QUESTIONNAIRE_STATUSES = ["DRAFT", "ACTIVE", "DEPRECATED"] as const;
 
 export type QuestionnaireType = (typeof QUESTIONNAIRE_TYPES)[number];
 
@@ -88,8 +87,6 @@ export type QuestionnaireVersion = {
   deletedAt?: string | null;
 };
 
-export const DEFAULT_QUESTIONNAIRE_TYPE: QuestionnaireType = "FACULTY_FEEDBACK";
-
 export function resolveQuestionnaireType(value: string | null): QuestionnaireType {
   if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
     return value as QuestionnaireType;
@@ -98,17 +95,11 @@ export function resolveQuestionnaireType(value: string | null): QuestionnaireTyp
   return DEFAULT_QUESTIONNAIRE_TYPE;
 }
 
-export const QUESTIONNAIRE_TYPE_LABELS: Record<QuestionnaireType, string> = {
-  FACULTY_IN_CLASSROOM: "Faculty In Classroom",
-  FACULTY_OUT_OF_CLASSROOM: "Faculty Out of Classroom",
-  FACULTY_FEEDBACK: "Faculty Feedback",
-};
-
-export const QUESTIONNAIRE_STATUS_FILTER_LABELS: Record<QuestionnaireStatusFilter, string> = {
-  ALL: "All statuses",
-  DRAFT: "Draft",
-  ACTIVE: "Active",
-  DEPRECATED: "Deprecated",
-};
-
 export * from "@/features/questionnaires/types/builder";
+export {
+  DEFAULT_QUESTIONNAIRE_TYPE,
+  QUESTIONNAIRE_STATUSES,
+  QUESTIONNAIRE_STATUS_FILTER_LABELS,
+  QUESTIONNAIRE_TYPES,
+  QUESTIONNAIRE_TYPE_LABELS,
+};

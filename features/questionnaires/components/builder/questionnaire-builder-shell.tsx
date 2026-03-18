@@ -11,7 +11,7 @@ import { QuestionnaireQualitativeEditor } from "@/features/questionnaires/compon
 import { QuestionnaireSectionEditor } from "@/features/questionnaires/components/builder/questionnaire-section-editor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { InlineEditInput } from "@/components/ui/inline-edit-input";
 import { Separator } from "@/components/ui/separator";
 import { useQuestionnaireBuilderController } from "@/features/questionnaires/hooks/use-questionnaire-builder-controller";
@@ -61,6 +61,8 @@ export function QuestionnaireBuilderShell({
     return <Card className="p-6 text-sm text-muted-foreground">Loading builder draft...</Card>;
   }
 
+  const hasExistingQuestionnaire = Boolean(draft.metadata.questionnaireId);
+
   const renderStatusBadge = () => {
     if (isDirty) {
       return (
@@ -87,32 +89,29 @@ export function QuestionnaireBuilderShell({
           <CardHeader className="space-y-4">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="space-y-4">
-                {draft.metadata.titleLocked ? (
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <CardTitle className="font-playfair text-xl">
-                        {draft.metadata.questionnaireTitle || "Untitled questionnaire"}
-                      </CardTitle>
-                      {renderStatusBadge()}
-                    </div>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      This title is inherited from the questionnaire root and cannot be renamed
-                      from the version builder.
-                    </p>
-                  </div>
-                ) : (
+                <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <InlineEditInput
-                      id="questionnaire-title"
-                      value={draft.metadata.title}
-                      placeholder="Enter the questionnaire title"
-                      textClassName="min-h-11 bg-transparent px-0 text-xl font-semibold hover:bg-transparent"
-                      inputClassName="h-11 px-0 text-xl font-semibold"
-                      onChange={updateTitle}
-                    />
+                    <div className="min-w-0 flex-1">
+                      <InlineEditInput
+                        id="questionnaire-title"
+                        value={draft.metadata.title}
+                        placeholder="Enter the questionnaire title"
+                        ariaInvalid={Boolean(
+                          validation.issues.some((issue) => issue.code === "metadata.title.required")
+                        )}
+                        textClassName="min-h-11 bg-transparent px-0 text-xl font-semibold hover:bg-transparent"
+                        inputClassName="h-11 px-0 text-xl font-semibold"
+                        onChange={updateTitle}
+                      />
+                    </div>
                     {renderStatusBadge()}
                   </div>
-                )}
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {hasExistingQuestionnaire
+                      ? "Changes to the questionnaire title will be saved to the parent questionnaire."
+                      : "Set the questionnaire title before creating the first draft version."}
+                  </p>
+                </div>
               </div>
 
               <div className="flex flex-col gap-3 xl:items-end">

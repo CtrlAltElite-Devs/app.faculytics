@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import {
+  DEFAULT_BUILDER_QUESTION_TYPE,
+  DEFAULT_QUALITATIVE_MAX_LENGTH,
+  MAX_SECTION_NESTING_LEVEL,
+} from "@/features/questionnaires/constants/builder";
 import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
 import {
   findSectionById,
@@ -18,7 +23,6 @@ import type {
   QuestionnaireType,
   QuestionnaireVersionDetail,
 } from "@/features/questionnaires/types";
-import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/types";
 
 type QuestionnaireBuilderStore = {
   hydrated: boolean;
@@ -63,7 +67,7 @@ function createEmptyQualitativeConfig(): QuestionnaireBuilderQualitativeConfig {
   return {
     enabled: false,
     required: false,
-    maxLength: 1000,
+    maxLength: DEFAULT_QUALITATIVE_MAX_LENGTH,
   };
 }
 
@@ -73,12 +77,12 @@ function normalizeQualitativeConfig(
   return {
     ...createEmptyQualitativeConfig(),
     ...qualitative,
-    maxLength: qualitative?.maxLength ?? 1000,
+    maxLength: qualitative?.maxLength ?? DEFAULT_QUALITATIVE_MAX_LENGTH,
   };
 }
 
 function createSection(order: number): QuestionnaireBuilderSectionNode {
-  const questionType: QuestionnaireBuilderQuestionNode["type"] = "LIKERT_1_5";
+  const questionType: QuestionnaireBuilderQuestionNode["type"] = DEFAULT_BUILDER_QUESTION_TYPE;
 
   return {
     id: createId("section"),
@@ -110,7 +114,7 @@ function normalizeSections(
       section.questions
         .slice()
         .sort((left, right) => left.order - right.order)[0]?.type ??
-      "LIKERT_1_5";
+      DEFAULT_BUILDER_QUESTION_TYPE;
 
     return {
       ...section,
@@ -330,7 +334,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
               questionnaireId,
               questionnaireTitle: title,
               title: title,
-              titleLocked: true,
+              titleLocked: false,
             },
           }))
         ),
@@ -368,7 +372,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
               title: context.questionnaireId !== null ? context.questionnaireTitle ?? "" : "",
               questionnaireId: context.questionnaireId,
               versionId: null,
-              titleLocked: Boolean(context.questionnaireId),
+              titleLocked: false,
               questionnaireTitle: context.questionnaireTitle,
             },
             hydratedFromServer: true,
@@ -404,12 +408,10 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
         set((state) =>
           replaceActiveDraft(state, (draft) => ({
             ...draft,
-            metadata: draft.metadata.titleLocked
-              ? draft.metadata
-              : {
-                  ...draft.metadata,
-                  title,
-                },
+            metadata: {
+              ...draft.metadata,
+              title,
+            },
           }))
         ),
       selectSection: (sectionId) =>
@@ -575,7 +577,10 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             qualitative: {
               ...normalizeQualitativeConfig(draft.qualitative),
               ...updates,
-              maxLength: updates.maxLength ?? draft.qualitative.maxLength ?? 1000,
+              maxLength:
+                updates.maxLength ??
+                draft.qualitative.maxLength ??
+                DEFAULT_QUALITATIVE_MAX_LENGTH,
             },
           }))
         ),
@@ -604,9 +609,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
               [state.activeType]: createDraft(state.activeType, {
                 metadata: {
                   ...activeDraft.metadata,
-                  title: activeDraft.metadata.titleLocked
-                    ? activeDraft.metadata.questionnaireTitle ?? ""
-                    : "",
+                  title: activeDraft.metadata.questionnaireTitle ?? "",
                 },
                 hydratedFromServer: activeDraft.hydratedFromServer,
               }),

@@ -1,3 +1,4 @@
+import { DEFAULT_QUALITATIVE_MAX_LENGTH } from "@/features/questionnaires/constants/builder";
 import {
   isLeafSection,
   sortSections,
@@ -152,7 +153,7 @@ export function serializeQuestionnaireBuilderDraft(
     qualitativeFeedback: {
       enabled: draft.qualitative.enabled,
       required: draft.qualitative.required,
-      maxLength: draft.qualitative.maxLength ?? 1000,
+      maxLength: draft.qualitative.maxLength ?? DEFAULT_QUALITATIVE_MAX_LENGTH,
     },
   };
 }

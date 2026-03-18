@@ -31,6 +31,7 @@ High-level rules:
 - `app/` owns routing, layouts, guards, and route-level composition
 - `components/ui/` owns low-level reusable UI primitives
 - `components/layout/` owns the app shell
+- `constants/` owns app-wide shared constants only
 - `features/<feature>/` owns domain code
 - `lib/` owns cross-feature pure utilities
 - `network/` owns shared transport setup only
@@ -126,6 +127,7 @@ features/
       index.ts
     index.ts
   questionnaires/
+    constants/
     api/
       questionnaire.requests.ts
     components/
@@ -217,6 +219,19 @@ stores/
 - role switcher
 - theme controls
 - app shell composition
+
+### `constants/`
+
+**Owns**
+
+- app-wide shared constants reused across multiple features
+- global role lists and other cross-slice static values
+
+**Does not own**
+
+- feature-specific enums, labels, or builder defaults
+- route-local display maps
+- transport-layer endpoints owned by `network/`
 
 **Does not own**
 

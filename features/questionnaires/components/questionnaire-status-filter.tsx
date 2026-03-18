@@ -13,8 +13,8 @@ import {
 import {
   QUESTIONNAIRE_STATUS_FILTER_LABELS,
   QUESTIONNAIRE_STATUSES,
-  type QuestionnaireStatusFilter,
-} from "@/features/questionnaires/types";
+} from "@/features/questionnaires/constants";
+import type { QuestionnaireStatusFilter } from "@/features/questionnaires/types";
 
 type QuestionnaireStatusFilterProps = {
   value: QuestionnaireStatusFilter;

@@ -12,10 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import {
-  QUESTIONNAIRE_TYPE_LABELS,
-  type QuestionnaireType,
-} from "@/features/questionnaires/types";
+import { QUESTIONNAIRE_TYPE_LABELS } from "@/features/questionnaires/constants";
+import type { QuestionnaireType } from "@/features/questionnaires/types";
 
 type QuestionnaireTypeButtonGroupProps = {
   types: QuestionnaireType[];

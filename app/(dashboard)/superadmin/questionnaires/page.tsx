@@ -4,11 +4,13 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
+import {
+  DEFAULT_QUESTIONNAIRE_TYPE,
+  QUESTIONNAIRE_TYPES,
+} from "@/features/questionnaires/constants";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { useQuestionnaireVersions } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 import {
-  QUESTIONNAIRE_TYPES,
-  DEFAULT_QUESTIONNAIRE_TYPE,
   resolveQuestionnaireType,
   type QuestionnaireVersionItem,
   type QuestionnaireType,
