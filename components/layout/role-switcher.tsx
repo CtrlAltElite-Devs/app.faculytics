@@ -32,12 +32,12 @@ export function RoleSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="min-w-32 justify-between">
+        <Button variant="outline" size="sm" className="w-[8.5rem] justify-between">
           <span>{getRoleLabel(activeRole)}</span>
           <ChevronDown className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-40">
+      <DropdownMenuContent align="end" className="w-[8.5rem] min-w-0">
         <DropdownMenuRadioGroup value={activeRole} onValueChange={handleRoleChange}>
           {availableRoles.map((role) => (
             <DropdownMenuRadioItem key={role} value={role}>

@@ -29,7 +29,7 @@ function DeanMetricCard({
       <CardHeader className="pb-0">
         <div className="space-y-2">
           <CardDescription className="font-sans text-sm">{title}</CardDescription>
-          <CardTitle className="text-3xl font-semibold tracking-tight">{value}</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight sm:text-3xl">{value}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
