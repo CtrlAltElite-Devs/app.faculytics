@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { QuestionnaireActionDialog } from "@/features/questionnaires/components/questionnaire-action-dialog";
 import { QuestionnaireCallout } from "@/features/questionnaires/components/questionnaire-callout";
 import { QuestionnaireAddActionButton } from "@/features/questionnaires/components/builder/questionnaire-add-action-button";
 import { QuestionnaireOutlinePanel } from "@/features/questionnaires/components/builder/questionnaire-outline-panel";
@@ -12,6 +11,7 @@ import { QuestionnaireSectionEditor } from "@/features/questionnaires/components
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 import { InlineEditInput } from "@/components/ui/inline-edit-input";
 import { Separator } from "@/components/ui/separator";
 import { useQuestionnaireBuilderController } from "@/features/questionnaires/hooks/use-questionnaire-builder-controller";
@@ -214,7 +214,7 @@ export function QuestionnaireBuilderShell({
         </div>
       </div>
 
-      <QuestionnaireActionDialog
+      <ConfirmationDialog
         open={discardDialogOpen}
         onOpenChange={setDiscardDialogOpen}
         title="Discard unsaved changes?"
@@ -225,7 +225,7 @@ export function QuestionnaireBuilderShell({
         onConfirm={handleDiscardDraft}
       />
 
-      <QuestionnaireActionDialog
+      <ConfirmationDialog
         open={Boolean(pendingParentId)}
         onOpenChange={(open) => {
           if (!open) {
@@ -245,7 +245,7 @@ export function QuestionnaireBuilderShell({
         onConfirm={handleConfirmParentConversion}
       />
 
-      <QuestionnaireActionDialog
+      <ConfirmationDialog
         open={saveDialogOpen}
         onOpenChange={setSaveDialogOpen}
         title="Questionnaire draft saved"

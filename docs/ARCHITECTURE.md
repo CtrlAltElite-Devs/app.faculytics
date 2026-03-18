@@ -30,6 +30,7 @@ High-level rules:
 
 - `app/` owns routing, layouts, guards, and route-level composition
 - `components/ui/` owns low-level reusable UI primitives
+- `components/shared/` owns reusable composed app components
 - `components/layout/` owns the app shell
 - `constants/` owns app-wide shared constants only
 - `features/<feature>/` owns domain code
@@ -98,6 +99,8 @@ components/
     role-switcher.tsx
     theme-provider.tsx
     theme-toggle.tsx
+  shared/
+    ...
   ui/
     ...
 
@@ -199,7 +202,6 @@ stores/
 - shadcn primitives
 - low-level controls
 - generic form inputs
-- shared overlays
 - generic layout atoms such as tables, badges, dialogs, sheets
 
 **Does not own**
@@ -208,6 +210,22 @@ stores/
 - route logic
 - request orchestration
 - role-specific behavior
+- reusable app-specific composed components
+
+### `components/shared/`
+
+**Owns**
+
+- reusable composed components that are app-specific but not feature-owned
+- shared overlays built from `components/ui/` primitives
+- cross-feature presentation wrappers such as confirmation dialogs
+
+**Does not own**
+
+- shadcn primitives
+- feature-specific business logic
+- route-specific composition
+- shell navigation or layout chrome
 
 ### `components/layout/`
 
@@ -398,6 +416,7 @@ backend data
 - `@/features/questionnaires/hooks/use-questionnaire-types`
 - `@/features/auth/lib/role-route`
 - `@/components/ui/button`
+- `@/components/shared/confirmation-dialog`
 - `@/components/layout/app-sidebar`
 - `@/app/(dashboard)/student/courses/_components/course-card`
 
@@ -448,6 +467,7 @@ Don't:
 Do:
 
 - keep `components/ui/` generic
+- keep `components/shared/` app-specific but reusable
 - keep `components/layout/` shell-only
 - keep feature UI inside its feature slice
 - keep route-only UI near its route
@@ -457,6 +477,7 @@ Don't:
 
 - call feature request modules directly from presentation components
 - place domain-specific UI in `components/ui/`
+- place reusable app-specific composed UI in `components/ui/`
 - keep old root-level domain component folders once a feature slice exists
 - pass down `useForm` instances, local filter state, or simple visibility toggles from pages when the child component is the only consumer
 
@@ -548,11 +569,13 @@ Use this decision order:
    Put it in `components/ui/`.
 3. Is it app shell?
    Put it in `components/layout/`.
-4. Is it feature-specific?
+4. Is it a reusable app-specific composed component built from primitives?
+   Put it in `components/shared/`.
+5. Is it feature-specific?
    Put it in `features/<feature>/`.
-5. Is it a shared pure helper with no feature ownership?
+6. Is it a shared pure helper with no feature ownership?
    Put it in `lib/`.
-6. Is it app-global client state?
+7. Is it app-global client state?
    Put it in `stores/`.
 
 If a file is used by exactly one route, prefer route-local `_components/` before creating a new shared home.

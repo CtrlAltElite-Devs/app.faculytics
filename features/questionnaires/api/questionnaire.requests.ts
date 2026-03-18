@@ -81,3 +81,23 @@ export async function updateQuestionnaireVersion({
   );
   return response.data;
 }
+
+/**
+ * Publish a draft questionnaire version.
+ */
+export async function publishQuestionnaireVersion(versionId: string) {
+  const response = await apiClient.patch<QuestionnaireVersion>(
+    Endpoints.questionnaireVersionPublish.replace(":versionId", versionId)
+  );
+  return response.data;
+}
+
+/**
+ * Deprecate a questionnaire version.
+ */
+export async function deprecateQuestionnaireVersion(versionId: string) {
+  const response = await apiClient.patch<QuestionnaireVersion>(
+    Endpoints.questionnaireVersionDeprecate.replace(":versionId", versionId)
+  );
+  return response.data;
+}

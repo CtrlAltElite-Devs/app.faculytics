@@ -1,4 +1,4 @@
-import { QuestionnaireActionDialog } from "@/features/questionnaires/components/questionnaire-action-dialog";
+import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 
 type QuestionnaireBuilderDiscardDialogProps = {
   open: boolean;
@@ -12,7 +12,7 @@ export function QuestionnaireBuilderDiscardDialog({
   onConfirm,
 }: QuestionnaireBuilderDiscardDialogProps) {
   return (
-    <QuestionnaireActionDialog
+    <ConfirmationDialog
       open={open}
       onOpenChange={onOpenChange}
       title="Discard unsaved changes?"
