@@ -82,8 +82,7 @@ export function hasMeaningfulDraftContent(draft: QuestionnaireBuilderDraft | nul
 
   const hasSections = draft.sections.length > 0;
   const hasQualitative = draft.qualitative.enabled;
-  const hasEditableTitle =
-    !draft.metadata.titleLocked && draft.metadata.title.trim().length > 0;
+  const hasEditableTitle = draft.metadata.title.trim().length > 0;
 
   return hasSections || hasQualitative || hasEditableTitle;
 }
@@ -122,7 +121,7 @@ export function validateQuestionnaireBuilderDraft(
   let totalLeafWeight = 0;
   let leafSectionCount = 0;
 
-  if (!draft.metadata.titleLocked && draft.metadata.title.trim().length === 0) {
+  if (draft.metadata.title.trim().length === 0) {
     appendIssue(issues, {
       code: "metadata.title.required",
       message: "Questionnaire title is required before saving.",

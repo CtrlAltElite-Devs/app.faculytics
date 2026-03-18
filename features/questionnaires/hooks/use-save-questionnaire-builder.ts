@@ -41,6 +41,7 @@ export function useSaveQuestionnaireBuilder() {
       return;
     }
 
+    const trimmedTitle = draft.metadata.title.trim();
     const payload = serializeQuestionnaireBuilderDraft(draft);
 
     try {
@@ -49,7 +50,7 @@ export function useSaveQuestionnaireBuilder() {
 
       if (!questionnaireId) {
         const createdQuestionnaire = await createQuestionnaireMutation.mutateAsync({
-          title: draft.metadata.title.trim(),
+          title: trimmedTitle,
           type: draft.metadata.type,
         });
         questionnaireId = createdQuestionnaire.id;
@@ -57,10 +58,13 @@ export function useSaveQuestionnaireBuilder() {
       }
 
       if (draft.metadata.versionId) {
+        const shouldSendTitle =
+          draft.metadata.questionnaireTitle === null || trimmedTitle !== draft.metadata.questionnaireTitle.trim();
         const updatedVersion = await updateQuestionnaireVersionMutation.mutateAsync({
           versionId: draft.metadata.versionId,
           payload: {
             schema: payload,
+            ...(shouldSendTitle ? { title: trimmedTitle } : {}),
           },
         });
         savedVersionId = updatedVersion.id;

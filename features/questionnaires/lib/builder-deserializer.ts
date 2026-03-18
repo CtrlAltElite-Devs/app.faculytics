@@ -128,7 +128,7 @@ export function deserializeQuestionnaireVersionToDraft(
       title: version.questionnaireTitle,
       questionnaireId: version.questionnaireId,
       versionId: version.id,
-      titleLocked: true,
+      titleLocked: false,
       questionnaireTitle: version.questionnaireTitle,
     },
     sections: normalizedSections,
