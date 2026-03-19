@@ -1,5 +1,6 @@
 "use client";
 
+import { AppLoadingScreen } from "@/components/shared/app-loading-screen";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/stores/auth-store";
@@ -47,7 +48,11 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
     }
   }, [clearSession, hasAnyAllowedRole, isAllowed, isMeError, isMePending, pathname, roleHome, router]);
 
-  if (isMePending || isMeError || !roleHome || !isAllowed) {
+  if (isMePending || !roleHome) {
+    return <AppLoadingScreen message="Checking access..." />;
+  }
+
+  if (isMeError || !isAllowed) {
     return null;
   }
 

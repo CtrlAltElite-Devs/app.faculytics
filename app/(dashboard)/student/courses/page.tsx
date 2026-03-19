@@ -4,14 +4,20 @@ import { useMyEnrollments } from "@/features/enrollments/hooks/use-my-enrollment
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 
 import { CourseGrid } from "./_components/course-grid";
-import { CoursesEmptyState } from "./_components/courses-empty-state";
-import { CoursesErrorState } from "./_components/courses-error-state";
-import { CoursesLoadingState } from "./_components/courses-loading-state";
+import { CoursesState } from "./_components/courses-state";
 
 export default function StudentCoursesPage() {
   const setSelectedCourse = useSelectedCourseStore((state) => state.setSelectedCourse);
   const { data, isLoading, isError } = useMyEnrollments({ page: 1, limit: 100 });
   const enrolledCourses = data?.data ?? [];
+  const coursesState =
+    isLoading
+      ? "loading"
+      : isError
+        ? "error"
+        : enrolledCourses.length === 0
+          ? "empty"
+          : "ready";
 
   return (
     <section className="md:px-16 md:py-12">
@@ -20,13 +26,12 @@ export default function StudentCoursesPage() {
         You are currently enrolled in {enrolledCourses.length} courses this semester
       </p>
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {isLoading ? <CoursesLoadingState /> : null}
-        {isError ? <CoursesErrorState /> : null}
-        {!isLoading && !isError ? (
+        {coursesState === "ready" ? (
           <CourseGrid enrollments={enrolledCourses} onSelectCourse={setSelectedCourse} />
-        ) : null}
+        ) : (
+          <CoursesState state={coursesState} />
+        )}
       </div>
-      {!isLoading && !isError && enrolledCourses.length === 0 ? <CoursesEmptyState /> : null}
     </section>
   );
 }

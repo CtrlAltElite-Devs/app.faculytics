@@ -1,5 +1,6 @@
 "use client";
 
+import { AppLoadingScreen } from "@/components/shared/app-loading-screen";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/stores/auth-store";
@@ -41,7 +42,15 @@ export function AuthGuard({ children }: AuthGuardProps) {
     }
   }, [activeRole, clearSession, hydrated, isMeError, isMePending, roleHome, router, token]);
 
-  if (!hydrated || !token || isMePending || isMeError || !activeRole || !roleHome) {
+  if (!hydrated || isMePending) {
+    return <AppLoadingScreen message="Restoring your session..." />;
+  }
+
+  if (token && !isMeError && (!activeRole || !roleHome)) {
+    return <AppLoadingScreen message="Loading your dashboard..." />;
+  }
+
+  if (!token || isMeError || !activeRole || !roleHome) {
     return null;
   }
 
