@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useMe } from "@/features/auth/hooks/use-me";
-import { APP_COPYRIGHT } from "@/lib/branding";
+import { APP_COPYRIGHT } from "@/constants/branding";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter, useSearchParams } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";

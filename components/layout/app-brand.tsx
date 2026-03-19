@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
-import { APP_LOGO_SRC, APP_NAME } from "@/lib/branding";
+import { APP_LOGO_SRC, APP_NAME } from "@/constants/branding";
 
 type AppBrandProps = {
   className?: string;
