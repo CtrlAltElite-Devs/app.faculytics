@@ -26,6 +26,14 @@ export const questionnaireSectionInputSchema = z.object({
       .min(1, "Weight must be at least 1.")
       .max(100, "Weight must be 100 or less."),
   ]),
+  dimensionCode: z.union([
+    z.null(),
+    z
+      .string()
+      .trim()
+      .min(1, "Select or create a dimension for this section.")
+      .max(255, "Dimension code must be 255 characters or fewer."),
+  ]),
 });
 
 export const questionnaireQuestionInputSchema = z.object({

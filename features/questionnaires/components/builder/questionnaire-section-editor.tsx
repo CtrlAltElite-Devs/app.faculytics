@@ -2,6 +2,7 @@
 
 import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, MoreVertical, Trash2 } from "lucide-react";
 
+import { DimensionCodeSelect } from "@/features/dimensions/components/dimension-code-select";
 import { QuestionnaireAddActionButton } from "@/features/questionnaires/components/builder/questionnaire-add-action-button";
 import { QuestionnaireQuestionEditor } from "@/features/questionnaires/components/builder/questionnaire-question-editor";
 import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
@@ -23,10 +24,13 @@ import type {
   BuilderQuestionType,
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
+  QuestionnaireBuilderSectionUpdates,
+  QuestionnaireType,
   QuestionnaireBuilderValidationIssue,
 } from "@/features/questionnaires/types";
 
 type QuestionnaireSectionEditorProps = {
+  questionnaireType: QuestionnaireType;
   section: QuestionnaireBuilderSectionNode;
   sectionIssues: QuestionnaireBuilderValidationIssue[];
   questionIssues: Record<string, QuestionnaireBuilderValidationIssue[]>;
@@ -34,10 +38,7 @@ type QuestionnaireSectionEditorProps = {
   selectedSectionId: string | null;
   isSelected?: boolean;
   depth?: number;
-  onUpdateSection: (
-    sectionId: string,
-    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight" | "questionType">>
-  ) => void;
+  onUpdateSection: (sectionId: string, updates: QuestionnaireBuilderSectionUpdates) => void;
   onAddChild: (sectionId: string) => void;
   onMove: (sectionId: string, direction: "up" | "down") => void;
   onRemove: (sectionId: string) => void;
@@ -56,6 +57,7 @@ const QUESTION_TYPE_LABELS: Record<BuilderQuestionType, string> = {
 };
 
 export function QuestionnaireSectionEditor({
+  questionnaireType,
   section,
   sectionIssues,
   questionIssues,
@@ -82,6 +84,9 @@ export function QuestionnaireSectionEditor({
   const structureIssue = sectionIssues.find(
     (issue) => issue.target.type === "section" && issue.target.field === "structure"
   );
+  const dimensionIssue = sectionIssues.find(
+    (issue) => issue.target.type === "section" && issue.target.field === "dimensionCode"
+  );
 
   return (
     <Card
@@ -96,7 +101,7 @@ export function QuestionnaireSectionEditor({
           className={cn(
             "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 gap-y-4",
             isLeaf
-              ? "md:grid-cols-[minmax(0,1fr)_minmax(112px,0.44fr)_88px_auto]"
+              ? "md:grid-cols-[minmax(0,1fr)_minmax(200px,0.6fr)_minmax(112px,0.44fr)_88px_auto]"
               : "md:grid-cols-[minmax(0,1fr)_auto]"
           )}
         >
@@ -116,40 +121,63 @@ export function QuestionnaireSectionEditor({
                 }
               />
             </CardTitle>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {depth > 0 ? "Subsection Title" : "Section Title"}
+            </p>
           </div>
 
           {isLeaf ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  id={`section-question-type-${section.id}`}
-                  type="button"
-                  variant="outline"
-                  className="col-span-2 min-w-0 w-full justify-between gap-3 md:col-span-1"
-                  aria-label="Section question type"
-                >
-                  {QUESTION_TYPE_LABELS[section.questionType]}
-                  <ChevronDown className="size-4 text-muted-foreground" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="min-w-48">
-                <DropdownMenuRadioGroup
-                  value={section.questionType}
-                  onValueChange={(value) =>
-                    onUpdateSection(section.id, {
-                      questionType: value as BuilderQuestionType,
-                    })
-                  }
-                >
-                  <DropdownMenuRadioItem value="LIKERT_1_5">
-                    {QUESTION_TYPE_LABELS.LIKERT_1_5}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="YES_NO">
-                    {QUESTION_TYPE_LABELS.YES_NO}
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="col-span-2 min-w-0 space-y-2 md:col-span-1">
+              <DimensionCodeSelect
+                questionnaireType={questionnaireType}
+                value={section.dimensionCode}
+                ariaInvalid={Boolean(dimensionIssue)}
+                errorMessage={dimensionIssue?.message}
+                onChange={(dimensionCode) =>
+                  onUpdateSection(section.id, {
+                    dimensionCode,
+                  })
+                }
+              />
+              <p className="text-xs text-muted-foreground">Dimension</p>
+            </div>
+          ) : null}
+
+          {isLeaf ? (
+            <div className="col-span-2 min-w-0 space-y-2 md:col-span-1">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    id={`section-question-type-${section.id}`}
+                    type="button"
+                    variant="outline"
+                    className="min-w-0 w-full justify-between gap-3"
+                    aria-label="Section question type"
+                  >
+                    {QUESTION_TYPE_LABELS[section.questionType]}
+                    <ChevronDown className="size-4 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="min-w-48">
+                  <DropdownMenuRadioGroup
+                    value={section.questionType}
+                    onValueChange={(value) =>
+                      onUpdateSection(section.id, {
+                        questionType: value as BuilderQuestionType,
+                      })
+                    }
+                  >
+                    <DropdownMenuRadioItem value="LIKERT_1_5">
+                      {QUESTION_TYPE_LABELS.LIKERT_1_5}
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="YES_NO">
+                      {QUESTION_TYPE_LABELS.YES_NO}
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <p className="text-xs text-muted-foreground">Question Type</p>
+            </div>
           ) : null}
 
           {isLeaf ? (
@@ -264,6 +292,7 @@ export function QuestionnaireSectionEditor({
             {section.children.map((childSection) => (
               <QuestionnaireSectionEditor
                 key={childSection.id}
+                questionnaireType={questionnaireType}
                 section={childSection}
                 sectionIssues={allSectionIssues[childSection.id] ?? []}
                 allSectionIssues={allSectionIssues}

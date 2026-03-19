@@ -23,6 +23,9 @@ type QuestionnaireListScreenProps = {
   onRetry: () => void;
   onEditDraft: (row: QuestionnaireVersionItem) => void;
   onViewVersion: (row: QuestionnaireVersionItem) => void;
+  onPublishVersion: (row: QuestionnaireVersionItem) => void;
+  onDeprecateVersion: (row: QuestionnaireVersionItem) => void;
+  disableActions?: boolean;
 };
 
 export function QuestionnaireListScreen({
@@ -37,6 +40,9 @@ export function QuestionnaireListScreen({
   onRetry,
   onEditDraft,
   onViewVersion,
+  onPublishVersion,
+  onDeprecateVersion,
+  disableActions = false,
 }: QuestionnaireListScreenProps) {
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
@@ -100,6 +106,9 @@ export function QuestionnaireListScreen({
             rows={filteredRows}
             onEditDraft={onEditDraft}
             onViewVersion={onViewVersion}
+            onPublishVersion={onPublishVersion}
+            onDeprecateVersion={onDeprecateVersion}
+            disableActions={disableActions}
           />
 
           <div className="flex justify-end">

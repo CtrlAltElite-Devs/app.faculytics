@@ -14,4 +14,12 @@ export enum Endpoints {
   questionnaireTypeVersions = "/api/v1/questionnaires/types/:type/versions",
   questionnaireVersions = "/api/v1/questionnaires/:id/versions",
   questionnaireVersionById = "/api/v1/questionnaires/versions/:versionId",
+  questionnaireVersionPublish = "/api/v1/questionnaires/versions/:versionId/publish",
+  questionnaireVersionDeprecate = "/api/v1/questionnaires/versions/:versionId/deprecate",
+
+  // Dimensions
+  dimensions = "/api/v1/dimensions",
+  dimensionById = "/api/v1/dimensions/:id",
+  dimensionActivate = "/api/v1/dimensions/:id/activate",
+  dimensionDeactivate = "/api/v1/dimensions/:id/deactivate",
 }

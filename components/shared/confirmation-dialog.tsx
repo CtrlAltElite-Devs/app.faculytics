@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type QuestionnaireActionDialogProps = {
+type ConfirmationDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
@@ -19,9 +19,10 @@ type QuestionnaireActionDialogProps = {
   confirmLabel: string;
   onConfirm: () => void;
   confirmVariant?: "default" | "brand" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  isPending?: boolean;
 };
 
-export function QuestionnaireActionDialog({
+export function ConfirmationDialog({
   open,
   onOpenChange,
   title,
@@ -30,7 +31,8 @@ export function QuestionnaireActionDialog({
   confirmLabel,
   onConfirm,
   confirmVariant = "default",
-}: QuestionnaireActionDialogProps) {
+  isPending = false,
+}: ConfirmationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -39,12 +41,18 @@ export function QuestionnaireActionDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isPending}
+            onClick={() => onOpenChange(false)}
+          >
             {cancelLabel}
           </Button>
           <Button
             type="button"
             variant={confirmVariant}
+            disabled={isPending}
             onClick={onConfirm}
           >
             {confirmLabel}

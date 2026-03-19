@@ -15,6 +15,7 @@ import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/qu
 import type {
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
+  QuestionnaireBuilderSectionUpdates,
   QuestionnaireType,
 } from "@/features/questionnaires/types";
 
@@ -105,10 +106,7 @@ export function useQuestionnaireBuilderController({
     addRootSection();
   };
 
-  const handleUpdateSection = (
-    sectionId: string,
-    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight" | "questionType">>
-  ) => {
+  const handleUpdateSection = (sectionId: string, updates: QuestionnaireBuilderSectionUpdates) => {
     updateSection(sectionId, updates);
   };
 

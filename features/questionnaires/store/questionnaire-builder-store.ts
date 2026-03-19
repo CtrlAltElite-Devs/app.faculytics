@@ -19,6 +19,7 @@ import type {
   QuestionnaireBuilderQualitativeConfig,
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
+  QuestionnaireBuilderSectionUpdates,
   QuestionnaireBuilderServerContext,
   QuestionnaireType,
   QuestionnaireVersionDetail,
@@ -38,10 +39,7 @@ type QuestionnaireBuilderStore = {
   selectSection: (sectionId: string | null) => void;
   addRootSection: () => void;
   addChildSection: (parentSectionId: string) => void;
-  updateSection: (
-    sectionId: string,
-    updates: Partial<Pick<QuestionnaireBuilderSectionNode, "title" | "weight" | "questionType">>
-  ) => void;
+  updateSection: (sectionId: string, updates: QuestionnaireBuilderSectionUpdates) => void;
   removeSection: (sectionId: string) => void;
   moveSection: (sectionId: string, direction: "up" | "down") => void;
   addQuestion: (sectionId: string) => void;
@@ -89,6 +87,8 @@ function createSection(order: number): QuestionnaireBuilderSectionNode {
     title: `Section ${order}`,
     order,
     weight: null,
+    dimensionCode: null,
+    dimensionCodeIssue: null,
     questionType,
     questions: [createQuestion(1, questionType)],
     children: [],
@@ -118,6 +118,8 @@ function normalizeSections(
 
     return {
       ...section,
+      dimensionCode: isLeafSection(section) ? section.dimensionCode ?? null : null,
+      dimensionCodeIssue: isLeafSection(section) ? section.dimensionCodeIssue ?? null : null,
       questionType,
       questions: resequenceQuestions(
         section.questions
@@ -450,6 +452,8 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
               return {
                 ...section,
                 weight: null,
+                dimensionCode: null,
+                dimensionCodeIssue: null,
                 questions: [],
                 children: resequenceSections([...section.children, nextChild]),
               };
@@ -482,6 +486,13 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
                     ? section.weight
                     : updates.weight
                   : null,
+                dimensionCode: isLeafSection(section)
+                  ? updates.dimensionCode === undefined
+                    ? section.dimensionCode
+                    : updates.dimensionCode
+                  : null,
+                dimensionCodeIssue:
+                  updates.dimensionCode === undefined ? section.dimensionCodeIssue : null,
                 questions:
                   updates.questionType === undefined
                     ? section.questions

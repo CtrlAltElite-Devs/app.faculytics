@@ -42,6 +42,28 @@ function mapQuestion(
   };
 }
 
+function resolveLeafDimensionState(questions: QuestionnaireSchemaQuestion[]) {
+  const codes = Array.from(
+    new Set(
+      questions
+        .map((question) => question.dimensionCode?.trim() ?? "")
+        .filter((code) => code.length > 0)
+    )
+  );
+
+  if (codes.length === 0) {
+    return {
+      dimensionCode: null,
+      dimensionCodeIssue: null,
+    } as const;
+  }
+
+  return {
+    dimensionCode: codes[0] ?? null,
+    dimensionCodeIssue: codes.length > 1 ? ("inconsistent" as const) : null,
+  };
+}
+
 function inferQuestionType(section: QuestionnaireBuilderSectionNode): BuilderQuestionType {
   if (section.questions.length > 0) {
     return section.questions[0]?.type ?? DEFAULT_BUILDER_QUESTION_TYPE;
@@ -65,6 +87,9 @@ function mapSectionTreeNode(node: QuestionnaireSchemaSectionTreeNode): Questionn
         mapQuestion(question, index + 1, question.type)
       )
     : [];
+  const { dimensionCode, dimensionCodeIssue } = resolveLeafDimensionState(
+    sortByOrder(node.questions)
+  );
   const questionType =
     questions[0]?.type ?? children[0]?.questionType ?? DEFAULT_BUILDER_QUESTION_TYPE;
 
@@ -73,6 +98,8 @@ function mapSectionTreeNode(node: QuestionnaireSchemaSectionTreeNode): Questionn
     title: node.title,
     order: node.order,
     weight: isLeaf ? node.weight ?? null : null,
+    dimensionCode: isLeaf ? dimensionCode : null,
+    dimensionCodeIssue: isLeaf ? dimensionCodeIssue : null,
     questionType,
     questions,
     children,
@@ -83,9 +110,11 @@ function buildSectionsFromFlatSchema(
   schema: QuestionnaireVersionSchema
 ): QuestionnaireBuilderSectionNode[] {
   return sortByOrder(schema.sections).map((section, index) => {
-    const questions = sortByOrder(section.questions).map((question, questionIndex) =>
+    const sortedQuestions = sortByOrder(section.questions);
+    const questions = sortedQuestions.map((question, questionIndex) =>
       mapQuestion(question, questionIndex + 1, question.type)
     );
+    const { dimensionCode, dimensionCodeIssue } = resolveLeafDimensionState(sortedQuestions);
     const questionType = questions[0]?.type ?? DEFAULT_BUILDER_QUESTION_TYPE;
 
     return {
@@ -93,6 +122,8 @@ function buildSectionsFromFlatSchema(
       title: section.title,
       order: index + 1,
       weight: section.weight,
+      dimensionCode,
+      dimensionCodeIssue,
       questionType,
       questions,
       children: [],

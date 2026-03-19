@@ -29,6 +29,11 @@ export type QuestionnaireVersionItem = {
   createdAt: string;
 };
 
+export type VersionLifecycleAction =
+  | { type: "publish"; row: QuestionnaireVersionItem }
+  | { type: "deprecate"; row: QuestionnaireVersionItem }
+  | null;
+
 export type QuestionnaireVersionsResponse = {
   questionnaireId: string | null;
   questionnaireTitle: string | null;
