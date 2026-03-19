@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/providers/app-provider";
-import { APP_DESCRIPTION, APP_NAME } from "@/constants/branding";
+import { branding } from "@/constants/branding";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,9 +21,9 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: APP_NAME,
-  description: APP_DESCRIPTION,
-  applicationName: APP_NAME,
+  title: branding.APP_NAME,
+  description: branding.APP_DESCRIPTION,
+  applicationName: branding.APP_NAME,
 };
 
 export default function RootLayout({

@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useMe } from "@/features/auth/hooks/use-me";
-import { APP_COPYRIGHT } from "@/constants/branding";
+import { branding } from "@/constants/branding";
 import { useAuthStore } from "@/stores/auth-store";
 
 import { AuthLoginForm } from "./_components/auth-login-form";
@@ -74,7 +74,7 @@ export default function AuthPage() {
                 recommendations.
               </p>
             </div>
-            <div className="text-sm opacity-70">{APP_COPYRIGHT}</div>
+            <div className="text-sm opacity-70">{branding.APP_COPYRIGHT}</div>
           </div>
         </BackgroundGradientAnimation>
       </div>
