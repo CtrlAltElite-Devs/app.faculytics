@@ -181,6 +181,7 @@ export function QuestionnaireBuilderShell({
               {draft.sections.map((section) => (
                 <QuestionnaireSectionEditor
                   key={section.id}
+                  questionnaireType={activeType}
                   section={section}
                   sectionIssues={validation.sectionIssues[section.id] ?? []}
                   allSectionIssues={validation.sectionIssues}

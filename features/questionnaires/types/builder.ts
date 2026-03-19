@@ -25,10 +25,16 @@ export type QuestionnaireBuilderSectionNode = {
   title: string;
   order: number;
   weight: number | null;
+  dimensionCode: string | null;
+  dimensionCodeIssue: "inconsistent" | null;
   questionType: BuilderQuestionType;
   questions: QuestionnaireBuilderQuestionNode[];
   children: QuestionnaireBuilderSectionNode[];
 };
+
+export type QuestionnaireBuilderSectionUpdates = Partial<
+  Pick<QuestionnaireBuilderSectionNode, "title" | "weight" | "questionType" | "dimensionCode">
+>;
 
 export type QuestionnaireBuilderQualitativeConfig = {
   enabled: boolean;
@@ -93,6 +99,7 @@ export type QuestionnaireSchemaQuestion = {
   type: BuilderQuestionType;
   order: number;
   required: boolean;
+  dimensionCode: string;
 };
 
 export type QuestionnaireSchemaSectionTreeNode = {
@@ -141,7 +148,7 @@ export type QuestionnaireBuilderValidationIssue = {
     | {
         type: "section";
         id: string;
-        field?: "title" | "weight" | "questions" | "structure";
+        field?: "title" | "weight" | "questions" | "structure" | "dimensionCode";
       }
     | {
         type: "question";

@@ -38,7 +38,8 @@ function buildSchemaQuestionId(typeCode: string, sectionPath: number[], question
 function serializeQuestion(
   question: QuestionnaireBuilderQuestionNode,
   schemaQuestionId: string,
-  questionType: QuestionnaireBuilderQuestionNode["type"]
+  questionType: QuestionnaireBuilderQuestionNode["type"],
+  dimensionCode: string
 ): QuestionnaireSchemaQuestion {
   return {
     id: schemaQuestionId,
@@ -46,6 +47,7 @@ function serializeQuestion(
     type: questionType,
     order: question.order,
     required: question.required,
+    dimensionCode,
   };
 }
 
@@ -69,7 +71,8 @@ function serializeSectionTree(
         serializeQuestion(
           question,
           buildSchemaQuestionId(typeCode, path, index + 1),
-          section.questionType
+          section.questionType,
+          section.dimensionCode ?? ""
         )
       );
   } else {
@@ -136,7 +139,8 @@ export function serializeQuestionnaireBuilderDraft(
         serializeQuestion(
           question,
           buildSchemaQuestionId(typeCode, path, questionIndex + 1),
-          section.questionType
+          section.questionType,
+          section.dimensionCode ?? ""
         )
       ),
   }));
