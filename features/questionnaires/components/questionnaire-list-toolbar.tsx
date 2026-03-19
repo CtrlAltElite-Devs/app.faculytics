@@ -66,16 +66,24 @@ export function QuestionnaireListToolbar({
           onValueChange={onTypeChange}
         />
 
-        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
-          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
+        <div className="flex w-full flex-col gap-3 lg:w-full lg:max-w-xl lg:self-end xl:w-auto xl:max-w-none">
+          <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-end">
             {!hasDraftVersion ? (
-              <Button asChild variant="brand" className="sm:self-stretch">
+              <Button asChild variant="brand" className="lg:self-stretch xl:self-auto">
                 <Link href={createDraftHref}>Create Draft</Link>
               </Button>
             ) : null}
-            <QuestionnaireSearchInput value={searchValue} onChange={onSearchChange} />
+            <QuestionnaireSearchInput
+              value={searchValue}
+              onChange={onSearchChange}
+              className="relative w-full lg:flex-1 xl:min-w-80 xl:flex-none"
+            />
           </div>
-          <QuestionnaireStatusFilter value={statusFilter} onValueChange={onStatusFilterChange} />
+          <QuestionnaireStatusFilter
+            value={statusFilter}
+            onValueChange={onStatusFilterChange}
+            className="w-full justify-between gap-3 lg:w-fit lg:min-w-44 lg:self-end"
+          />
         </div>
       </div>
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 
 import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { useSaveQuestionnaireBuilder } from "@/features/questionnaires/hooks/use-save-questionnaire-builder";
@@ -14,7 +14,6 @@ import {
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import type {
   QuestionnaireBuilderQuestionNode,
-  QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderSectionUpdates,
   QuestionnaireType,
 } from "@/features/questionnaires/types";
@@ -22,6 +21,59 @@ import type {
 type UseQuestionnaireBuilderControllerOptions = {
   activeType: QuestionnaireType;
 };
+
+type BuilderUiState = {
+  saveDialogOpen: boolean;
+  discardDialogOpen: boolean;
+  pendingParentId: string | null;
+  pendingScrollToSection: boolean;
+};
+
+type BuilderUiAction =
+  | { type: "set-save-dialog-open"; open: boolean }
+  | { type: "set-discard-dialog-open"; open: boolean }
+  | { type: "set-pending-parent-id"; sectionId: string | null }
+  | { type: "request-scroll-to-section" }
+  | { type: "clear-pending-scroll-to-section" };
+
+const initialBuilderUiState: BuilderUiState = {
+  saveDialogOpen: false,
+  discardDialogOpen: false,
+  pendingParentId: null,
+  pendingScrollToSection: false,
+};
+
+function builderUiReducer(state: BuilderUiState, action: BuilderUiAction): BuilderUiState {
+  switch (action.type) {
+    case "set-save-dialog-open":
+      return {
+        ...state,
+        saveDialogOpen: action.open,
+      };
+    case "set-discard-dialog-open":
+      return {
+        ...state,
+        discardDialogOpen: action.open,
+      };
+    case "set-pending-parent-id":
+      return {
+        ...state,
+        pendingParentId: action.sectionId,
+      };
+    case "request-scroll-to-section":
+      return {
+        ...state,
+        pendingScrollToSection: true,
+      };
+    case "clear-pending-scroll-to-section":
+      return {
+        ...state,
+        pendingScrollToSection: false,
+      };
+    default:
+      return state;
+  }
+}
 
 export function useQuestionnaireBuilderController({
   activeType,
@@ -41,11 +93,21 @@ export function useQuestionnaireBuilderController({
   const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
   const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
   const { save, isPending } = useSaveQuestionnaireBuilder();
+  const [uiState, dispatch] = useReducer(builderUiReducer, initialBuilderUiState);
 
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
-  const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
-  const [pendingParentId, setPendingParentId] = useState<string | null>(null);
-  const [pendingScrollToSection, setPendingScrollToSection] = useState(false);
+  const { saveDialogOpen, discardDialogOpen, pendingParentId, pendingScrollToSection } = uiState;
+
+  const setSaveDialogOpen = (open: boolean) => {
+    dispatch({ type: "set-save-dialog-open", open });
+  };
+
+  const setDiscardDialogOpen = (open: boolean) => {
+    dispatch({ type: "set-discard-dialog-open", open });
+  };
+
+  const setPendingParentId = (sectionId: string | null) => {
+    dispatch({ type: "set-pending-parent-id", sectionId });
+  };
 
   useEffect(() => {
     if (!draft || draft.selectedSectionId || draft.sections.length === 0) {
@@ -67,7 +129,7 @@ export function useQuestionnaireBuilderController({
 
     requestAnimationFrame(() => {
       document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      setPendingScrollToSection(false);
+      dispatch({ type: "clear-pending-scroll-to-section" });
     });
   }, [draft?.selectedSectionId, pendingScrollToSection]);
 
@@ -93,16 +155,16 @@ export function useQuestionnaireBuilderController({
     }
 
     if (conversionState.requiresConfirmation) {
-      setPendingParentId(sectionId);
+      dispatch({ type: "set-pending-parent-id", sectionId });
       return;
     }
 
-    setPendingScrollToSection(true);
+    dispatch({ type: "request-scroll-to-section" });
     addChildSection(sectionId);
   };
 
   const handleAddRootSection = () => {
-    setPendingScrollToSection(true);
+    dispatch({ type: "request-scroll-to-section" });
     addRootSection();
   };
 
@@ -130,22 +192,22 @@ export function useQuestionnaireBuilderController({
     const result = await save();
 
     if (result?.status === "saved") {
-      setSaveDialogOpen(true);
+      dispatch({ type: "set-save-dialog-open", open: true });
     }
   };
 
   const handleDiscardDraft = () => {
     resetActiveDraft();
-    setDiscardDialogOpen(false);
+    dispatch({ type: "set-discard-dialog-open", open: false });
   };
 
   const handleConfirmParentConversion = () => {
     if (pendingParentId) {
-      setPendingScrollToSection(true);
+      dispatch({ type: "request-scroll-to-section" });
       addChildSection(pendingParentId);
     }
 
-    setPendingParentId(null);
+    dispatch({ type: "set-pending-parent-id", sectionId: null });
   };
 
   return {

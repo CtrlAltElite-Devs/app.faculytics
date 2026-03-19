@@ -53,7 +53,7 @@ export function QuestionnaireTypeButtonGroup({
         </DropdownMenu>
       </div>
 
-      <ButtonGroup className="hidden w-fit md:flex">
+      <ButtonGroup className="hidden w-full md:flex">
         {types.map((type) => {
           const isActive = type === value;
 
@@ -63,7 +63,7 @@ export function QuestionnaireTypeButtonGroup({
               type="button"
               variant={isActive ? "default" : "outline"}
               className={cn(
-                "cursor-pointer px-4",
+                "min-w-0 flex-1 cursor-pointer px-4",
                 isActive && "bg-brand-blue/80 text-white hover:bg-brand-blue/70"
               )}
               onClick={() => onValueChange(type)}

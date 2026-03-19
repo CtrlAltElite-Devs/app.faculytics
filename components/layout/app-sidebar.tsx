@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 
 import { AppBrand } from "@/components/layout/app-brand"
+import { RoleSwitcher } from "@/components/layout/role-switcher"
 import { useActiveRole } from "@/features/auth/hooks/use-active-role"
 import { getNavItemsForRole } from "@/features/auth/lib/role-route"
 import { NavMain } from "@/components/layout/nav-main"
@@ -16,6 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
   SidebarRail,
 } from "@/components/ui/sidebar"
 
@@ -40,6 +42,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        <div className="px-2 pb-2 md:hidden">
+          <RoleSwitcher className="w-full justify-between" />
+        </div>
+        <SidebarSeparator className="md:hidden" />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} />

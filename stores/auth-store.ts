@@ -9,9 +9,11 @@ type AuthStore = {
   isAuthenticated: boolean;
   hydrated: boolean;
   activeRole: AppRole | null;
+  pendingRoleHome: string | null;
   setHydrated: (hydrated: boolean) => void;
   setSession: (token: string, refreshToken: string) => void;
   setActiveRole: (activeRole: AppRole | null) => void;
+  setPendingRoleHome: (pendingRoleHome: string | null) => void;
   clearSession: () => void;
 };
 
@@ -23,6 +25,7 @@ export const useAuthStore = create<AuthStore>()(
       isAuthenticated: false,
       hydrated: false,
       activeRole: null,
+      pendingRoleHome: null,
       setHydrated: (hydrated) => set({ hydrated }),
 
       setSession: (token, refreshToken) =>
@@ -33,6 +36,7 @@ export const useAuthStore = create<AuthStore>()(
           hydrated: true,
         }),
       setActiveRole: (activeRole) => set({ activeRole }),
+      setPendingRoleHome: (pendingRoleHome) => set({ pendingRoleHome }),
       clearSession: () =>
         set({
           token: null,
@@ -40,6 +44,7 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: false,
           hydrated: true,
           activeRole: null,
+          pendingRoleHome: null,
         }),
     }),
     {
