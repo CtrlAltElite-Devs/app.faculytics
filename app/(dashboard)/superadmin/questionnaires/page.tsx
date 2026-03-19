@@ -53,10 +53,6 @@ export default function SuperAdminQuestionnairesPage() {
       return;
     }
 
-    if (builderStatus === "saved") {
-      toast.success("Questionnaire draft saved successfully.");
-    }
-
     if (builderStatus === "conflict") {
       toast.error("A draft version already exists for that questionnaire type.");
     }

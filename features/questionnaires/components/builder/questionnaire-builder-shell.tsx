@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { QuestionnaireCallout } from "@/features/questionnaires/components/questionnaire-callout";
 import { QuestionnaireAddActionButton } from "@/features/questionnaires/components/builder/questionnaire-add-action-button";
+import { InlineEditInput } from "@/features/questionnaires/components/builder/inline-edit-input";
 import { QuestionnaireOutlinePanel } from "@/features/questionnaires/components/builder/questionnaire-outline-panel";
 import { QuestionnaireQualitativeEditor } from "@/features/questionnaires/components/builder/questionnaire-qualitative-editor";
 import { QuestionnaireSectionEditor } from "@/features/questionnaires/components/builder/questionnaire-section-editor";
@@ -12,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
-import { InlineEditInput } from "@/components/ui/inline-edit-input";
 import { Separator } from "@/components/ui/separator";
 import { useQuestionnaireBuilderController } from "@/features/questionnaires/hooks/use-questionnaire-builder-controller";
 import type { QuestionnaireType } from "@/features/questionnaires/types";
@@ -62,26 +62,16 @@ export function QuestionnaireBuilderShell({
   }
 
   const hasExistingQuestionnaire = Boolean(draft.metadata.questionnaireId);
-
-  const renderStatusBadge = () => {
-    if (isDirty) {
-      return (
-        <Badge variant="ghost" className="font-medium badge-status-draft">
-          Unsaved Changes
-        </Badge>
-      );
-    }
-
-    if (isSaved) {
-      return (
-        <Badge variant="ghost" className="font-medium badge-status-active">
-          Saved
-        </Badge>
-      );
-    }
-
-    return null;
-  };
+  const statusBadge = isDirty ? (
+    <Badge variant="ghost" className="font-medium badge-status-draft">
+      Unsaved Changes
+    </Badge>
+  ) : isSaved ? (
+    <Badge variant="ghost" className="font-medium badge-status-active">
+      Saved
+    </Badge>
+  ) : null;
+  const globalIssues = validation.issues.filter((issue) => issue.target.type === "global");
 
   return (
     <div className="space-y-6">
@@ -90,7 +80,7 @@ export function QuestionnaireBuilderShell({
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="space-y-4">
                 <div>
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1">
                       <InlineEditInput
                         id="questionnaire-title"
@@ -99,12 +89,12 @@ export function QuestionnaireBuilderShell({
                         ariaInvalid={Boolean(
                           validation.issues.some((issue) => issue.code === "metadata.title.required")
                         )}
-                        textClassName="min-h-11 bg-transparent px-0 text-xl font-semibold hover:bg-transparent"
-                        inputClassName="h-11 px-0 text-xl font-semibold"
+                        textClassName="min-h-11 text-xl font-semibold"
+                        inputClassName="h-11 text-xl font-semibold"
                         onChange={updateTitle}
                       />
                     </div>
-                    {renderStatusBadge()}
+                    {statusBadge ? <div className="sm:shrink-0">{statusBadge}</div> : null}
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {hasExistingQuestionnaire
@@ -139,9 +129,17 @@ export function QuestionnaireBuilderShell({
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            {validation.issues.length > 0 ? (
+            {globalIssues.length > 0 ? (
               <QuestionnaireCallout variant="danger">
-                {validation.issues[0]?.message}
+                {globalIssues.length === 1 ? (
+                  globalIssues[0]?.message
+                ) : (
+                  <ul className="list-disc space-y-1 pl-5">
+                    {globalIssues.map((issue, index) => (
+                      <li key={`${issue.code}-${issue.target.type}-${index}`}>{issue.message}</li>
+                    ))}
+                  </ul>
+                )}
               </QuestionnaireCallout>
             ) : (
               <QuestionnaireCallout>
@@ -255,7 +253,7 @@ export function QuestionnaireBuilderShell({
         confirmLabel="Go back to questionnaires"
         onConfirm={() => {
           setSaveDialogOpen(false);
-          router.push(`/superadmin/questionnaires?builder=saved&type=${activeType}`);
+          router.push(`/superadmin/questionnaires?type=${activeType}`);
         }}
       />
     </div>
