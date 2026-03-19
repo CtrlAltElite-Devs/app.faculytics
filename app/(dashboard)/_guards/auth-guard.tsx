@@ -31,13 +31,13 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     if (isMeError) {
       clearSession();
-      router.replace("/auth?error=me-failed");
+      router.replace("/auth");
       return;
     }
 
     if (!activeRole || !roleHome) {
       clearSession();
-      router.replace("/auth?error=no-role");
+      router.replace("/auth");
     }
   }, [activeRole, clearSession, hydrated, isMeError, isMePending, roleHome, router, token]);
 

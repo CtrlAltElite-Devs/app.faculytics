@@ -120,6 +120,7 @@ export function validateQuestionnaireBuilderDraft(
   const qualitativeIssues: QuestionnaireBuilderValidationIssue[] = [];
   let totalLeafWeight = 0;
   let leafSectionCount = 0;
+  let hasMissingDimension = false;
 
   if (draft.metadata.title.trim().length === 0) {
     appendIssue(issues, {
@@ -196,9 +197,10 @@ export function validateQuestionnaireBuilderDraft(
         section.dimensionCode
       );
       if (!dimensionResult.success || section.dimensionCode === null) {
+        hasMissingDimension = true;
         const issue: QuestionnaireBuilderValidationIssue = {
           code: "section.dimensionCode.required",
-          message: "Select or create a dimension for this section before saving.",
+          message: "Select or create a dimension.",
           target: {
             type: "section",
             id: section.id,
@@ -329,6 +331,14 @@ export function validateQuestionnaireBuilderDraft(
   };
 
   sortSections(draft.sections).forEach(visitSection);
+
+  if (hasMissingDimension) {
+    issues.unshift({
+      code: "sections.dimensionCode.required",
+      message: "Each section must have a dimension",
+      target: { type: "global" },
+    });
+  }
 
   if (leafSectionCount > 0 && totalLeafWeight !== 100) {
     appendIssue(issues, {

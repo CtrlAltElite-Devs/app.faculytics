@@ -120,8 +120,8 @@ export function DimensionCodeSelect({
     setSearchValue(dimension.displayName);
     setIsOpen(false);
 
-    if (nextCode !== previousCode) {
-      toast.success(options?.toastMessage ?? `Dimension "${dimension.displayName}" selected.`);
+    if (nextCode !== previousCode && options?.toastMessage) {
+      toast.success(options.toastMessage);
     }
   };
 

@@ -3,6 +3,7 @@
 import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, MoreVertical, Trash2 } from "lucide-react";
 
 import { DimensionCodeSelect } from "@/features/dimensions/components/dimension-code-select";
+import { InlineEditInput } from "@/features/questionnaires/components/builder/inline-edit-input";
 import { QuestionnaireAddActionButton } from "@/features/questionnaires/components/builder/questionnaire-add-action-button";
 import { QuestionnaireQuestionEditor } from "@/features/questionnaires/components/builder/questionnaire-question-editor";
 import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
@@ -17,7 +18,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { InlineEditInput } from "@/components/ui/inline-edit-input";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type {

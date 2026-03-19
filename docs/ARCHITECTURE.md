@@ -1,4 +1,4 @@
-# Faculytics Frontend Architecture
+# Faculytics v2 Frontend Architecture
 
 **Stack:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, Axios, Zustand, React Hook Form, Zod
 **App type:** Multi-role faculty evaluation platform

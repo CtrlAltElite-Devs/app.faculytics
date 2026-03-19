@@ -49,9 +49,9 @@ export function InlineEditInput({
         aria-invalid={ariaInvalid}
         data-slot="inline-edit-input"
         className={cn(
-          "h-9 w-full min-w-0 truncate whitespace-nowrap rounded-none border-0 border-b border-input bg-transparent px-3 py-1 font-sans text-base shadow-none outline-none transition-[color,box-shadow] placeholder:text-muted-foreground md:text-sm",
-          "focus-visible:border-b-ring",
-          "aria-invalid:border-destructive",
+          "block h-9 w-full max-w-full min-w-0 overflow-hidden whitespace-nowrap rounded-md border border-input bg-muted/60 px-3 py-1 font-sans text-base shadow-xs outline-none transition-[color,box-shadow,background-color] placeholder:text-muted-foreground md:text-sm",
+          "focus-visible:border-ring focus-visible:bg-background focus-visible:ring-[3px] focus-visible:ring-ring/20",
+          "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
           inputClassName
         )}
         onChange={(event) => onChange(event.target.value)}
@@ -70,9 +70,9 @@ export function InlineEditInput({
       type="button"
       disabled={disabled}
       className={cn(
-        "h-9 w-full min-w-0 truncate whitespace-nowrap rounded-md bg-muted/20 px-3 py-1 text-left font-playfair transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "block h-9 w-full max-w-full min-w-0 overflow-hidden whitespace-nowrap rounded-md border border-input bg-muted/50 px-3 py-1 text-left text-clip font-playfair shadow-xs transition-[color,box-shadow,background-color,border-color] hover:border-ring/40 hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/20",
         !value && "text-muted-foreground",
-        ariaInvalid && "text-destructive",
+        ariaInvalid && "border-destructive/60 text-destructive",
         textClassName
       )}
       onClick={() => setIsEditing(true)}

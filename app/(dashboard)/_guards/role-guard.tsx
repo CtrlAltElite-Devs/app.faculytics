@@ -27,13 +27,13 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
 
     if (isMeError) {
       clearSession();
-      router.replace("/auth?error=me-failed");
+      router.replace("/auth");
       return;
     }
 
     if (!roleHome) {
       clearSession();
-      router.replace("/auth?error=no-role");
+      router.replace("/auth");
       return;
     }
 
