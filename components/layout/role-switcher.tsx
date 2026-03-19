@@ -7,6 +7,7 @@ import type { AppRole } from "@/constants/roles";
 import { Button } from "@/components/ui/button";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { getRoleConfig, getRoleLabel } from "@/features/auth/lib/role-route";
+import { useAuthStore } from "@/stores/auth-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,7 @@ type RoleSwitcherProps = {
 export function RoleSwitcher({ align = "end", className }: RoleSwitcherProps) {
   const router = useRouter();
   const { activeRole, availableRoles, setActiveRole } = useActiveRole();
+  const setPendingRoleHome = useAuthStore((state) => state.setPendingRoleHome);
 
   if (!activeRole || !availableRoles.length) {
     return null;
@@ -30,9 +32,15 @@ export function RoleSwitcher({ align = "end", className }: RoleSwitcherProps) {
 
   const handleRoleChange = (nextRole: string) => {
     const nextActiveRole = nextRole as AppRole;
+    const nextHomePath = getRoleConfig(nextActiveRole).homePath;
 
+    if (nextActiveRole === activeRole) {
+      return;
+    }
+
+    setPendingRoleHome(nextHomePath);
     setActiveRole(nextActiveRole);
-    router.replace(getRoleConfig(nextActiveRole).homePath);
+    router.replace(nextHomePath);
   };
 
   return (

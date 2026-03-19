@@ -2,7 +2,6 @@
 
 import { AppLoadingScreen } from "@/components/shared/app-loading-screen";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
-import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -17,8 +16,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const hydrated = useAuthStore((state) => state.hydrated);
   const token = useAuthStore((state) => state.token);
   const clearSession = useAuthStore((state) => state.clearSession);
-  const { isPending: isMePending, isError: isMeError } = useMe();
-  const { activeRole, roleHome } = useActiveRole();
+  const { activeRole, roleHome, isPending: isMePending, isError: isMeError } = useActiveRole();
 
   useEffect(() => {
     if (!hydrated) return;

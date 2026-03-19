@@ -2,7 +2,6 @@
 
 import { AppLoadingScreen } from "@/components/shared/app-loading-screen";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
-import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/stores/auth-store";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -17,14 +16,23 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const clearSession = useAuthStore((state) => state.clearSession);
-  const { data: me, isPending: isMePending, isError: isMeError } = useMe();
-  const { activeRole, roleHome } = useActiveRole();
-  const roles = me?.roles ?? [];
+  const pendingRoleHome = useAuthStore((state) => state.pendingRoleHome);
+  const setPendingRoleHome = useAuthStore((state) => state.setPendingRoleHome);
+  const { activeRole, roleHome, roles, isPending: isMePending, isError: isMeError } =
+    useActiveRole();
   const hasAnyAllowedRole = roles.some((role) => allowedRoles.includes(role));
   const isAllowed = Boolean(activeRole && allowedRoles.includes(activeRole));
 
   useEffect(() => {
     if (isMePending) return;
+
+    if (pendingRoleHome && roleHome === pendingRoleHome) {
+      if (pathname === pendingRoleHome) {
+        setPendingRoleHome(null);
+      }
+
+      return;
+    }
 
     if (isMeError) {
       clearSession();
@@ -46,7 +54,18 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
     if (!isAllowed && pathname !== roleHome) {
       router.replace(roleHome);
     }
-  }, [clearSession, hasAnyAllowedRole, isAllowed, isMeError, isMePending, pathname, roleHome, router]);
+  }, [
+    clearSession,
+    hasAnyAllowedRole,
+    isAllowed,
+    isMeError,
+    isMePending,
+    pathname,
+    pendingRoleHome,
+    roleHome,
+    router,
+    setPendingRoleHome,
+  ]);
 
   if (isMePending || !roleHome) {
     return <AppLoadingScreen message="Checking access..." />;

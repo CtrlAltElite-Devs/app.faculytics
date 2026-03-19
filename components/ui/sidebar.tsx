@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { usePathname } from "next/navigation"
 import { cva, type VariantProps } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
 import { Slot } from "radix-ui"
@@ -91,6 +92,8 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void
 }) {
   const isMobile = useIsMobile()
+  const pathname = usePathname()
+  const hasMountedRef = React.useRef(false)
   const [openMobile, setOpenMobile] = React.useState(() => getSidebarOpenFromCookie() ?? false)
 
   // This is the internal state of the sidebar.
@@ -113,6 +116,17 @@ function SidebarProvider({
     const persistedOpen = isMobile ? openMobile : open
     persistSidebarOpenState(persistedOpen)
   }, [isMobile, open, openMobile])
+
+  React.useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }, [isMobile, pathname])
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
