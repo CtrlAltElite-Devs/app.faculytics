@@ -12,9 +12,8 @@ export function AppLoadingScreen({
   message = "Preparing your workspace...",
 }: AppLoadingScreenProps) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6">
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-xl" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.1),transparent_45%),radial-gradient(circle_at_bottom,rgba(255,255,255,0.06),transparent_35%)]" />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6">
+      <div className="absolute inset-0 bg-background/40 backdrop-blur-xl" />
       <div className="relative flex w-full max-w-sm flex-col items-center gap-5 text-center">
         <AppBrand
           className="flex-col gap-3"
