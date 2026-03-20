@@ -80,8 +80,8 @@ export function QuestionnaireBuilderShell({
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="space-y-4">
                 <div>
-                  <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
-                    <div className="min-w-0 flex-1">
+                  <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center">
+                    <div className="w-full lg:min-w-0 lg:flex-1">
                       <InlineEditInput
                         id="questionnaire-title"
                         value={draft.metadata.title}
@@ -94,7 +94,7 @@ export function QuestionnaireBuilderShell({
                         onChange={updateTitle}
                       />
                     </div>
-                    {statusBadge ? <div className="sm:shrink-0">{statusBadge}</div> : null}
+                    {statusBadge ? <div className="lg:shrink-0">{statusBadge}</div> : null}
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {hasExistingQuestionnaire
