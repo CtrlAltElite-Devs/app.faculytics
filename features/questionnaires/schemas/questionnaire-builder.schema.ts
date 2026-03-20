@@ -31,7 +31,7 @@ export const questionnaireSectionInputSchema = z.object({
     z
       .string()
       .trim()
-      .min(1, "Select or create a dimension for this section.")
+      .min(1, "Dimension code is required.")
       .max(255, "Dimension code must be 255 characters or fewer."),
   ]),
 });
