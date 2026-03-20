@@ -17,3 +17,7 @@ export * from "@/features/questionnaires/lib/builder-serializer";
 export * from "@/features/questionnaires/lib/builder-validator";
 export * from "@/features/questionnaires/lib/action-errors";
 export * from "@/features/questionnaires/store/questionnaire-builder-store";
+export * from "@/features/questionnaires/components/questionnaire-stepper";
+export * from "@/features/questionnaires/components/questionnaire-step-section";
+export * from "@/features/questionnaires/components/questionnaire-step-qualitative";
+export * from "@/features/questionnaires/components/questionnaire-step-question";

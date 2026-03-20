@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 
-import { QuestionnairePreviewRenderer } from "@/features/questionnaires/components/builder/questionnaire-preview-renderer";
+import { QuestionnaireStepper } from "@/features/questionnaires/components/questionnaire-stepper";
 import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import { useQuestionnaireVersion } from "@/features/questionnaires/hooks/use-questionnaire-versions";
@@ -56,12 +56,12 @@ export default function QuestionnaireVersionPreviewPage() {
   };
 
   return (
-    <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
-      <QuestionnairePreviewRenderer
-        model={buildQuestionnairePreviewModel(draft)}
-        backHref="/superadmin/questionnaires"
-        backLabel="Back to questionnaires"
-      />
-    </section>
+    <QuestionnaireStepper
+      model={buildQuestionnairePreviewModel(draft)}
+      mode="preview"
+      allowFreeNavigation
+      backHref="/superadmin/questionnaires"
+      backLabel="Back to questionnaires"
+    />
   );
 }

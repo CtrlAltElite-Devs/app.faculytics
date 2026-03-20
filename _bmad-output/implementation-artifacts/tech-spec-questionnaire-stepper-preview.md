@@ -2,7 +2,7 @@
 title: 'Questionnaire Stepper Preview'
 slug: 'questionnaire-stepper-preview'
 created: '2026-03-20'
-status: 'ready-for-dev'
+status: 'implementation-complete'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack:
   - 'Next.js 16 (App Router)'
@@ -143,7 +143,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
 
 #### Layer 1: Generic Stepper Primitives (no questionnaire knowledge)
 
-- [ ] Task 1: Create `components/shared/stepper/stepper-context.tsx`
+- [x] Task 1: Create `components/shared/stepper/stepper-context.tsx`
   - File: `components/shared/stepper/stepper-context.tsx` [NEW]
   - Action: Create a React context + provider + hook for stepper state management.
   - Details:
@@ -157,7 +157,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
     - Export `useStepper()` hook that throws if used outside provider
     - `"use client"` directive
 
-- [ ] Task 2: Create `components/shared/stepper/stepper-indicator.tsx`
+- [x] Task 2: Create `components/shared/stepper/stepper-indicator.tsx`
   - File: `components/shared/stepper/stepper-indicator.tsx` [NEW]
   - Action: Create the visual step progress indicator component.
   - Details:
@@ -171,7 +171,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
     - **Accessibility:** Container has `role="tablist"`, each step has `role="tab"`, active step has `aria-current="step"`. Step content area in the parent should use `role="tabpanel"`
     - `"use client"` directive
 
-- [ ] Task 3: Create `components/shared/stepper/stepper-navigation.tsx`
+- [x] Task 3: Create `components/shared/stepper/stepper-navigation.tsx`
   - File: `components/shared/stepper/stepper-navigation.tsx` [NEW]
   - Action: Create Back/Next navigation buttons component.
   - Details:
@@ -183,14 +183,14 @@ Convert the preview into a multi-step stepper flow where each top-level section 
     - Layout: `flex justify-between` with back on left, next on right
     - `"use client"` directive
 
-- [ ] Task 4: Create `components/shared/stepper/index.ts`
+- [x] Task 4: Create `components/shared/stepper/index.ts`
   - File: `components/shared/stepper/index.ts` [NEW]
   - Action: Barrel export for stepper primitives.
   - Details: Re-export `StepperProvider`, `useStepper`, `StepperIndicator`, `StepperNavigation` and their prop types
 
 #### Layer 2: Questionnaire Domain Components
 
-- [ ] Task 5: Create `features/questionnaires/components/questionnaire-step-question.tsx`
+- [x] Task 5: Create `features/questionnaires/components/questionnaire-step-question.tsx`
   - File: `features/questionnaires/components/questionnaire-step-question.tsx` [NEW]
   - Action: Create the single question renderer — the composable leaf unit.
   - Details:
@@ -201,7 +201,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
     - All inputs disabled when `disabled=true` (preview mode)
     - `"use client"` directive
 
-- [ ] Task 6: Create `features/questionnaires/components/questionnaire-step-section.tsx`
+- [x] Task 6: Create `features/questionnaires/components/questionnaire-step-section.tsx`
   - File: `features/questionnaires/components/questionnaire-step-section.tsx` [NEW]
   - Action: Create the section step content renderer.
   - Details:
@@ -214,7 +214,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
     - Empty state: if no children and no questions, render muted text "No questions added to this section yet."
     - `"use client"` directive
 
-- [ ] Task 7: Create `features/questionnaires/components/questionnaire-step-qualitative.tsx`
+- [x] Task 7: Create `features/questionnaires/components/questionnaire-step-qualitative.tsx`
   - File: `features/questionnaires/components/questionnaire-step-qualitative.tsx` [NEW]
   - Action: Create the qualitative feedback step content.
   - Details:
@@ -224,7 +224,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
     - Match existing qualitative rendering from `questionnaire-preview-renderer.tsx`
     - `"use client"` directive
 
-- [ ] Task 8: Create `features/questionnaires/components/questionnaire-stepper.tsx`
+- [x] Task 8: Create `features/questionnaires/components/questionnaire-stepper.tsx`
   - File: `features/questionnaires/components/questionnaire-stepper.tsx` [NEW]
   - Action: Create the main orchestrator that composes generic stepper with questionnaire domain.
   - Details:
@@ -245,7 +245,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
 
 #### Layer 3: Route Integration
 
-- [ ] Task 9: Update builder preview page
+- [x] Task 9: Update builder preview page
   - File: `app/(dashboard)/superadmin/questionnaires/new/preview/page.tsx` [MODIFY]
   - Action: Replace `QuestionnairePreviewRenderer` with `QuestionnaireStepper`
   - Details:
@@ -255,7 +255,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
     - Remove the outer `<section className="space-y-6 px-0 py-5 sm:px-6 md:p-8">` wrapper around the success state only (keep loading/empty state `<section>` wrappers with their existing padding). `QuestionnaireStepper` manages its own layout for the success case
     - `QuestionnaireStepper` handles URL `?step=N` sync internally — no need to pass `initialStep` from the page
 
-- [ ] Task 10: Update version preview page
+- [x] Task 10: Update version preview page
   - File: `app/(dashboard)/superadmin/questionnaires/preview/page.tsx` [MODIFY]
   - Action: Replace `QuestionnairePreviewRenderer` with `QuestionnaireStepper`
   - Details:
@@ -266,7 +266,7 @@ Convert the preview into a multi-step stepper flow where each top-level section 
 
 #### Layer 4: Barrel Export
 
-- [ ] Task 11: Update barrel export
+- [x] Task 11: Update barrel export
   - File: `features/questionnaires/index.ts` [MODIFY]
   - Action: Add exports for new stepper components
   - Details: Add re-exports for `questionnaire-stepper`, `questionnaire-step-section`, `questionnaire-step-qualitative`, `questionnaire-step-question`

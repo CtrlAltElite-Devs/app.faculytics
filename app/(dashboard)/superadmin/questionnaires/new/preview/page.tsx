@@ -1,12 +1,10 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 
-import { QuestionnairePreviewRenderer } from "@/features/questionnaires/components/builder/questionnaire-preview-renderer";
+import { QuestionnaireStepper } from "@/features/questionnaires/components/questionnaire-stepper";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
-import {
-  resolveQuestionnaireType,
-} from "@/features/questionnaires/types";
+import { resolveQuestionnaireType } from "@/features/questionnaires/types";
 
 import { QuestionnairePreviewLoadingCard } from "../../_components/questionnaire-preview-loading-card";
 import { QuestionnairePreviewStateCard } from "../../_components/questionnaire-preview-state-card";
@@ -41,8 +39,12 @@ export default function QuestionnaireBuilderPreviewPage() {
   }
 
   return (
-    <section className="space-y-6 px-0 py-5 sm:px-6 md:p-8">
-      <QuestionnairePreviewRenderer model={buildQuestionnairePreviewModel(draft)} />
-    </section>
+    <QuestionnaireStepper
+      model={buildQuestionnairePreviewModel(draft)}
+      mode="preview"
+      allowFreeNavigation
+      backHref={`/superadmin/questionnaires/new?type=${requestedType}`}
+      backLabel="Back to builder"
+    />
   );
 }
