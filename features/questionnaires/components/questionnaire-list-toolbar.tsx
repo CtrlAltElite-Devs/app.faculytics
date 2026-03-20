@@ -36,54 +36,55 @@ export function QuestionnaireListToolbar({
 
   return (
     <>
-      <div className="flex flex-col gap-3 md:hidden">
+      <div className="flex flex-col gap-3 lg:hidden">
         <QuestionnaireTypeButtonGroup
           types={availableTypes}
           value={activeType}
           onValueChange={onTypeChange}
         />
-        <QuestionnaireStatusFilter
-          value={statusFilter}
-          onValueChange={onStatusFilterChange}
-          className="w-full justify-between gap-3"
-        />
+        <div className="flex flex-col gap-3">
+          <QuestionnaireSearchInput
+            value={searchValue}
+            onChange={onSearchChange}
+            className="relative w-full"
+          />
+          <QuestionnaireStatusFilter
+            value={statusFilter}
+            onValueChange={onStatusFilterChange}
+            className="w-full justify-between gap-3"
+          />
+        </div>
         {!hasDraftVersion ? (
           <Button asChild variant="brand" className="w-full">
             <Link href={createDraftHref}>Create Draft</Link>
           </Button>
         ) : null}
-        <QuestionnaireSearchInput
-          value={searchValue}
-          onChange={onSearchChange}
-          className="relative w-full"
-        />
       </div>
 
-      <div className="hidden md:flex md:flex-col md:gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="hidden lg:flex lg:min-w-0 lg:flex-row lg:items-center lg:gap-3">
         <QuestionnaireTypeButtonGroup
           types={availableTypes}
           value={activeType}
           onValueChange={onTypeChange}
+          className="lg:shrink-0"
         />
 
-        <div className="flex w-full flex-col gap-3 lg:w-full lg:max-w-xl lg:self-end xl:w-auto xl:max-w-none">
-          <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-end">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
             {!hasDraftVersion ? (
-              <Button asChild variant="brand" className="lg:self-stretch xl:self-auto">
+              <Button asChild variant="brand" className="shrink-0">
                 <Link href={createDraftHref}>Create Draft</Link>
               </Button>
             ) : null}
             <QuestionnaireSearchInput
               value={searchValue}
               onChange={onSearchChange}
-              className="relative w-full lg:flex-1 xl:min-w-80 xl:flex-none"
+              className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/6"
             />
-          </div>
-          <QuestionnaireStatusFilter
-            value={statusFilter}
-            onValueChange={onStatusFilterChange}
-            className="w-full justify-between gap-3 lg:w-fit lg:min-w-44 lg:self-end"
-          />
+            <QuestionnaireStatusFilter
+              value={statusFilter}
+              onValueChange={onStatusFilterChange}
+              className="w-auto shrink-0 justify-between gap-3"
+            />
         </div>
       </div>
     </>
