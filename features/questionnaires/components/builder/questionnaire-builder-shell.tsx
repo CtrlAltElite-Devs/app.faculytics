@@ -71,7 +71,7 @@ export function QuestionnaireBuilderShell({
       Saved
     </Badge>
   ) : null;
-  const globalIssues = validation.issues.filter((issue) => issue.target.type === "global");
+  const validationMessages = [...new Set(validation.issues.map((issue) => issue.message))];
 
   return (
     <div className="space-y-6">
@@ -119,7 +119,7 @@ export function QuestionnaireBuilderShell({
                   <Button
                     type="button"
                     variant="brand"
-                    disabled={isPending}
+                    disabled={isPending || !validation.isValid}
                     onClick={() => void handleSave()}
                   >
                     {isPending ? "Saving..." : "Save draft"}
@@ -129,14 +129,14 @@ export function QuestionnaireBuilderShell({
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            {globalIssues.length > 0 ? (
+            {!validation.isValid ? (
               <QuestionnaireCallout variant="danger">
-                {globalIssues.length === 1 ? (
-                  globalIssues[0]?.message
+                {validationMessages.length === 1 ? (
+                  validationMessages[0]
                 ) : (
                   <ul className="list-disc space-y-1 pl-5">
-                    {globalIssues.map((issue, index) => (
-                      <li key={`${issue.code}-${issue.target.type}-${index}`}>{issue.message}</li>
+                    {validationMessages.slice(0, 3).map((message, index) => (
+                      <li key={`${message}-${index}`}>{message}</li>
                     ))}
                   </ul>
                 )}
