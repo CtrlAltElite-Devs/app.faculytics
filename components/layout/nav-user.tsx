@@ -5,8 +5,7 @@ import { LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
-import { useLogout } from "@/features/auth/hooks/use-logout"
-import { useMe } from "@/features/auth/hooks/use-me"
+import { useLogout, useMe } from "@/features/auth"
 import {
   Avatar,
   AvatarFallback,

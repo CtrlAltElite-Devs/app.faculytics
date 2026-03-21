@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 
 import type { AppRole } from "@/constants/roles";
 import { Button } from "@/components/ui/button";
-import { useActiveRole } from "@/features/auth/hooks/use-active-role";
-import { getRoleConfig, getRoleLabel } from "@/features/auth/lib/role-route";
+import { useActiveRole, getRoleConfig, getRoleLabel } from "@/features/auth";
 import { useAuthStore } from "@/stores/auth-store";
 import {
   DropdownMenu,
