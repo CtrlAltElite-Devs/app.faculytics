@@ -81,7 +81,7 @@ function QuestionnaireFormStackedBase({
         const selectedKey = getSelectedOptionKey(answers[question.id], isLikert);
 
         return (
-          <div key={question.id} className="space-y-2.5 text-center">
+          <div key={question.id} className="space-y-2.5">
             <p className="text-sm font-medium">{questionLabel}</p>
 
             <RadioGroup
@@ -92,7 +92,7 @@ function QuestionnaireFormStackedBase({
               }}
               disabled={disabled}
               aria-label={questionLabel}
-              className="flex flex-wrap justify-center gap-2"
+              className="flex flex-wrap justify-center gap-8"
             >
               {options.map((option) => (
                 <Label key={option} className={PILL_CLASS}>

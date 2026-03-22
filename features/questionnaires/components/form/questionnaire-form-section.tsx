@@ -17,6 +17,10 @@ type QuestionnaireFormSectionProps = {
   mode: QuestionnaireFormMode;
   answers: QuestionnaireFormAnswers;
   onAnswer: (questionId: string, value: number) => void;
+  /** Hide the question counter on child sections to avoid duplication with the parent. */
+  hideCounter?: boolean;
+  /** When true, renders without the card wrapper (border/bg/padding). Used for child sections. */
+  isChild?: boolean;
 };
 
 /**
@@ -37,6 +41,8 @@ function QuestionnaireFormSectionBase({
   mode,
   answers,
   onAnswer,
+  hideCounter = false,
+  isChild = false,
 }: QuestionnaireFormSectionProps) {
   const questionIds = useMemo(() => collectQuestionIds(section), [section]);
 
@@ -66,7 +72,7 @@ function QuestionnaireFormSectionBase({
     : "LIKERT_1_5";
 
   return (
-    <div className="space-y-4 rounded-2xl border bg-background p-4 sm:p-5">
+    <div className={isChild ? "space-y-4 pl-4 sm:pl-6" : "space-y-4 rounded-2xl border bg-background p-4 sm:p-5"}>
       {/* Section header: title + weight badge (preview) or progress count (interactive) */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
@@ -77,7 +83,7 @@ function QuestionnaireFormSectionBase({
             <Badge variant="outline">Weight: {section.weight}%</Badge>
           )}
         </div>
-        {mode === "interactive" && totalQuestions > 0 && (
+        {mode === "interactive" && totalQuestions > 0 && !hideCounter && (
           <span className="text-xs text-muted-foreground">
             {answeredCount} / {totalQuestions}
           </span>
@@ -118,6 +124,8 @@ function QuestionnaireFormSectionBase({
               mode={mode}
               answers={answers}
               onAnswer={onAnswer}
+              hideCounter
+              isChild
             />
           ))}
         </div>

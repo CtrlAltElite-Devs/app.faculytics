@@ -23,6 +23,8 @@ type QuestionnaireFormRendererProps = {
   defaultValues?: Partial<QuestionnaireFormValues>;
   /** Called whenever a form value changes. Only fires in interactive mode. */
   onChange?: (values: QuestionnaireFormValues) => void;
+  /** Optional slot rendered beside the progress percentage (e.g. draft status badge). */
+  progressTrailing?: React.ReactNode;
 };
 
 /**
@@ -49,6 +51,7 @@ export function QuestionnaireFormRenderer({
   mode,
   defaultValues,
   onChange,
+  progressTrailing,
 }: QuestionnaireFormRendererProps) {
   const isInteractive = mode === "interactive";
 
@@ -109,6 +112,7 @@ export function QuestionnaireFormRenderer({
           answeredCount={answeredCount}
           totalRequired={totalRequired}
           isComplete={isComplete}
+          trailing={progressTrailing}
         />
       )}
 

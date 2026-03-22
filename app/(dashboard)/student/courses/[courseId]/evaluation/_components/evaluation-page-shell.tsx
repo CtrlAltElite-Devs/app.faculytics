@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 type EvaluationPageShellProps = {
@@ -15,12 +19,22 @@ export function EvaluationPageShell({
 }: EvaluationPageShellProps) {
   return (
     <section className="px-4 py-5 sm:px-6 md:px-16 md:py-12">
-      <h1 className="font-playfair text-3xl font-bold">
-        Faculty Evaluation Questionnaire
-      </h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Your honest feedback helps improve the quality of education.
-      </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-playfair text-3xl font-bold">
+            Faculty Evaluation Questionnaire
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Your honest feedback helps improve the quality of education.
+          </p>
+        </div>
+        <Button asChild variant="outline" className="shrink-0">
+          <Link href="/student/courses">
+            <ArrowLeft className="size-4" />
+            Back to Courses
+          </Link>
+        </Button>
+      </div>
 
       {courseName && facultyName && (
         <Card className="mt-8">
