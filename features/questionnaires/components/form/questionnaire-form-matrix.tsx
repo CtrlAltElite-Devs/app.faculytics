@@ -26,10 +26,7 @@ type QuestionnaireFormMatrixProps = {
 
 /**
  * A custom radio button that looks like shadcn's RadioGroupItem.
- *
- * We use a plain <button> instead of Radix RadioGroup because
- * Radix injects "grid gap-3" styles that break HTML <table> layout.
- * See: https://github.com/radix-ui/primitives/issues/2988
+ * Used in the matrix to select options for each question. 
  */
 function MatrixRadio({
   checked,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
@@ -9,10 +9,13 @@ import { submitEvaluation } from "@/features/questionnaires/api/questionnaire.re
 
 export function useSubmitEvaluation() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: submitEvaluation,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["questionnaires", "submissions", "check"] });
+      queryClient.invalidateQueries({ queryKey: ["questionnaires", "drafts"] });
       toast.success("Evaluation submitted successfully.");
       router.push("/student/courses");
     },
