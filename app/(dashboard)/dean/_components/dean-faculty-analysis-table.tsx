@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { deanAnalyticsSampleData } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
@@ -237,13 +238,15 @@ export function DeanFacultyAnalysisTable() {
                       </div>
                     </div>
                     <Button
-                      type="button"
+                      asChild
                       variant="outline"
                       size="sm"
                       className="w-full border-brand-blue/50 bg-brand-blue/10 font-sans text-brand-blue hover:bg-brand-blue/15 hover:text-brand-blue"
                     >
-                      <Eye className="size-4" />
-                      View Analysis
+                      <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
+                        <Eye className="size-4" />
+                        View Analysis
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -296,13 +299,15 @@ export function DeanFacultyAnalysisTable() {
                     </TableCell>
                     <TableCell className="px-4 py-4 text-right lg:px-5">
                       <Button
-                        type="button"
+                        asChild
                         variant="outline"
                         size="sm"
                         className="h-auto max-w-full whitespace-nowrap border-brand-blue/50 bg-brand-blue/10 px-3 py-2 font-sans text-brand-blue hover:bg-brand-blue/15 hover:text-brand-blue"
                       >
-                        <Eye className="size-4" />
-                        View Analysis
+                        <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
+                          <Eye className="size-4" />
+                          View Analysis
+                        </Link>
                       </Button>
                     </TableCell>
                   </TableRow>
