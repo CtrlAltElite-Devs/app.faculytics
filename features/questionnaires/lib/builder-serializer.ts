@@ -194,7 +194,7 @@ export function buildQuestionnairePreviewModel(
   draft: QuestionnaireBuilderDraft
 ): QuestionnaireBuilderPreviewModel {
   return {
-    title: draft.metadata.title.trim() || draft.metadata.questionnaireTitle || "Untitled questionnaire",
+    title: (draft.metadata.title ?? draft.metadata.questionnaireTitle ?? "Untitled questionnaire").trim() || "Untitled questionnaire",
     type: draft.metadata.type,
     sections: sortSections(draft.sections).map((section) => buildPreviewSection(section, 0, [])),
     qualitative: draft.qualitative,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import type {
@@ -28,13 +28,12 @@ function collectQuestionIds(
   return section.children.flatMap(collectQuestionIds);
 }
 
-export const QuestionnaireFormSection = React.memo(
-  function QuestionnaireFormSection({
-    section,
-    mode,
-    answers,
-    onAnswer,
-  }: QuestionnaireFormSectionProps) {
+function QuestionnaireFormSectionBase({
+  section,
+  mode,
+  answers,
+  onAnswer,
+}: QuestionnaireFormSectionProps) {
     const questionIds = useMemo(() => collectQuestionIds(section), [section]);
 
     const sectionAnswers = useMemo(() => {
@@ -117,5 +116,6 @@ export const QuestionnaireFormSection = React.memo(
         )}
       </div>
     );
-  },
-);
+}
+
+export const QuestionnaireFormSection = memo(QuestionnaireFormSectionBase);

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { memo } from "react";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -24,14 +24,13 @@ type QuestionnaireFormStackedProps = {
   onAnswer: (questionId: string, value: number) => void;
 };
 
-export const QuestionnaireFormStacked = React.memo(
-  function QuestionnaireFormStacked({
-    questions,
-    questionType,
-    mode,
-    answers,
-    onAnswer,
-  }: QuestionnaireFormStackedProps) {
+function QuestionnaireFormStackedBase({
+  questions,
+  questionType,
+  mode,
+  answers,
+  onAnswer,
+}: QuestionnaireFormStackedProps) {
     const isLikert = questionType === "LIKERT_1_5";
     const disabled = mode === "preview";
 
@@ -44,7 +43,7 @@ export const QuestionnaireFormStacked = React.memo(
             : YES_NO_REVERSE_MAP[currentValue] ?? "";
 
           return (
-            <div key={question.id} className="space-y-2.5">
+            <div key={question.id} className="space-y-2.5 text-center">
               <p className="text-sm font-medium">
                 {question.prompt || "Untitled question"}
               </p>
@@ -60,7 +59,7 @@ export const QuestionnaireFormStacked = React.memo(
                 }}
                 disabled={disabled}
                 aria-label={question.prompt || "Untitled question"}
-                className="flex flex-wrap gap-2"
+                className="flex flex-wrap justify-center gap-2"
               >
                 {isLikert
                   ? LIKERT_OPTIONS.map((option) => (
@@ -86,6 +85,7 @@ export const QuestionnaireFormStacked = React.memo(
           );
         })}
       </div>
-    );
-  },
-);
+  );
+}
+
+export const QuestionnaireFormStacked = memo(QuestionnaireFormStackedBase);

@@ -514,7 +514,7 @@ The student evaluation always uses the `FACULTY_FEEDBACK` questionnaire type. Th
 
 ```
 Student navigates to /student/courses/:courseId/evaluation
-  → page resolves enrollment context (course, faculty, semester)
+  → page resolves enrollment context (course, faculty, semester from enrollment.semester)
   → page fetches active FACULTY_FEEDBACK version via fetchQuestionnaireVersionsByType("FACULTY_FEEDBACK")
   → page checks if student already submitted (GET /questionnaires/submissions/check)
       → if yes: render "already submitted" state (no form)
@@ -549,14 +549,29 @@ If the student has already submitted an evaluation for the current faculty + cou
 
 ### Backend Dependencies
 
-Two backend endpoints are required but do not exist yet:
-
 | Issue | Description | Status |
 |-------|-------------|--------|
-| [FAC-62](https://github.com/CtrlAltElite-Devs/api.faculytics/issues/133) | Expose active semester in enrollment or auth context — frontend needs `semesterId` for submission and drafts | Open |
-| [FAC-63](https://github.com/CtrlAltElite-Devs/api.faculytics/issues/134) | Add `GET /submissions/check` endpoint — frontend needs to proactively check if student already submitted | Open |
+| [FAC-62](https://github.com/CtrlAltElite-Devs/api.faculytics/issues/133) | Expose active semester in enrollment context — frontend needs `semesterId` for submission and drafts | **Resolved** |
+| [FAC-63](https://github.com/CtrlAltElite-Devs/api.faculytics/issues/134) | Add `GET /submissions/check` endpoint — frontend needs to proactively check if student already submitted | **Resolved** |
 
-Until FAC-62 is resolved, the `semesterId` cannot be provided and submissions/drafts will not work. Until FAC-63 is resolved, the frontend falls back to handling the 409 from the submit endpoint.
+**FAC-62 resolution:** The `GET /enrollments/me` endpoint now includes a `semester` field on each enrollment. The frontend extracts `semesterId` from the resolved enrollment (`enrollment.semester.id`). The semester is derived from the course's program → department → semester relation chain. It can be `null` if the hierarchy is incomplete, which the evaluation page should guard against.
+
+```typescript
+// New type added to features/enrollments/types/index.ts
+type SemesterShortResponseDto = {
+  id: string;
+  code: string;
+  label?: string;
+  academicYear?: string;
+};
+
+// EnrollmentResponseDto now includes:
+semester?: SemesterShortResponseDto | null;
+```
+
+Both backend dependencies are now resolved. All submission, draft, and check features are fully unblocked.
+
+**FAC-63 resolution:** `GET /questionnaires/submissions/check` accepts query params `versionId`, `facultyId`, `semesterId`, `courseId?` and returns `{ submitted: boolean, submittedAt?: Date }`. The endpoint uses `CurrentUserInterceptor` to infer the respondent from the JWT token.
 
 ### Backend API Endpoints
 
@@ -1045,9 +1060,9 @@ In `features/questionnaires/index.ts`, export `QuestionnaireFormRenderer` from t
 
 ---
 
-### Phase 4: API Layer and Hooks (No Backend Blockers)
+### Phase 4: API Layer and Hooks
 
-> Goal: Wire up the request functions and hooks. Some hooks depend on FAC-62/FAC-63, but the code can be written now and enabled later.
+> Goal: Wire up the request functions and hooks. All hooks are fully unblocked.
 
 **Step 4.1 — Add request functions**
 
@@ -1061,17 +1076,17 @@ Fetches the active published version for a given questionnaire type (e.g., `FACU
 
 `useMutation` wrapping `submitEvaluation`. `onSuccess`: toast + `router.push("/student/courses")`. `onError`: handle 409 (duplicate → toast + redirect), other errors → generic toast.
 
-**Step 4.4 — `use-check-submission.ts`** *(depends on FAC-63)*
+**Step 4.4 — `use-check-submission.ts`**
 
-`useQuery` wrapping `checkSubmission`. Returns `{ submitted: boolean }`. Can be written now with `enabled: false` or behind a feature flag until FAC-63 ships. The fallback (409 handling in submit) works without this.
+`useQuery` wrapping `checkSubmission`. Returns `{ submitted: boolean, submittedAt?: Date }`. FAC-63 is resolved — this endpoint is live.
 
-**Step 4.5 — `use-evaluation-draft.ts`** *(depends on FAC-62 for semesterId)*
+**Step 4.5 — `use-evaluation-draft.ts`**
 
-`useQuery` wrapping `fetchDraft`. Needs `versionId`, `facultyId`, `semesterId` params. Can be written now but won't have `semesterId` until FAC-62 ships.
+`useQuery` wrapping `fetchDraft`. Needs `versionId`, `facultyId`, `semesterId` params. The `semesterId` is now available from `enrollment.semester.id` (resolved by FAC-62).
 
-**Step 4.6 — `use-save-draft.ts` / `useAutoSaveDraft`** *(depends on FAC-62 for semesterId)*
+**Step 4.6 — `use-save-draft.ts` / `useAutoSaveDraft`**
 
-`useMutation` wrapping `saveDraft`, plus a custom `useAutoSaveDraft` hook that debounces `onChange` values. Includes the retry-once-then-ignore logic and the "Saving..." / "Saved" status.
+`useMutation` wrapping `saveDraft`, plus a custom `useAutoSaveDraft` hook that debounces `onChange` values. Includes the retry-once-then-ignore logic and the "Saving..." / "Saved" status. The `semesterId` is available from the enrollment context.
 
 ---
 
@@ -1168,6 +1183,4 @@ Phase 5 (student evaluation page)
 Phase 6 (QA)
 ```
 
-**What can ship without backend blockers:** Phases 1–3 (renderer + superadmin preview) are fully independent of FAC-62 and FAC-63. Phase 4 hooks can be coded but some won't be callable. Phase 5 core form works, but draft and submission-check features activate later.
-
-**What's blocked:** Draft auto-save and proactive "already submitted" check need FAC-62 (semesterId) and FAC-63 (check endpoint) respectively. The 409 fallback on submit works without FAC-63.
+**All phases are fully unblocked.** Both FAC-62 (`semesterId` via enrollment) and FAC-63 (`GET /submissions/check`) are resolved. No backend dependencies remain.

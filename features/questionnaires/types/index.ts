@@ -103,6 +103,57 @@ export type QuestionnaireFormValues = {
   qualitativeComment: string;
 };
 
+// --- Submission / Draft types ---
+
+export type SubmitEvaluationPayload = {
+  versionId: string;
+  respondentId: string;
+  facultyId: string;
+  semesterId: string;
+  courseId?: string;
+  answers: QuestionnaireFormAnswers;
+  qualitativeComment?: string;
+};
+
+export type SaveDraftPayload = {
+  versionId: string;
+  facultyId: string;
+  semesterId: string;
+  courseId?: string;
+  answers: QuestionnaireFormAnswers;
+  qualitativeComment?: string;
+};
+
+export type FetchDraftParams = {
+  versionId: string;
+  facultyId: string;
+  semesterId: string;
+  courseId?: string;
+};
+
+export type DraftResponse = {
+  id: string;
+  versionId: string;
+  facultyId: string;
+  semesterId: string;
+  courseId?: string;
+  answers: QuestionnaireFormAnswers;
+  qualitativeComment?: string;
+  updatedAt: string;
+};
+
+export type CheckSubmissionParams = {
+  versionId: string;
+  facultyId: string;
+  semesterId: string;
+  courseId?: string;
+};
+
+export type CheckSubmissionResponse = {
+  submitted: boolean;
+  submittedAt?: string;
+};
+
 // --- Utility functions ---
 
 export function resolveQuestionnaireType(value: string | null): QuestionnaireType {
