@@ -40,7 +40,7 @@ export function FacultyAnalysisScreen({
       />
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm" className="font-sans">
-          <Link href="/dean">
+          <Link href="/dean/dashboard">
             Back to Overview
           </Link>
         </Button>
