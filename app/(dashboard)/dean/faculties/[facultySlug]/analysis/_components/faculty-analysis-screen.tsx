@@ -10,7 +10,10 @@ import type {
 } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
 import { Button } from "@/components/ui/button";
 
-import { FacultyAnalysisQualitativeMetrics } from "./faculty-analysis-qualitative-metrics";
+import {
+  FacultyAnalysisActionableInsights,
+  FacultyAnalysisQualitativeOverview,
+} from "./faculty-analysis-qualitative-metrics";
 import { FacultyAnalysisRadarChart } from "./faculty-analysis-radar-chart";
 import { FacultyAnalysisSummary } from "./faculty-analysis-summary";
 import { FacultyAnalysisToolbar } from "./faculty-analysis-toolbar";
@@ -33,8 +36,12 @@ export function FacultyAnalysisScreen({
       </div>
 
       <FacultyAnalysisSummary faculty={faculty} />
+      <FacultyAnalysisQualitativeOverview
+        faculty={faculty}
+        selectedSemester={selectedSemester}
+      />
       <FacultyAnalysisRadarChart faculty={faculty} />
-      <FacultyAnalysisQualitativeMetrics
+      <FacultyAnalysisActionableInsights
         faculty={faculty}
         selectedSemester={selectedSemester}
       />

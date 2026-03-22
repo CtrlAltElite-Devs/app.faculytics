@@ -20,6 +20,165 @@ type QualitativeInsight = {
   description: string;
 };
 
+type FacultyFeedbackRecord = {
+  date: string;
+  feedback: string;
+  sentiment: "Positive" | "Neutral" | "Negative";
+};
+
+const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
+  {
+    date: "2026-01-14",
+    feedback: "Explains difficult concepts clearly and checks if the class is keeping up.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-01-21",
+    feedback: "Provides helpful examples, though some sessions feel a bit fast-paced.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-01-28",
+    feedback: "Creates a welcoming classroom environment and encourages participation.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-02-03",
+    feedback: "Would appreciate quicker feedback on submitted activities and quizzes.",
+    sentiment: "Negative",
+  },
+  {
+    date: "2026-02-10",
+    feedback: "Consultation sessions are useful and make course requirements easier to understand.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-02-18",
+    feedback: "Instructions are generally clear, but deadlines should be emphasized more often.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-02-24",
+    feedback: "Uses practical examples that help connect theory to real-world situations.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-03-02",
+    feedback: "Some lessons move too quickly when multiple topics are covered in one meeting.",
+    sentiment: "Negative",
+  },
+  {
+    date: "2026-03-09",
+    feedback: "Shows strong command of the subject and answers questions confidently.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-03-16",
+    feedback: "Overall a good learning experience with room for improved follow-up materials.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-03-19",
+    feedback: "Uses organized slides that make each lecture easier to follow.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-03-22",
+    feedback: "Class activities are helpful, but some instructions could be repeated before starting.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-03-25",
+    feedback: "Needs to return graded outputs sooner so students can adjust their performance.",
+    sentiment: "Negative",
+  },
+  {
+    date: "2026-03-28",
+    feedback: "Shows patience when answering follow-up questions during recitation.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-04-02",
+    feedback: "Provides useful reminders before major assessments and deadlines.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-04-05",
+    feedback: "Some examples are clear, though a few topics still need more detailed discussion.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-04-08",
+    feedback: "Consultation hours are helpful, but availability can be inconsistent on busy weeks.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-04-11",
+    feedback: "The instructor encourages participation and makes students feel comfortable sharing ideas.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-04-14",
+    feedback: "Feedback on projects is sometimes too brief to guide improvement well.",
+    sentiment: "Negative",
+  },
+  {
+    date: "2026-04-17",
+    feedback: "Relates lessons to real scenarios, which helps with understanding complex topics.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-04-20",
+    feedback: "The course is manageable overall, but workload expectations should be clarified earlier.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-04-23",
+    feedback: "Creates a respectful class atmosphere and handles discussions professionally.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-04-26",
+    feedback: "Lecture pacing becomes difficult to follow when several new concepts are introduced together.",
+    sentiment: "Negative",
+  },
+  {
+    date: "2026-04-29",
+    feedback: "Instructions for laboratory tasks are detailed and easy to apply.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-05-02",
+    feedback: "Shows expertise in the subject, although some answers could be explained more simply.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-05-05",
+    feedback: "Uses examples from actual practice, which makes the subject more engaging.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-05-08",
+    feedback: "Would benefit from posting materials earlier before class sessions.",
+    sentiment: "Negative",
+  },
+  {
+    date: "2026-05-11",
+    feedback: "Makes effort to check student understanding before moving to the next topic.",
+    sentiment: "Positive",
+  },
+  {
+    date: "2026-05-14",
+    feedback: "Assessment instructions are generally clear, but rubrics should be discussed more fully.",
+    sentiment: "Neutral",
+  },
+  {
+    date: "2026-05-17",
+    feedback: "Overall, the class is well handled and supports steady learning progress.",
+    sentiment: "Positive",
+  },
+] as const;
+
 function createQualitativeSemesterData(
   positive: number,
   neutral: number,
@@ -432,6 +591,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.7,
       overallPositiveRate: "89.4%",
       responses: 412,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: defaultQuantitativeMetricViews,
       qualitativeMetrics: defaultQualitativeMetrics,
     },
@@ -447,6 +607,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.4,
       overallPositiveRate: "85.1%",
       responses: 376,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.4 },
@@ -602,6 +763,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.8,
       overallPositiveRate: "91.8%",
       responses: 508,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.9 },
@@ -751,6 +913,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.5,
       overallPositiveRate: "88.2%",
       responses: 441,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.6 },
@@ -784,6 +947,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.4,
       overallPositiveRate: "86.7%",
       responses: 394,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.5 },
@@ -817,6 +981,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.7,
       overallPositiveRate: "90.5%",
       responses: 467,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.8 },
@@ -850,6 +1015,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.3,
       overallPositiveRate: "84.9%",
       responses: 352,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.3 },
@@ -883,6 +1049,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.5,
       overallPositiveRate: "87.6%",
       responses: 389,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.6 },
@@ -916,6 +1083,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.6,
       overallPositiveRate: "89.1%",
       responses: 421,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.7 },
@@ -949,6 +1117,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.9,
       overallPositiveRate: "92.3%",
       responses: 476,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.9 },
@@ -982,6 +1151,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.4,
       overallPositiveRate: "85.8%",
       responses: 365,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.4 },
@@ -1015,6 +1185,7 @@ export const deanAnalyticsSampleData = {
       averageRating: 4.6,
       overallPositiveRate: "88.9%",
       responses: 403,
+      feedbackRecords: defaultFacultyFeedbackRecords,
       quantitativeMetrics: createQuantitativeMetricViews({
         classroom: [
           { metric: "Instructional Clarity", score: 4.7 },

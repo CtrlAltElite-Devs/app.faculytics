@@ -48,13 +48,10 @@ function buildOverallRecommendation(items: string[]) {
   return uniqueItems.join(" ");
 }
 
-export function FacultyAnalysisQualitativeMetrics({
-  faculty,
-  selectedSemester,
-}: {
-  faculty: DeanFacultyAnalysisRecord;
-  selectedSemester: FacultyAnalysisSemesterKey;
-}) {
+function useQualitativeMetricsData(
+  faculty: DeanFacultyAnalysisRecord,
+  selectedSemester: FacultyAnalysisSemesterKey,
+) {
   const isMobile = useIsMobile();
   const qualitativeMetrics = faculty.qualitativeMetrics[selectedSemester];
   const sentimentData = qualitativeMetrics.sentiment.map((item) => ({
@@ -70,6 +67,26 @@ export function FacultyAnalysisQualitativeMetrics({
   );
   const strengthsRecommendation = buildOverallRecommendation(strengthsActionItems);
   const improvementRecommendation = buildOverallRecommendation(improvementActionItems);
+
+  return {
+    isMobile,
+    qualitativeMetrics,
+    sentimentData,
+    maxMentions,
+    strengthsRecommendation,
+    improvementRecommendation,
+  };
+}
+
+export function FacultyAnalysisQualitativeOverview({
+  faculty,
+  selectedSemester,
+}: {
+  faculty: DeanFacultyAnalysisRecord;
+  selectedSemester: FacultyAnalysisSemesterKey;
+}) {
+  const { isMobile, qualitativeMetrics, sentimentData, maxMentions } =
+    useQualitativeMetricsData(faculty, selectedSemester);
 
   return (
     <section>
@@ -144,82 +161,96 @@ export function FacultyAnalysisQualitativeMetrics({
           </CardContent>
         </Card>
       </div>
-      <Card className="mt-6 rounded-2xl border-border/70 shadow-sm">
-        <CardHeader>
-          <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
-            Actionable Insights and Recommendations
-          </CardTitle>
-          <CardDescription className="font-sans text-sm">
-            Suggested focus areas derived from the semester&apos;s qualitative feedback.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <div className="rounded-xl border border-emerald-200 bg-muted/20 p-4 dark:border-emerald-900/70">
-              <div className="flex items-center gap-2">
-                <h3 className="font-playfair text-lg font-semibold text-emerald-700 dark:text-emerald-300">
-                  Strengths to Maintain
-                </h3>
-                <span className="font-sans text-xs text-muted-foreground">
-                  {qualitativeMetrics.strengthsToMaintain.length} generated answers
-                </span>
-              </div>
-              <div className="mt-3 space-y-3">
-                {qualitativeMetrics.strengthsToMaintain.map((item) => (
-                  <div
-                    key={item.title}
-                    className="rounded-lg border border-border/70 bg-background p-3"
-                  >
-                    <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
-                    <p className="mt-1 font-sans text-sm text-muted-foreground">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 dark:border-emerald-900/70 dark:bg-emerald-950/20">
-                <p className="font-playfair text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                  Action Plan
-                </p>
-                <p className="mt-2 font-sans text-sm text-muted-foreground">
-                  {strengthsRecommendation}
-                </p>
-              </div>
+    </section>
+  );
+}
+
+export function FacultyAnalysisActionableInsights({
+  faculty,
+  selectedSemester,
+}: {
+  faculty: DeanFacultyAnalysisRecord;
+  selectedSemester: FacultyAnalysisSemesterKey;
+}) {
+  const { qualitativeMetrics, strengthsRecommendation, improvementRecommendation } =
+    useQualitativeMetricsData(faculty, selectedSemester);
+
+  return (
+    <Card className="rounded-2xl border-border/70 shadow-sm">
+      <CardHeader>
+        <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
+          Actionable Insights and Recommendations
+        </CardTitle>
+        <CardDescription className="font-sans text-sm">
+          Suggested focus areas derived from the semester&apos;s qualitative feedback.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <div className="rounded-xl border border-emerald-200 bg-muted/20 p-4 dark:border-emerald-900/70">
+            <div className="flex items-center gap-2">
+              <h3 className="font-playfair text-lg font-semibold text-emerald-700 dark:text-emerald-300">
+                Strengths to Maintain
+              </h3>
+              <span className="font-sans text-xs text-muted-foreground">
+                {qualitativeMetrics.strengthsToMaintain.length} generated answers
+              </span>
             </div>
-            <div className="rounded-xl border border-orange-200 bg-muted/20 p-4 dark:border-orange-900/70">
-              <div className="flex items-center gap-2">
-                <h3 className="font-playfair text-lg font-semibold text-orange-700 dark:text-orange-300">
-                  Areas for Improvement
-                </h3>
-                <span className="font-sans text-xs text-muted-foreground">
-                  {qualitativeMetrics.areasForImprovement.length} generated answers
-                </span>
-              </div>
-              <div className="mt-3 space-y-3">
-                {qualitativeMetrics.areasForImprovement.map((item) => (
-                  <div
-                    key={item.title}
-                    className="rounded-lg border border-border/70 bg-background p-3"
-                  >
-                    <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
-                    <p className="mt-1 font-sans text-sm text-muted-foreground">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50/70 p-3 dark:border-orange-900/70 dark:bg-orange-950/20">
-                <p className="font-playfair text-sm font-semibold text-orange-700 dark:text-orange-300">
-                  Action Plan
-                </p>
-                <p className="mt-2 font-sans text-sm text-muted-foreground">
-                  {improvementRecommendation}
-                </p>
-              </div>
+            <div className="mt-3 space-y-3">
+              {qualitativeMetrics.strengthsToMaintain.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-lg border border-border/70 bg-background p-3"
+                >
+                  <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
+                  <p className="mt-1 font-sans text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 dark:border-emerald-900/70 dark:bg-emerald-950/20">
+              <p className="font-playfair text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                Action Plan
+              </p>
+              <p className="mt-2 font-sans text-sm text-muted-foreground">
+                {strengthsRecommendation}
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </section>
+          <div className="rounded-xl border border-orange-200 bg-muted/20 p-4 dark:border-orange-900/70">
+            <div className="flex items-center gap-2">
+              <h3 className="font-playfair text-lg font-semibold text-orange-700 dark:text-orange-300">
+                Areas for Improvement
+              </h3>
+              <span className="font-sans text-xs text-muted-foreground">
+                {qualitativeMetrics.areasForImprovement.length} generated answers
+              </span>
+            </div>
+            <div className="mt-3 space-y-3">
+              {qualitativeMetrics.areasForImprovement.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-lg border border-border/70 bg-background p-3"
+                >
+                  <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
+                  <p className="mt-1 font-sans text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50/70 p-3 dark:border-orange-900/70 dark:bg-orange-950/20">
+              <p className="font-playfair text-sm font-semibold text-orange-700 dark:text-orange-300">
+                Action Plan
+              </p>
+              <p className="mt-2 font-sans text-sm text-muted-foreground">
+                {improvementRecommendation}
+              </p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
