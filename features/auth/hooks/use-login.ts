@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { persistSidebarOpenState } from "@/components/ui/sidebar";
 import { login } from "@/features/auth/api/auth.requests";
 import { useAuthStore } from "@/stores/auth-store";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
@@ -22,7 +21,6 @@ export function useLogin() {
       queryClient.removeQueries({ queryKey: ["auth"] });
       queryClient.removeQueries({ queryKey: ["enrollments"] });
       clearSelectedCourse();
-      persistSidebarOpenState(false);
       setSession(data.token, data.refreshToken);
     },
   });

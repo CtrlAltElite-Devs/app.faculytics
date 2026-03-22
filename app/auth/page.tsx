@@ -1,32 +1,27 @@
 "use client";
 
+import { startTransition, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { AppBrand } from "@/components/layout/app-brand";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useMe } from "@/features/auth/hooks/use-me";
+import { branding } from "@/constants/branding";
 import { useAuthStore } from "@/stores/auth-store";
-import { useRouter, useSearchParams } from "next/navigation";
-import { startTransition, useEffect, useState } from "react";
 
 import { AuthLoginForm } from "./_components/auth-login-form";
 
 export default function AuthPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { data: me, isPending: isMePending, isError: isMeError } = useMe();
   const { roleHome } = useActiveRole();
   const clearSession = useAuthStore((state) => state.clearSession);
   const token = useAuthStore((state) => state.token);
   const [unsupportedRoleMessage, setUnsupportedRoleMessage] = useState<string | null>(null);
   const isAuthenticating = Boolean(token) && isMePending;
-  const authError = searchParams.get("error");
-  const statusMessage =
-    unsupportedRoleMessage ??
-    (authError === "me-failed"
-      ? "We could not restore your session. Please sign in again."
-      : authError === "no-role"
-        ? "Your account does not have a supported role for this app yet. Contact your administrator."
-        : null);
+  const statusMessage = unsupportedRoleMessage;
 
   useEffect(() => {
     if (!token || isMePending) return;
@@ -47,7 +42,7 @@ export default function AuthPage() {
     if (me) {
       startTransition(() => {
         setUnsupportedRoleMessage(
-          "Your account does not have a supported role for this app yet. Contact your administrator.",
+          "Your account does not have a supported role for this app yet. Contact your administrator."
         );
       });
       clearSession();
@@ -79,14 +74,19 @@ export default function AuthPage() {
                 recommendations.
               </p>
             </div>
-            <div className="text-sm opacity-70">2026 Faculytics. All rights reserved.</div>
+            <div className="text-sm opacity-70">{branding.APP_COPYRIGHT}</div>
           </div>
         </BackgroundGradientAnimation>
       </div>
 
       <div className="col-span-1 flex flex-col lg:col-span-3">
         <div className="flex items-center justify-between p-4 sm:p-6 lg:p-8">
-          <h3 className="text-xl font-playfair font-semibold">Faculytics 2.0</h3>
+          <AppBrand
+            priority
+            className="gap-3"
+            logoClassName="size-6"
+            textClassName="text-base font-playfair font-semibold"
+          />
           <ThemeToggle />
         </div>
 

@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { GraduationCap } from "lucide-react"
 import Link from "next/link"
 
-import { useActiveRole } from "@/features/auth/hooks/use-active-role"
-import { getNavItemsForRole, getRoleConfig } from "@/features/auth/lib/role-route"
+import { AppBrand } from "@/components/layout/app-brand"
+import { RoleSwitcher } from "@/components/layout/role-switcher"
+import { useActiveRole, getNavItemsForRole } from "@/features/auth"
 import { NavMain } from "@/components/layout/nav-main"
 import { NavUser } from "@/components/layout/nav-user"
 import {
@@ -16,6 +16,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
   SidebarRail,
 } from "@/components/ui/sidebar"
 
@@ -23,7 +24,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { activeRole, roleHome } = useActiveRole()
   const navItems = getNavItemsForRole(activeRole)
   const logoHref = roleHome ?? "/"
-  const roleLabel = activeRole ? getRoleConfig(activeRole).label : null
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -31,20 +31,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href={logoHref}>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-brand-blue text-sidebar-primary-foreground">
-                  <GraduationCap className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                  <span className="truncate font-semibold">Faculytics</span>
-                  {roleLabel ? (
-                    <span className="truncate text-xs text-muted-foreground">{roleLabel} Mode</span>
-                  ) : null}
-                </div>
+              <Link href={logoHref} className="flex items-center gap-2">
+                <AppBrand
+                  logoClassName="size-5"
+                  textClassName="text-sm group-data-[collapsible=icon]:hidden"
+                  className="min-w-0 flex-1"
+                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        <div className="px-2 pb-2 md:hidden">
+          <RoleSwitcher className="w-full justify-between" />
+        </div>
+        <SidebarSeparator className="md:hidden" />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} />

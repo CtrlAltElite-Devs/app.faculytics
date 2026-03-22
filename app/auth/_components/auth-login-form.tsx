@@ -21,6 +21,7 @@ type AuthLoginFormProps = {
 export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginFormProps) {
   const { mutate, isPending, error } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
     defaultValues: {
@@ -28,6 +29,7 @@ export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginForm
       password: "",
     },
   });
+  
   const isBusy = isPending || isAuthenticating;
   const loginErrorMessage = (error as AxiosError<AuthErrorResponse> | null)?.response?.data?.message ?? null;
   const feedbackMessage = loginErrorMessage ?? statusMessage;

@@ -14,4 +14,21 @@ export enum Endpoints {
   questionnaireTypeVersions = "/api/v1/questionnaires/types/:type/versions",
   questionnaireVersions = "/api/v1/questionnaires/:id/versions",
   questionnaireVersionById = "/api/v1/questionnaires/versions/:versionId",
+  questionnaireLatestActiveVersion = "/api/v1/questionnaires/:id/latest-active-version",
+  questionnaireVersionPublish = "/api/v1/questionnaires/versions/:versionId/publish",
+  questionnaireVersionDeprecate = "/api/v1/questionnaires/versions/:versionId/deprecate",
+
+  // Questionnaire Submissions
+  questionnaireSubmissions = "/api/v1/questionnaires/submissions",
+  questionnaireSubmissionsCheck = "/api/v1/questionnaires/submissions/check",
+
+  // Questionnaire Drafts
+  questionnaireDrafts = "/api/v1/questionnaires/drafts",
+  questionnaireDraftsList = "/api/v1/questionnaires/drafts/list",
+
+  // Dimensions
+  dimensions = "/api/v1/dimensions",
+  dimensionById = "/api/v1/dimensions/:id",
+  dimensionActivate = "/api/v1/dimensions/:id/activate",
+  dimensionDeactivate = "/api/v1/dimensions/:id/deactivate",
 }

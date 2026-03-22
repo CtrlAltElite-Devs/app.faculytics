@@ -1,5 +1,13 @@
+import { ArchiveX, Eye, MoreVertical, PencilLine, Rocket } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -15,6 +23,9 @@ type QuestionnaireTableProps = {
   rows: QuestionnaireVersionItem[];
   onEditDraft?: (row: QuestionnaireVersionItem) => void;
   onViewVersion?: (row: QuestionnaireVersionItem) => void;
+  onPublishVersion?: (row: QuestionnaireVersionItem) => void;
+  onDeprecateVersion?: (row: QuestionnaireVersionItem) => void;
+  disableActions?: boolean;
 };
 
 const STATUS_BADGE_CLASS_NAMES = {
@@ -35,7 +46,14 @@ function formatDate(value?: string | null) {
   }).format(new Date(value));
 }
 
-export function QuestionnaireTable({ rows, onEditDraft, onViewVersion }: QuestionnaireTableProps) {
+export function QuestionnaireTable({
+  rows,
+  onEditDraft,
+  onViewVersion,
+  onPublishVersion,
+  onDeprecateVersion,
+  disableActions = false,
+}: QuestionnaireTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border bg-background">
       <Table>
@@ -66,16 +84,47 @@ export function QuestionnaireTable({ rows, onEditDraft, onViewVersion }: Questio
               <TableCell className="whitespace-nowrap text-muted-foreground">
                 {formatDate(row.createdAt)}
               </TableCell>
-              <TableCell>
-                {row.status === "DRAFT" && onEditDraft ? (
-                  <Button type="button" variant="outline" size="sm" onClick={() => onEditDraft(row)}>
-                    Edit
-                  </Button>
-                ) : row.status !== "DRAFT" && onViewVersion ? (
-                  <Button type="button" variant="outline" size="sm" onClick={() => onViewVersion(row)}>
-                    View
-                  </Button>
-                ) : null}
+              <TableCell className="pl-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="size-9 p-0"
+                      disabled={disableActions}
+                      aria-label={`Actions for version ${row.versionNumber}`}
+                    >
+                      <MoreVertical className="size-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {row.status === "DRAFT" && onEditDraft ? (
+                      <DropdownMenuItem disabled={disableActions} onClick={() => onEditDraft(row)}>
+                        <PencilLine className="size-4" />
+                        Edit
+                      </DropdownMenuItem>
+                    ) : null}
+                    {row.status !== "DRAFT" && onViewVersion ? (
+                      <DropdownMenuItem disabled={disableActions} onClick={() => onViewVersion(row)}>
+                        <Eye className="size-4" />
+                        View
+                      </DropdownMenuItem>
+                    ) : null}
+                    {row.status === "DRAFT" && onPublishVersion ? (
+                      <DropdownMenuItem disabled={disableActions} onClick={() => onPublishVersion(row)}>
+                        <Rocket className="size-4" />
+                        Publish
+                      </DropdownMenuItem>
+                    ) : null}
+                    {(row.status === "DRAFT" || row.status === "ACTIVE") && onDeprecateVersion ? (
+                      <DropdownMenuItem disabled={disableActions} onClick={() => onDeprecateVersion(row)}>
+                        <ArchiveX className="size-4" />
+                        Deprecate
+                      </DropdownMenuItem>
+                    ) : null}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}

@@ -120,6 +120,7 @@ export function validateQuestionnaireBuilderDraft(
   const qualitativeIssues: QuestionnaireBuilderValidationIssue[] = [];
   let totalLeafWeight = 0;
   let leafSectionCount = 0;
+  let hasMissingDimension = false;
 
   if (draft.metadata.title.trim().length === 0) {
     appendIssue(issues, {
@@ -191,6 +192,41 @@ export function validateQuestionnaireBuilderDraft(
         localSectionIssues.push(issue);
         appendIssue(issues, issue);
       }
+
+      const dimensionResult = questionnaireSectionInputSchema.shape.dimensionCode.safeParse(
+        section.dimensionCode
+      );
+      if (!dimensionResult.success || section.dimensionCode === null) {
+        hasMissingDimension = true;
+        const issue: QuestionnaireBuilderValidationIssue = {
+          code: "section.dimensionCode.required",
+          message: "Dimension code is required.",
+          target: {
+            type: "section",
+            id: section.id,
+            field: "dimensionCode",
+          },
+        };
+
+        localSectionIssues.push(issue);
+        appendIssue(issues, issue);
+      }
+
+      if (section.dimensionCodeIssue === "inconsistent") {
+        const issue: QuestionnaireBuilderValidationIssue = {
+          code: "section.dimensionCode.inconsistent",
+          message:
+            "Questions in this section reference different dimension codes. Re-select one dimension to fix it.",
+          target: {
+            type: "section",
+            id: section.id,
+            field: "dimensionCode",
+          },
+        };
+
+        localSectionIssues.push(issue);
+        appendIssue(issues, issue);
+      }
     } else {
       if (section.weight !== null) {
         const issue: QuestionnaireBuilderValidationIssue = {
@@ -215,6 +251,21 @@ export function validateQuestionnaireBuilderDraft(
             type: "section",
             id: section.id,
             field: "structure",
+          },
+        };
+
+        localSectionIssues.push(issue);
+        appendIssue(issues, issue);
+      }
+
+      if (section.dimensionCode !== null) {
+        const issue: QuestionnaireBuilderValidationIssue = {
+          code: "section.dimensionCode.non_leaf",
+          message: "Only leaf sections may carry a dimension.",
+          target: {
+            type: "section",
+            id: section.id,
+            field: "dimensionCode",
           },
         };
 
@@ -280,6 +331,14 @@ export function validateQuestionnaireBuilderDraft(
   };
 
   sortSections(draft.sections).forEach(visitSection);
+
+  if (hasMissingDimension) {
+    issues.unshift({
+      code: "sections.dimensionCode.required",
+      message: "Dimension code is required.",
+      target: { type: "global" },
+    });
+  }
 
   if (leafSectionCount > 0 && totalLeafWeight !== 100) {
     appendIssue(issues, {

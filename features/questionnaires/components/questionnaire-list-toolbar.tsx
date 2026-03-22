@@ -36,46 +36,55 @@ export function QuestionnaireListToolbar({
 
   return (
     <>
-      <div className="flex flex-col gap-3 md:hidden">
+      <div className="flex flex-col gap-3 lg:hidden">
         <QuestionnaireTypeButtonGroup
           types={availableTypes}
           value={activeType}
           onValueChange={onTypeChange}
         />
-        <QuestionnaireStatusFilter
-          value={statusFilter}
-          onValueChange={onStatusFilterChange}
-          className="w-full justify-between gap-3"
-        />
+        <div className="flex flex-col gap-3">
+          <QuestionnaireSearchInput
+            value={searchValue}
+            onChange={onSearchChange}
+            className="relative w-full"
+          />
+          <QuestionnaireStatusFilter
+            value={statusFilter}
+            onValueChange={onStatusFilterChange}
+            className="w-full justify-between gap-3"
+          />
+        </div>
         {!hasDraftVersion ? (
           <Button asChild variant="brand" className="w-full">
             <Link href={createDraftHref}>Create Draft</Link>
           </Button>
         ) : null}
-        <QuestionnaireSearchInput
-          value={searchValue}
-          onChange={onSearchChange}
-          className="relative w-full"
-        />
       </div>
 
-      <div className="hidden md:flex md:flex-col md:gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="hidden lg:flex lg:min-w-0 lg:flex-row lg:items-center lg:gap-3">
         <QuestionnaireTypeButtonGroup
           types={availableTypes}
           value={activeType}
           onValueChange={onTypeChange}
+          className="lg:shrink-0"
         />
 
-        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
-          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
             {!hasDraftVersion ? (
-              <Button asChild variant="brand" className="sm:self-stretch">
+              <Button asChild variant="brand" className="shrink-0">
                 <Link href={createDraftHref}>Create Draft</Link>
               </Button>
             ) : null}
-            <QuestionnaireSearchInput value={searchValue} onChange={onSearchChange} />
-          </div>
-          <QuestionnaireStatusFilter value={statusFilter} onValueChange={onStatusFilterChange} />
+            <QuestionnaireSearchInput
+              value={searchValue}
+              onChange={onSearchChange}
+              className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/6"
+            />
+            <QuestionnaireStatusFilter
+              value={statusFilter}
+              onValueChange={onStatusFilterChange}
+              className="w-auto shrink-0 justify-between gap-3"
+            />
         </div>
       </div>
     </>

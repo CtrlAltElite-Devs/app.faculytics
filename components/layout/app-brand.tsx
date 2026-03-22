@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
-import { APP_LOGO_SRC, APP_NAME } from "@/lib/branding";
+import { branding } from "@/constants/branding";
 
 type AppBrandProps = {
   className?: string;
@@ -21,15 +21,15 @@ export function AppBrand({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <Image
-        src={APP_LOGO_SRC}
-        alt={`${APP_NAME} logo`}
+        src={branding.APP_LOGO_SRC}
+        alt={`${branding.APP_NAME} logo`}
         width={40}
         height={40}
         priority={priority}
         className={cn("size-8 shrink-0", logoClassName)}
       />
       {showText ? (
-        <span className={cn("truncate font-semibold", textClassName)}>{APP_NAME}</span>
+        <span className={cn("truncate font-semibold", textClassName)}>{branding.APP_NAME}</span>
       ) : null}
     </div>
   );

@@ -42,8 +42,8 @@ export function DashboardHeader() {
     <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="h-4" />
-      <div className="flex flex-1 items-center justify-between gap-4">
-        <Breadcrumb>
+      <div className="flex min-w-0 flex-1 items-center justify-between gap-2 sm:gap-4">
+        <Breadcrumb className="min-w-0 flex-1">
           <BreadcrumbList>
             {crumbs.map((crumb, index) => {
               const isLast = index === crumbs.length - 1;
@@ -66,7 +66,7 @@ export function DashboardHeader() {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="flex items-center gap-2">
-          <RoleSwitcher />
+          <RoleSwitcher className="hidden min-w-32 justify-between md:inline-flex" />
           <ThemeToggle />
         </div>
       </div>

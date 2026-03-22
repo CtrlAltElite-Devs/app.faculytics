@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { QuestionnaireActionDialog } from "@/features/questionnaires/components/questionnaire-action-dialog";
 import { QuestionnaireCallout } from "@/features/questionnaires/components/questionnaire-callout";
 import { QuestionnaireAddActionButton } from "@/features/questionnaires/components/builder/questionnaire-add-action-button";
+import { InlineEditInput } from "@/features/questionnaires/components/builder/inline-edit-input";
 import { QuestionnaireOutlinePanel } from "@/features/questionnaires/components/builder/questionnaire-outline-panel";
 import { QuestionnaireQualitativeEditor } from "@/features/questionnaires/components/builder/questionnaire-qualitative-editor";
 import { QuestionnaireSectionEditor } from "@/features/questionnaires/components/builder/questionnaire-section-editor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { InlineEditInput } from "@/components/ui/inline-edit-input";
+import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 import { Separator } from "@/components/ui/separator";
 import { useQuestionnaireBuilderController } from "@/features/questionnaires/hooks/use-questionnaire-builder-controller";
 import type { QuestionnaireType } from "@/features/questionnaires/types";
@@ -55,33 +55,26 @@ export function QuestionnaireBuilderShell({
     updateQualitative,
     updateTitle,
     validation,
+    totalLeafWeight,
   } = useQuestionnaireBuilderController({ activeType });
 
-  if (!isHydrated || !draft || !validation || !previewModel) {
+  if (!isHydrated || !draft || !previewModel) {
     return <Card className="p-6 text-sm text-muted-foreground">Loading builder draft...</Card>;
   }
 
   const hasExistingQuestionnaire = Boolean(draft.metadata.questionnaireId);
-
-  const renderStatusBadge = () => {
-    if (isDirty) {
-      return (
-        <Badge variant="ghost" className="font-medium badge-status-draft">
-          Unsaved Changes
-        </Badge>
-      );
-    }
-
-    if (isSaved) {
-      return (
-        <Badge variant="ghost" className="font-medium badge-status-active">
-          Saved
-        </Badge>
-      );
-    }
-
-    return null;
-  };
+  const statusBadge = isDirty ? (
+    <Badge variant="ghost" className="font-medium badge-status-draft">
+      Unsaved Changes
+    </Badge>
+  ) : isSaved ? (
+    <Badge variant="ghost" className="font-medium badge-status-active">
+      Saved
+    </Badge>
+  ) : null;
+  const validationMessages = validation
+    ? [...new Set(validation.issues.map((issue) => issue.message))]
+    : [];
 
   return (
     <div className="space-y-6">
@@ -90,21 +83,21 @@ export function QuestionnaireBuilderShell({
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="space-y-4">
                 <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="min-w-0 flex-1">
+                  <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center">
+                    <div className="w-full lg:min-w-0 lg:flex-1">
                       <InlineEditInput
                         id="questionnaire-title"
                         value={draft.metadata.title}
                         placeholder="Enter the questionnaire title"
                         ariaInvalid={Boolean(
-                          validation.issues.some((issue) => issue.code === "metadata.title.required")
+                          validation?.issues.some((issue) => issue.code === "metadata.title.required")
                         )}
-                        textClassName="min-h-11 bg-transparent px-0 text-xl font-semibold hover:bg-transparent"
-                        inputClassName="h-11 px-0 text-xl font-semibold"
+                        textClassName="min-h-11 text-xl font-semibold"
+                        inputClassName="h-11 text-xl font-semibold"
                         onChange={updateTitle}
                       />
                     </div>
-                    {renderStatusBadge()}
+                    {statusBadge ? <div className="lg:shrink-0">{statusBadge}</div> : null}
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {hasExistingQuestionnaire
@@ -139,14 +132,17 @@ export function QuestionnaireBuilderShell({
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            {validation.issues.length > 0 ? (
+            {validation && !validation.isValid && (
               <QuestionnaireCallout variant="danger">
-                {validation.issues[0]?.message}
-              </QuestionnaireCallout>
-            ) : (
-              <QuestionnaireCallout>
-                Draft is ready to save. Preview remains superadmin-only until a version is
-                published through future lifecycle actions.
+                {validationMessages.length === 1 ? (
+                  validationMessages[0]
+                ) : (
+                  <ul className="list-disc space-y-1 pl-5">
+                    {validationMessages.slice(0, 3).map((message, index) => (
+                      <li key={`${message}-${index}`}>{message}</li>
+                    ))}
+                  </ul>
+                )}
               </QuestionnaireCallout>
             )}
 
@@ -157,11 +153,11 @@ export function QuestionnaireBuilderShell({
         <div className="min-w-0 lg:sticky lg:top-4">
           <QuestionnaireOutlinePanel
             sections={draft.sections}
-            totalLeafWeight={validation.totalLeafWeight}
+            totalLeafWeight={totalLeafWeight}
             selectedSectionId={draft.selectedSectionId}
-            sectionIssues={validation.sectionIssues}
+            sectionIssues={validation?.sectionIssues ?? {}}
             qualitative={draft.qualitative}
-            qualitativeIssues={validation.qualitativeIssues}
+            qualitativeIssues={validation?.qualitativeIssues ?? []}
             onSelect={handleSelectSection}
             onAddRoot={handleAddRootSection}
             onAddChild={requestAddChild}
@@ -181,10 +177,11 @@ export function QuestionnaireBuilderShell({
               {draft.sections.map((section) => (
                 <QuestionnaireSectionEditor
                   key={section.id}
+                  questionnaireType={activeType}
                   section={section}
-                  sectionIssues={validation.sectionIssues[section.id] ?? []}
-                  allSectionIssues={validation.sectionIssues}
-                  questionIssues={validation.questionIssues}
+                  sectionIssues={validation?.sectionIssues[section.id] ?? []}
+                  allSectionIssues={validation?.sectionIssues ?? {}}
+                  questionIssues={validation?.questionIssues ?? {}}
                   selectedSectionId={draft.selectedSectionId}
                   isSelected={section.id === draft.selectedSectionId}
                   onUpdateSection={handleUpdateSection}
@@ -207,14 +204,14 @@ export function QuestionnaireBuilderShell({
             <Separator />
             <QuestionnaireQualitativeEditor
               value={draft.qualitative}
-              issues={validation.qualitativeIssues}
+              issues={validation?.qualitativeIssues ?? []}
               onChange={updateQualitative}
             />
           </div>
         </div>
       </div>
 
-      <QuestionnaireActionDialog
+      <ConfirmationDialog
         open={discardDialogOpen}
         onOpenChange={setDiscardDialogOpen}
         title="Discard unsaved changes?"
@@ -225,7 +222,7 @@ export function QuestionnaireBuilderShell({
         onConfirm={handleDiscardDraft}
       />
 
-      <QuestionnaireActionDialog
+      <ConfirmationDialog
         open={Boolean(pendingParentId)}
         onOpenChange={(open) => {
           if (!open) {
@@ -245,7 +242,7 @@ export function QuestionnaireBuilderShell({
         onConfirm={handleConfirmParentConversion}
       />
 
-      <QuestionnaireActionDialog
+      <ConfirmationDialog
         open={saveDialogOpen}
         onOpenChange={setSaveDialogOpen}
         title="Questionnaire draft saved"
@@ -254,7 +251,7 @@ export function QuestionnaireBuilderShell({
         confirmLabel="Go back to questionnaires"
         onConfirm={() => {
           setSaveDialogOpen(false);
-          router.push(`/superadmin/questionnaires?builder=saved&type=${activeType}`);
+          router.push(`/superadmin/questionnaires?type=${activeType}`);
         }}
       />
     </div>

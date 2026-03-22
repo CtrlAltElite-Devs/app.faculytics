@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { logout } from "@/features/auth/api/auth.requests";
 import { useAuthStore } from "@/stores/auth-store";
@@ -13,6 +14,9 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: logout,
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
     onSettled: () => {
       clearSession();
       clearSelectedCourse();

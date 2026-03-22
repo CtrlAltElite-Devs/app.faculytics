@@ -18,11 +18,19 @@ export type FacultyShortResponseDto = {
   profilePicture?: string;
 };
 
+export type SemesterShortResponseDto = {
+  id: string;
+  code: string;
+  label?: string;
+  academicYear?: string;
+};
+
 export type EnrollmentResponseDto = {
   id: string;
   role: string;
   course: CourseShortResponseDto;
   faculty?: FacultyShortResponseDto | null;
+  semester?: SemesterShortResponseDto | null;
 };
 
 export type PaginationMeta = {

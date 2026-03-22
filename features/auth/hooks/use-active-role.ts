@@ -11,15 +11,16 @@ export function useActiveRole() {
   const { data: me, isPending, isError } = useMe();
   const storedActiveRole = useAuthStore((state) => state.activeRole);
   const setActiveRole = useAuthStore((state) => state.setActiveRole);
+  const roles = useMemo(() => me?.roles ?? [], [me?.roles]);
 
-  const availableRoles = useMemo(() => getAvailableRoles(me?.roles), [me?.roles]);
+  const availableRoles = useMemo(() => getAvailableRoles(roles), [roles]);
   const activeRole = useMemo(
-    () => resolveActiveRole(me?.roles, storedActiveRole),
-    [me?.roles, storedActiveRole],
+    () => resolveActiveRole(roles, storedActiveRole),
+    [roles, storedActiveRole],
   );
   const roleHome = useMemo(
-    () => resolveHomeFromRoles(me?.roles, storedActiveRole),
-    [me?.roles, storedActiveRole],
+    () => resolveHomeFromRoles(roles, storedActiveRole),
+    [roles, storedActiveRole],
   );
 
   useEffect(() => {
@@ -31,6 +32,10 @@ export function useActiveRole() {
   }, [activeRole, isError, isPending, setActiveRole, storedActiveRole]);
 
   return {
+    me,
+    roles,
+    isPending,
+    isError,
     activeRole,
     availableRoles,
     roleHome,
