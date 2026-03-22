@@ -92,6 +92,19 @@ export type QuestionnaireVersion = {
   deletedAt?: string | null;
 };
 
+// --- Form renderer types ---
+
+export type QuestionnaireFormMode = "preview" | "interactive";
+
+export type QuestionnaireFormAnswers = Record<string, number>;
+
+export type QuestionnaireFormValues = {
+  answers: QuestionnaireFormAnswers;
+  qualitativeComment: string;
+};
+
+// --- Utility functions ---
+
 export function resolveQuestionnaireType(value: string | null): QuestionnaireType {
   if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
     return value as QuestionnaireType;

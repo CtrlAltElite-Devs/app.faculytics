@@ -17,3 +17,4 @@ export * from "@/features/questionnaires/lib/builder-serializer";
 export * from "@/features/questionnaires/lib/builder-validator";
 export * from "@/features/questionnaires/lib/action-errors";
 export * from "@/features/questionnaires/store/questionnaire-builder-store";
+export { QuestionnaireFormRenderer } from "@/features/questionnaires/components/form/questionnaire-form-renderer";

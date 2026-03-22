@@ -17,6 +17,14 @@ export enum Endpoints {
   questionnaireVersionPublish = "/api/v1/questionnaires/versions/:versionId/publish",
   questionnaireVersionDeprecate = "/api/v1/questionnaires/versions/:versionId/deprecate",
 
+  // Questionnaire Submissions
+  questionnaireSubmissions = "/api/v1/questionnaires/submissions",
+  questionnaireSubmissionsCheck = "/api/v1/questionnaires/submissions/check",
+
+  // Questionnaire Drafts
+  questionnaireDrafts = "/api/v1/questionnaires/drafts",
+  questionnaireDraftsList = "/api/v1/questionnaires/drafts/list",
+
   // Dimensions
   dimensions = "/api/v1/dimensions",
   dimensionById = "/api/v1/dimensions/:id",
