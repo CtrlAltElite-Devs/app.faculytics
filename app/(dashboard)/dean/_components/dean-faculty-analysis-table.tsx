@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -239,12 +239,11 @@ export function DeanFacultyAnalysisTable() {
                     </div>
                     <Button
                       asChild
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="w-full border-brand-blue/50 bg-brand-blue/10 font-sans text-brand-blue hover:bg-brand-blue/15 hover:text-brand-blue"
+                      className="w-full font-sans text-brand-blue hover:text-brand-blue"
                     >
                       <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
-                        <Eye className="size-4" />
                         View Analysis
                       </Link>
                     </Button>
@@ -300,12 +299,11 @@ export function DeanFacultyAnalysisTable() {
                     <TableCell className="px-4 py-4 text-right lg:px-5">
                       <Button
                         asChild
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="h-auto max-w-full whitespace-nowrap border-brand-blue/50 bg-brand-blue/10 px-3 py-2 font-sans text-brand-blue hover:bg-brand-blue/15 hover:text-brand-blue"
+                        className="h-auto max-w-full whitespace-nowrap px-3 py-2 font-sans text-brand-blue hover:text-brand-blue"
                       >
                         <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
-                          <Eye className="size-4" />
                           View Analysis
                         </Link>
                       </Button>

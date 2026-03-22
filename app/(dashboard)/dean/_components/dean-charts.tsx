@@ -29,6 +29,10 @@ const semesterChartConfig = {
     label: "Second Semester",
     color: "#f2c200",
   },
+  summerSemester: {
+    label: "Summer Semester",
+    color: "#9ca3af",
+  },
 } satisfies ChartConfig;
 
 const overallSentimentChartConfig = {
@@ -61,9 +65,11 @@ export function DeanSentimentBarChart() {
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold sm:text-2xl">Semester Sentiment Comparison</CardTitle>
+        <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
+          Semester Sentiment Comparison
+        </CardTitle>
         <CardDescription className="font-sans text-sm">
-          Overall sentiment for both semesters, categorized by positive, neutral, and
+          Overall sentiment across semesters, categorized by positive, neutral, and
           negative sentiment.
         </CardDescription>
       </CardHeader>
@@ -122,6 +128,12 @@ export function DeanSentimentBarChart() {
               radius={[6, 6, 0, 0]}
               maxBarSize={isMobile ? 24 : 40}
             />
+            <Bar
+              dataKey="summerSemester"
+              fill="var(--color-summerSemester)"
+              radius={[6, 6, 0, 0]}
+              maxBarSize={isMobile ? 24 : 40}
+            />
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -135,7 +147,9 @@ export function DeanOverallSentimentPieChart() {
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold sm:text-2xl">Overall Sentiment Distribution</CardTitle>
+        <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
+          Overall Sentiment Distribution
+        </CardTitle>
         <CardDescription className="font-sans text-sm">
           View of the combined sentiment across all faculties for this department.
         </CardDescription>

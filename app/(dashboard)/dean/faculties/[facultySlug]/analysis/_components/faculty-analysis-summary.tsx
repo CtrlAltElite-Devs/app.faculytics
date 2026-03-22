@@ -23,7 +23,9 @@ function FacultyMetricCard({
       <CardHeader className="pb-0">
         <div className="space-y-2">
           <CardDescription className="font-sans text-sm">{title}</CardDescription>
-          <CardTitle className="text-2xl font-semibold tracking-tight sm:text-3xl">{value}</CardTitle>
+          <CardTitle className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
+            {value}
+          </CardTitle>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
