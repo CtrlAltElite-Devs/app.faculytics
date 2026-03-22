@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function DeanDashboardPage() {
-  redirect("/dean/faculties");
+export default function DeanPage() {
+  redirect("/dean/dashboard");
 }
