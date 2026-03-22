@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,7 +29,6 @@ export function EvaluationPageShell({
         </div>
         <Button asChild variant="outline" className="shrink-0">
           <Link href="/student/courses">
-            <ArrowLeft className="size-4" />
             Back to Courses
           </Link>
         </Button>
