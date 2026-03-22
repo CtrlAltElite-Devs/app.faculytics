@@ -36,16 +36,7 @@ export function useActiveQuestionnaireVersion(
 
       if (!questionnaireId) return null;
 
-      const version = await fetchLatestActiveVersion(questionnaireId);
-      if (!version) return null;
-
-      // Enrich with fields from typeSummary since latest-active-version
-      // doesn't populate the questionnaire relation
-      return {
-        ...version,
-        questionnaireType: version.questionnaireType ?? type,
-        questionnaireTitle: version.questionnaireTitle ?? typeSummary.questionnaireTitle ?? "",
-      };
+      return fetchLatestActiveVersion(questionnaireId);
     },
   });
 }

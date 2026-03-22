@@ -35,11 +35,12 @@ export function useAutoSaveDraft({
   onStatusChange,
 }: UseAutoSaveDraftOptions) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const mutation = useSaveDraft();
+  const mutationRef = useRef(useSaveDraft());
+  const onStatusChangeRef = useRef(onStatusChange);
+  onStatusChangeRef.current = onStatusChange;
 
   const debouncedSave = useCallback(
     (values: QuestionnaireFormValues) => {
-      // Don't save empty forms
       if (Object.keys(values.answers).length === 0) return;
 
       if (timerRef.current) {
@@ -56,28 +57,26 @@ export function useAutoSaveDraft({
           qualitativeComment: values.qualitativeComment || undefined,
         };
 
-        onStatusChange?.("saving");
+        onStatusChangeRef.current?.("saving");
 
-        mutation.mutate(payload, {
+        mutationRef.current.mutate(payload, {
           onSuccess: () => {
-            onStatusChange?.("saved");
+            onStatusChangeRef.current?.("saved");
           },
           onError: () => {
-            // Silent retry once
-            mutation.mutate(payload, {
+            mutationRef.current.mutate(payload, {
               onSuccess: () => {
-                onStatusChange?.("saved");
+                onStatusChangeRef.current?.("saved");
               },
               onError: () => {
-                // Ignore — draft save is best-effort
-                onStatusChange?.("error");
+                onStatusChangeRef.current?.("error");
               },
             });
           },
         });
       }, DEBOUNCE_MS);
     },
-    [versionId, facultyId, semesterId, courseId, mutation, onStatusChange],
+    [versionId, facultyId, semesterId, courseId],
   );
 
   const cancel = useCallback(() => {
@@ -87,5 +86,5 @@ export function useAutoSaveDraft({
     }
   }, []);
 
-  return { debouncedSave, cancel, status: mutation.status };
+  return { debouncedSave, cancel };
 }

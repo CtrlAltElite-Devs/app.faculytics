@@ -27,7 +27,7 @@ export function QuestionnaireFormProgress({
           {percentage}%
         </p>
       </div>
-      <Progress value={percentage} />
+      <Progress value={percentage} className="bg-brand-blue/20 [&>*]:bg-brand-blue" />
     </div>
   );
 }

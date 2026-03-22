@@ -15,21 +15,31 @@ import { QuestionnaireFormQualitative } from "./questionnaire-form-qualitative";
 import { QuestionnaireFormSection } from "./questionnaire-form-section";
 
 type QuestionnaireFormRendererProps = {
+  /** The questionnaire data to render (sections, questions, qualitative config). */
   model: QuestionnaireBuilderPreviewModel;
+  /** "preview" disables all inputs; "interactive" enables answering. */
   mode: QuestionnaireFormMode;
+  /** Pre-fill the form with saved draft data. Only used in interactive mode. */
   defaultValues?: Partial<QuestionnaireFormValues>;
+  /** Called whenever a form value changes. Only fires in interactive mode. */
   onChange?: (values: QuestionnaireFormValues) => void;
 };
 
+/**
+ * Recursively collects IDs of all required questions across all sections.
+ * Used to track completion progress (how many required questions are answered).
+ */
 function collectRequiredQuestionIds(
   sections: QuestionnaireBuilderPreviewSection[],
 ): string[] {
   return sections.flatMap((section) => {
+    // Leaf section: has questions directly
     if (section.questions.length > 0) {
       return section.questions
         .filter((q) => q.required)
         .map((q) => q.id);
     }
+    // Parent section: recurse into children
     return collectRequiredQuestionIds(section.children);
   });
 }
@@ -40,6 +50,9 @@ export function QuestionnaireFormRenderer({
   defaultValues,
   onChange,
 }: QuestionnaireFormRendererProps) {
+  const isInteractive = mode === "interactive";
+
+  // --- Form state ---
   const [answers, setAnswers] = useState<QuestionnaireFormAnswers>(
     defaultValues?.answers ?? {},
   );
@@ -47,6 +60,7 @@ export function QuestionnaireFormRenderer({
     defaultValues?.qualitativeComment ?? "",
   );
 
+  // --- Completion tracking ---
   const requiredQuestionIds = useMemo(
     () => collectRequiredQuestionIds(model.sections),
     [model.sections],
@@ -59,17 +73,12 @@ export function QuestionnaireFormRenderer({
 
   const totalRequired = requiredQuestionIds.length;
 
-  const isComplete = useMemo(
-    () =>
-      answeredCount === totalRequired &&
-      (!model.qualitative.required ||
-        qualitativeComment.trim().length > 0),
-    [answeredCount, totalRequired, model.qualitative.required, qualitativeComment],
-  );
+  const hasAnsweredAllQuestions = answeredCount === totalRequired;
+  const hasRequiredComment =
+    !model.qualitative.required || qualitativeComment.trim().length > 0;
+  const isComplete = hasAnsweredAllQuestions && hasRequiredComment;
 
-  const isInteractive = mode === "interactive";
-
-  // Stable callback for child components
+  // --- Callbacks (stable references for memoized children) ---
   const handleAnswer = useCallback(
     (questionId: string, value: number) => {
       if (!isInteractive) return;
@@ -86,12 +95,13 @@ export function QuestionnaireFormRenderer({
     [isInteractive],
   );
 
-  // Fire onChange whenever values change (interactive mode only)
+  // Notify the parent whenever form values change
   useEffect(() => {
     if (!isInteractive || !onChange) return;
     onChange({ answers, qualitativeComment });
   }, [answers, qualitativeComment, isInteractive, onChange]);
 
+  // --- Render ---
   return (
     <div className="space-y-5">
       {isInteractive && (

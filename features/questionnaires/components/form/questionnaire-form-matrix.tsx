@@ -3,17 +3,18 @@
 import { memo } from "react";
 
 import { cn } from "@/lib/utils";
+import {
+  LIKERT_OPTIONS,
+  YES_NO_OPTIONS,
+  YES_NO_VALUE_MAP,
+  YES_NO_REVERSE_MAP,
+} from "@/features/questionnaires/constants/builder";
 import type {
   BuilderQuestionType,
   QuestionnaireBuilderPreviewQuestion,
   QuestionnaireFormAnswers,
   QuestionnaireFormMode,
 } from "@/features/questionnaires/types";
-
-const LIKERT_HEADERS = ["1", "2", "3", "4", "5"] as const;
-const YES_NO_HEADERS = ["Yes", "No"] as const;
-const YES_NO_VALUE_MAP: Record<string, number> = { Yes: 5, No: 1 };
-const YES_NO_REVERSE_MAP: Record<number, string> = { 5: "Yes", 1: "No" };
 
 type QuestionnaireFormMatrixProps = {
   questions: QuestionnaireBuilderPreviewQuestion[];
@@ -23,6 +24,13 @@ type QuestionnaireFormMatrixProps = {
   onAnswer: (questionId: string, value: number) => void;
 };
 
+/**
+ * A custom radio button that looks like shadcn's RadioGroupItem.
+ *
+ * We use a plain <button> instead of Radix RadioGroup because
+ * Radix injects "grid gap-3" styles that break HTML <table> layout.
+ * See: https://github.com/radix-ui/primitives/issues/2988
+ */
 function MatrixRadio({
   checked,
   disabled,
@@ -43,17 +51,49 @@ function MatrixRadio({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-input shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
+        "relative aspect-square size-4 shrink-0 rounded-full border border-input shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
         checked && "border-primary",
       )}
     >
       {checked && (
-        <span className="block size-2 rounded-full bg-primary" />
+        <span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary" />
       )}
     </button>
   );
 }
 
+/**
+ * Converts a stored numeric answer back to the string key used for comparison.
+ *
+ * - Likert: numeric 4 → string "4"
+ * - Yes/No: numeric 5 → string "Yes", numeric 1 → string "No"
+ *
+ * Returns "" if the question hasn't been answered yet.
+ */
+function getSelectedOptionKey(
+  value: number | undefined,
+  isLikert: boolean,
+): string {
+  if (value === undefined) return "";
+  return isLikert ? value.toString() : (YES_NO_REVERSE_MAP[value] ?? "");
+}
+
+/**
+ * Converts a display option string to the numeric value stored in answers.
+ *
+ * - Likert: "4" → 4
+ * - Yes/No: "Yes" → 5, "No" → 1 (scale-aligned)
+ */
+function getNumericValue(option: string, isLikert: boolean): number {
+  return isLikert ? Number(option) : YES_NO_VALUE_MAP[option];
+}
+
+/**
+ * Desktop Likert matrix table.
+ *
+ * Renders questions as rows and scale options (1-5 or Yes/No) as columns.
+ * Each row is a radio group — selecting an option records the answer.
+ */
 function QuestionnaireFormMatrixBase({
   questions,
   questionType,
@@ -62,7 +102,7 @@ function QuestionnaireFormMatrixBase({
   onAnswer,
 }: QuestionnaireFormMatrixProps) {
   const isLikert = questionType === "LIKERT_1_5";
-  const headers = isLikert ? LIKERT_HEADERS : YES_NO_HEADERS;
+  const options = isLikert ? LIKERT_OPTIONS : YES_NO_OPTIONS;
   const disabled = mode === "preview";
 
   return (
@@ -76,56 +116,48 @@ function QuestionnaireFormMatrixBase({
             >
               <span className="sr-only">Question</span>
             </th>
-            {headers.map((header) => (
+            {options.map((option) => (
               <th
-                key={header}
+                key={option}
                 scope="col"
                 className="w-14 px-2 py-2 text-center text-sm font-medium text-muted-foreground"
               >
-                {header}
+                {option}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {questions.map((question) => {
-            const currentValue = answers[question.id];
-            const selectedKey = isLikert
-              ? currentValue?.toString() ?? ""
-              : YES_NO_REVERSE_MAP[currentValue] ?? "";
+            const selectedKey = getSelectedOptionKey(answers[question.id], isLikert);
+            const questionLabel = question.prompt || "Untitled question";
 
             return (
               <tr
                 key={question.id}
                 role="radiogroup"
-                aria-label={question.prompt || "Untitled question"}
-                className="border-b last:border-b-0 transition-colors hover:bg-muted/50"
+                aria-label={questionLabel}
+                className="border-b transition-colors last:border-b-0 hover:bg-muted/50"
               >
                 <th
                   scope="row"
                   className="px-3 py-3 text-left text-sm font-normal"
                 >
-                  {question.prompt || "Untitled question"}
+                  {questionLabel}
                 </th>
-                {headers.map((option) => {
-                  const checked = selectedKey === option;
-                  const numericValue = isLikert
-                    ? Number(option)
-                    : YES_NO_VALUE_MAP[option];
+                {options.map((option) => {
+                  const isSelected = selectedKey === option;
 
                   return (
-                    <td
-                      key={option}
-                      className="w-14 px-2 py-3 text-center"
-                    >
-                      <MatrixRadio
-                        checked={checked}
-                        disabled={disabled}
-                        onClick={() => onAnswer(question.id, numericValue)}
-                        ariaLabel={
-                          isLikert ? `Rating ${option}` : option
-                        }
-                      />
+                    <td key={option} className="w-14 px-2 py-3">
+                      <div className="flex justify-center">
+                        <MatrixRadio
+                          checked={isSelected}
+                          disabled={disabled}
+                          onClick={() => onAnswer(question.id, getNumericValue(option, isLikert))}
+                          ariaLabel={isLikert ? `Rating ${option}` : option}
+                        />
+                      </div>
                     </td>
                   );
                 })}

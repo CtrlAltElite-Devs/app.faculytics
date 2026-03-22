@@ -2,19 +2,20 @@
 
 import { memo } from "react";
 
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  LIKERT_OPTIONS,
+  YES_NO_OPTIONS,
+  YES_NO_VALUE_MAP,
+  YES_NO_REVERSE_MAP,
+} from "@/features/questionnaires/constants/builder";
 import type {
   BuilderQuestionType,
   QuestionnaireBuilderPreviewQuestion,
   QuestionnaireFormAnswers,
   QuestionnaireFormMode,
 } from "@/features/questionnaires/types";
-
-const LIKERT_OPTIONS = ["1", "2", "3", "4", "5"] as const;
-const YES_NO_OPTIONS = ["Yes", "No"] as const;
-const YES_NO_VALUE_MAP: Record<string, number> = { Yes: 5, No: 1 };
-const YES_NO_REVERSE_MAP: Record<number, string> = { 5: "Yes", 1: "No" };
 
 type QuestionnaireFormStackedProps = {
   questions: QuestionnaireBuilderPreviewQuestion[];
@@ -24,6 +25,44 @@ type QuestionnaireFormStackedProps = {
   onAnswer: (questionId: string, value: number) => void;
 };
 
+/**
+ * Converts a stored numeric answer back to the string key used by the RadioGroup.
+ *
+ * - Likert: numeric 4 → string "4"
+ * - Yes/No: numeric 5 → string "Yes", numeric 1 → string "No"
+ *
+ * Returns "" if the question hasn't been answered yet.
+ */
+function getSelectedOptionKey(
+  value: number | undefined,
+  isLikert: boolean,
+): string {
+  if (value === undefined) return "";
+  return isLikert ? value.toString() : (YES_NO_REVERSE_MAP[value] ?? "");
+}
+
+/**
+ * Converts a display option string to the numeric value stored in answers.
+ *
+ * - Likert: "4" → 4
+ * - Yes/No: "Yes" → 5, "No" → 1 (scale-aligned)
+ */
+function getNumericValue(option: string, isLikert: boolean): number {
+  return isLikert ? Number(option) : YES_NO_VALUE_MAP[option];
+}
+
+// Shared className for each option pill.
+// The `has-[[data-state=checked]]` selector targets Radix's checked state
+// on the hidden RadioGroupItem inside the label.
+const PILL_CLASS =
+  "flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50";
+
+/**
+ * Mobile stacked layout for questionnaire questions.
+ *
+ * Renders each question as a card with selectable pill-style radio options.
+ * This is the mobile counterpart to the desktop QuestionnaireFormMatrix table.
+ */
 function QuestionnaireFormStackedBase({
   questions,
   questionType,
@@ -31,60 +70,41 @@ function QuestionnaireFormStackedBase({
   answers,
   onAnswer,
 }: QuestionnaireFormStackedProps) {
-    const isLikert = questionType === "LIKERT_1_5";
-    const disabled = mode === "preview";
+  const isLikert = questionType === "LIKERT_1_5";
+  const options = isLikert ? LIKERT_OPTIONS : YES_NO_OPTIONS;
+  const disabled = mode === "preview";
 
-    return (
-      <div className="space-y-5">
-        {questions.map((question) => {
-          const currentValue = answers[question.id];
-          const radioValue = isLikert
-            ? currentValue?.toString() ?? ""
-            : YES_NO_REVERSE_MAP[currentValue] ?? "";
+  return (
+    <div className="space-y-5">
+      {questions.map((question) => {
+        const questionLabel = question.prompt || "Untitled question";
+        const selectedKey = getSelectedOptionKey(answers[question.id], isLikert);
 
-          return (
-            <div key={question.id} className="space-y-2.5 text-center">
-              <p className="text-sm font-medium">
-                {question.prompt || "Untitled question"}
-              </p>
+        return (
+          <div key={question.id} className="space-y-2.5 text-center">
+            <p className="text-sm font-medium">{questionLabel}</p>
 
-              <RadioGroup
-                value={radioValue}
-                onValueChange={(val) => {
-                  if (disabled) return;
-                  const numericValue = isLikert
-                    ? Number(val)
-                    : YES_NO_VALUE_MAP[val];
-                  onAnswer(question.id, numericValue);
-                }}
-                disabled={disabled}
-                aria-label={question.prompt || "Untitled question"}
-                className="flex flex-wrap justify-center gap-2"
-              >
-                {isLikert
-                  ? LIKERT_OPTIONS.map((option) => (
-                      <Label
-                        key={option}
-                        className="flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
-                      >
-                        <RadioGroupItem value={option} className="sr-only" />
-                        <span className="font-medium">{option}</span>
-                      </Label>
-                    ))
-                  : YES_NO_OPTIONS.map((option) => (
-                      <Label
-                        key={option}
-                        className="flex cursor-pointer items-center gap-1.5 rounded-lg border px-4 py-2 text-sm transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
-                      >
-                        <RadioGroupItem value={option} className="sr-only" />
-                        <span className="font-medium">{option}</span>
-                      </Label>
-                    ))}
-              </RadioGroup>
-            </div>
-          );
-        })}
-      </div>
+            <RadioGroup
+              value={selectedKey}
+              onValueChange={(val) => {
+                if (disabled) return;
+                onAnswer(question.id, getNumericValue(val, isLikert));
+              }}
+              disabled={disabled}
+              aria-label={questionLabel}
+              className="flex flex-wrap justify-center gap-2"
+            >
+              {options.map((option) => (
+                <Label key={option} className={PILL_CLASS}>
+                  <RadioGroupItem value={option} className="sr-only" />
+                  <span className="font-medium">{option}</span>
+                </Label>
+              ))}
+            </RadioGroup>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

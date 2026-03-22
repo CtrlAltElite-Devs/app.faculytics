@@ -1,4 +1,3 @@
-export * from "@/features/questionnaires/api/questionnaire.requests";
 export * from "@/features/questionnaires/constants";
 export * from "@/features/questionnaires/constants/builder";
 export * from "@/features/questionnaires/hooks/use-create-questionnaire";
