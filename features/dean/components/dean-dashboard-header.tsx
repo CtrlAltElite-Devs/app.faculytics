@@ -3,7 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-import { deanAnalyticsSampleData } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

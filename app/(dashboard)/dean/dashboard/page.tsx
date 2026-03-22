@@ -1,10 +1,10 @@
-import { DeanDashboardHeader } from "../_components/dean-dashboard-header";
-import { DeanFacultyAnalysisTable } from "../_components/dean-faculty-analysis-table";
-import { DeanMetricsGrid } from "../_components/dean-metrics-grid";
+import { DeanDashboardHeader } from "@/features/dean/components/dean-dashboard-header";
+import { DeanFacultyAnalysisTable } from "@/features/dean/components/dean-faculty-analysis-table";
+import { DeanMetricsGrid } from "@/features/dean/components/dean-metrics-grid";
 import {
   DeanOverallSentimentPieChart,
   DeanSentimentBarChart,
-} from "../_components/dean-charts";
+} from "@/features/dean/components/dean-charts";
 
 export default function DeanDashboardPage() {
   return (

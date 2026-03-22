@@ -7,7 +7,7 @@ import Link from "next/link";
 import type {
   DeanFacultyAnalysisRecord,
   FacultyAnalysisSemesterKey,
-} from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+} from "@/features/dean";
 import { Button } from "@/components/ui/button";
 
 import {

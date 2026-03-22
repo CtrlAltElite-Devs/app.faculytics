@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { FacultyAnalysisScreen } from "./_components/faculty-analysis-screen";
 
-import { getDeanFacultyAnalysisBySlug } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+import { getDeanFacultyAnalysisBySlug } from "@/features/dean";
 
 type FacultyAnalysisDetailPageProps = {
   params: Promise<{

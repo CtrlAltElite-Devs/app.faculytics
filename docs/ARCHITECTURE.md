@@ -238,6 +238,16 @@ app/
         page.tsx
     faculty/
     dean/
+      dashboard/
+        page.tsx
+      faculties/
+        [facultySlug]/
+          analysis/
+            _components/
+            page.tsx
+        page.tsx
+      layout.tsx
+      page.tsx
     superadmin/
       questionnaires/
         _components/
@@ -264,6 +274,17 @@ components/
     ...
 
 features/
+  dean/
+    components/
+      dean-charts.tsx
+      dean-dashboard-header.tsx
+      dean-faculty-analysis-table.tsx
+      dean-metrics-grid.tsx
+    lib/
+      analytics-sample-data.ts
+    types/
+      index.ts
+    index.ts
   auth/
     api/
       auth.requests.ts

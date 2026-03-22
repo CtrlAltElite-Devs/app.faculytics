@@ -3,7 +3,7 @@
 import { ChevronDown, Upload } from "lucide-react";
 import { useId, useState } from "react";
 
-import type { FacultyAnalysisSemesterKey } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+import type { FacultyAnalysisSemesterKey } from "@/features/dean";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

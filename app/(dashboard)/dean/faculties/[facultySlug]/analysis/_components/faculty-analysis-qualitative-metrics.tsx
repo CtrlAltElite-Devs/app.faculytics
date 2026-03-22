@@ -5,7 +5,7 @@ import { Cell, Pie, PieChart } from "recharts";
 import type {
   DeanFacultyAnalysisRecord,
   FacultyAnalysisSemesterKey,
-} from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+} from "@/features/dean";
 import {
   ChartContainer,
   ChartLegend,

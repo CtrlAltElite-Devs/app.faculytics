@@ -4,7 +4,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import { deanAnalyticsSampleData } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

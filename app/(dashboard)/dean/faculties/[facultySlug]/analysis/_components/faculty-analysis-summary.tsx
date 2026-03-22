@@ -3,7 +3,7 @@
 import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
 
-import type { DeanFacultyAnalysisRecord } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+import type { DeanFacultyAnalysisRecord } from "@/features/dean";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {

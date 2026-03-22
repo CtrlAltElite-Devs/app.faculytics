@@ -14,6 +14,7 @@ export * from "@/features/questionnaires/hooks/use-submit-evaluation";
 export * from "@/features/questionnaires/hooks/use-evaluation-draft";
 export * from "@/features/questionnaires/hooks/use-save-draft";
 export * from "@/features/questionnaires/hooks/use-check-submission";
+export * from "@/features/questionnaires/hooks/use-questionnaire-list-page";
 export * from "@/features/questionnaires/types";
 export * from "@/features/questionnaires/schemas";
 export * from "@/features/questionnaires/lib/builder-deserializer";

@@ -10,7 +10,7 @@ import {
   RadarChart,
 } from "recharts";
 
-import type { DeanFacultyAnalysisRecord } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+import type { DeanFacultyAnalysisRecord } from "@/features/dean";
 import {
   ChartContainer,
   ChartTooltip,

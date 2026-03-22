@@ -1,30 +1,10 @@
-type QuantitativeMetricScore = {
-  metric: string;
-  score: number;
-};
-
-type SemesterKey = "firstSemester" | "secondSemester" | "summerSemester";
-
-type QualitativeTheme = {
-  label: string;
-  mentions: number;
-};
-
-type QualitativeActionPlan = {
-  title: string;
-  items: string[];
-};
-
-type QualitativeInsight = {
-  title: string;
-  description: string;
-};
-
-type FacultyFeedbackRecord = {
-  date: string;
-  feedback: string;
-  sentiment: "Positive" | "Neutral" | "Negative";
-};
+import type {
+  FacultyFeedbackRecord,
+  QualitativeActionPlan,
+  QualitativeInsight,
+  QualitativeTheme,
+  QuantitativeMetricScore,
+} from "@/features/dean/types";
 
 const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   {
@@ -1213,8 +1193,6 @@ export const deanAnalyticsSampleData = {
     },
   ],
 } as const;
-
-export type FacultyAnalysisSemesterKey = SemesterKey;
 
 export type DeanFacultyAnalysisRecord =
   (typeof deanAnalyticsSampleData.facultyAnalysis)[number];

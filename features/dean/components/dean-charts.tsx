@@ -2,7 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
 
-import { deanAnalyticsSampleData } from "@/app/(dashboard)/dean/_data/analytics-sample-data";
+import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
 import {
   ChartContainer,
   ChartLegend,
