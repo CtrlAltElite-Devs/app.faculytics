@@ -33,7 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/lib/use-mobile";
 
 const chipGap = 8;
 const rowsPerPageOptions = [5, 10, 20, 50] as const;

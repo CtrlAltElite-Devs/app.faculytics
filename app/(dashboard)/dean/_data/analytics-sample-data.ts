@@ -342,7 +342,7 @@ function createQuantitativeMetricView(metrics: readonly QuantitativeMetricScore[
     metrics: metrics.map(({ metric, score }) => ({
       metric,
       score,
-      questions: createMetricQuestions(score, quantitativeQuestionnaireTemplates[metric]),
+      questions: createMetricQuestions(score, quantitativeQuestionnaireTemplates[metric as keyof typeof quantitativeQuestionnaireTemplates]),
     })),
   };
 }
