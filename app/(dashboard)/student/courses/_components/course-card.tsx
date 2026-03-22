@@ -45,7 +45,7 @@ export default function CourseCard({
 
   return (
     <Card className="overflow-hidden py-0 gap-0 h-full">
-      <div className="relative aspect-video w-full">
+      <div className="relative aspect-[3/1] w-full">
         <Image
           src={resolvedImageSrc}
           alt={`${decodedFullname} course image`}
