@@ -20,7 +20,7 @@ Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4, shadcn/u
 
 ## Architecture
 
-The codebase follows a **feature-sliced structure**. The authoritative reference is `docs/ARCHITECTURE.md` — always consult it for file placement decisions.
+The codebase follows a **feature-sliced structure**. The authoritative reference is `docs/ARCHITECTURE.md` — it contains **mandatory rules** (MUST/MUST NOT) that all code changes must follow. Always consult it before writing or placing new code.
 
 ### Key layout
 
