@@ -2,7 +2,7 @@ import { apiClient } from "@/network/axios";
 import { Endpoints } from "@/network/endpoints";
 
 import type { LoginRequest, RefreshTokenRequestBody } from "@/features/auth/types";
-import type { LoginResponse, MeResponse } from "@/features/auth/types";
+import type { LoginResponse, LogoutResponse, MeResponse } from "@/features/auth/types";
 
 /**
  * Login a user with username and password.
@@ -38,6 +38,6 @@ export async function refreshToken(payload: RefreshTokenRequestBody) {
  * @returns Empty response when logout succeeds
  */
 export async function logout() {
-  const response = await apiClient.post<void>(Endpoints.logout);
+  const response = await apiClient.post<LogoutResponse>(Endpoints.logout);
   return response.data;
 }

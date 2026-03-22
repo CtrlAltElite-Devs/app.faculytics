@@ -1,7 +1,11 @@
 "use client";
+
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-import { QuestionnairePreviewRenderer } from "@/features/questionnaires/components/builder/questionnaire-preview-renderer";
+import { Button } from "@/components/ui/button";
+import { QuestionnaireFormRenderer } from "@/features/questionnaires/components/form/questionnaire-form-renderer";
+import { QuestionnaireRatingScaleInstructions } from "@/features/questionnaires/components/questionnaire-rating-scale-instructions";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import {
@@ -40,9 +44,31 @@ export default function QuestionnaireBuilderPreviewPage() {
     );
   }
 
+  const model = buildQuestionnairePreviewModel(draft);
+  const backHref = `/superadmin/questionnaires/new?type=${requestedType}`;
+
   return (
     <section className="space-y-6 px-0 py-5 sm:px-6 md:p-8">
-      <QuestionnairePreviewRenderer model={buildQuestionnairePreviewModel(draft)} />
+      <div className="flex flex-wrap items-start justify-between gap-4 px-4 sm:px-0">
+        <div>
+          <h1 className="font-playfair text-3xl font-bold">{model.title}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Superadmin preview. This simulates the student reading experience
+            without submission.
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href={backHref}>Back to builder</Link>
+        </Button>
+      </div>
+
+      <div className="px-4 sm:px-0">
+        <QuestionnaireRatingScaleInstructions />
+      </div>
+
+      <div className="px-4 sm:px-0">
+        <QuestionnaireFormRenderer model={model} mode="preview" />
+      </div>
     </section>
   );
 }

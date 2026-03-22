@@ -11,6 +11,10 @@ export type LoginResponse = {
   refreshToken: string;
 };
 
+export type LogoutResponse = {
+  message: string;
+};
+
 export type AuthErrorResponse = {
   message: string;
   error: string;

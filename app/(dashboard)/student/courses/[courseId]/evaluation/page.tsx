@@ -1,84 +1,76 @@
 "use client";
 
-import { QuestionnaireRatingScaleInstructions } from "@/features/questionnaires/components/questionnaire-rating-scale-instructions";
-import { useMyEnrollments } from "@/features/enrollments/hooks/use-my-enrollments";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { decodeHtmlEntities } from "@/lib/string";
-import { useSelectedCourseStore } from "@/stores/selected-course-store";
-import { ClipboardList } from "lucide-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import { FacultyEvaluationQuestionnaireState } from "../../_components/faculty-evaluation-questionnaire-state";
-import { FacultyEvaluationSummary } from "../../_components/faculty-evaluation-summary";
+import { useEvaluationData } from "@/features/questionnaires/hooks/use-evaluation-data";
+
+import { EvaluationAlreadySubmitted } from "./_components/evaluation-already-submitted";
+import { EvaluationForm } from "./_components/evaluation-form";
+import { EvaluationNoFaculty } from "./_components/evaluation-no-faculty";
+import { EvaluationPageShell } from "./_components/evaluation-page-shell";
+import {
+  EvaluationError,
+  EvaluationLoading,
+} from "./_components/evaluation-states";
 
 export default function FacultyEvaluationPage() {
-  const params = useParams<{ courseId: string }>();
-  const courseId = params.courseId;
-  const selectedCourseFromStore = useSelectedCourseStore((state) => state.selectedCourse);
-  const hasStoreMatch = selectedCourseFromStore?.course.id === courseId;
-  const { data, isLoading, isError } = useMyEnrollments(
-    { page: 1, limit: 100 },
-    { enabled: !hasStoreMatch }
-  );
+  const { courseId } = useParams<{ courseId: string }>();
+  const result = useEvaluationData(courseId);
 
-  const selectedEnrollment = hasStoreMatch
-    ? selectedCourseFromStore
-    : data?.data.find((enrollment) => enrollment.course.id === courseId);
+  if (result.status === "loading") {
+    const ctx = result.context;
+    return (
+      <EvaluationPageShell
+        courseName={ctx?.courseName}
+        courseShortname={ctx?.courseShortname}
+        facultyName={ctx?.facultyName}
+      >
+        <EvaluationLoading message={result.message} />
+      </EvaluationPageShell>
+    );
+  }
 
-  const contextState =
-    selectedEnrollment
-      ? "ready"
-      : isLoading
-        ? "loading"
-        : isError
-          ? "error"
-          : "missing";
+  if (result.status === "error") {
+    return (
+      <EvaluationPageShell>
+        <EvaluationError message={result.message} />
+      </EvaluationPageShell>
+    );
+  }
 
-  const selectedCourse = selectedEnrollment?.course;
-  const selectedFaculty = selectedEnrollment?.faculty;
-  const shortname = decodeHtmlEntities(selectedCourse?.shortname || "Course");
-  const fullname = decodeHtmlEntities(selectedCourse?.fullname || "Selected course");
-  const facultyName = decodeHtmlEntities(selectedFaculty?.fullName || "Instructor unavailable");
-  const facultyId = selectedFaculty?.id || null;
+  if (result.status === "no-faculty") {
+    return (
+      <EvaluationPageShell>
+        <EvaluationNoFaculty />
+      </EvaluationPageShell>
+    );
+  }
 
-  return (
-    <section className="md:px-16 md:py-12">
-      <h1 className="font-playfair text-3xl font-bold">Faculty Evaluation Questionnaire</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Your honest feedback helps improve the quality of education.
-      </p>
+  if (result.status === "no-semester") {
+    return (
+      <EvaluationPageShell>
+        <EvaluationError message="Unable to determine the current semester for this course." />
+      </EvaluationPageShell>
+    );
+  }
 
-      <FacultyEvaluationSummary
-        facultyName={facultyName}
-        facultyId={facultyId}
-        fullname={fullname}
-        shortname={shortname}
-      />
+  if (result.status === "no-version") {
+    const { courseName, courseShortname, facultyName } = result.context;
+    return (
+      <EvaluationPageShell courseName={courseName} courseShortname={courseShortname} facultyName={facultyName}>
+        <EvaluationError message="No active questionnaire is available for evaluation at this time." />
+      </EvaluationPageShell>
+    );
+  }
 
-      <div className="mt-8">
-        <QuestionnaireRatingScaleInstructions />
-      </div>
+  if (result.status === "already-submitted") {
+    const { context, submittedAt } = result;
+    return (
+      <EvaluationPageShell courseName={context.courseName} courseShortname={context.courseShortname} facultyName={context.facultyName}>
+        <EvaluationAlreadySubmitted submittedAt={submittedAt} />
+      </EvaluationPageShell>
+    );
+  }
 
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg font-playfair">
-            <ClipboardList className="size-5 text-muted-foreground" />
-            Questionnaire
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <FacultyEvaluationQuestionnaireState contextState={contextState} />
-
-          <div className="flex flex-wrap gap-3">
-            <Button asChild variant="outline">
-              <Link href="/student/courses">Back to Courses</Link>
-            </Button>
-            <Button variant="brand">Submit Evaluation</Button>
-          </div>
-        </CardContent>
-      </Card>
-    </section>
-  );
+  return <EvaluationForm courseId={courseId} {...result.data} />;
 }

@@ -169,15 +169,15 @@
 
 @layer utilities {
   .badge-status-draft {
-    @apply border-yellow-200 bg-yellow-100 text-yellow-800 dark:border-yellow-900/60 dark:bg-yellow-950/40 dark:text-yellow-300;
+    @apply border-yellow-200 bg-yellow-100 px-2.5 py-1 text-yellow-800 dark:border-yellow-900/60 dark:bg-yellow-950/40 dark:text-yellow-300;
   }
 
   .badge-status-active {
-    @apply border-green-200 bg-green-100 text-green-800 dark:border-green-900/60 dark:bg-green-950/40 dark:text-green-300;
+    @apply border-green-200 bg-green-100 px-2.5 py-1 text-green-800 dark:border-green-900/60 dark:bg-green-950/40 dark:text-green-300;
   }
 
   .badge-status-deprecated {
-    @apply border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300;
+    @apply border-slate-200 bg-slate-100 px-2.5 py-1 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300;
   }
 
   .panel-surface {

@@ -200,7 +200,7 @@ export function validateQuestionnaireBuilderDraft(
         hasMissingDimension = true;
         const issue: QuestionnaireBuilderValidationIssue = {
           code: "section.dimensionCode.required",
-          message: "Select or create a dimension.",
+          message: "Dimension code is required.",
           target: {
             type: "section",
             id: section.id,
@@ -335,7 +335,7 @@ export function validateQuestionnaireBuilderDraft(
   if (hasMissingDimension) {
     issues.unshift({
       code: "sections.dimensionCode.required",
-      message: "Each section must have a dimension",
+      message: "Dimension code is required.",
       target: { type: "global" },
     });
   }

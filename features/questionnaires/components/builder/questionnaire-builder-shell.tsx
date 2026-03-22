@@ -55,9 +55,10 @@ export function QuestionnaireBuilderShell({
     updateQualitative,
     updateTitle,
     validation,
+    totalLeafWeight,
   } = useQuestionnaireBuilderController({ activeType });
 
-  if (!isHydrated || !draft || !validation || !previewModel) {
+  if (!isHydrated || !draft || !previewModel) {
     return <Card className="p-6 text-sm text-muted-foreground">Loading builder draft...</Card>;
   }
 
@@ -71,7 +72,9 @@ export function QuestionnaireBuilderShell({
       Saved
     </Badge>
   ) : null;
-  const globalIssues = validation.issues.filter((issue) => issue.target.type === "global");
+  const validationMessages = validation
+    ? [...new Set(validation.issues.map((issue) => issue.message))]
+    : [];
 
   return (
     <div className="space-y-6">
@@ -80,21 +83,21 @@ export function QuestionnaireBuilderShell({
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="space-y-4">
                 <div>
-                  <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
-                    <div className="min-w-0 flex-1">
+                  <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center">
+                    <div className="w-full lg:min-w-0 lg:flex-1">
                       <InlineEditInput
                         id="questionnaire-title"
                         value={draft.metadata.title}
                         placeholder="Enter the questionnaire title"
                         ariaInvalid={Boolean(
-                          validation.issues.some((issue) => issue.code === "metadata.title.required")
+                          validation?.issues.some((issue) => issue.code === "metadata.title.required")
                         )}
                         textClassName="min-h-11 text-xl font-semibold"
                         inputClassName="h-11 text-xl font-semibold"
                         onChange={updateTitle}
                       />
                     </div>
-                    {statusBadge ? <div className="sm:shrink-0">{statusBadge}</div> : null}
+                    {statusBadge ? <div className="lg:shrink-0">{statusBadge}</div> : null}
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {hasExistingQuestionnaire
@@ -129,22 +132,17 @@ export function QuestionnaireBuilderShell({
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            {globalIssues.length > 0 ? (
+            {validation && !validation.isValid && (
               <QuestionnaireCallout variant="danger">
-                {globalIssues.length === 1 ? (
-                  globalIssues[0]?.message
+                {validationMessages.length === 1 ? (
+                  validationMessages[0]
                 ) : (
                   <ul className="list-disc space-y-1 pl-5">
-                    {globalIssues.map((issue, index) => (
-                      <li key={`${issue.code}-${issue.target.type}-${index}`}>{issue.message}</li>
+                    {validationMessages.slice(0, 3).map((message, index) => (
+                      <li key={`${message}-${index}`}>{message}</li>
                     ))}
                   </ul>
                 )}
-              </QuestionnaireCallout>
-            ) : (
-              <QuestionnaireCallout>
-                Draft is ready to save. Preview remains superadmin-only until a version is
-                published through future lifecycle actions.
               </QuestionnaireCallout>
             )}
 
@@ -155,11 +153,11 @@ export function QuestionnaireBuilderShell({
         <div className="min-w-0 lg:sticky lg:top-4">
           <QuestionnaireOutlinePanel
             sections={draft.sections}
-            totalLeafWeight={validation.totalLeafWeight}
+            totalLeafWeight={totalLeafWeight}
             selectedSectionId={draft.selectedSectionId}
-            sectionIssues={validation.sectionIssues}
+            sectionIssues={validation?.sectionIssues ?? {}}
             qualitative={draft.qualitative}
-            qualitativeIssues={validation.qualitativeIssues}
+            qualitativeIssues={validation?.qualitativeIssues ?? []}
             onSelect={handleSelectSection}
             onAddRoot={handleAddRootSection}
             onAddChild={requestAddChild}
@@ -181,9 +179,9 @@ export function QuestionnaireBuilderShell({
                   key={section.id}
                   questionnaireType={activeType}
                   section={section}
-                  sectionIssues={validation.sectionIssues[section.id] ?? []}
-                  allSectionIssues={validation.sectionIssues}
-                  questionIssues={validation.questionIssues}
+                  sectionIssues={validation?.sectionIssues[section.id] ?? []}
+                  allSectionIssues={validation?.sectionIssues ?? {}}
+                  questionIssues={validation?.questionIssues ?? {}}
                   selectedSectionId={draft.selectedSectionId}
                   isSelected={section.id === draft.selectedSectionId}
                   onUpdateSection={handleUpdateSection}
@@ -206,7 +204,7 @@ export function QuestionnaireBuilderShell({
             <Separator />
             <QuestionnaireQualitativeEditor
               value={draft.qualitative}
-              issues={validation.qualitativeIssues}
+              issues={validation?.qualitativeIssues ?? []}
               onChange={updateQualitative}
             />
           </div>

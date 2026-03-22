@@ -8,52 +8,206 @@
 
 ## 1. Purpose
 
-This document is the source of truth for how the frontend is organized today.
+This document is the **authoritative source of truth** for how the frontend is organized. Every rule here is mandatory — not a suggestion.
 
 It defines:
 
 - the current file structure
 - what each top-level folder owns
-- when code should live in `app/`, `components/`, `features/`, `lib/`, or `stores/`
-- the do's and don'ts for adding new code
-- the boundaries that should not be crossed
+- when code MUST live in `app/`, `components/`, `features/`, `lib/`, or `stores/`
+- the rules for adding new code
+- the boundaries that MUST NOT be crossed
 
-This is not a theoretical target anymore. It should match the real repository structure.
+All contributors — human and AI — MUST follow these rules. If a rule blocks progress, update this document first and explain why.
 
 ---
 
-## 2. Architecture Summary
+## 2. Architecture Rules
 
 The repo uses a **feature-sliced frontend structure** with a small shared core.
 
-High-level rules:
+### Folder ownership (mandatory)
 
-- `app/` owns routing, layouts, guards, and route-level composition
-- `components/ui/` owns low-level reusable UI primitives
-- `components/shared/` owns reusable composed app components
-- `components/layout/` owns the app shell
-- `constants/` owns app-wide shared constants only
-- `features/<feature>/` owns domain code
-- `lib/` owns cross-feature pure utilities
-- `network/` owns shared transport setup only
-- `stores/` owns app-global client state only
-
-The current feature slices are:
-
-- `features/auth`
-- `features/enrollments`
-- `features/questionnaires`
-
-Route-local UI is allowed when a component is used by exactly one route. Example:
-
-- `app/(dashboard)/student/courses/_components/course-card.tsx`
-- `app/auth/_components/*`
-- `app/(dashboard)/superadmin/questionnaires/_components/*`
-- `app/(dashboard)/superadmin/questionnaires/new/_components/*`
+| Folder | Owns | MUST NOT contain |
+|--------|------|-----------------|
+| `app/` | Routing, layouts, guards, route-local `_components/`, route-level composition | Request functions, feature-wide logic, reusable feature components, component-local state (form, filter, toggle) |
+| `components/ui/` | shadcn primitives only | Feature logic, route logic, app-specific composed components |
+| `components/shared/` | Reusable composed app-specific components | shadcn primitives, feature business logic, route composition |
+| `components/layout/` | App shell (sidebar, header, nav, role switcher, theme) | Feature API calls, page content |
+| `constants/` | App-wide shared constants reused across multiple features | Feature-specific enums/defaults, route-local display maps, transport endpoints |
+| `features/<feature>/` | Domain code: API requests, hooks, components, lib, schemas, store, types | Nothing outside its domain |
+| `lib/` | Cross-feature pure utilities (no React, no features) | Feature-specific logic, request modules, React imports |
+| `network/` | Shared Axios client + endpoint enum | Feature request modules, feature DTOs |
+| `stores/` | App-global Zustand stores only | Feature-local state, React Query cache duplicates |
+| `providers/` | App-level providers (Query, Theme, Tooltip, Toaster) | Feature logic, route logic |
 
 ---
 
-## 3. Current File Structure
+## 3. Page Rules
+
+Pages MUST be **thin composition layers**. A page file wires route params, calls hooks, and renders components. It MUST NOT contain business logic, data transformation, or complex orchestration.
+
+### MUST
+
+- Keep page files focused on **routing, guards, and composition**
+- Extract data-fetching orchestration into feature hooks when a page needs 3+ queries
+- Extract form/submission logic into a separate component or hook
+- Use `_components/` for route-only UI
+
+### MUST NOT
+
+- Let a page file exceed ~120 lines of component code (excluding imports/types)
+- Put request functions in `app/`
+- Put feature-wide serializers or validators in pages
+- Lift component-local interaction state (form, filters, toggles) into pages unless it directly controls route flow (redirects, URL params, unsaved-changes guards)
+- Let pages grow into "feature dumping grounds"
+
+### When to extract a hook from a page
+
+Extract a custom hook when a page:
+
+- Chains 3+ queries in a waterfall (query B depends on query A)
+- Contains conditional query enabling logic (enabled depends on prior results)
+- Mixes data resolution with UI rendering in the same component
+
+The hook MUST return a clear result shape (prefer discriminated unions for multi-state flows). The page MUST only switch on the result and render.
+
+---
+
+## 4. Component Rules
+
+### MUST
+
+- Keep `components/ui/` generic — no domain knowledge
+- Keep feature UI inside its feature slice (`features/<feature>/components/`)
+- Keep route-only UI in `_components/` near its route
+- Let components own the interaction state they directly render
+- Use `memo()` on components that receive stable props but re-render due to parent changes
+
+### MUST NOT
+
+- Call feature request modules directly from presentation components
+- Place domain-specific UI in `components/ui/`
+- Place reusable app-specific composed UI in `components/ui/` (use `components/shared/`)
+- Pass `useForm` instances, filter state, or visibility toggles down from pages when only one child uses them
+
+---
+
+## 5. Hook Rules
+
+### MUST
+
+- Keep `useQuery` and `useMutation` inside feature hooks (`features/<feature>/hooks/`)
+- Let hooks own query invalidation and side-effect orchestration
+- Keep hooks close to the feature they serve
+- Use `useCallback`/`useMemo` when passing callbacks or computed values to memoized children
+- Use refs for values that should NOT trigger re-renders or recreate callbacks (e.g., mutation objects, latest-callback patterns)
+
+### MUST NOT
+
+- Put React Query logic directly in page files when the hook is reusable
+- Mix transport logic directly into route components
+- Include unstable objects (mutation instances, inline objects) in `useCallback` dependency arrays — use refs instead
+
+---
+
+## 6. API Layer Rules
+
+### MUST
+
+- Keep feature request modules thin (call API, return `response.data`)
+- Keep transport config centralized in `network/`
+- Place feature request functions in `features/<feature>/api/`
+
+### MUST NOT
+
+- Create shared `network/requests/` folders for feature requests
+- Add React imports to request modules
+- Hide feature logic in the shared transport layer
+
+---
+
+## 7. State Rules
+
+### MUST
+
+- Put state in the **lowest component** that owns the behavior
+- Use React Query for all server state
+- Use Zustand only for app-global client state (`stores/`)
+- Use feature-local Zustand stores inside the feature slice when needed
+
+### MUST NOT
+
+- Duplicate server state in Zustand (React Query owns it)
+- Move request code into Zustand stores
+- Store feature-local state in root `stores/`
+
+### State placement decision order
+
+1. Only this component uses it → component-local `useState`/`useReducer`
+2. Multiple components in one route need it → lift to nearest shared parent or route-local context
+3. Multiple routes need client state → `stores/` (Zustand)
+4. It comes from the server → React Query (feature hook)
+
+---
+
+## 8. Feature Slice Rules
+
+A feature slice MAY contain these folders:
+
+```text
+features/<feature>/
+  api/           # Request functions
+  components/    # Feature-owned UI
+  constants/     # Feature-specific constants
+  hooks/         # Feature hooks (queries, mutations, orchestration)
+  lib/           # Feature-specific pure logic (serializers, validators)
+  schemas/       # Zod schemas
+  store/         # Feature-local Zustand store
+  types/         # Feature types and DTOs
+  index.ts       # Barrel — public export surface
+```
+
+Not every feature needs every folder.
+
+### Barrel export rule
+
+`features/*/index.ts` is the feature's public API surface.
+
+- MUST export stable shared entry points
+- MUST NOT over-export internal request functions, store internals, or implementation details
+- MUST NOT create name collisions between types and components
+
+### When to use a feature slice
+
+- The code belongs to a **domain**, not a single route
+- The domain has hooks, API calls, types, or schemas that should stay together
+- The code will likely have multiple files
+
+### When to use route-local `_components/`
+
+- The UI is used by exactly **one route**
+- Extracting a full feature component would be heavier than the reuse justifies
+- The component needs local interaction state that doesn't affect routing
+
+---
+
+## 9. Import Rules
+
+### MUST
+
+- Use `@/*` path alias for any import that crosses folders or feature boundaries
+- Use relative imports only for tightly colocated route-local files (`./_components/...`)
+- Keep external imports first, internal imports second
+
+### MUST NOT
+
+- Use deep relative imports like `../../../` across features or app sections
+- Import feature internals from outside the feature without going through the barrel or a direct feature path
+
+---
+
+## 10. Current File Structure
 
 ```text
 app/
@@ -75,6 +229,11 @@ app/
           course-card.tsx
         [courseId]/
           evaluation/
+            _components/
+              evaluation-page-shell.tsx
+              evaluation-states.tsx
+              evaluation-already-submitted.tsx
+              evaluation-no-faculty.tsx
             page.tsx
         page.tsx
     faculty/
@@ -131,22 +290,40 @@ features/
     index.ts
   questionnaires/
     constants/
+      builder.ts
+      index.ts
     api/
       questionnaire.requests.ts
     components/
       builder/
         ...
+      form/
+        questionnaire-form-matrix.tsx
+        questionnaire-form-stacked.tsx
+        questionnaire-form-section.tsx
+        questionnaire-form-renderer.tsx
+        questionnaire-form-progress.tsx
+        questionnaire-form-qualitative.tsx
       ...
     hooks/
+      use-evaluation-data.ts
+      use-active-questionnaire-version.ts
+      use-check-submission.ts
+      use-evaluation-draft.ts
+      use-save-draft.ts
+      use-submit-evaluation.ts
       ...
     lib/
+      builder-serializer.ts
+      builder-deserializer.ts
       ...
     schemas/
       ...
     store/
       questionnaire-builder-store.ts
     types/
-      ...
+      index.ts
+      builder.ts
     index.ts
 
 constants/
@@ -171,450 +348,99 @@ stores/
 
 ---
 
-## 4. Folder Ownership
+## 11. Hard Constraints
 
-### `app/`
+These are **non-negotiable**. Breaking them is a blocking code review issue.
 
-**Owns**
-
-- pages
-- layouts
-- route guards
-- route-local redirects
-- route-local `_components/`
-- route-only composition and wiring
-- route-level navigation, redirect, and URL-state orchestration
-
-**Does not own**
-
-- request functions
-- feature-wide serializers or validators
-- shared UI
-- reusable feature components used by multiple routes
-- component-local form state
-- component-local filter/search state
-- purely presentational UI toggles such as show/hide, modal visibility, or inline editing state unless that state directly controls route flow
-
-### `components/ui/`
-
-**Owns**
-
-- shadcn primitives
-- low-level controls
-- generic form inputs
-- generic layout atoms such as tables, badges, dialogs, sheets
-
-**Does not own**
-
-- feature logic
-- route logic
-- request orchestration
-- role-specific behavior
-- reusable app-specific composed components
-
-### `components/shared/`
-
-**Owns**
-
-- reusable composed components that are app-specific but not feature-owned
-- shared overlays built from `components/ui/` primitives
-- cross-feature presentation wrappers such as confirmation dialogs
-
-**Does not own**
-
-- shadcn primitives
-- feature-specific business logic
-- route-specific composition
-- shell navigation or layout chrome
-
-### `components/layout/`
-
-**Owns**
-
-- sidebar
-- dashboard header
-- shell navigation
-- role switcher
-- theme controls
-- app shell composition
-
-### `constants/`
-
-**Owns**
-
-- app-wide shared constants reused across multiple features
-- global role lists and other cross-slice static values
-
-**Does not own**
-
-- feature-specific enums, labels, or builder defaults
-- route-local display maps
-- transport-layer endpoints owned by `network/`
-
-**Does not own**
-
-- feature API calls
-- page-specific content
-- domain-specific business rules
-
-### `features/<feature>/`
-
-**Owns**
-
-- feature-specific request functions
-- feature hooks
-- feature components
-- feature-specific pure logic
-- feature-specific schemas and types
-- feature-local store when needed
-
-**Examples**
-
-- `features/auth` owns login/session-related frontend behavior
-- `features/enrollments` owns current-user enrollment retrieval and types
-- `features/questionnaires` owns questionnaire list, builder, preview, schema handling, and builder state
-
-### `lib/`
-
-**Owns**
-
-- generic string helpers
-- generic utility functions
-- cross-feature pure helpers
-
-**Does not own**
-
-- feature-specific validation once a feature slice exists
-- request modules
-- React code
-
-### `network/`
-
-**Owns**
-
-- shared axios client setup
-- endpoint constants
-
-**Does not own**
-
-- feature request modules
-- feature DTOs
-- feature business logic
-
-### `stores/`
-
-**Owns**
-
-- app-global session state
-- app-global selected-course state
-
-**Does not own**
-
-- feature-local server collections
-- React Query cache replacements
-- feature stores that should live inside a feature slice
+1. MUST NOT reintroduce root `hooks/<feature>/` folders for migrated features
+2. MUST NOT reintroduce root `network/requests/*` feature files
+3. MUST NOT reintroduce root `types/<feature>/` or `schemas/<feature>/` for migrated features
+4. MUST NOT keep feature-local code in `lib/` once a feature slice exists
+5. MUST NOT import feature request functions directly into shared shell components
+6. MUST NOT duplicate server state in Zustand
+7. MUST NOT mix product redesign with structural refactor in the same change unless explicitly planned
+8. MUST NOT let page files grow into orchestration-heavy components — extract hooks
+9. MUST NOT add React imports to request modules
+10. MUST NOT put component-local state in pages unless it controls route flow
 
 ---
 
-## 5. Feature Slice Rules
+## 12. How To Place New Code
 
-A feature slice may contain these folders:
+Follow this decision order strictly:
 
-```text
-features/<feature>/
-  api/
-  components/
-  hooks/
-  lib/
-  schemas/
-  store/
-  types/
-  index.ts
-```
+1. **Route file, guard, or route-only component?** → `app/`
+2. **Generic UI primitive?** → `components/ui/`
+3. **App shell?** → `components/layout/`
+4. **Reusable app-specific composed component?** → `components/shared/`
+5. **Feature-specific?** → `features/<feature>/`
+6. **Shared pure helper with no feature ownership?** → `lib/`
+7. **App-global client state?** → `stores/`
 
-Not every feature needs every folder.
-
-Examples:
-
-- `features/enrollments` does not need `components/` today
-- `features/questionnaires` needs a local `store/`
-- `features/auth` has a `lib/` folder because role-routing logic is auth-specific
-
-### Use a feature slice when
-
-- the code belongs to a domain, not a single route
-- the code will likely have multiple files
-- the domain has hooks, API calls, types, or schemas that should stay together
-
-### Use route-local `_components/` when
-
-- the UI is only used by one route
-- the component is tightly coupled to one page’s behavior
-- extracting a full feature slice would be heavier than the actual reuse justifies
-- the UI needs local form state, local filter state, or small interaction state that does not affect routing, redirects, or shared data ownership
-
-### State placement rule
-
-Put state in the lowest component that actually owns the behavior.
-
-- keep component-local UI state inside the component that renders and uses it
-- keep route pages focused on composition, URL params, redirects, and feature hook wiring
-- move `useForm`, input visibility toggles, search text, status filters, and similar local interaction state into route-local or feature components when only that component uses them
-- keep state in the page only when it coordinates route transitions, unsaved-changes guards, query-param synchronization, or cross-component orchestration within the route
-
-Examples:
-
-- `app/auth/_components/auth-login-form.tsx` should own its login form state and password visibility toggle
-- `app/(dashboard)/superadmin/questionnaires/_components/questionnaire-list-screen.tsx` should own its local search and status filter state
-- `app/(dashboard)/superadmin/questionnaires/new/page.tsx` may keep back-navigation/discard-confirmation state because it coordinates route exit behavior
-
-Current example:
-
-- `app/(dashboard)/student/courses/_components/course-card.tsx`
-- `app/auth/_components/auth-login-form.tsx`
-- `app/(dashboard)/superadmin/questionnaires/_components/questionnaire-list-screen.tsx`
-- `app/(dashboard)/superadmin/questionnaires/new/_components/questionnaire-builder-screen.tsx`
+If used by exactly one route → prefer route-local `_components/` before creating a shared home.
 
 ---
 
-## 6. Data Flow
+## 13. Naming Conventions
 
-Preferred query flow:
+| Type | Convention | Example |
+|------|-----------|---------|
+| Components | `PascalCase` | `QuestionnaireFormMatrix` |
+| Hooks | `useXxx` | `useEvaluationData` |
+| Request modules | `*.requests.ts` | `questionnaire.requests.ts` |
+| Store files | `*-store.ts` | `auth-store.ts` |
+| Constants files | `kebab-case.ts` | `builder.ts` |
+| Feature folders | Domain name (singular/plural per existing usage) | `questionnaires/`, `auth/` |
 
-```text
-route or route-local component
-  -> feature hook
-  -> feature api request
-  -> shared axios client
-  -> backend
-```
-
-Preferred mutation flow:
-
-```text
-form or action component
-  -> feature schema
-  -> feature hook
-  -> feature api request
-  -> backend
-```
-
-Preferred transformation flow:
-
-```text
-backend data
-  -> feature lib helper
-  -> feature component or route
-```
+One feature folder per domain, not per file type.
 
 ---
 
-## 7. Import Rules
+## 14. Quality Gates
 
-### Allowed patterns
+Before merging any architecture or file-structure change:
 
-- `@/features/questionnaires/hooks/use-questionnaire-types`
-- `@/features/auth/lib/role-route`
-- `@/components/ui/button`
-- `@/components/shared/confirmation-dialog`
-- `@/components/layout/app-sidebar`
-- `@/app/(dashboard)/student/courses/_components/course-card`
-
-### Preferred rules
-
-- default to `@/*` absolute imports for any import that crosses folders or feature boundaries
-- import from `features/<feature>/...` for feature internals
-- allow relative imports only for tightly colocated route-local files, such as `./_components/...` or `../_components/...` inside the same route subtree
-- do not use deep relative imports like `../../../` across features, shared folders, or app sections
-- keep external imports first, internal imports second
-
-### Barrel export rule
-
-`features/*/index.ts` is the feature’s public export surface.
-
-Do:
-
-- export stable shared entry points from it
-
-Do not:
-
-- over-export everything blindly
-- create name collisions between types and components
-- rely on a barrel when a direct feature path is clearer
+1. MUST pass `npx tsc --noEmit`
+2. MUST pass `bun run lint` for touched areas
+3. MUST manually verify touched user flows
+4. SHOULD run full `bun run build` for significant changes
 
 ---
 
-## 8. Do's and Don'ts
+## 15. Refactoring Rules
 
-### Routing
+Refactoring MUST NOT introduce breaking changes. Every refactor MUST preserve existing behavior exactly.
 
-Do:
+### Before refactoring
 
-- keep route files focused on composition
-- keep guards under route-local folders
-- use `_components/` for route-only UI
-- keep local form/filter/toggle state out of page files unless it affects route orchestration
+1. **Audit the existing flow** — read the full component/hook and list every data dependency, guard condition, side effect, and prop being passed
+2. **Identify the public contract** — what props does the component accept? What does the hook return? What callbacks fire and with what arguments?
 
-Don't:
+### During refactoring
 
-- put request functions in `app/`
-- put feature-wide business logic in pages
-- let page files grow into feature dumping grounds
-- lift component-local interaction state into pages without a route-level reason
+1. MUST preserve the exact same guard order (loading → error → edge cases → ready)
+2. MUST preserve every prop/context being passed to child components (e.g., a shell showing course info during loading states)
+3. MUST NOT silently drop data from payloads (e.g., removing `courseId` from a submit payload)
+4. MUST NOT change the shape of return types in ways that lose information (e.g., a loading state that previously carried context MUST still carry context)
+5. MUST NOT change query keys, `enabled` conditions, or query dependency chains — these control when and whether data fetches happen
+6. MUST NOT reorder hooks or add conditional hook calls — this breaks React's rules of hooks
 
-### Components
+### After refactoring
 
-Do:
+1. MUST pass `npx tsc --noEmit`
+2. MUST manually compare the before/after for every render path and confirm identical behavior
+3. MUST verify that every API call sends the same payload shape as before
 
-- keep `components/ui/` generic
-- keep `components/shared/` app-specific but reusable
-- keep `components/layout/` shell-only
-- keep feature UI inside its feature slice
-- keep route-only UI near its route
-- let route-local and feature components own the interaction state they directly render
-
-Don't:
-
-- call feature request modules directly from presentation components
-- place domain-specific UI in `components/ui/`
-- place reusable app-specific composed UI in `components/ui/`
-- keep old root-level domain component folders once a feature slice exists
-- pass down `useForm` instances, local filter state, or simple visibility toggles from pages when the child component is the only consumer
-
-### Hooks
-
-Do:
-
-- keep `useQuery` and `useMutation` inside feature hooks
-- let hooks own invalidation and side-effect orchestration
-- keep hooks close to the feature they serve
-
-Don't:
-
-- put React Query logic in page files when it should be reusable
-- mix transport logic directly into route components
-
-### API layer
-
-Do:
-
-- keep feature request modules thin
-- return `response.data`
-- keep transport config centralized in `network/`
-
-Don't:
-
-- create a new shared `network/requests/` folder
-- add React imports to request modules
-- hide feature logic in the shared transport layer
-
-### Stores
-
-Do:
-
-- keep app-global state in root `stores/`
-- keep feature-local state inside the feature slice
-
-Don't:
-
-- store API collections that React Query already owns
-- move request code into Zustand stores
-
-### Types and schemas
-
-Do:
-
-- keep feature DTOs in `features/<feature>/types`
-- keep feature validation in `features/<feature>/schemas`
-
-Don't:
-
-- reintroduce root `types/` or `schemas/` folders for feature-local code
-- define shared DTOs inline in page files
+If a refactor intentionally changes behavior, it is not a refactor — it is a feature change. Label it as such in the commit message.
 
 ---
 
-## 9. Hard Constraints
+## 16. Updating This Document
 
-These rules should be treated as architectural constraints, not suggestions.
+This document MUST stay in sync with the actual repository structure. When the structure changes:
 
-- Do not reintroduce root `hooks/<feature>/` folders for migrated features.
-- Do not reintroduce root `network/requests/*` feature files.
-- Do not reintroduce root `types/<feature>/` or `schemas/<feature>/` for migrated features.
-- Do not keep feature-local code in `lib/` once a feature slice exists.
-- Do not import feature request functions directly into shared shell components.
-- Do not duplicate server state in Zustand.
-- Do not mix product redesign with structural refactor in the same change unless explicitly planned.
+1. Update the relevant section
+2. Update the file tree in Section 10
+3. Note the change in your commit message
 
----
-
-## 10. Naming and Conventions
-
-- Components: `PascalCase`
-- Hooks: `useXxx`
-- Request modules: `*.requests.ts`
-- Store files: `*-store.ts`
-- Feature folders: singular/plural based on the existing domain name and current usage
-- Use one feature folder per domain, not per file type
-
----
-
-## 11. How To Place New Code
-
-Use this decision order:
-
-1. Is it a route file, guard, or route-only component?
-   Put it in `app/`.
-2. Is it a generic UI primitive?
-   Put it in `components/ui/`.
-3. Is it app shell?
-   Put it in `components/layout/`.
-4. Is it a reusable app-specific composed component built from primitives?
-   Put it in `components/shared/`.
-5. Is it feature-specific?
-   Put it in `features/<feature>/`.
-6. Is it a shared pure helper with no feature ownership?
-   Put it in `lib/`.
-7. Is it app-global client state?
-   Put it in `stores/`.
-
-If a file is used by exactly one route, prefer route-local `_components/` before creating a new shared home.
-
----
-
-## 12. Quality Gates
-
-For architecture or file-structure changes:
-
-- run `npx tsc --noEmit`
-- run targeted ESLint for touched areas
-- run `npm run lint` when practical
-- manually verify the touched user flows
-
-At the moment, the repo still has a known full-lint blocker outside the migrated slices. That issue should be treated separately from feature placement decisions.
-
----
-
-## 13. Current State Summary
-
-The migration away from root-level feature folders is complete for the tracked domains:
-
-- `questionnaires`
-- `auth`
-- `enrollments`
-- app shell
-
-The route-thinning pass is in place for the highest-weight routes through route-local `_components/`
-folders in:
-
-- `app/auth`
-- `app/(dashboard)/student/courses`
-- `app/(dashboard)/superadmin/questionnaires`
-- `app/(dashboard)/superadmin/questionnaires/new`
-
-The remaining work is operational, not structural:
-
-- manual runtime verification
-- fixing any unrelated repo-wide lint issues
-
-This document should be updated any time the real folder ownership changes.
+If a rule needs to change, update the rule **before** writing code that violates it. Document the reasoning in the commit or PR description.

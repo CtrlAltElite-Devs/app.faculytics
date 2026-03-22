@@ -5,8 +5,7 @@ import Link from "next/link"
 
 import { AppBrand } from "@/components/layout/app-brand"
 import { RoleSwitcher } from "@/components/layout/role-switcher"
-import { useActiveRole } from "@/features/auth/hooks/use-active-role"
-import { getNavItemsForRole } from "@/features/auth/lib/role-route"
+import { useActiveRole, getNavItemsForRole } from "@/features/auth"
 import { NavMain } from "@/components/layout/nav-main"
 import { NavUser } from "@/components/layout/nav-user"
 import {
