@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { useSaveQuestionnaireBuilder } from "@/features/questionnaires/hooks/use-save-questionnaire-builder";
@@ -15,6 +15,7 @@ import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/qu
 import type {
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionUpdates,
+  QuestionnaireBuilderValidationResult,
   QuestionnaireType,
 } from "@/features/questionnaires/types";
 
@@ -95,6 +96,9 @@ export function useQuestionnaireBuilderController({
   const { save, isPending } = useSaveQuestionnaireBuilder();
   const [uiState, dispatch] = useReducer(builderUiReducer, initialBuilderUiState);
 
+  // Validation only runs on save — no real-time red outlines while editing.
+  const [validation, setValidation] = useState<QuestionnaireBuilderValidationResult | null>(null);
+
   const { saveDialogOpen, discardDialogOpen, pendingParentId, pendingScrollToSection } = uiState;
 
   const setSaveDialogOpen = (open: boolean) => {
@@ -133,7 +137,9 @@ export function useQuestionnaireBuilderController({
     });
   }, [draft?.selectedSectionId, pendingScrollToSection]);
 
-  const validation = draft ? validateQuestionnaireBuilderDraft(draft) : null;
+  // Always compute for display data (totalLeafWeight) — but errors only show from save snapshot.
+  const liveValidation = draft ? validateQuestionnaireBuilderDraft(draft) : null;
+
   const previewModel = draft ? buildQuestionnairePreviewModel(draft) : null;
   const isDirty = hasUnsavedChanges();
   const isSaved = !isDirty && Boolean(draft?.metadata.versionId);
@@ -189,6 +195,14 @@ export function useQuestionnaireBuilderController({
   };
 
   const handleSave = async () => {
+    // Validate the draft and snapshot the result for the UI to display.
+    if (draft) {
+      const result = validateQuestionnaireBuilderDraft(draft);
+      setValidation(result);
+
+      if (!result.isValid) return;
+    }
+
     const result = await save();
 
     if (result?.status === "saved") {
@@ -198,6 +212,7 @@ export function useQuestionnaireBuilderController({
 
   const handleDiscardDraft = () => {
     resetActiveDraft();
+    setValidation(null);
     dispatch({ type: "set-discard-dialog-open", open: false });
   };
 
@@ -219,6 +234,7 @@ export function useQuestionnaireBuilderController({
     removeQuestion,
     updateQualitative,
     validation,
+    totalLeafWeight: liveValidation?.totalLeafWeight ?? 0,
     previewModel,
     isDirty,
     isSaved,

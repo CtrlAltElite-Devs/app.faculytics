@@ -55,9 +55,10 @@ export function QuestionnaireBuilderShell({
     updateQualitative,
     updateTitle,
     validation,
+    totalLeafWeight,
   } = useQuestionnaireBuilderController({ activeType });
 
-  if (!isHydrated || !draft || !validation || !previewModel) {
+  if (!isHydrated || !draft || !previewModel) {
     return <Card className="p-6 text-sm text-muted-foreground">Loading builder draft...</Card>;
   }
 
@@ -71,7 +72,9 @@ export function QuestionnaireBuilderShell({
       Saved
     </Badge>
   ) : null;
-  const validationMessages = [...new Set(validation.issues.map((issue) => issue.message))];
+  const validationMessages = validation
+    ? [...new Set(validation.issues.map((issue) => issue.message))]
+    : [];
 
   return (
     <div className="space-y-6">
@@ -87,7 +90,7 @@ export function QuestionnaireBuilderShell({
                         value={draft.metadata.title}
                         placeholder="Enter the questionnaire title"
                         ariaInvalid={Boolean(
-                          validation.issues.some((issue) => issue.code === "metadata.title.required")
+                          validation?.issues.some((issue) => issue.code === "metadata.title.required")
                         )}
                         textClassName="min-h-11 text-xl font-semibold"
                         inputClassName="h-11 text-xl font-semibold"
@@ -119,7 +122,7 @@ export function QuestionnaireBuilderShell({
                   <Button
                     type="button"
                     variant="brand"
-                    disabled={isPending || !validation.isValid}
+                    disabled={isPending}
                     onClick={() => void handleSave()}
                   >
                     {isPending ? "Saving..." : "Save draft"}
@@ -129,7 +132,7 @@ export function QuestionnaireBuilderShell({
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            {!validation.isValid ? (
+            {validation && !validation.isValid && (
               <QuestionnaireCallout variant="danger">
                 {validationMessages.length === 1 ? (
                   validationMessages[0]
@@ -141,11 +144,6 @@ export function QuestionnaireBuilderShell({
                   </ul>
                 )}
               </QuestionnaireCallout>
-            ) : (
-              <QuestionnaireCallout>
-                Draft is ready to save. Preview remains superadmin-only until a version is
-                published through future lifecycle actions.
-              </QuestionnaireCallout>
             )}
 
           </CardContent>
@@ -155,11 +153,11 @@ export function QuestionnaireBuilderShell({
         <div className="min-w-0 lg:sticky lg:top-4">
           <QuestionnaireOutlinePanel
             sections={draft.sections}
-            totalLeafWeight={validation.totalLeafWeight}
+            totalLeafWeight={totalLeafWeight}
             selectedSectionId={draft.selectedSectionId}
-            sectionIssues={validation.sectionIssues}
+            sectionIssues={validation?.sectionIssues ?? {}}
             qualitative={draft.qualitative}
-            qualitativeIssues={validation.qualitativeIssues}
+            qualitativeIssues={validation?.qualitativeIssues ?? []}
             onSelect={handleSelectSection}
             onAddRoot={handleAddRootSection}
             onAddChild={requestAddChild}
@@ -181,9 +179,9 @@ export function QuestionnaireBuilderShell({
                   key={section.id}
                   questionnaireType={activeType}
                   section={section}
-                  sectionIssues={validation.sectionIssues[section.id] ?? []}
-                  allSectionIssues={validation.sectionIssues}
-                  questionIssues={validation.questionIssues}
+                  sectionIssues={validation?.sectionIssues[section.id] ?? []}
+                  allSectionIssues={validation?.sectionIssues ?? {}}
+                  questionIssues={validation?.questionIssues ?? {}}
                   selectedSectionId={draft.selectedSectionId}
                   isSelected={section.id === draft.selectedSectionId}
                   onUpdateSection={handleUpdateSection}
@@ -206,7 +204,7 @@ export function QuestionnaireBuilderShell({
             <Separator />
             <QuestionnaireQualitativeEditor
               value={draft.qualitative}
-              issues={validation.qualitativeIssues}
+              issues={validation?.qualitativeIssues ?? []}
               onChange={updateQualitative}
             />
           </div>

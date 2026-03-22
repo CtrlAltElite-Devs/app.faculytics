@@ -101,8 +101,8 @@ export function QuestionnaireSectionEditor({
           className={cn(
             "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 gap-y-4",
             isLeaf
-              ? "md:grid-cols-[minmax(0,1fr)_minmax(200px,0.6fr)_minmax(112px,0.44fr)_88px_auto]"
-              : "md:grid-cols-[minmax(0,1fr)_auto]"
+              ? "xl:grid-cols-[minmax(0,1fr)_minmax(180px,0.6fr)_minmax(100px,0.4fr)_80px_auto]"
+              : "xl:grid-cols-[minmax(0,1fr)_auto]"
           )}
         >
           <div className="min-w-0">
@@ -127,7 +127,7 @@ export function QuestionnaireSectionEditor({
           </div>
 
           {isLeaf ? (
-            <div className="col-span-2 min-w-0 space-y-2 md:col-span-1">
+            <div className="col-span-2 min-w-0 space-y-2 xl:col-span-1">
               <DimensionCodeSelect
                 questionnaireType={questionnaireType}
                 value={section.dimensionCode}
@@ -144,63 +144,62 @@ export function QuestionnaireSectionEditor({
           ) : null}
 
           {isLeaf ? (
-            <div className="col-span-2 min-w-0 space-y-2 md:col-span-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    id={`section-question-type-${section.id}`}
-                    type="button"
-                    variant="outline"
-                    className="min-w-0 w-full justify-between gap-3"
-                    aria-label="Section question type"
-                  >
-                    {QUESTION_TYPE_LABELS[section.questionType]}
-                    <ChevronDown className="size-4 text-muted-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="min-w-48">
-                  <DropdownMenuRadioGroup
-                    value={section.questionType}
-                    onValueChange={(value) =>
-                      onUpdateSection(section.id, {
-                        questionType: value as BuilderQuestionType,
-                      })
-                    }
-                  >
-                    <DropdownMenuRadioItem value="LIKERT_1_5">
-                      {QUESTION_TYPE_LABELS.LIKERT_1_5}
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="YES_NO">
-                      {QUESTION_TYPE_LABELS.YES_NO}
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <p className="text-xs text-muted-foreground">Question Type</p>
+            <div className="col-span-2 flex min-w-0 gap-2 xl:contents">
+              <div className="min-w-0 flex-1 space-y-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      id={`section-question-type-${section.id}`}
+                      type="button"
+                      variant="outline"
+                      className="min-w-0 w-full justify-between gap-3"
+                      aria-label="Section question type"
+                    >
+                      {QUESTION_TYPE_LABELS[section.questionType]}
+                      <ChevronDown className="size-4 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="min-w-48">
+                    <DropdownMenuRadioGroup
+                      value={section.questionType}
+                      onValueChange={(value) =>
+                        onUpdateSection(section.id, {
+                          questionType: value as BuilderQuestionType,
+                        })
+                      }
+                    >
+                      <DropdownMenuRadioItem value="LIKERT_1_5">
+                        {QUESTION_TYPE_LABELS.LIKERT_1_5}
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="YES_NO">
+                        {QUESTION_TYPE_LABELS.YES_NO}
+                      </DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <p className="text-xs text-muted-foreground">Question Type</p>
+              </div>
+              <div className="w-20 shrink-0 space-y-2 xl:w-auto">
+                <Input
+                  id={`section-weight-${section.id}`}
+                  type="number"
+                  min={1}
+                  max={100}
+                  step={1}
+                  value={section.weight ?? ""}
+                  aria-invalid={Boolean(weightIssue)}
+                  onChange={(event) =>
+                    onUpdateSection(section.id, {
+                      weight: event.target.value === "" ? null : Number(event.target.value),
+                    })
+                  }
+                />
+                <p className="text-xs text-muted-foreground">Weight</p>
+              </div>
             </div>
           ) : null}
 
-          {isLeaf ? (
-            <div className="col-span-2 min-w-0 space-y-2 md:col-span-1">
-              <Input
-                id={`section-weight-${section.id}`}
-                type="number"
-                min={1}
-                max={100}
-                step={1}
-                value={section.weight ?? ""}
-                aria-invalid={Boolean(weightIssue)}
-                onChange={(event) =>
-                  onUpdateSection(section.id, {
-                    weight: event.target.value === "" ? null : Number(event.target.value),
-                  })
-                }
-              />
-              <p className="text-xs text-muted-foreground">Weight</p>
-            </div>
-          ) : null}
-
-          <div className="col-start-2 row-start-1 flex items-center justify-end md:col-start-auto md:row-start-auto">
+          <div className="col-start-2 row-start-1 flex items-center justify-end xl:col-start-auto xl:row-start-auto">
             <div className="hidden items-center gap-1 lg:flex">
               <Button
                 type="button"
