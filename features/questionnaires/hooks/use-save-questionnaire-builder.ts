@@ -7,7 +7,6 @@ import { fetchQuestionnaireVersionById } from "@/features/questionnaires/api/que
 import { useCreateQuestionnaire } from "@/features/questionnaires/hooks/use-create-questionnaire";
 import { useCreateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-create-questionnaire-version";
 import { serializeQuestionnaireBuilderDraft } from "@/features/questionnaires/lib/builder-serializer";
-import { validateQuestionnaireBuilderDraft } from "@/features/questionnaires/lib/builder-validator";
 import { useUpdateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-update-questionnaire-version";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 
@@ -32,12 +31,6 @@ export function useSaveQuestionnaireBuilder() {
     const draft = storeState.drafts[activeType];
     if (!draft) {
       toast.error("There is no active draft to save.");
-      return;
-    }
-
-    const validation = validateQuestionnaireBuilderDraft(draft);
-    if (!validation.isValid) {
-      toast.error(validation.issues[0]?.message ?? "Fix the draft issues before saving.");
       return;
     }
 

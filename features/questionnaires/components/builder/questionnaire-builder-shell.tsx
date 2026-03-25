@@ -64,11 +64,11 @@ export function QuestionnaireBuilderShell({
 
   const hasExistingQuestionnaire = Boolean(draft.metadata.questionnaireId);
   const statusBadge = isDirty ? (
-    <Badge variant="ghost" className="font-medium badge-status-draft">
+    <Badge variant="ghost" className="badge-status-draft">
       Unsaved Changes
     </Badge>
   ) : isSaved ? (
-    <Badge variant="ghost" className="font-medium badge-status-active">
+    <Badge variant="ghost" className="badge-status-active">
       Saved
     </Badge>
   ) : null;
@@ -78,11 +78,11 @@ export function QuestionnaireBuilderShell({
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="overflow-hidden">
           <CardHeader className="space-y-4">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-              <div className="space-y-4">
-                <div>
+            <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+              <div className="min-w-0 space-y-4">
+                <div className="min-w-0">
                   <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center">
                     <div className="w-full lg:min-w-0 lg:flex-1">
                       <InlineEditInput

@@ -1,9 +1,13 @@
 "use client";
 
 import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { useState } from "react";
 
 import type { DeanFacultyAnalysisRecord } from "@/features/dean";
+import {
+  useFeedbackTableState,
+  rowsPerPageOptions,
+  sentimentFilterOptions,
+} from "@/features/dean/hooks/use-feedback-table-state";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -57,63 +61,25 @@ function FacultyMetricCard({
   );
 }
 
-function getSentimentBadgeClassName(sentiment: "Positive" | "Neutral" | "Negative") {
-  if (sentiment === "Positive") {
-    return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/20 dark:text-emerald-300";
-  }
-
-  if (sentiment === "Negative") {
-    return "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/20 dark:text-rose-300";
-  }
-
-  return "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-300";
-}
-
-const rowsPerPageOptions = [5, 10, 20] as const;
-const sentimentFilterOptions = ["All", "Positive", "Neutral", "Negative"] as const;
-
-function getPaginationItems(currentPage: number, totalPages: number) {
-  if (totalPages <= 5) {
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
-  }
-
-  if (currentPage <= 3) {
-    return [1, 2, 3, 4, "...", totalPages] as const;
-  }
-
-  if (currentPage >= totalPages - 2) {
-    return [1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages] as const;
-  }
-
-  return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages] as const;
-}
-
 export function FacultyAnalysisSummary({
   faculty,
 }: {
   faculty: DeanFacultyAnalysisRecord;
 }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSentiment, setSelectedSentiment] =
-    useState<(typeof sentimentFilterOptions)[number]>("All");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
-  const filteredFeedback = faculty.feedbackRecords.filter((record) => {
-    const matchesSearch = record.feedback
-      .toLowerCase()
-      .includes(searchQuery.trim().toLowerCase());
-    const matchesSentiment =
-      selectedSentiment === "All" || record.sentiment === selectedSentiment;
-
-    return matchesSearch && matchesSentiment;
-  });
-  const totalRows = filteredFeedback.length;
-  const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
-  const paginatedFeedback = filteredFeedback.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
-  const paginationItems = getPaginationItems(currentPage, totalPages);
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedSentiment,
+    setSelectedSentiment,
+    currentPage,
+    setCurrentPage,
+    rowsPerPage,
+    setRowsPerPage,
+    totalRows,
+    totalPages,
+    paginatedFeedback,
+    paginationItems,
+  } = useFeedbackTableState(faculty);
 
   return (
     <div className="space-y-6">
@@ -230,45 +196,49 @@ export function FacultyAnalysisSummary({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Card className="m-0 gap-0 overflow-hidden rounded-2xl border-border/70 p-0 shadow-sm">
-          <CardContent className="p-0">
-            <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
-              <TableHeader>
-                <TableRow className="border-border/70 bg-muted/60 hover:bg-muted/60">
-                  <TableHead className="w-[18%] px-4 py-4 font-sans text-xs font-semibold text-muted-foreground lg:px-5">
-                    Date
-                  </TableHead>
-                  <TableHead className="w-[62%] px-4 py-4 font-sans text-xs font-semibold text-muted-foreground lg:px-5">
-                    Feedback
-                  </TableHead>
-                  <TableHead className="w-[20%] px-4 py-4 font-sans text-xs font-semibold text-muted-foreground lg:px-5">
-                    Sentiment
-                  </TableHead>
+        <div className="data-table-wrapper">
+          <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
+            <TableHeader className="data-table-header">
+              <TableRow>
+                <TableHead className="data-table-head w-[18%]">
+                  Date
+                </TableHead>
+                <TableHead className="data-table-head w-[62%]">
+                  Feedback
+                </TableHead>
+                <TableHead className="data-table-head w-[20%]">
+                  Sentiment
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="[&_tr:last-child]:border-b-0">
+              {paginatedFeedback.map((record) => (
+                <TableRow key={`${record.date}-${record.feedback}`} className="data-table-row">
+                  <TableCell className="data-table-cell">
+                    {record.date}
+                  </TableCell>
+                  <TableCell className="data-table-cell">
+                    {record.feedback}
+                  </TableCell>
+                  <TableCell className="data-table-cell">
+                    <Badge
+                      variant={record.sentiment === "Negative" ? "destructive" : "ghost"}
+                      className={
+                        record.sentiment === "Positive"
+                          ? "badge-status-active"
+                          : record.sentiment === "Neutral"
+                            ? "badge-status-deprecated"
+                            : undefined
+                      }
+                    >
+                      {record.sentiment}
+                    </Badge>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody className="[&_tr:last-child]:border-b-0">
-                {paginatedFeedback.map((record) => (
-                  <TableRow key={`${record.date}-${record.feedback}`} className="border-border/70">
-                    <TableCell className="px-4 py-4 font-sans text-sm text-foreground lg:px-5">
-                      {record.date}
-                    </TableCell>
-                    <TableCell className="px-4 py-4 font-sans text-sm text-foreground lg:px-5">
-                      {record.feedback}
-                    </TableCell>
-                    <TableCell className="px-4 py-4 lg:px-5">
-                      <Badge
-                        variant="outline"
-                        className={getSentimentBadgeClassName(record.sentiment)}
-                      >
-                        {record.sentiment}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
         <div className="flex flex-col gap-3 px-1 pt-5 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="text-xs sm:text-sm">
             Showing {paginatedFeedback.length} of {totalRows} feedback records

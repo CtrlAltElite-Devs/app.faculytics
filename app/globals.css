@@ -168,18 +168,6 @@
 }
 
 @layer utilities {
-  .badge-status-draft {
-    @apply border-yellow-200 bg-yellow-100 px-2.5 py-1 text-yellow-800 dark:border-yellow-900/60 dark:bg-yellow-950/40 dark:text-yellow-300;
-  }
-
-  .badge-status-active {
-    @apply border-green-200 bg-green-100 px-2.5 py-1 text-green-800 dark:border-green-900/60 dark:bg-green-950/40 dark:text-green-300;
-  }
-
-  .badge-status-deprecated {
-    @apply border-slate-200 bg-slate-100 px-2.5 py-1 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300;
-  }
-
   .panel-surface {
     @apply border-border/70 bg-surface/85 backdrop-blur-md;
   }
@@ -191,6 +179,42 @@
 
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
+  }
+
+  /* ── Faculytics: Badge status variants ───────────────────────────── */
+
+  .badge-status-draft {
+    @apply border-yellow-200 bg-yellow-100 px-2.5 py-1 font-medium text-yellow-800 dark:border-yellow-900/60 dark:bg-yellow-950/40 dark:text-yellow-300;
+  }
+
+  .badge-status-active {
+    @apply border-emerald-200 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/20 dark:text-emerald-300;
+  }
+
+  .badge-status-deprecated {
+    @apply border-slate-200 bg-slate-50 px-2.5 py-1 font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-300;
+  }
+
+  /* ── Faculytics: Data table ──────────────────────────────────────── */
+
+  .data-table-wrapper {
+    @apply overflow-hidden rounded-xl border border-border/70;
+  }
+
+  .data-table-header {
+    @apply bg-blue-50 text-blue-700 dark:bg-blue-900/10 dark:text-blue-300;
+  }
+
+  .data-table-head {
+    @apply px-4 py-3 font-sans text-xs font-semibold lg:px-5;
+  }
+
+  .data-table-row {
+    @apply border-border/70;
+  }
+
+  .data-table-cell {
+    @apply px-4 py-2 font-sans text-sm lg:px-5;
   }
 }
 

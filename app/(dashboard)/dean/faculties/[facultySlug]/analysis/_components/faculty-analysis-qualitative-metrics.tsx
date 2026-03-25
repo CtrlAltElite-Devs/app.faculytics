@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { buildOverallRecommendation } from "@/features/dean/lib/recommendation-utils";
 import { useIsMobile } from "@/lib/use-mobile";
 
 const qualitativeSentimentChartConfig = {
@@ -37,16 +38,6 @@ const qualitativeSentimentChartConfig = {
     color: "#facc15",
   },
 } satisfies ChartConfig;
-
-function buildOverallRecommendation(items: string[]) {
-  const uniqueItems = Array.from(new Set(items));
-
-  if (uniqueItems.length === 0) {
-    return "No recommendation available for this section.";
-  }
-
-  return uniqueItems.join(" ");
-}
 
 function useQualitativeMetricsData(
   faculty: DeanFacultyAnalysisRecord,

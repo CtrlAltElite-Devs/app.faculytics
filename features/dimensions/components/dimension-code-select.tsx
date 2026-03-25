@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { normalizeDimensionText } from "@/features/dimensions/lib/dimension-utils";
 
 type DimensionCodeSelectProps = {
   questionnaireType: QuestionnaireType;
@@ -35,10 +36,6 @@ type DimensionCodeSelectProps = {
   ariaInvalid?: boolean;
   errorMessage?: string;
 };
-
-function normalizeDimensionText(value: string) {
-  return value.trim().toLowerCase();
-}
 
 export function DimensionCodeSelect({
   questionnaireType,
@@ -57,7 +54,7 @@ export function DimensionCodeSelect({
   const activeDimensions = useMemo(() => dimensionsQuery.data?.data ?? [], [dimensionsQuery.data]);
 
   const selectedDimension = useMemo(
-    () => activeDimensions.find((dimension) => dimension.code === value) ?? null,
+    () => activeDimensions.find((dimension) => dimension.code === value),
     [activeDimensions, value]
   );
   const unavailableSelectedDimension = useMemo<Dimension | null>(() => {

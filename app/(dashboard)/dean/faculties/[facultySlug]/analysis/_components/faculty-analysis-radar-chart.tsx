@@ -178,42 +178,39 @@ export function FacultyAnalysisRadarChart({
         </div>
         <div className="mt-4 space-y-4">
           {metricView.metrics.map((metric) => (
-            <div
-              key={metric.metric}
-              className="overflow-hidden rounded-xl border border-border/70"
-            >
+            <div key={metric.metric} className="data-table-wrapper">
               <Table>
-                <TableHeader className="bg-blue-50 text-blue-700 dark:bg-muted/40 dark:text-foreground">
+                <TableHeader className="data-table-header">
                   <TableRow>
-                    <TableHead className="min-w-[26rem] font-semibold">
+                    <TableHead className="data-table-head min-w-[26rem]">
                       {metric.metric}
                     </TableHead>
-                    <TableHead className="min-w-[8rem] text-center font-semibold">
+                    <TableHead className="data-table-head min-w-[8rem] text-center">
                       Average
                     </TableHead>
-                    <TableHead className="min-w-[12rem] font-semibold">
+                    <TableHead className="data-table-head min-w-[12rem]">
                       Interpretation
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {metric.questions.map((question) => (
-                    <TableRow key={`${metric.metric}-${question.question}`}>
-                      <TableCell className="whitespace-normal font-normal">
+                    <TableRow key={`${metric.metric}-${question.question}`} className="data-table-row">
+                      <TableCell className="data-table-cell whitespace-normal font-normal">
                         {question.question}
                       </TableCell>
-                      <TableCell className="text-center font-medium">
+                      <TableCell className="data-table-cell text-center font-medium">
                         {formatScore(question.average)}
                       </TableCell>
-                      <TableCell>{getInterpretation(question.average)}</TableCell>
+                      <TableCell className="data-table-cell">{getInterpretation(question.average)}</TableCell>
                     </TableRow>
                   ))}
-                  <TableRow className="bg-muted/30 font-semibold hover:bg-muted/30">
-                    <TableCell>Overall Average Rating</TableCell>
-                    <TableCell className="text-center">
+                  <TableRow className="data-table-row bg-muted/30 font-semibold hover:bg-muted/30">
+                    <TableCell className="data-table-cell">Overall Average Rating</TableCell>
+                    <TableCell className="data-table-cell text-center">
                       {formatScore(metric.score)}
                     </TableCell>
-                    <TableCell>{getInterpretation(metric.score)}</TableCell>
+                    <TableCell className="data-table-cell">{getInterpretation(metric.score)}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

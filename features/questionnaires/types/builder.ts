@@ -61,11 +61,12 @@ export type QuestionnaireBuilderDraft = {
 
 export type QuestionnaireBuilderServerContext = {
   type: QuestionnaireType;
-  questionnaireId: string | null;
-  questionnaireTitle: string | null;
   versions: QuestionnaireVersionItem[];
   draftVersion: QuestionnaireVersionDetail | null;
-};
+} & (
+  | { questionnaireId: string; questionnaireTitle: string }
+  | { questionnaireId: null; questionnaireTitle: null }
+);
 
 export type QuestionnaireBuilderPreviewQuestion = {
   id: string;

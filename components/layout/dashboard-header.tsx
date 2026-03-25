@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import { Fragment } from "react";
 
 import { RoleSwitcher } from "@/components/layout/role-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -49,7 +49,7 @@ export function DashboardHeader() {
               const isLast = index === crumbs.length - 1;
 
               return (
-                <React.Fragment key={crumb.href}>
+                <Fragment key={crumb.href}>
                   <BreadcrumbItem>
                     {isLast ? (
                       <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
@@ -60,7 +60,7 @@ export function DashboardHeader() {
                     )}
                   </BreadcrumbItem>
                   {!isLast && <BreadcrumbSeparator />}
-                </React.Fragment>
+                </Fragment>
               );
             })}
           </BreadcrumbList>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useMyEnrollments } from "@/features/enrollments/hooks/use-my-enrollments";
 import { deleteDraft } from "@/features/questionnaires/api/questionnaire.requests";
@@ -130,10 +130,12 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
 
   // Auto-delete stale draft (version mismatch) — runs once
   const staleDeletedRef = useRef(false);
-  if (isDraftStale && !staleDeletedRef.current) {
-    staleDeletedRef.current = true;
-    void deleteDraft(draft.id);
-  }
+  useEffect(() => {
+    if (isDraftStale && !staleDeletedRef.current) {
+      staleDeletedRef.current = true;
+      void deleteDraft(draft.id);
+    }
+  }, [isDraftStale, draft]);
 
   const defaultValues =
     draft && !isDraftStale

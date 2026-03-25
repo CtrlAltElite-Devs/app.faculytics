@@ -48,12 +48,12 @@ function MatrixRadio({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "relative aspect-square size-4 shrink-0 rounded-full border border-input shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
-        checked && "border-primary",
+        "relative aspect-square size-4 shrink-0 rounded-full border border-input shadow-xs transition-[color,box-shadow] outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
+        checked && "border-blue-500",
       )}
     >
       {checked && (
-        <span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary" />
+        <span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500" />
       )}
     </button>
   );
@@ -72,7 +72,7 @@ function getSelectedOptionKey(
   isLikert: boolean,
 ): string {
   if (value === undefined) return "";
-  return isLikert ? value.toString() : (YES_NO_REVERSE_MAP[value] ?? "");
+  return isLikert ? value.toString() : YES_NO_REVERSE_MAP[value];
 }
 
 /**

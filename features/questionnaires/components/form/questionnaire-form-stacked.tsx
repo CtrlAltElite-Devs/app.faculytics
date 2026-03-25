@@ -38,7 +38,7 @@ function getSelectedOptionKey(
   isLikert: boolean,
 ): string {
   if (value === undefined) return "";
-  return isLikert ? value.toString() : (YES_NO_REVERSE_MAP[value] ?? "");
+  return isLikert ? value.toString() : YES_NO_REVERSE_MAP[value];
 }
 
 /**
