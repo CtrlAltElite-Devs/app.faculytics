@@ -1,6 +1,7 @@
 "use client";
 
 import { AppLoadingScreen } from "@/components/shared/app-loading-screen";
+import type { AppRole } from "@/constants/roles";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { useAuthStore } from "@/stores/auth-store";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,7 +9,7 @@ import type { ReactNode } from "react";
 import { useEffect } from "react";
 
 type RoleGuardProps = {
-  allowedRoles: string[];
+  allowedRoles: AppRole[];
   children: ReactNode;
 };
 

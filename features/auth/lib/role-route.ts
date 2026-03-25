@@ -7,7 +7,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { ROLES, type AppRole } from "@/constants/roles";
+import { APP_ROLES, ROLES, type AppRole } from "@/constants/roles";
 
 type NavItem = {
   title: string;
@@ -23,13 +23,13 @@ type RoleConfig = {
 };
 
 const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
-  STUDENT: {
+  [APP_ROLES.STUDENT]: {
     label: "Student",
     homePath: "/student/courses",
     routePrefix: "/student",
     navItems: [{ title: "Courses", url: "/student/courses", icon: BookOpen }],
   },
-  FACULTY: {
+  [APP_ROLES.FACULTY]: {
     label: "Faculty",
     homePath: "/faculty/courses",
     routePrefix: "/faculty",
@@ -38,7 +38,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
       { title: "Analytics", url: "/faculty/analytics", icon: BarChart3 },
     ],
   },
-  DEAN: {
+  [APP_ROLES.DEAN]: {
     label: "Dean",
     homePath: "/dean/dashboard",
     routePrefix: "/dean",
@@ -47,13 +47,22 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
       { title: "Faculties", url: "/dean/faculties", icon: Building2 },
     ],
   },
-  ADMIN: {
+  [APP_ROLES.CHAIRPERSON]: {
+    label: "Chairperson",
+    homePath: "/chairperson/dashboard",
+    routePrefix: "/chairperson",
+    navItems: [
+      { title: "Dashboard", url: "/chairperson/dashboard", icon: LayoutDashboard },
+      { title: "Faculties", url: "/chairperson/faculties", icon: Building2 },
+    ],
+  },
+  [APP_ROLES.ADMIN]: {
     label: "Admin",
     homePath: "/admin",
     routePrefix: "/admin",
     navItems: [{ title: "Admin", url: "/admin", icon: Shield }],
   },
-  SUPER_ADMIN: {
+  [APP_ROLES.SUPER_ADMIN]: {
     label: "Super Admin",
     homePath: "/superadmin/questionnaires",
     routePrefix: "/superadmin",
@@ -67,14 +76,14 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
   },
 };
 
-export function getAvailableRoles(roles?: string[] | null): AppRole[] {
+export function getAvailableRoles(roles?: readonly string[] | null): AppRole[] {
   if (!roles?.length) return [];
 
   return ROLES.filter((role) => roles.includes(role));
 }
 
-export function resolveActiveRole(roles?: string[] | null, activeRole?: AppRole | null) {
-  const availableRoles = getAvailableRoles(roles);
+export function resolveActiveRole(roles?: readonly AppRole[] | null, activeRole?: AppRole | null) {
+  const availableRoles = roles ?? [];
   if (!availableRoles.length) return null;
 
   if (activeRole && availableRoles.includes(activeRole)) {
@@ -84,7 +93,10 @@ export function resolveActiveRole(roles?: string[] | null, activeRole?: AppRole 
   return availableRoles[0];
 }
 
-export function resolveHomeFromRoles(roles?: string[] | null, activeRole?: AppRole | null) {
+export function resolveHomeFromRoles(
+  roles?: readonly AppRole[] | null,
+  activeRole?: AppRole | null
+) {
   const role = resolveActiveRole(roles, activeRole);
   return role ? ROLE_CONFIG[role].homePath : null;
 }

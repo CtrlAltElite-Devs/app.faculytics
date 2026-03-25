@@ -1,4 +1,5 @@
 import { RoleGuard } from "@/app/(dashboard)/_guards/role-guard";
+import { APP_ROLES } from "@/constants/roles";
 import type { ReactNode } from "react";
 
 type DeanLayoutProps = {
@@ -6,5 +7,5 @@ type DeanLayoutProps = {
 };
 
 export default function DeanLayout({ children }: DeanLayoutProps) {
-  return <RoleGuard allowedRoles={["DEAN"]}>{children}</RoleGuard>;
+  return <RoleGuard allowedRoles={[APP_ROLES.DEAN]}>{children}</RoleGuard>;
 }
