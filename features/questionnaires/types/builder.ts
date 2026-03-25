@@ -117,7 +117,6 @@ export type QuestionnaireSchemaLeafSection = {
   order: number;
   title: string;
   weight: number;
-  parentPath: string[];
   questions: QuestionnaireSchemaQuestion[];
 };
 

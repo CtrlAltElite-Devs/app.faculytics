@@ -29,6 +29,7 @@ type EvaluationFormProps = {
   courseName: string;
   courseShortname: string;
   facultyName: string;
+  enrollmentSectionName?: string;
   activeVersion: { id: string };
   faculty: { id: string };
   semester: { id: string };
@@ -41,6 +42,7 @@ export function EvaluationForm({
   courseName,
   courseShortname,
   facultyName,
+  enrollmentSectionName,
   activeVersion,
   faculty,
   semester,
@@ -128,6 +130,7 @@ export function EvaluationForm({
       courseName={courseName}
       courseShortname={courseShortname}
       facultyName={facultyName}
+      enrollmentSectionName={enrollmentSectionName}
     >
       <div className="mt-8">
         <QuestionnaireRatingScaleInstructions />

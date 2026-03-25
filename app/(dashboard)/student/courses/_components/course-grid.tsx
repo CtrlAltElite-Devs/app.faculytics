@@ -17,6 +17,7 @@ export function CourseGrid({ enrollments, onSelectCourse }: CourseGridProps) {
           fullname={enrollment.course.fullname}
           teacherName={enrollment.faculty?.fullName ?? "Teacher unavailable"}
           teacherImageSrc={enrollment.faculty?.profilePicture}
+          sectionName={enrollment.section?.name}
           imageSrc={enrollment.course.courseImage}
           feedbackHref={`/student/courses/${enrollment.course.id}/evaluation`}
           onGiveFeedback={() => onSelectCourse(enrollment)}
