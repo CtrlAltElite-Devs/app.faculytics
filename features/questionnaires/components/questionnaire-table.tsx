@@ -16,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import type { QuestionnaireVersionItem } from "@/features/questionnaires/types";
 
 type QuestionnaireTableProps = {
@@ -55,36 +54,36 @@ export function QuestionnaireTable({
   disableActions = false,
 }: QuestionnaireTableProps) {
   return (
-    <div className="overflow-hidden rounded-xl border bg-background">
+    <div className="data-table-wrapper">
       <Table>
-        <TableHeader>
+        <TableHeader className="data-table-header">
           <TableRow>
-            <TableHead className="w-[18%] px-4">Version</TableHead>
-            <TableHead className="w-[22%]">Status</TableHead>
-            <TableHead className="w-[20%]">Published</TableHead>
-            <TableHead className="w-[20%]">Created</TableHead>
-            <TableHead className="w-[20%] pl-4">Action</TableHead>
+            <TableHead className="data-table-head w-[18%]">Version</TableHead>
+            <TableHead className="data-table-head w-[22%]">Status</TableHead>
+            <TableHead className="data-table-head w-[20%]">Published</TableHead>
+            <TableHead className="data-table-head w-[20%]">Created</TableHead>
+            <TableHead className="data-table-head w-[20%]">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell className="px-4 font-medium tabular-nums">v{row.versionNumber}</TableCell>
-              <TableCell>
+            <TableRow key={row.id} className="data-table-row">
+              <TableCell className="data-table-cell font-medium tabular-nums">v{row.versionNumber}</TableCell>
+              <TableCell className="data-table-cell">
                 <Badge
                   variant="ghost"
-                  className={cn("font-medium", STATUS_BADGE_CLASS_NAMES[row.status])}
+                  className={STATUS_BADGE_CLASS_NAMES[row.status]}
                 >
                   {row.status}
                 </Badge>
               </TableCell>
-              <TableCell className="whitespace-nowrap text-muted-foreground">
+              <TableCell className="data-table-cell whitespace-nowrap text-muted-foreground">
                 {formatDate(row.publishedAt)}
               </TableCell>
-              <TableCell className="whitespace-nowrap text-muted-foreground">
+              <TableCell className="data-table-cell whitespace-nowrap text-muted-foreground">
                 {formatDate(row.createdAt)}
               </TableCell>
-              <TableCell className="pl-4">
+              <TableCell className="data-table-cell">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button

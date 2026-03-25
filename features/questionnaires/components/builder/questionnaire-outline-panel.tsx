@@ -12,6 +12,10 @@ import type {
   QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderValidationIssue,
 } from "@/features/questionnaires/types";
+import {
+  countDescendantSections,
+  countNestedQuestions,
+} from "@/features/questionnaires/lib/section-stats";
 
 type QuestionnaireOutlinePanelProps = {
   sections: QuestionnaireBuilderSectionNode[];
@@ -26,14 +30,6 @@ type QuestionnaireOutlinePanelProps = {
   onMove: (sectionId: string, direction: "up" | "down") => void;
   onRemove: (sectionId: string) => void;
 };
-
-function countDescendantSections(node: QuestionnaireBuilderSectionNode): number {
-  return node.children.reduce((total, child) => total + 1 + countDescendantSections(child), 0);
-}
-
-function countNestedQuestions(node: QuestionnaireBuilderSectionNode): number {
-  return node.questions.length + node.children.reduce((total, child) => total + countNestedQuestions(child), 0);
-}
 
 function OutlineNode({
   depth = 0,

@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import {
-  DEFAULT_BUILDER_QUESTION_TYPE,
-  DEFAULT_QUALITATIVE_MAX_LENGTH,
-  MAX_SECTION_NESTING_LEVEL,
-} from "@/features/questionnaires/constants/builder";
+import { DEFAULT_QUALITATIVE_MAX_LENGTH, MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
+import { createComparableDraftSnapshot, draftsMatch } from "@/features/questionnaires/lib/builder-draft-utils";
+import {
+  createDraft,
+  createQuestion,
+  createSection,
+  createSyncedDraftSnapshot,
+  normalizeQualitativeConfig,
+  resequenceQuestions,
+} from "@/features/questionnaires/lib/builder-factory";
 import {
   findSectionById,
   getSectionLevel,
@@ -57,151 +62,6 @@ type QuestionnaireBuilderStore = {
 
 const QUESTIONNAIRE_BUILDER_STORAGE_KEY = "questionnaire-builder-storage";
 
-function createId(prefix: string) {
-  return `${prefix}-${crypto.randomUUID()}`;
-}
-
-function createEmptyQualitativeConfig(): QuestionnaireBuilderQualitativeConfig {
-  return {
-    enabled: false,
-    required: false,
-    maxLength: DEFAULT_QUALITATIVE_MAX_LENGTH,
-  };
-}
-
-function normalizeQualitativeConfig(
-  qualitative?: Partial<QuestionnaireBuilderQualitativeConfig>
-): QuestionnaireBuilderQualitativeConfig {
-  return {
-    ...createEmptyQualitativeConfig(),
-    ...qualitative,
-    maxLength: qualitative?.maxLength ?? DEFAULT_QUALITATIVE_MAX_LENGTH,
-  };
-}
-
-function createSection(order: number): QuestionnaireBuilderSectionNode {
-  const questionType: QuestionnaireBuilderQuestionNode["type"] = DEFAULT_BUILDER_QUESTION_TYPE;
-
-  return {
-    id: createId("section"),
-    title: `Section ${order}`,
-    order,
-    weight: null,
-    dimensionCode: null,
-    dimensionCodeIssue: null,
-    questionType,
-    questions: [createQuestion(1, questionType)],
-    children: [],
-  };
-}
-
-function createQuestion(order: number, type: QuestionnaireBuilderQuestionNode["type"]): QuestionnaireBuilderQuestionNode {
-  return {
-    id: createId("question"),
-    prompt: "",
-    type,
-    order,
-    required: true,
-  };
-}
-
-function normalizeSections(
-  sections: QuestionnaireBuilderSectionNode[]
-): QuestionnaireBuilderSectionNode[] {
-  return sections.map((section) => {
-    const questionType =
-      section.questionType ??
-      section.questions
-        .slice()
-        .sort((left, right) => left.order - right.order)[0]?.type ??
-      DEFAULT_BUILDER_QUESTION_TYPE;
-
-    return {
-      ...section,
-      dimensionCode: isLeafSection(section) ? section.dimensionCode ?? null : null,
-      dimensionCodeIssue: isLeafSection(section) ? section.dimensionCodeIssue ?? null : null,
-      questionType,
-      questions: resequenceQuestions(
-        section.questions
-          .slice()
-          .sort((left, right) => left.order - right.order)
-          .map((question) => ({
-            ...question,
-            type: questionType,
-          }))
-      ),
-      children: normalizeSections(section.children),
-    };
-  });
-}
-
-function createDraft(
-  type: QuestionnaireType,
-  overrides?: Partial<QuestionnaireBuilderDraft>
-): QuestionnaireBuilderDraft {
-  return {
-    metadata: {
-      type,
-      title: "",
-      questionnaireId: null,
-      versionId: null,
-      titleLocked: false,
-      questionnaireTitle: null,
-      ...overrides?.metadata,
-    },
-    sections: normalizeSections(overrides?.sections ?? []),
-    qualitative: normalizeQualitativeConfig(overrides?.qualitative),
-    selectedSectionId: overrides?.selectedSectionId ?? null,
-    hydratedFromServer: overrides?.hydratedFromServer ?? false,
-  };
-}
-
-function createSyncedDraftSnapshot(
-  draft: QuestionnaireBuilderDraft,
-  type: QuestionnaireType = draft.metadata.type
-): QuestionnaireBuilderDraft {
-  return createDraft(type, {
-    metadata: {
-      ...draft.metadata,
-      type,
-    },
-    sections: draft.sections,
-    qualitative: draft.qualitative,
-    selectedSectionId:
-      draft.selectedSectionId ?? sortSections(draft.sections)[0]?.id ?? null,
-    hydratedFromServer: true,
-  });
-}
-
-function createComparableDraftSnapshot(draft: QuestionnaireBuilderDraft | null) {
-  if (!draft) {
-    return null;
-  }
-
-  return {
-    metadata: {
-      type: draft.metadata.type,
-      title: draft.metadata.title,
-      questionnaireId: draft.metadata.questionnaireId,
-      versionId: draft.metadata.versionId,
-      titleLocked: draft.metadata.titleLocked,
-      questionnaireTitle: draft.metadata.questionnaireTitle,
-    },
-    sections: draft.sections,
-    qualitative: draft.qualitative,
-  };
-}
-
-function draftsMatch(
-  left: QuestionnaireBuilderDraft | null | undefined,
-  right: QuestionnaireBuilderDraft | null | undefined
-) {
-  return (
-    JSON.stringify(createComparableDraftSnapshot(left ?? null)) ===
-    JSON.stringify(createComparableDraftSnapshot(right ?? null))
-  );
-}
-
 function getActiveDraft(state: QuestionnaireBuilderStore) {
   if (!state.activeType) {
     return null;
@@ -228,13 +88,6 @@ function replaceActiveDraft(
       [activeType]: updater(currentDraft),
     },
   };
-}
-
-function resequenceQuestions(questions: QuestionnaireBuilderQuestionNode[]) {
-  return questions.map((question, index) => ({
-    ...question,
-    order: index + 1,
-  }));
 }
 
 function resequenceSections(
@@ -371,7 +224,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
           const fallbackDraft = createDraft(context.type, {
             metadata: {
               type: context.type,
-              title: context.questionnaireId !== null ? context.questionnaireTitle ?? "" : "",
+              title: context.questionnaireId !== null ? context.questionnaireTitle : "",
               questionnaireId: context.questionnaireId,
               versionId: null,
               titleLocked: false,

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
+import { useBuilderUiState } from "@/features/questionnaires/hooks/use-builder-ui-state";
 import { useSaveQuestionnaireBuilder } from "@/features/questionnaires/hooks/use-save-questionnaire-builder";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import {
@@ -23,59 +24,6 @@ type UseQuestionnaireBuilderControllerOptions = {
   activeType: QuestionnaireType;
 };
 
-type BuilderUiState = {
-  saveDialogOpen: boolean;
-  discardDialogOpen: boolean;
-  pendingParentId: string | null;
-  pendingScrollToSection: boolean;
-};
-
-type BuilderUiAction =
-  | { type: "set-save-dialog-open"; open: boolean }
-  | { type: "set-discard-dialog-open"; open: boolean }
-  | { type: "set-pending-parent-id"; sectionId: string | null }
-  | { type: "request-scroll-to-section" }
-  | { type: "clear-pending-scroll-to-section" };
-
-const initialBuilderUiState: BuilderUiState = {
-  saveDialogOpen: false,
-  discardDialogOpen: false,
-  pendingParentId: null,
-  pendingScrollToSection: false,
-};
-
-function builderUiReducer(state: BuilderUiState, action: BuilderUiAction): BuilderUiState {
-  switch (action.type) {
-    case "set-save-dialog-open":
-      return {
-        ...state,
-        saveDialogOpen: action.open,
-      };
-    case "set-discard-dialog-open":
-      return {
-        ...state,
-        discardDialogOpen: action.open,
-      };
-    case "set-pending-parent-id":
-      return {
-        ...state,
-        pendingParentId: action.sectionId,
-      };
-    case "request-scroll-to-section":
-      return {
-        ...state,
-        pendingScrollToSection: true,
-      };
-    case "clear-pending-scroll-to-section":
-      return {
-        ...state,
-        pendingScrollToSection: false,
-      };
-    default:
-      return state;
-  }
-}
-
 export function useQuestionnaireBuilderController({
   activeType,
 }: UseQuestionnaireBuilderControllerOptions) {
@@ -94,24 +42,10 @@ export function useQuestionnaireBuilderController({
   const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
   const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
   const { save, isPending } = useSaveQuestionnaireBuilder();
-  const [uiState, dispatch] = useReducer(builderUiReducer, initialBuilderUiState);
+  const ui = useBuilderUiState();
 
   // Validation only runs on save — no real-time red outlines while editing.
   const [validation, setValidation] = useState<QuestionnaireBuilderValidationResult | null>(null);
-
-  const { saveDialogOpen, discardDialogOpen, pendingParentId, pendingScrollToSection } = uiState;
-
-  const setSaveDialogOpen = (open: boolean) => {
-    dispatch({ type: "set-save-dialog-open", open });
-  };
-
-  const setDiscardDialogOpen = (open: boolean) => {
-    dispatch({ type: "set-discard-dialog-open", open });
-  };
-
-  const setPendingParentId = (sectionId: string | null) => {
-    dispatch({ type: "set-pending-parent-id", sectionId });
-  };
 
   useEffect(() => {
     if (!draft || draft.selectedSectionId || draft.sections.length === 0) {
@@ -122,7 +56,7 @@ export function useQuestionnaireBuilderController({
   }, [draft, selectSection]);
 
   useEffect(() => {
-    if (!draft?.selectedSectionId || !pendingScrollToSection) {
+    if (!draft?.selectedSectionId || !ui.pendingScrollToSection) {
       return;
     }
 
@@ -133,9 +67,9 @@ export function useQuestionnaireBuilderController({
 
     requestAnimationFrame(() => {
       document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      dispatch({ type: "clear-pending-scroll-to-section" });
+      ui.clearPendingScrollToSection();
     });
-  }, [draft?.selectedSectionId, pendingScrollToSection]);
+  }, [draft?.selectedSectionId, ui.pendingScrollToSection]);
 
   // Always compute for display data (totalLeafWeight) — but errors only show from save snapshot.
   const liveValidation = draft ? validateQuestionnaireBuilderDraft(draft) : null;
@@ -144,7 +78,7 @@ export function useQuestionnaireBuilderController({
   const isDirty = hasUnsavedChanges();
   const isSaved = !isDirty && Boolean(draft?.metadata.versionId);
   const pendingConversionState = canConvertSectionToParent(
-    pendingParentId && draft ? findSectionById(draft.sections, pendingParentId) : null
+    ui.pendingParentId && draft ? findSectionById(draft.sections, ui.pendingParentId) : null
   );
 
   const requestAddChild = (sectionId: string) => {
@@ -161,16 +95,16 @@ export function useQuestionnaireBuilderController({
     }
 
     if (conversionState.requiresConfirmation) {
-      dispatch({ type: "set-pending-parent-id", sectionId });
+      ui.setPendingParentId(sectionId);
       return;
     }
 
-    dispatch({ type: "request-scroll-to-section" });
+    ui.requestScrollToSection();
     addChildSection(sectionId);
   };
 
   const handleAddRootSection = () => {
-    dispatch({ type: "request-scroll-to-section" });
+    ui.requestScrollToSection();
     addRootSection();
   };
 
@@ -206,23 +140,23 @@ export function useQuestionnaireBuilderController({
     const result = await save();
 
     if (result?.status === "saved") {
-      dispatch({ type: "set-save-dialog-open", open: true });
+      ui.setSaveDialogOpen(true);
     }
   };
 
   const handleDiscardDraft = () => {
     resetActiveDraft();
     setValidation(null);
-    dispatch({ type: "set-discard-dialog-open", open: false });
+    ui.setDiscardDialogOpen(false);
   };
 
   const handleConfirmParentConversion = () => {
-    if (pendingParentId) {
-      dispatch({ type: "request-scroll-to-section" });
-      addChildSection(pendingParentId);
+    if (ui.pendingParentId) {
+      ui.requestScrollToSection();
+      addChildSection(ui.pendingParentId);
     }
 
-    dispatch({ type: "set-pending-parent-id", sectionId: null });
+    ui.setPendingParentId(null);
   };
 
   return {
@@ -239,12 +173,12 @@ export function useQuestionnaireBuilderController({
     isDirty,
     isSaved,
     isPending,
-    saveDialogOpen,
-    setSaveDialogOpen,
-    discardDialogOpen,
-    setDiscardDialogOpen,
-    pendingParentId,
-    setPendingParentId,
+    saveDialogOpen: ui.saveDialogOpen,
+    setSaveDialogOpen: ui.setSaveDialogOpen,
+    discardDialogOpen: ui.discardDialogOpen,
+    setDiscardDialogOpen: ui.setDiscardDialogOpen,
+    pendingParentId: ui.pendingParentId,
+    setPendingParentId: ui.setPendingParentId,
     pendingConversionState,
     requestAddChild,
     handleAddRootSection,

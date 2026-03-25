@@ -33,23 +33,25 @@ export default function SuperAdminQuestionnairesPage() {
         disableActions={page.isVersionActionPending}
       />
 
-      <ConfirmationDialog
-        open={page.versionAction !== null}
-        onOpenChange={(open) => {
-          if (!open && !page.isVersionActionPending) {
-            page.setVersionAction(null);
-          }
-        }}
-        title={page.actionDialogConfig?.title ?? ""}
-        description={page.actionDialogConfig?.description ?? ""}
-        cancelLabel="Cancel"
-        confirmLabel={page.actionDialogConfig?.confirmLabel ?? ""}
-        confirmVariant={page.actionDialogConfig?.confirmVariant}
-        isPending={page.isVersionActionPending}
-        onConfirm={() => {
-          void page.handleConfirmVersionAction();
-        }}
-      />
+      {page.actionDialogConfig && (
+        <ConfirmationDialog
+          open={page.versionAction !== null}
+          onOpenChange={(open) => {
+            if (!open && !page.isVersionActionPending) {
+              page.setVersionAction(null);
+            }
+          }}
+          title={page.actionDialogConfig.title}
+          description={page.actionDialogConfig.description}
+          cancelLabel="Cancel"
+          confirmLabel={page.actionDialogConfig.confirmLabel}
+          confirmVariant={page.actionDialogConfig.confirmVariant}
+          isPending={page.isVersionActionPending}
+          onConfirm={() => {
+            void page.handleConfirmVersionAction();
+          }}
+        />
+      )}
     </section>
   );
 }

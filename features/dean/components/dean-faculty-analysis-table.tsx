@@ -2,16 +2,13 @@
 
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
+import { FacultySubjects } from "@/features/dean/components/faculty-subjects";
+import { paginateArray } from "@/lib/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,153 +24,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useIsMobile } from "@/lib/use-mobile";
 
-const chipGap = 8;
 const rowsPerPageOptions = [5, 10, 20, 50] as const;
-
-const subjectChipClassName =
-  "max-w-32 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2.5 py-1 font-sans text-[11px] text-brand-blue";
-
-const overflowChipClassName =
-  "cursor-default rounded-full border-brand-blue/20 bg-brand-blue/8 px-2.5 py-1 font-sans text-[11px] text-brand-blue";
-
-function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const subjectMeasureRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const moreMeasureRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const [visibleCount, setVisibleCount] = useState(subjects.length);
-
-  useEffect(() => {
-    const calculateVisibleCount = () => {
-      const containerWidth = containerRef.current?.clientWidth ?? 0;
-
-      if (!containerWidth) {
-        setVisibleCount(subjects.length);
-        return;
-      }
-
-      const subjectWidths = subjects.map(
-        (_, index) => subjectMeasureRefs.current[index]?.offsetWidth ?? 0,
-      );
-      const moreWidths = subjects.slice(1).map(
-        (_, index) => moreMeasureRefs.current[index]?.offsetWidth ?? 0,
-      );
-
-      let usedWidth = 0;
-      let fittedCount = subjects.length;
-
-      for (let index = 0; index < subjects.length; index += 1) {
-        const nextChipWidth = subjectWidths[index] ?? 0;
-        const nextUsedWidth = usedWidth + (index > 0 ? chipGap : 0) + nextChipWidth;
-        const hiddenCount = subjects.length - (index + 1);
-        const reservedMoreWidth = hiddenCount > 0 ? (moreWidths[hiddenCount - 1] ?? 0) + chipGap : 0;
-
-        if (nextUsedWidth + reservedMoreWidth > containerWidth) {
-          fittedCount = index;
-          break;
-        }
-
-        usedWidth = nextUsedWidth;
-      }
-
-      setVisibleCount(Math.max(fittedCount, 0));
-    };
-
-    calculateVisibleCount();
-
-    const resizeObserver = new ResizeObserver(() => {
-      calculateVisibleCount();
-    });
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [subjects]);
-
-  const visibleSubjects = subjects.slice(0, visibleCount);
-  const hiddenSubjects = subjects.slice(visibleCount);
-  const hiddenSubjectCount = hiddenSubjects.length;
-
-  return (
-    <TooltipProvider>
-      <>
-        <div aria-hidden="true" className="pointer-events-none absolute -z-10 opacity-0">
-          <div className="flex gap-2">
-            {subjects.map((subject, index) => (
-              <Badge
-                key={`measure-${subject}`}
-                ref={(node) => {
-                  subjectMeasureRefs.current[index] = node;
-                }}
-                variant="outline"
-                className={subjectChipClassName}
-              >
-                {subject}
-              </Badge>
-            ))}
-            {subjects.slice(1).map((_, index) => {
-              const count = index + 1;
-
-              return (
-                <Badge
-                  key={`measure-more-${count}`}
-                  ref={(node) => {
-                    moreMeasureRefs.current[index] = node;
-                  }}
-                  variant="outline"
-                  className={overflowChipClassName}
-                >
-                  + {count} more
-                </Badge>
-              );
-            })}
-          </div>
-        </div>
-        <div ref={containerRef} className="flex flex-nowrap items-center gap-2 overflow-hidden">
-          {visibleSubjects.map((subject) => (
-            <Badge
-              key={subject}
-              variant="outline"
-              className={subjectChipClassName}
-            >
-              <span className="truncate">{subject}</span>
-            </Badge>
-          ))}
-          {hiddenSubjectCount > 0 ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge
-                  variant="outline"
-                  className={overflowChipClassName}
-                >
-                  + {hiddenSubjectCount} more
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-56 font-sans text-xs">
-                <div className="flex flex-col gap-1">
-                  {hiddenSubjects.map((subject) => (
-                    <span key={subject}>{subject}</span>
-                  ))}
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          ) : null}
-        </div>
-      </>
-    </TooltipProvider>
-  );
-}
 
 export function DeanFacultyAnalysisTable() {
   const isMobile = useIsMobile();
@@ -181,10 +34,7 @@ export function DeanFacultyAnalysisTable() {
   const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
   const totalRows = deanAnalyticsSampleData.facultyAnalysis.length;
   const totalPages = Math.ceil(totalRows / rowsPerPage);
-  const paginatedRows = deanAnalyticsSampleData.facultyAnalysis.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage,
-  );
+  const paginatedRows = paginateArray(deanAnalyticsSampleData.facultyAnalysis, currentPage, rowsPerPage);
 
   return (
     <div className="space-y-4">
@@ -196,8 +46,7 @@ export function DeanFacultyAnalysisTable() {
           Review faculty-specific subject coverage and jump directly to individual analysis.
         </p>
       </div>
-      <Card className="m-0 gap-0 overflow-hidden rounded-2xl border-border/70 p-0 shadow-sm">
-        <CardContent className="p-0">
+      <div className="data-table-wrapper">
           {isMobile ? (
             <div className="divide-y divide-border/70">
               {paginatedRows.map((faculty) => (
@@ -253,29 +102,29 @@ export function DeanFacultyAnalysisTable() {
             </div>
           ) : (
             <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
-              <TableHeader>
-                <TableRow className="border-border/70 bg-muted/60 hover:bg-muted/60">
-                  <TableHead className="w-[24%] px-4 py-4 font-sans text-xs font-semibold text-muted-foreground lg:px-5">
+              <TableHeader className="data-table-header">
+                <TableRow>
+                  <TableHead className="data-table-head w-[24%]">
                     Faculty
                   </TableHead>
-                  <TableHead className="w-[32%] px-4 py-4 font-sans text-xs font-semibold text-muted-foreground lg:px-5">
+                  <TableHead className="data-table-head w-[32%]">
                     Subjects
                   </TableHead>
-                  <TableHead className="w-[16%] px-4 py-4 font-sans text-xs font-semibold text-muted-foreground lg:px-5">
+                  <TableHead className="data-table-head w-[16%]">
                     Overall Positive Rate
                   </TableHead>
-                  <TableHead className="w-[10%] px-4 py-4 font-sans text-xs font-semibold text-muted-foreground lg:px-5">
+                  <TableHead className="data-table-head w-[10%]">
                     Responses
                   </TableHead>
-                  <TableHead className="w-[18%] px-4 py-4 text-right font-sans text-xs font-semibold text-muted-foreground lg:px-5">
+                  <TableHead className="data-table-head w-[18%] text-right">
                     Action
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="[&_tr:last-child]:border-b-0">
                 {paginatedRows.map((faculty) => (
-                  <TableRow key={faculty.facultyName} className="border-border/70">
-                    <TableCell className="px-4 py-4 lg:px-5">
+                  <TableRow key={faculty.facultyName} className="data-table-row">
+                    <TableCell className="data-table-cell">
                       <div className="flex min-w-0 items-center gap-3">
                         <Avatar size="default" className="border border-border/70">
                           <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
@@ -287,16 +136,16 @@ export function DeanFacultyAnalysisTable() {
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="px-4 py-4 lg:px-5">
+                    <TableCell className="data-table-cell">
                       <FacultySubjects subjects={faculty.subjects} />
                     </TableCell>
-                    <TableCell className="px-4 py-4 font-sans text-sm font-semibold text-foreground lg:px-5">
+                    <TableCell className="data-table-cell font-semibold">
                       {faculty.overallPositiveRate}
                     </TableCell>
-                    <TableCell className="px-4 py-4 font-sans text-sm font-semibold text-foreground lg:px-5">
+                    <TableCell className="data-table-cell font-semibold">
                       {faculty.responses}
                     </TableCell>
-                    <TableCell className="px-4 py-4 text-right lg:px-5">
+                    <TableCell className="data-table-cell text-right">
                       <Button
                         asChild
                         variant="ghost"
@@ -313,8 +162,7 @@ export function DeanFacultyAnalysisTable() {
               </TableBody>
             </Table>
           )}
-        </CardContent>
-      </Card>
+      </div>
       <div className="flex flex-col gap-3 pt-4 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="text-xs sm:text-sm">
           Showing {paginatedRows.length} of {totalRows} faculty records
