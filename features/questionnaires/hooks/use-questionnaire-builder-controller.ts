@@ -16,7 +16,6 @@ import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/qu
 import type {
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionUpdates,
-  QuestionnaireBuilderValidationResult,
   QuestionnaireType,
 } from "@/features/questionnaires/types";
 
@@ -44,8 +43,9 @@ export function useQuestionnaireBuilderController({
   const { save, isPending } = useSaveQuestionnaireBuilder();
   const ui = useBuilderUiState();
 
-  // Validation only runs on save — no real-time red outlines while editing.
-  const [validation, setValidation] = useState<QuestionnaireBuilderValidationResult | null>(null);
+  // Errors only appear after the first save attempt, then re-validate live so
+  // errors clear as the user fixes them (same as RHF onSubmit + reValidateMode: onChange).
+  const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
 
   useEffect(() => {
     if (!draft || draft.selectedSectionId || draft.sections.length === 0) {
@@ -71,8 +71,9 @@ export function useQuestionnaireBuilderController({
     });
   }, [draft?.selectedSectionId, ui.pendingScrollToSection]);
 
-  // Always compute for display data (totalLeafWeight) — but errors only show from save snapshot.
+  // Always compute live — used for totalLeafWeight, and for error display after first save attempt.
   const liveValidation = draft ? validateQuestionnaireBuilderDraft(draft) : null;
+  const validation = hasAttemptedSave ? liveValidation : null;
 
   const previewModel = draft ? buildQuestionnairePreviewModel(draft) : null;
   const isDirty = hasUnsavedChanges();
@@ -129,10 +130,9 @@ export function useQuestionnaireBuilderController({
   };
 
   const handleSave = async () => {
-    // Validate the draft and snapshot the result for the UI to display.
     if (draft) {
+      setHasAttemptedSave(true);
       const result = validateQuestionnaireBuilderDraft(draft);
-      setValidation(result);
 
       if (!result.isValid) return;
     }
@@ -140,13 +140,14 @@ export function useQuestionnaireBuilderController({
     const result = await save();
 
     if (result?.status === "saved") {
+      setHasAttemptedSave(false);
       ui.setSaveDialogOpen(true);
     }
   };
 
   const handleDiscardDraft = () => {
     resetActiveDraft();
-    setValidation(null);
+    setHasAttemptedSave(false);
     ui.setDiscardDialogOpen(false);
   };
 
