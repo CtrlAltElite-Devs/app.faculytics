@@ -421,7 +421,7 @@ One feature folder per domain, not per file type.
 
 Before merging any architecture or file-structure change:
 
-1. MUST pass `npx tsc --noEmit`
+1. MUST pass `bun run typecheck`
 2. MUST pass `bun run lint` for touched areas
 3. MUST manually verify touched user flows
 4. SHOULD run full `bun run build` for significant changes
@@ -448,7 +448,7 @@ Refactoring MUST NOT introduce breaking changes. Every refactor MUST preserve ex
 
 ### After refactoring
 
-1. MUST pass `npx tsc --noEmit`
+1. MUST pass `bun run typecheck`
 2. MUST manually compare the before/after for every render path and confirm identical behavior
 3. MUST verify that every API call sends the same payload shape as before
 

@@ -67,7 +67,7 @@ Version-sensitive notes:
 
 ### Testing Rules
 
-- The current mandatory validation gate is `npm run lint` plus `npx tsc --noEmit`; agents should run both after meaningful code changes when possible.
+- The current mandatory validation gate is `bun run lint` plus `bun run typecheck`; agents should run both after meaningful code changes when possible.
 - There is no dedicated test framework configured yet, so do not invent Jest/Vitest/Playwright setup as part of ordinary feature work unless the task explicitly includes test infrastructure.
 - When adding tests, colocate them with the feature as `*.test.ts` or `*.test.tsx`, or place them in a local `__tests__/` folder near the source.
 - If a change touches auth, routing, or API contracts and automated tests are not added, manual verification steps should still cover loading, error, unauthorized, and empty-state behavior.
@@ -89,7 +89,7 @@ Version-sensitive notes:
 
 ### Development Workflow Rules
 
-- Treat `npm run lint` and `npx tsc --noEmit` as the default pre-handoff checks for code changes.
+- Treat `bun run lint` and `bun run typecheck` as the default pre-handoff checks for code changes.
 - Use Conventional Commit prefixes consistent with the repo history and guidance, such as `feat:`, `refactor:`, and `chore:`.
 - Keep commits focused and atomic; avoid bundling unrelated refactors with feature work.
 - If a change affects UI, capture manual verification notes and screenshots/GIFs for PR-ready handoff.

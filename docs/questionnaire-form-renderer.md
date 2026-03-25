@@ -1050,7 +1050,7 @@ Same swap as Step 3.1. The page already has its own loading/error states via `Qu
 
 **Step 3.3 — Delete old preview renderer**
 
-Delete `features/questionnaires/components/builder/questionnaire-preview-renderer.tsx`. Remove any exports from barrel files. Run `npx tsc --noEmit` to verify no dangling imports.
+Delete `features/questionnaires/components/builder/questionnaire-preview-renderer.tsx`. Remove any exports from barrel files. Run `bun run typecheck` to verify no dangling imports.
 
 **Step 3.4 — Update barrel export**
 
@@ -1158,7 +1158,7 @@ Test at mobile (`< md`) and desktop (`≥ md`) breakpoints:
 **Step 6.4 — Type check and lint**
 
 ```bash
-cd app.faculytics && npx tsc --noEmit && bun run lint
+cd app.faculytics && bun run typecheck && bun run lint
 ```
 
 ---

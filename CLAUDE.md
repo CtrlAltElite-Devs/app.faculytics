@@ -15,8 +15,8 @@ Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4, shadcn/u
 - `bun dev` — start dev server (port 3000)
 - `bun run build` — production build
 - `bun run lint` — ESLint (flat config, core-web-vitals + typescript presets)
-- `npx tsc --noEmit` — type-check without emitting (run before PRs)
-- `npx shadcn add <component>` — add shadcn components (also supports `@aceternity` registry)
+- `bun run typecheck` — type-check without emitting (run before PRs)
+- `bunx shadcn add <component>` — add shadcn components (also supports `@aceternity` registry)
 
 ## Architecture
 

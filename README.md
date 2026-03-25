@@ -23,8 +23,8 @@ Open `http://localhost:3000`.
 ## Quality Checks
 
 ```bash
-npm run lint
-npx tsc --noEmit
+bun run lint
+bun run typecheck
 ```
 
 ## Branding Assets

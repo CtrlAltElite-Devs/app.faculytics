@@ -23,8 +23,8 @@
 - `npm run dev`: start local dev server at `http://localhost:3000`.
 - `npm run build`: create production build.
 - `npm run start`: run built app.
-- `npm run lint`: run ESLint checks.
-- `npx tsc --noEmit`: run strict type-checking (recommended before PRs).
+- `bun run lint`: run ESLint checks.
+- `bun run typecheck`: run strict type-checking (recommended before PRs).
 
 ## Coding Style & Naming Conventions
 
@@ -49,8 +49,8 @@
 
 - No dedicated test framework is currently configured.
 - Minimum quality gate for changes:
-  - `npm run lint`
-  - `npx tsc --noEmit`
+  - `bun run lint`
+  - `bun run typecheck`
 - When tests are added, place them next to source as `*.test.ts`/`*.test.tsx` or under a local `__tests__/` folder by feature.
 
 ## Commit & Pull Request Guidelines
