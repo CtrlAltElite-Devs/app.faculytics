@@ -70,5 +70,3 @@ export function useBuilderUiState() {
     clearPendingScrollToSection: () => dispatch({ type: "clear-pending-scroll-to-section" }),
   };
 }
-
-export type { BuilderUiState, BuilderUiAction };

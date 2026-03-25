@@ -13,11 +13,7 @@ import {
   validateQuestionnaireBuilderDraft,
 } from "@/features/questionnaires/lib/builder-validator";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
-import type {
-  QuestionnaireBuilderQuestionNode,
-  QuestionnaireBuilderSectionUpdates,
-  QuestionnaireType,
-} from "@/features/questionnaires/types";
+import type { QuestionnaireType } from "@/features/questionnaires/types";
 
 type UseQuestionnaireBuilderControllerOptions = {
   activeType: QuestionnaireType;
@@ -55,8 +51,9 @@ export function useQuestionnaireBuilderController({
     selectSection(draft.sections[0]?.id ?? null);
   }, [draft, selectSection]);
 
+  const { pendingScrollToSection, clearPendingScrollToSection } = ui;
   useEffect(() => {
-    if (!draft?.selectedSectionId || !ui.pendingScrollToSection) {
+    if (!draft?.selectedSectionId || !pendingScrollToSection) {
       return;
     }
 
@@ -67,9 +64,9 @@ export function useQuestionnaireBuilderController({
 
     requestAnimationFrame(() => {
       document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      ui.clearPendingScrollToSection();
+      clearPendingScrollToSection();
     });
-  }, [draft?.selectedSectionId, ui.pendingScrollToSection]);
+  }, [draft?.selectedSectionId, pendingScrollToSection, clearPendingScrollToSection]);
 
   // Always compute live — used for totalLeafWeight, and for error display after first save attempt.
   const liveValidation = draft ? validateQuestionnaireBuilderDraft(draft) : null;
@@ -107,18 +104,6 @@ export function useQuestionnaireBuilderController({
   const handleAddRootSection = () => {
     ui.requestScrollToSection();
     addRootSection();
-  };
-
-  const handleUpdateSection = (sectionId: string, updates: QuestionnaireBuilderSectionUpdates) => {
-    updateSection(sectionId, updates);
-  };
-
-  const handleUpdateQuestion = (
-    sectionId: string,
-    questionId: string,
-    updates: Partial<Pick<QuestionnaireBuilderQuestionNode, "prompt" | "type">>
-  ) => {
-    updateQuestion(sectionId, questionId, updates);
   };
 
   const handleSelectSection = (sectionId: string) => {
@@ -183,8 +168,8 @@ export function useQuestionnaireBuilderController({
     pendingConversionState,
     requestAddChild,
     handleAddRootSection,
-    handleUpdateSection,
-    handleUpdateQuestion,
+    handleUpdateSection: updateSection,
+    handleUpdateQuestion: updateQuestion,
     handleSelectSection,
     handleSave,
     handleDiscardDraft,

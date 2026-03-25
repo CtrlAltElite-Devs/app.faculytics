@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { DEFAULT_QUALITATIVE_MAX_LENGTH, MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
-import { createComparableDraftSnapshot, draftsMatch } from "@/features/questionnaires/lib/builder-draft-utils";
+import { draftsMatch } from "@/features/questionnaires/lib/builder-draft-utils";
 import {
   createDraft,
   createQuestion,
@@ -503,10 +503,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
           return hasMeaningfulDraftContent(activeDraft);
         }
 
-        return (
-          JSON.stringify(createComparableDraftSnapshot(activeDraft)) !==
-          JSON.stringify(createComparableDraftSnapshot(syncedDraft))
-        );
+        return !draftsMatch(activeDraft, syncedDraft);
       },
     }),
     {

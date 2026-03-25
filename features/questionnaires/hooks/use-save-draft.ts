@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import { saveDraft } from "@/features/questionnaires/api/questionnaire.requests";
@@ -37,7 +37,9 @@ export function useAutoSaveDraft({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mutationRef = useRef(useSaveDraft());
   const onStatusChangeRef = useRef(onStatusChange);
-  onStatusChangeRef.current = onStatusChange;
+  useEffect(() => {
+    onStatusChangeRef.current = onStatusChange;
+  }, [onStatusChange]);
 
   const debouncedSave = useCallback(
     (values: QuestionnaireFormValues) => {
