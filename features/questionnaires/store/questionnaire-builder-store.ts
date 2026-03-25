@@ -240,11 +240,9 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             persistedDraft !== null && !draftsMatch(persistedDraft, persistedSyncedDraft ?? null);
           const nextSyncedDrafts = { ...state.syncedDrafts };
 
-          if (context.draftVersion) {
-            nextSyncedDrafts[context.type] = nextDraft;
-          } else if (persistedSyncedDraft) {
-            delete nextSyncedDrafts[context.type];
-          }
+          // Always set a synced snapshot so hasUnsavedChanges can compare against
+          // the initial state rather than falling back to hasMeaningfulDraftContent.
+          nextSyncedDrafts[context.type] = nextDraft;
 
           const shouldKeepPersistedDraft =
             hasPersistedUnsavedChanges &&
