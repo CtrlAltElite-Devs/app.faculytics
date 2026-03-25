@@ -25,12 +25,18 @@ export type SemesterShortResponseDto = {
   academicYear?: string;
 };
 
+export type SectionShortResponseDto = {
+  id: string;
+  name: string;
+};
+
 export type EnrollmentResponseDto = {
   id: string;
   role: string;
   course: CourseShortResponseDto;
   faculty?: FacultyShortResponseDto | null;
   semester?: SemesterShortResponseDto | null;
+  section?: SectionShortResponseDto | null;
 };
 
 export type PaginationMeta = {

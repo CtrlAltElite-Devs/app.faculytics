@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Layers3 } from "lucide-react";
 
 import { decodeHtmlEntities, resolveCourseImageSrc } from "@/lib/string";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,6 +13,7 @@ export type CourseCardProps = {
   fullname: string;
   teacherName: string;
   teacherImageSrc?: string;
+  sectionName?: string;
   feedbackHref: string;
   onGiveFeedback?: () => void;
   imageSrc?: string;
@@ -22,6 +24,7 @@ export default function CourseCard({
   fullname,
   teacherName,
   teacherImageSrc,
+  sectionName,
   feedbackHref,
   onGiveFeedback,
   imageSrc,
@@ -29,6 +32,7 @@ export default function CourseCard({
   const decodedShortname = decodeHtmlEntities(shortname);
   const decodedFullname = decodeHtmlEntities(fullname);
   const decodedTeacherName = decodeHtmlEntities(teacherName);
+  const decodedSectionName = sectionName ? decodeHtmlEntities(sectionName) : null;
   const titleSizeClass =
     decodedFullname.length > 64 ? "text-base" : decodedFullname.length > 40 ? "text-lg" : "text-xl";
   const resolvedImageSrc = resolveCourseImageSrc(imageSrc);
@@ -60,14 +64,22 @@ export default function CourseCard({
             {decodedFullname}
           </h2>
         </div>
-        <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
-          <Avatar className="size-7">
-            {teacherImageSrc ? (
-              <AvatarImage src={teacherImageSrc} alt={decodedTeacherName} />
-            ) : null}
-            <AvatarFallback className="text-[10px]">{teacherInitials || "T"}</AvatarFallback>
-          </Avatar>
-          <p className="line-clamp-1">{decodedTeacherName}</p>
+        <div className="space-y-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2.5">
+            <Avatar className="size-7">
+              {teacherImageSrc ? (
+                <AvatarImage src={teacherImageSrc} alt={decodedTeacherName} />
+              ) : null}
+              <AvatarFallback className="text-[10px]">{teacherInitials || "T"}</AvatarFallback>
+            </Avatar>
+            <p className="line-clamp-1">{decodedTeacherName}</p>
+          </div>
+          {decodedSectionName && (
+            <div className="flex items-center gap-2.5">
+              <Layers3 className="size-6 shrink-0" />
+              <p className="line-clamp-1">{decodedSectionName}</p>
+            </div>
+          )}
         </div>
         <Button asChild variant="brand" className="mt-auto w-full">
           <Link href={feedbackHref} onClick={onGiveFeedback}>

@@ -28,12 +28,12 @@ import { useEvaluationDraft } from "./use-evaluation-draft";
 // ---------------------------------------------------------------------------
 
 type EvaluationContext = {
-  enrollment: EnrollmentResponseDto;
   faculty: FacultyShortResponseDto;
   semester: SemesterShortResponseDto;
   courseName: string;
   courseShortname: string;
   facultyName: string;
+  enrollmentSectionName?: string;
 };
 
 type ReadyData = EvaluationContext & {
@@ -93,32 +93,26 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   });
   const activeVersion = activeVersionQuery.data;
 
-  // --- Step 3: Check if already submitted ---
-  const checkParams =
-    activeVersion && faculty && semester
-      ? {
-          versionId: activeVersion.id,
-          facultyId: faculty.id,
-          semesterId: semester.id,
-          courseId,
-        }
-      : null;
+  const evaluationParams = useMemo(
+    () =>
+      activeVersion && faculty && semester
+        ? {
+            versionId: activeVersion.id,
+            facultyId: faculty.id,
+            semesterId: semester.id,
+            courseId,
+          }
+        : null,
+    [activeVersion, faculty, semester, courseId]
+  );
 
-  const submissionCheck = useCheckSubmission(checkParams);
+  // --- Step 3: Check if already submitted ---
+  const submissionCheck = useCheckSubmission(evaluationParams);
 
   // --- Step 4: Fetch existing draft ---
-  const draftParams =
-    activeVersion && faculty && semester
-      ? {
-          versionId: activeVersion.id,
-          facultyId: faculty.id,
-          semesterId: semester.id,
-          courseId,
-        }
-      : null;
-
-  const draftQuery = useEvaluationDraft(draftParams, {
-    enabled: Boolean(draftParams) && submissionCheck.isSuccess && !submissionCheck.data?.submitted,
+  const draftQuery = useEvaluationDraft(evaluationParams, {
+    enabled:
+      Boolean(evaluationParams) && submissionCheck.isSuccess && !submissionCheck.data?.submitted,
   });
 
   // --- Step 5: Build model + handle stale draft ---
@@ -156,14 +150,7 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   // --- Derive display strings (safe to call unconditionally) ---
   const context = useMemo<EvaluationContext | null>(() => {
     if (!enrollment || !faculty || !semester) return null;
-    return {
-      enrollment,
-      faculty,
-      semester,
-      courseName: decodeHtmlEntities(enrollment.course.fullname || "Course"),
-      courseShortname: decodeHtmlEntities(enrollment.course.shortname || ""),
-      facultyName: decodeHtmlEntities(faculty.fullName || ""),
-    };
+    return buildEvaluationContext(enrollment, faculty, semester);
   }, [enrollment, faculty, semester]);
 
   // --- Status resolution (waterfall) ---
@@ -193,7 +180,7 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   if (!activeVersion || !model || !context) {
     return {
       status: "no-version",
-      context: context ?? buildFallbackContext(enrollment),
+      context: buildEvaluationContext(enrollment, faculty, semester),
     };
   }
 
@@ -223,14 +210,19 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Fallback context when version/model aren't available yet. */
-function buildFallbackContext(enrollment: EnrollmentResponseDto): EvaluationContext {
+function buildEvaluationContext(
+  enrollment: EnrollmentResponseDto,
+  faculty: FacultyShortResponseDto,
+  semester: SemesterShortResponseDto
+): EvaluationContext {
   return {
-    enrollment,
-    faculty: enrollment.faculty!,
-    semester: enrollment.semester!,
+    faculty,
+    semester,
     courseName: decodeHtmlEntities(enrollment.course.fullname || "Course"),
     courseShortname: decodeHtmlEntities(enrollment.course.shortname || ""),
-    facultyName: decodeHtmlEntities(enrollment.faculty?.fullName || ""),
+    facultyName: decodeHtmlEntities(faculty.fullName || ""),
+    enrollmentSectionName: enrollment.section?.name
+      ? decodeHtmlEntities(enrollment.section.name)
+      : undefined,
   };
 }

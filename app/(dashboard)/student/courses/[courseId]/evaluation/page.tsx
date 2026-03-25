@@ -21,6 +21,7 @@ export default function FacultyEvaluationPage() {
         courseName={ctx?.courseName}
         courseShortname={ctx?.courseShortname}
         facultyName={ctx?.facultyName}
+        enrollmentSectionName={ctx?.enrollmentSectionName}
       >
         <EvaluationLoading message={result.message} />
       </EvaluationPageShell>
@@ -52,12 +53,13 @@ export default function FacultyEvaluationPage() {
   }
 
   if (result.status === "no-version") {
-    const { courseName, courseShortname, facultyName } = result.context;
+    const { courseName, courseShortname, facultyName, enrollmentSectionName } = result.context;
     return (
       <EvaluationPageShell
         courseName={courseName}
         courseShortname={courseShortname}
         facultyName={facultyName}
+        enrollmentSectionName={enrollmentSectionName}
       >
         <EvaluationError message="No active questionnaire is available for evaluation at this time." />
       </EvaluationPageShell>
@@ -71,6 +73,7 @@ export default function FacultyEvaluationPage() {
         courseName={context.courseName}
         courseShortname={context.courseShortname}
         facultyName={context.facultyName}
+        enrollmentSectionName={context.enrollmentSectionName}
       >
         <EvaluationAlreadySubmitted submittedAt={submittedAt} />
       </EvaluationPageShell>
