@@ -7,10 +7,7 @@ export type QuantitativeMetricScore = {
   score: number;
 };
 
-export type SemesterKey =
-  | "firstSemester"
-  | "secondSemester"
-  | "summerSemester";
+export type SemesterKey = "firstSemester" | "secondSemester" | "summerSemester";
 
 export type FacultyAnalysisSemesterKey = SemesterKey;
 

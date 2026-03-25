@@ -33,7 +33,10 @@ export function useQuestionnaireVersions(
   });
 }
 
-export function useQuestionnaireVersion(versionId: string | null, options?: UseQuestionnaireVersionsOptions) {
+export function useQuestionnaireVersion(
+  versionId: string | null,
+  options?: UseQuestionnaireVersionsOptions
+) {
   const token = useAuthStore((state) => state.token);
   const isEnabled = options?.enabled ?? true;
 

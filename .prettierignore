@@ -1,0 +1,11 @@
+.next
+node_modules
+.git
+.agents
+.claude
+_bmad
+_bmad-output
+docs
+bun.lock
+components/ui
+REFACTOR_PLAN.md

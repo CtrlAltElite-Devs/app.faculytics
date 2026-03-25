@@ -12,7 +12,7 @@ type UseEvaluationDraftOptions = {
 
 export function useEvaluationDraft(
   params: FetchDraftParams | null,
-  options?: UseEvaluationDraftOptions,
+  options?: UseEvaluationDraftOptions
 ) {
   const token = useAuthStore((state) => state.token);
   const isEnabled = options?.enabled ?? true;

@@ -71,7 +71,13 @@ export function DimensionCodeSelect({
       createdAt: "",
       updatedAt: "",
     };
-  }, [dimensionsQuery.isError, dimensionsQuery.isLoading, questionnaireType, selectedDimension, value]);
+  }, [
+    dimensionsQuery.isError,
+    dimensionsQuery.isLoading,
+    questionnaireType,
+    selectedDimension,
+    value,
+  ]);
 
   const normalizedSearch = normalizeDimensionText(searchValue);
   const selectedDisplayValue =
@@ -224,7 +230,9 @@ export function DimensionCodeSelect({
                         <Check
                           className={cn(
                             "size-4",
-                            value === unavailableSelectedDimension.code ? "opacity-100" : "opacity-0"
+                            value === unavailableSelectedDimension.code
+                              ? "opacity-100"
+                              : "opacity-0"
                           )}
                         />
                         <span className="truncate">{unavailableSelectedDimension.displayName}</span>
@@ -283,8 +291,8 @@ export function DimensionCodeSelect({
       {helperMessage ? <p className="text-sm text-destructive">{helperMessage}</p> : null}
       {!helperMessage && unavailableSelectedDimension ? (
         <p className="text-sm text-amber-700">
-          The saved code &quot;{unavailableSelectedDimension.code}&quot; is not in the active registry.
-          Re-select it or choose a replacement before publishing.
+          The saved code &quot;{unavailableSelectedDimension.code}&quot; is not in the active
+          registry. Re-select it or choose a replacement before publishing.
         </p>
       ) : null}
     </div>

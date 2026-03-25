@@ -79,7 +79,9 @@ function inferQuestionType(section: QuestionnaireBuilderSectionNode): BuilderQue
   return DEFAULT_BUILDER_QUESTION_TYPE;
 }
 
-function mapSectionTreeNode(node: QuestionnaireSchemaSectionTreeNode): QuestionnaireBuilderSectionNode {
+function mapSectionTreeNode(
+  node: QuestionnaireSchemaSectionTreeNode
+): QuestionnaireBuilderSectionNode {
   const children = sortByOrder(node.sections).map(mapSectionTreeNode);
   const isLeaf = children.length === 0;
   const questions = isLeaf
@@ -97,7 +99,7 @@ function mapSectionTreeNode(node: QuestionnaireSchemaSectionTreeNode): Questionn
     id: node.id,
     title: node.title,
     order: node.order,
-    weight: isLeaf ? node.weight ?? null : null,
+    weight: isLeaf ? (node.weight ?? null) : null,
     dimensionCode: isLeaf ? dimensionCode : null,
     dimensionCodeIssue: isLeaf ? dimensionCodeIssue : null,
     questionType,

@@ -4,10 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import { saveDraft } from "@/features/questionnaires/api/questionnaire.requests";
-import type {
-  QuestionnaireFormValues,
-  SaveDraftPayload,
-} from "@/features/questionnaires/types";
+import type { QuestionnaireFormValues, SaveDraftPayload } from "@/features/questionnaires/types";
 
 const DEBOUNCE_MS = 3000;
 
@@ -78,7 +75,7 @@ export function useAutoSaveDraft({
         });
       }, DEBOUNCE_MS);
     },
-    [versionId, facultyId, semesterId, courseId],
+    [versionId, facultyId, semesterId, courseId]
   );
 
   const cancel = useCallback(() => {

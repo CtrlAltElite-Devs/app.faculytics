@@ -42,7 +42,7 @@ export async function fetchQuestionnaireVersionsByType(type: QuestionnaireType) 
  */
 export async function fetchLatestActiveVersion(questionnaireId: string) {
   const response = await apiClient.get<QuestionnaireVersionDetail | null>(
-    Endpoints.questionnaireLatestActiveVersion.replace(":id", questionnaireId),
+    Endpoints.questionnaireLatestActiveVersion.replace(":id", questionnaireId)
   );
   return response.data;
 }
@@ -135,7 +135,7 @@ export async function submitEvaluation(payload: SubmitEvaluationPayload) {
 export async function checkSubmission(params: CheckSubmissionParams) {
   const response = await apiClient.get<CheckSubmissionResponse>(
     Endpoints.questionnaireSubmissionsCheck,
-    { params },
+    { params }
   );
   return response.data;
 }
@@ -146,10 +146,7 @@ export async function checkSubmission(params: CheckSubmissionParams) {
  * Save or update a draft (upsert).
  */
 export async function saveDraft(payload: SaveDraftPayload) {
-  const response = await apiClient.post<DraftResponse>(
-    Endpoints.questionnaireDrafts,
-    payload,
-  );
+  const response = await apiClient.post<DraftResponse>(Endpoints.questionnaireDrafts, payload);
   return response.data;
 }
 
@@ -158,10 +155,9 @@ export async function saveDraft(payload: SaveDraftPayload) {
  * Returns null if no draft exists.
  */
 export async function fetchDraft(params: FetchDraftParams) {
-  const response = await apiClient.get<DraftResponse | null>(
-    Endpoints.questionnaireDrafts,
-    { params },
-  );
+  const response = await apiClient.get<DraftResponse | null>(Endpoints.questionnaireDrafts, {
+    params,
+  });
   return response.data;
 }
 

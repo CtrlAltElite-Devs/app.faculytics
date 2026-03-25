@@ -48,7 +48,11 @@ export type EvaluationDataResult =
   | { status: "no-faculty" }
   | { status: "no-semester" }
   | { status: "no-version"; context: EvaluationContext }
-  | { status: "already-submitted"; context: EvaluationContext; submittedAt?: string }
+  | {
+      status: "already-submitted";
+      context: EvaluationContext;
+      submittedAt?: string;
+    }
   | { status: "ready"; data: ReadyData };
 
 // ---------------------------------------------------------------------------
@@ -71,10 +75,7 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   const selectedCourse = useSelectedCourseStore((s) => s.selectedCourse);
   const hasStoreMatch = selectedCourse?.course.id === courseId;
 
-  const enrollmentsQuery = useMyEnrollments(
-    { page: 1, limit: 100 },
-    { enabled: !hasStoreMatch },
-  );
+  const enrollmentsQuery = useMyEnrollments({ page: 1, limit: 100 }, { enabled: !hasStoreMatch });
 
   const enrollment = hasStoreMatch
     ? selectedCourse
@@ -95,7 +96,12 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   // --- Step 3: Check if already submitted ---
   const checkParams =
     activeVersion && faculty && semester
-      ? { versionId: activeVersion.id, facultyId: faculty.id, semesterId: semester.id, courseId }
+      ? {
+          versionId: activeVersion.id,
+          facultyId: faculty.id,
+          semesterId: semester.id,
+          courseId,
+        }
       : null;
 
   const submissionCheck = useCheckSubmission(checkParams);
@@ -103,14 +109,16 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   // --- Step 4: Fetch existing draft ---
   const draftParams =
     activeVersion && faculty && semester
-      ? { versionId: activeVersion.id, facultyId: faculty.id, semesterId: semester.id, courseId }
+      ? {
+          versionId: activeVersion.id,
+          facultyId: faculty.id,
+          semesterId: semester.id,
+          courseId,
+        }
       : null;
 
   const draftQuery = useEvaluationDraft(draftParams, {
-    enabled:
-      Boolean(draftParams) &&
-      submissionCheck.isSuccess &&
-      !submissionCheck.data?.submitted,
+    enabled: Boolean(draftParams) && submissionCheck.isSuccess && !submissionCheck.data?.submitted,
   });
 
   // --- Step 5: Build model + handle stale draft ---
@@ -122,7 +130,7 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
             hydratedFromServer: true,
           })
         : null,
-    [activeVersion],
+    [activeVersion]
   );
 
   const draft = draftQuery.data;
@@ -139,7 +147,10 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
 
   const defaultValues =
     draft && !isDraftStale
-      ? { answers: draft.answers, qualitativeComment: draft.qualitativeComment ?? "" }
+      ? {
+          answers: draft.answers,
+          qualitativeComment: draft.qualitativeComment ?? "",
+        }
       : undefined;
 
   // --- Derive display strings (safe to call unconditionally) ---
@@ -162,14 +173,21 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   }
 
   if (enrollmentError || !enrollment) {
-    return { status: "error", message: "This course is not in your current enrollments." };
+    return {
+      status: "error",
+      message: "This course is not in your current enrollments.",
+    };
   }
 
   if (!faculty) return { status: "no-faculty" };
   if (!semester) return { status: "no-semester" };
 
   if (activeVersionQuery.isLoading) {
-    return { status: "loading", message: "Loading questionnaire...", context: context ?? undefined };
+    return {
+      status: "loading",
+      message: "Loading questionnaire...",
+      context: context ?? undefined,
+    };
   }
 
   if (!activeVersion || !model || !context) {
@@ -188,7 +206,11 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   }
 
   if (submissionCheck.isLoading || draftQuery.isLoading) {
-    return { status: "loading", message: "Preparing your evaluation...", context };
+    return {
+      status: "loading",
+      message: "Preparing your evaluation...",
+      context,
+    };
   }
 
   return {

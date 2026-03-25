@@ -34,7 +34,11 @@ export function DeanFacultyAnalysisTable() {
   const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
   const totalRows = deanAnalyticsSampleData.facultyAnalysis.length;
   const totalPages = Math.ceil(totalRows / rowsPerPage);
-  const paginatedRows = paginateArray(deanAnalyticsSampleData.facultyAnalysis, currentPage, rowsPerPage);
+  const paginatedRows = paginateArray(
+    deanAnalyticsSampleData.facultyAnalysis,
+    currentPage,
+    rowsPerPage
+  );
 
   return (
     <div className="space-y-4">
@@ -47,121 +51,109 @@ export function DeanFacultyAnalysisTable() {
         </p>
       </div>
       <div className="data-table-wrapper">
-          {isMobile ? (
-            <div className="divide-y divide-border/70">
-              {paginatedRows.map((faculty) => (
-                <div key={faculty.facultyName} className="space-y-4 p-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar size="default" className="border border-border/70">
-                      <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
-                        {faculty.facultyInitials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="font-sans text-sm font-semibold text-foreground">
-                        {faculty.facultyName}
+        {isMobile ? (
+          <div className="divide-y divide-border/70">
+            {paginatedRows.map((faculty) => (
+              <div key={faculty.facultyName} className="space-y-4 p-4">
+                <div className="flex items-center gap-3">
+                  <Avatar size="default" className="border border-border/70">
+                    <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
+                      {faculty.facultyInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <p className="font-sans text-sm font-semibold text-foreground">
+                      {faculty.facultyName}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-3 font-sans text-sm">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Subjects
+                    </p>
+                    <FacultySubjects subjects={faculty.subjects} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Positive Rate
                       </p>
+                      <p className="font-semibold text-foreground">{faculty.overallPositiveRate}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Responses
+                      </p>
+                      <p className="font-semibold text-foreground">{faculty.responses}</p>
                     </div>
                   </div>
-                  <div className="space-y-3 font-sans text-sm">
-                    <div className="space-y-2">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Subjects
-                      </p>
-                      <FacultySubjects subjects={faculty.subjects} />
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="sm"
+                    className="w-full font-sans text-brand-blue hover:text-brand-blue"
+                  >
+                    <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
+                      View Analysis
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
+            <TableHeader className="data-table-header">
+              <TableRow>
+                <TableHead className="data-table-head w-[24%]">Faculty</TableHead>
+                <TableHead className="data-table-head w-[32%]">Subjects</TableHead>
+                <TableHead className="data-table-head w-[16%]">Overall Positive Rate</TableHead>
+                <TableHead className="data-table-head w-[10%]">Responses</TableHead>
+                <TableHead className="data-table-head w-[18%] text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="[&_tr:last-child]:border-b-0">
+              {paginatedRows.map((faculty) => (
+                <TableRow key={faculty.facultyName} className="data-table-row">
+                  <TableCell className="data-table-cell">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Avatar size="default" className="border border-border/70">
+                        <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
+                          {faculty.facultyInitials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="truncate font-sans text-sm font-semibold text-foreground">
+                        {faculty.facultyName}
+                      </span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                          Positive Rate
-                        </p>
-                        <p className="font-semibold text-foreground">
-                          {faculty.overallPositiveRate}
-                        </p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                          Responses
-                        </p>
-                        <p className="font-semibold text-foreground">{faculty.responses}</p>
-                      </div>
-                    </div>
+                  </TableCell>
+                  <TableCell className="data-table-cell">
+                    <FacultySubjects subjects={faculty.subjects} />
+                  </TableCell>
+                  <TableCell className="data-table-cell font-semibold">
+                    {faculty.overallPositiveRate}
+                  </TableCell>
+                  <TableCell className="data-table-cell font-semibold">
+                    {faculty.responses}
+                  </TableCell>
+                  <TableCell className="data-table-cell text-right">
                     <Button
                       asChild
                       variant="ghost"
                       size="sm"
-                      className="w-full font-sans text-brand-blue hover:text-brand-blue"
+                      className="h-auto max-w-full whitespace-nowrap px-3 py-2 font-sans text-brand-blue hover:text-brand-blue"
                     >
                       <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
                         View Analysis
                       </Link>
                     </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
-              <TableHeader className="data-table-header">
-                <TableRow>
-                  <TableHead className="data-table-head w-[24%]">
-                    Faculty
-                  </TableHead>
-                  <TableHead className="data-table-head w-[32%]">
-                    Subjects
-                  </TableHead>
-                  <TableHead className="data-table-head w-[16%]">
-                    Overall Positive Rate
-                  </TableHead>
-                  <TableHead className="data-table-head w-[10%]">
-                    Responses
-                  </TableHead>
-                  <TableHead className="data-table-head w-[18%] text-right">
-                    Action
-                  </TableHead>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody className="[&_tr:last-child]:border-b-0">
-                {paginatedRows.map((faculty) => (
-                  <TableRow key={faculty.facultyName} className="data-table-row">
-                    <TableCell className="data-table-cell">
-                      <div className="flex min-w-0 items-center gap-3">
-                        <Avatar size="default" className="border border-border/70">
-                          <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
-                            {faculty.facultyInitials}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="truncate font-sans text-sm font-semibold text-foreground">
-                          {faculty.facultyName}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="data-table-cell">
-                      <FacultySubjects subjects={faculty.subjects} />
-                    </TableCell>
-                    <TableCell className="data-table-cell font-semibold">
-                      {faculty.overallPositiveRate}
-                    </TableCell>
-                    <TableCell className="data-table-cell font-semibold">
-                      {faculty.responses}
-                    </TableCell>
-                    <TableCell className="data-table-cell text-right">
-                      <Button
-                        asChild
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto max-w-full whitespace-nowrap px-3 py-2 font-sans text-brand-blue hover:text-brand-blue"
-                      >
-                        <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
-                          View Analysis
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
       <div className="flex flex-col gap-3 pt-4 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="text-xs sm:text-sm">

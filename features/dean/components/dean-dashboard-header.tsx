@@ -15,7 +15,7 @@ import {
 
 export function DeanDashboardHeader() {
   const [selectedAcademicYear, setSelectedAcademicYear] = useState(
-    deanAnalyticsSampleData.selectedAcademicYear,
+    deanAnalyticsSampleData.selectedAcademicYear
   );
 
   return (
@@ -40,11 +40,16 @@ export function DeanDashboardHeader() {
               <ChevronDown className="size-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0">
+          <DropdownMenuContent
+            align="end"
+            className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+          >
             <DropdownMenuRadioGroup
               value={selectedAcademicYear}
               onValueChange={(value) => {
-                setSelectedAcademicYear(value as (typeof deanAnalyticsSampleData.academicYears)[number]);
+                setSelectedAcademicYear(
+                  value as (typeof deanAnalyticsSampleData.academicYears)[number]
+                );
               }}
             >
               {deanAnalyticsSampleData.academicYears.map((year) => (

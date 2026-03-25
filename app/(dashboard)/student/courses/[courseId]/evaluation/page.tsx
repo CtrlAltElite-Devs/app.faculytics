@@ -8,10 +8,7 @@ import { EvaluationAlreadySubmitted } from "./_components/evaluation-already-sub
 import { EvaluationForm } from "./_components/evaluation-form";
 import { EvaluationNoFaculty } from "./_components/evaluation-no-faculty";
 import { EvaluationPageShell } from "./_components/evaluation-page-shell";
-import {
-  EvaluationError,
-  EvaluationLoading,
-} from "./_components/evaluation-states";
+import { EvaluationError, EvaluationLoading } from "./_components/evaluation-states";
 
 export default function FacultyEvaluationPage() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -57,7 +54,11 @@ export default function FacultyEvaluationPage() {
   if (result.status === "no-version") {
     const { courseName, courseShortname, facultyName } = result.context;
     return (
-      <EvaluationPageShell courseName={courseName} courseShortname={courseShortname} facultyName={facultyName}>
+      <EvaluationPageShell
+        courseName={courseName}
+        courseShortname={courseShortname}
+        facultyName={facultyName}
+      >
         <EvaluationError message="No active questionnaire is available for evaluation at this time." />
       </EvaluationPageShell>
     );
@@ -66,7 +67,11 @@ export default function FacultyEvaluationPage() {
   if (result.status === "already-submitted") {
     const { context, submittedAt } = result;
     return (
-      <EvaluationPageShell courseName={context.courseName} courseShortname={context.courseShortname} facultyName={context.facultyName}>
+      <EvaluationPageShell
+        courseName={context.courseName}
+        courseShortname={context.courseShortname}
+        facultyName={context.facultyName}
+      >
         <EvaluationAlreadySubmitted submittedAt={submittedAt} />
       </EvaluationPageShell>
     );

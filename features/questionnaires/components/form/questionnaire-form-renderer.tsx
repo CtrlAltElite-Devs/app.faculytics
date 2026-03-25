@@ -31,15 +31,11 @@ type QuestionnaireFormRendererProps = {
  * Recursively collects IDs of all required questions across all sections.
  * Used to track completion progress (how many required questions are answered).
  */
-function collectRequiredQuestionIds(
-  sections: QuestionnaireBuilderPreviewSection[],
-): string[] {
+function collectRequiredQuestionIds(sections: QuestionnaireBuilderPreviewSection[]): string[] {
   return sections.flatMap((section) => {
     // Leaf section: has questions directly
     if (section.questions.length > 0) {
-      return section.questions
-        .filter((q) => q.required)
-        .map((q) => q.id);
+      return section.questions.filter((q) => q.required).map((q) => q.id);
     }
     // Parent section: recurse into children
     return collectRequiredQuestionIds(section.children);
@@ -56,29 +52,26 @@ export function QuestionnaireFormRenderer({
   const isInteractive = mode === "interactive";
 
   // --- Form state ---
-  const [answers, setAnswers] = useState<QuestionnaireFormAnswers>(
-    defaultValues?.answers ?? {},
-  );
+  const [answers, setAnswers] = useState<QuestionnaireFormAnswers>(defaultValues?.answers ?? {});
   const [qualitativeComment, setQualitativeComment] = useState<string>(
-    defaultValues?.qualitativeComment ?? "",
+    defaultValues?.qualitativeComment ?? ""
   );
 
   // --- Completion tracking ---
   const requiredQuestionIds = useMemo(
     () => collectRequiredQuestionIds(model.sections),
-    [model.sections],
+    [model.sections]
   );
 
   const answeredCount = useMemo(
     () => requiredQuestionIds.filter((id) => id in answers).length,
-    [requiredQuestionIds, answers],
+    [requiredQuestionIds, answers]
   );
 
   const totalRequired = requiredQuestionIds.length;
 
   const hasAnsweredAllQuestions = answeredCount === totalRequired;
-  const hasRequiredComment =
-    !model.qualitative.required || qualitativeComment.trim().length > 0;
+  const hasRequiredComment = !model.qualitative.required || qualitativeComment.trim().length > 0;
   const isComplete = hasAnsweredAllQuestions && hasRequiredComment;
 
   // --- Callbacks (stable references for memoized children) ---
@@ -87,7 +80,7 @@ export function QuestionnaireFormRenderer({
       if (!isInteractive) return;
       setAnswers((prev) => ({ ...prev, [questionId]: value }));
     },
-    [isInteractive],
+    [isInteractive]
   );
 
   const handleCommentChange = useCallback(
@@ -95,7 +88,7 @@ export function QuestionnaireFormRenderer({
       if (!isInteractive) return;
       setQualitativeComment(value);
     },
-    [isInteractive],
+    [isInteractive]
   );
 
   // Notify the parent whenever form values change

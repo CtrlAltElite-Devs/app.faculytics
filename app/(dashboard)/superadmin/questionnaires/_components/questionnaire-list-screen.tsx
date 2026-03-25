@@ -113,7 +113,8 @@ export function QuestionnaireListScreen({
 
           <div className="flex justify-end">
             <p className="text-sm text-muted-foreground">
-              {filteredRows.length} of {rows.length} version{rows.length === 1 ? "" : "s"}
+              {filteredRows.length} of {rows.length} version
+              {rows.length === 1 ? "" : "s"}
             </p>
           </div>
         </div>

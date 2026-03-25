@@ -26,7 +26,7 @@ type QuestionnaireFormMatrixProps = {
 
 /**
  * A custom radio button that looks like shadcn's RadioGroupItem.
- * Used in the matrix to select options for each question. 
+ * Used in the matrix to select options for each question.
  */
 function MatrixRadio({
   checked,
@@ -49,7 +49,7 @@ function MatrixRadio({
       onClick={onClick}
       className={cn(
         "relative aspect-square size-4 shrink-0 rounded-full border border-input shadow-xs transition-[color,box-shadow] outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
-        checked && "border-blue-500",
+        checked && "border-blue-500"
       )}
     >
       {checked && (
@@ -67,10 +67,7 @@ function MatrixRadio({
  *
  * Returns "" if the question hasn't been answered yet.
  */
-function getSelectedOptionKey(
-  value: number | undefined,
-  isLikert: boolean,
-): string {
+function getSelectedOptionKey(value: number | undefined, isLikert: boolean): string {
   if (value === undefined) return "";
   return isLikert ? value.toString() : YES_NO_REVERSE_MAP[value];
 }
@@ -136,10 +133,7 @@ function QuestionnaireFormMatrixBase({
                 aria-label={questionLabel}
                 className="border-b transition-colors last:border-b-0 hover:bg-muted/50"
               >
-                <th
-                  scope="row"
-                  className="px-3 py-3 text-left text-sm font-normal"
-                >
+                <th scope="row" className="px-3 py-3 text-left text-sm font-normal">
                   {questionLabel}
                 </th>
                 {options.map((option) => {

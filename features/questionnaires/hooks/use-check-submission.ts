@@ -12,7 +12,7 @@ type UseCheckSubmissionOptions = {
 
 export function useCheckSubmission(
   params: CheckSubmissionParams | null,
-  options?: UseCheckSubmissionOptions,
+  options?: UseCheckSubmissionOptions
 ) {
   const token = useAuthStore((state) => state.token);
   const isEnabled = options?.enabled ?? true;

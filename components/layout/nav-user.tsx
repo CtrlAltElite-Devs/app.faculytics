@@ -1,42 +1,35 @@
-"use client"
+"use client";
 
-import { LogOut } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button"
-import { useLogout, useMe } from "@/features/auth"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button";
+import { useLogout, useMe } from "@/features/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 
 export function NavUser() {
-  const router = useRouter()
-  const { data: me } = useMe()
-  const logoutMutation = useLogout()
+  const router = useRouter();
+  const { data: me } = useMe();
+  const logoutMutation = useLogout();
 
-  const userName = me?.fullName || me?.userName || "User"
-  const userEmail = me?.userName || "No email"
-  const userAvatar = me?.userProfilePicture?.trim() || null
+  const userName = me?.fullName || me?.userName || "User";
+  const userEmail = me?.userName || "No email";
+  const userAvatar = me?.userProfilePicture?.trim() || null;
   const userInitials = userName
     .split(" ")
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
 
   const handleLogout = async () => {
     try {
-      await logoutMutation.mutateAsync()
+      await logoutMutation.mutateAsync();
     } catch {
-      router.replace("/auth")
+      router.replace("/auth");
     }
-  }
+  };
 
   return (
     <SidebarMenu>
@@ -63,5 +56,5 @@ export function NavUser() {
         </div>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

@@ -3,10 +3,7 @@ type QuestionnairePageHeaderProps = {
   description: string;
 };
 
-export function QuestionnairePageHeader({
-  title,
-  description,
-}: QuestionnairePageHeaderProps) {
+export function QuestionnairePageHeader({ title, description }: QuestionnairePageHeaderProps) {
   return (
     <div>
       <h1 className="font-playfair text-2xl font-semibold">{title}</h1>

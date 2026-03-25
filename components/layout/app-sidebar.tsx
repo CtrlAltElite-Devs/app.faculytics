@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
+import * as React from "react";
+import Link from "next/link";
 
-import { AppBrand } from "@/components/layout/app-brand"
-import { RoleSwitcher } from "@/components/layout/role-switcher"
-import { useActiveRole, getNavItemsForRole } from "@/features/auth"
-import { NavMain } from "@/components/layout/nav-main"
-import { NavUser } from "@/components/layout/nav-user"
+import { AppBrand } from "@/components/layout/app-brand";
+import { RoleSwitcher } from "@/components/layout/role-switcher";
+import { useActiveRole, getNavItemsForRole } from "@/features/auth";
+import { NavMain } from "@/components/layout/nav-main";
+import { NavUser } from "@/components/layout/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -18,12 +18,12 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { activeRole, roleHome } = useActiveRole()
-  const navItems = getNavItemsForRole(activeRole)
-  const logoHref = roleHome ?? "/"
+  const { activeRole, roleHome } = useActiveRole();
+  const navItems = getNavItemsForRole(activeRole);
+  const logoHref = roleHome ?? "/";
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -54,5 +54,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

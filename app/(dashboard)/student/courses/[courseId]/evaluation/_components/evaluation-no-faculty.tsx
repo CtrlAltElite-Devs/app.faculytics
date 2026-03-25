@@ -10,12 +10,9 @@ export function EvaluationNoFaculty() {
       <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
         <UserX className="size-12 text-muted-foreground" />
         <div>
-          <h2 className="font-playfair text-xl font-semibold">
-            No Instructor Assigned
-          </h2>
+          <h2 className="font-playfair text-xl font-semibold">No Instructor Assigned</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            No instructor is assigned to this course. Evaluation is not
-            available.
+            No instructor is assigned to this course. Evaluation is not available.
           </p>
         </div>
         <Button asChild variant="outline">

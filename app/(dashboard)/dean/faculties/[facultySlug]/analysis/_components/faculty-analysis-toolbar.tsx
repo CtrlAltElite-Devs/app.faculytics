@@ -79,7 +79,7 @@ export function FacultyAnalysisToolbar({
               Upload File
             </DialogTitle>
             <DialogDescription className="font-sans text-sm">
-              Import feedback data to generate or merge with the existing data. 
+              Import feedback data to generate or merge with the existing data.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

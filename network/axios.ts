@@ -11,7 +11,9 @@ type RetriableRequestConfig = InternalAxiosRequestConfig & {
 
 function isAuthEndpoint(url?: string) {
   if (!url) return false;
-  return [Endpoints.login, Endpoints.refresh, Endpoints.logout].some((endpoint) => url.includes(endpoint));
+  return [Endpoints.login, Endpoints.refresh, Endpoints.logout].some((endpoint) =>
+    url.includes(endpoint)
+  );
 }
 
 function handleUnauthorized() {
@@ -70,7 +72,12 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as RetriableRequestConfig | undefined;
     const isUnauthorized = error.response?.status === 401;
 
-    if (!originalRequest || !isUnauthorized || originalRequest._retry || isAuthEndpoint(originalRequest.url)) {
+    if (
+      !originalRequest ||
+      !isUnauthorized ||
+      originalRequest._retry ||
+      isAuthEndpoint(originalRequest.url)
+    ) {
       return Promise.reject(error);
     }
 
@@ -97,5 +104,5 @@ apiClient.interceptors.response.use(
       handleUnauthorized();
       return Promise.reject(refreshError);
     }
-  },
+  }
 );

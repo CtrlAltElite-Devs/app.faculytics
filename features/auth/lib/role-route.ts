@@ -1,4 +1,11 @@
-import { BarChart3, BookOpen, Building2, LayoutDashboard, Shield, type LucideIcon } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  Building2,
+  LayoutDashboard,
+  Shield,
+  type LucideIcon,
+} from "lucide-react";
 
 import { ROLES, type AppRole } from "@/constants/roles";
 
@@ -50,7 +57,13 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     label: "Super Admin",
     homePath: "/superadmin/questionnaires",
     routePrefix: "/superadmin",
-    navItems: [{ title: "Questionnaires", url: "/superadmin/questionnaires", icon: Shield }],
+    navItems: [
+      {
+        title: "Questionnaires",
+        url: "/superadmin/questionnaires",
+        icon: Shield,
+      },
+    ],
   },
 };
 
@@ -60,10 +73,7 @@ export function getAvailableRoles(roles?: string[] | null): AppRole[] {
   return ROLES.filter((role) => roles.includes(role));
 }
 
-export function resolveActiveRole(
-  roles?: string[] | null,
-  activeRole?: AppRole | null,
-) {
+export function resolveActiveRole(roles?: string[] | null, activeRole?: AppRole | null) {
   const availableRoles = getAvailableRoles(roles);
   if (!availableRoles.length) return null;
 
@@ -74,10 +84,7 @@ export function resolveActiveRole(
   return availableRoles[0];
 }
 
-export function resolveHomeFromRoles(
-  roles?: string[] | null,
-  activeRole?: AppRole | null,
-) {
+export function resolveHomeFromRoles(roles?: string[] | null, activeRole?: AppRole | null) {
   const role = resolveActiveRole(roles, activeRole);
   return role ? ROLE_CONFIG[role].homePath : null;
 }

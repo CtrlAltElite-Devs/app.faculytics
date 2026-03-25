@@ -1,11 +1,5 @@
 import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 function formatMetric(value: number, suffix?: string) {
   const formattedValue = Number.isInteger(value)

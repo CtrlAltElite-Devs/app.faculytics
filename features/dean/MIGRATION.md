@@ -12,18 +12,18 @@ All endpoints require JWT and are scoped to `DEAN` or `SUPER_ADMIN` roles. Deans
 
 ### Analytics Module (`/api/v1/analytics`)
 
-| Method | Path | Query Params | Response DTO |
-|--------|------|-------------|--------------|
-| GET | `/analytics/overview` | `semesterId` (required), `programCode?` | `DepartmentOverviewResponseDto` |
-| GET | `/analytics/attention` | `semesterId` (required) | `AttentionListResponseDto` |
-| GET | `/analytics/trends` | `semesterId?`, `minSemesters?` (default 3), `minR2?` (default 0.5) | `FacultyTrendsResponseDto` |
+| Method | Path                   | Query Params                                                       | Response DTO                    |
+| ------ | ---------------------- | ------------------------------------------------------------------ | ------------------------------- |
+| GET    | `/analytics/overview`  | `semesterId` (required), `programCode?`                            | `DepartmentOverviewResponseDto` |
+| GET    | `/analytics/attention` | `semesterId` (required)                                            | `AttentionListResponseDto`      |
+| GET    | `/analytics/trends`    | `semesterId?`, `minSemesters?` (default 3), `minR2?` (default 0.5) | `FacultyTrendsResponseDto`      |
 
 ### Faculty Module (`/api/v1/faculty`)
 
-| Method | Path | Query Params | Response DTO |
-|--------|------|-------------|--------------|
-| GET | `/faculty` | `semesterId` (required), `departmentId?`, `programId?`, `search?`, `page?` (default 1), `limit?` (default 20, max 100) | `FacultyListResponseDto` |
-| GET | `/faculty/:facultyId/submission-count` | `semesterId` (required) | `SubmissionCountResponseDto` |
+| Method | Path                                   | Query Params                                                                                                           | Response DTO                 |
+| ------ | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| GET    | `/faculty`                             | `semesterId` (required), `departmentId?`, `programId?`, `search?`, `page?` (default 1), `limit?` (default 20, max 100) | `FacultyListResponseDto`     |
+| GET    | `/faculty/:facultyId/submission-count` | `semesterId` (required)                                                                                                | `SubmissionCountResponseDto` |
 
 ---
 
@@ -40,24 +40,24 @@ All endpoints require JWT and are scoped to `DEAN` or `SUPER_ADMIN` roles. Deans
     positiveCount: number;
     negativeCount: number;
     neutralCount: number;
-  };
+  }
   faculty: Array<{
     facultyId: string;
     facultyName: string;
     departmentCode: string;
     submissionCount: number;
     commentCount: number;
-    avgNormalizedScore: number;       // 0–100
+    avgNormalizedScore: number; // 0–100
     positiveCount: number;
     negativeCount: number;
     neutralCount: number;
     analyzedCount: number;
     topicCount: number;
-    percentileRank: number;           // 0–1
-    scoreDelta: number | null;        // vs previous semester
+    percentileRank: number; // 0–1
+    scoreDelta: number | null; // vs previous semester
     sentimentDelta: number | null;
   }>;
-  lastRefreshedAt: string | null;     // ISO 8601
+  lastRefreshedAt: string | null; // ISO 8601
 }
 ```
 
@@ -108,7 +108,7 @@ All endpoints require JWT and are scoped to `DEAN` or `SUPER_ADMIN` roles. Deans
     id: string;
     fullName: string;
     profilePicture: string | null;
-    subjects: string[];               // sorted alphabetically
+    subjects: string[]; // sorted alphabetically
   }>;
   meta: {
     totalItems: number;
@@ -116,7 +116,7 @@ All endpoints require JWT and are scoped to `DEAN` or `SUPER_ADMIN` roles. Deans
     itemsPerPage: number;
     totalPages: number;
     currentPage: number;
-  };
+  }
 }
 ```
 
@@ -155,13 +155,13 @@ Define proper frontend DTOs matching the backend response shapes above. Drop the
 
 ### 4. Create hooks in `features/dean/hooks/`
 
-| Hook | Wraps | Used by |
-|------|-------|---------|
-| `use-department-overview.ts` | `GET /analytics/overview` | Dashboard metrics grid, charts, faculty table |
-| `use-attention-list.ts` | `GET /analytics/attention` | (future) attention flags UI |
-| `use-faculty-trends.ts` | `GET /analytics/trends` | (future) trends visualization |
-| `use-faculty-list.ts` | `GET /faculty` | Faculty table with pagination + search |
-| `use-submission-count.ts` | `GET /faculty/:id/submission-count` | Faculty detail page |
+| Hook                         | Wraps                               | Used by                                       |
+| ---------------------------- | ----------------------------------- | --------------------------------------------- |
+| `use-department-overview.ts` | `GET /analytics/overview`           | Dashboard metrics grid, charts, faculty table |
+| `use-attention-list.ts`      | `GET /analytics/attention`          | (future) attention flags UI                   |
+| `use-faculty-trends.ts`      | `GET /analytics/trends`             | (future) trends visualization                 |
+| `use-faculty-list.ts`        | `GET /faculty`                      | Faculty table with pagination + search        |
+| `use-submission-count.ts`    | `GET /faculty/:id/submission-count` | Faculty detail page                           |
 
 ### 5. Wire components to real data
 
@@ -182,15 +182,15 @@ Replace `deanAnalyticsSampleData` imports in each component with hook calls:
 
 ## Key Differences: Mock vs Real
 
-| Mock data | Real API |
-|-----------|----------|
-| Faculty identified by `facultySlug` (string) | Faculty identified by `facultyId` (UUID) |
-| Hardcoded `subjects` array | `subjects` from enrollment join (course shortnames) |
-| `averageRating` (1–5 scale) | `avgNormalizedScore` (0–100 scale) |
-| `overallPositiveRate` (string like "89.4%") | Compute from `positiveCount / (positive + negative + neutral)` |
+| Mock data                                         | Real API                                                         |
+| ------------------------------------------------- | ---------------------------------------------------------------- |
+| Faculty identified by `facultySlug` (string)      | Faculty identified by `facultyId` (UUID)                         |
+| Hardcoded `subjects` array                        | `subjects` from enrollment join (course shortnames)              |
+| `averageRating` (1–5 scale)                       | `avgNormalizedScore` (0–100 scale)                               |
+| `overallPositiveRate` (string like "89.4%")       | Compute from `positiveCount / (positive + negative + neutral)`   |
 | Qualitative themes, insights, action plans inline | Comes from analysis pipeline recommendations (separate endpoint) |
-| No semester filtering | `semesterId` required on all analytics queries |
-| Static feedback records | Real submissions from `QuestionnaireSubmission` entity |
+| No semester filtering                             | `semesterId` required on all analytics queries                   |
+| Static feedback records                           | Real submissions from `QuestionnaireSubmission` entity           |
 
 ---
 

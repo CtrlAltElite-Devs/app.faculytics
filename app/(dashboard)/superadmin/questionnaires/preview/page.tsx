@@ -66,8 +66,7 @@ export default function QuestionnaireVersionPreviewPage() {
         <div>
           <h1 className="font-playfair text-3xl font-bold">{model.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Superadmin preview. This simulates the student reading experience
-            without submission.
+            Superadmin preview. This simulates the student reading experience without submission.
           </p>
         </div>
         <Button asChild variant="outline">

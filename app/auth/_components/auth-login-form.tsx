@@ -29,9 +29,10 @@ export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginForm
       password: "",
     },
   });
-  
+
   const isBusy = isPending || isAuthenticating;
-  const loginErrorMessage = (error as AxiosError<AuthErrorResponse> | null)?.response?.data?.message ?? null;
+  const loginErrorMessage =
+    (error as AxiosError<AuthErrorResponse> | null)?.response?.data?.message ?? null;
   const feedbackMessage = loginErrorMessage ?? statusMessage;
 
   const onSubmit = (values: LoginRequest) => {

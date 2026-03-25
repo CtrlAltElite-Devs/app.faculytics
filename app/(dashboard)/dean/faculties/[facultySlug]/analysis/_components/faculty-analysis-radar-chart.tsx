@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 
-import {
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-} from "recharts";
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
 
 import type { DeanFacultyAnalysisRecord } from "@/features/dean";
 import {
@@ -17,13 +11,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -73,20 +61,14 @@ function getInterpretation(score: number) {
   return "Poor Performance";
 }
 
-export function FacultyAnalysisRadarChart({
-  faculty,
-}: {
-  faculty: DeanFacultyAnalysisRecord;
-}) {
-  const [selectedView, setSelectedView] =
-    useState<keyof typeof metricViewLabels>("classroom");
+export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
+  const [selectedView, setSelectedView] = useState<keyof typeof metricViewLabels>("classroom");
   const metricView = faculty.quantitativeMetrics[selectedView];
   const radarData = metricView.metrics.map((metric) => ({
     metric: metric.metric,
     score: metric.score,
   }));
-  const overallRating =
-    radarData.reduce((sum, metric) => sum + metric.score, 0) / radarData.length;
+  const overallRating = radarData.reduce((sum, metric) => sum + metric.score, 0) / radarData.length;
 
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">
@@ -96,28 +78,28 @@ export function FacultyAnalysisRadarChart({
             Quantitative Metric Analysis
           </CardTitle>
           <CardDescription className="font-sans text-sm">
-            Multi-metric snapshot of faculty performance based on quantitative student
-            evaluation scores.
+            Multi-metric snapshot of faculty performance based on quantitative student evaluation
+            scores.
           </CardDescription>
         </div>
         <ButtonGroup className="w-fit">
-          {(Object.entries(metricViewLabels) as Array<
-            [keyof typeof metricViewLabels, string]
-          >).map(([view, label]) => (
-            <Button
-              key={view}
-              type="button"
-              variant={selectedView === view ? "default" : "outline"}
-              size="sm"
-              className={cn(
-                "font-sans",
-                selectedView === view && "bg-brand-blue/80 text-white hover:bg-brand-blue/70"
-              )}
-              onClick={() => setSelectedView(view)}
-            >
-              {label}
-            </Button>
-          ))}
+          {(Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>).map(
+            ([view, label]) => (
+              <Button
+                key={view}
+                type="button"
+                variant={selectedView === view ? "default" : "outline"}
+                size="sm"
+                className={cn(
+                  "font-sans",
+                  selectedView === view && "bg-brand-blue/80 text-white hover:bg-brand-blue/70"
+                )}
+                onClick={() => setSelectedView(view)}
+              >
+                {label}
+              </Button>
+            )
+          )}
         </ButtonGroup>
       </CardHeader>
       <CardContent className="pb-0">
@@ -132,10 +114,7 @@ export function FacultyAnalysisRadarChart({
               outerRadius="72%"
               margin={{ top: 12, right: 24, bottom: 12, left: 24 }}
             >
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="dot" />}
-              />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
               <PolarGrid />
               <PolarAngleAxis
                 dataKey="metric"
@@ -182,27 +161,28 @@ export function FacultyAnalysisRadarChart({
               <Table>
                 <TableHeader className="data-table-header">
                   <TableRow>
-                    <TableHead className="data-table-head min-w-[26rem]">
-                      {metric.metric}
-                    </TableHead>
+                    <TableHead className="data-table-head min-w-[26rem]">{metric.metric}</TableHead>
                     <TableHead className="data-table-head min-w-[8rem] text-center">
                       Average
                     </TableHead>
-                    <TableHead className="data-table-head min-w-[12rem]">
-                      Interpretation
-                    </TableHead>
+                    <TableHead className="data-table-head min-w-[12rem]">Interpretation</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {metric.questions.map((question) => (
-                    <TableRow key={`${metric.metric}-${question.question}`} className="data-table-row">
+                    <TableRow
+                      key={`${metric.metric}-${question.question}`}
+                      className="data-table-row"
+                    >
                       <TableCell className="data-table-cell whitespace-normal font-normal">
                         {question.question}
                       </TableCell>
                       <TableCell className="data-table-cell text-center font-medium">
                         {formatScore(question.average)}
                       </TableCell>
-                      <TableCell className="data-table-cell">{getInterpretation(question.average)}</TableCell>
+                      <TableCell className="data-table-cell">
+                        {getInterpretation(question.average)}
+                      </TableCell>
                     </TableRow>
                   ))}
                   <TableRow className="data-table-row bg-muted/30 font-semibold hover:bg-muted/30">
@@ -210,7 +190,9 @@ export function FacultyAnalysisRadarChart({
                     <TableCell className="data-table-cell text-center">
                       {formatScore(metric.score)}
                     </TableCell>
-                    <TableCell className="data-table-cell">{getInterpretation(metric.score)}</TableCell>
+                    <TableCell className="data-table-cell">
+                      {getInterpretation(metric.score)}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

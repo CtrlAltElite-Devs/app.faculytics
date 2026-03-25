@@ -64,7 +64,8 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   },
   {
     date: "2026-03-22",
-    feedback: "Class activities are helpful, but some instructions could be repeated before starting.",
+    feedback:
+      "Class activities are helpful, but some instructions could be repeated before starting.",
     sentiment: "Neutral",
   },
   {
@@ -94,7 +95,8 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   },
   {
     date: "2026-04-11",
-    feedback: "The instructor encourages participation and makes students feel comfortable sharing ideas.",
+    feedback:
+      "The instructor encourages participation and makes students feel comfortable sharing ideas.",
     sentiment: "Positive",
   },
   {
@@ -109,7 +111,8 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   },
   {
     date: "2026-04-20",
-    feedback: "The course is manageable overall, but workload expectations should be clarified earlier.",
+    feedback:
+      "The course is manageable overall, but workload expectations should be clarified earlier.",
     sentiment: "Neutral",
   },
   {
@@ -119,7 +122,8 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   },
   {
     date: "2026-04-26",
-    feedback: "Lecture pacing becomes difficult to follow when several new concepts are introduced together.",
+    feedback:
+      "Lecture pacing becomes difficult to follow when several new concepts are introduced together.",
     sentiment: "Negative",
   },
   {
@@ -129,7 +133,8 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   },
   {
     date: "2026-05-02",
-    feedback: "Shows expertise in the subject, although some answers could be explained more simply.",
+    feedback:
+      "Shows expertise in the subject, although some answers could be explained more simply.",
     sentiment: "Neutral",
   },
   {
@@ -149,7 +154,8 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   },
   {
     date: "2026-05-14",
-    feedback: "Assessment instructions are generally clear, but rubrics should be discussed more fully.",
+    feedback:
+      "Assessment instructions are generally clear, but rubrics should be discussed more fully.",
     sentiment: "Neutral",
   },
   {
@@ -169,7 +175,7 @@ function createQualitativeSemesterData(
   actionPlans: {
     strengthsToMaintain: QualitativeActionPlan[];
     areasForImprovement: QualitativeActionPlan[];
-  },
+  }
 ) {
   const normalizedThemes = [...themes];
 
@@ -196,7 +202,7 @@ function createQualitativeSemesterData(
 function createQualitativeMetrics(
   firstSemester: ReturnType<typeof createQualitativeSemesterData>,
   secondSemester: ReturnType<typeof createQualitativeSemesterData>,
-  summerSemester: ReturnType<typeof createQualitativeSemesterData>,
+  summerSemester: ReturnType<typeof createQualitativeSemesterData>
 ) {
   return {
     firstSemester,
@@ -322,7 +328,12 @@ function createQuantitativeMetricView(metrics: readonly QuantitativeMetricScore[
     metrics: metrics.map(({ metric, score }) => ({
       metric,
       score,
-      questions: createMetricQuestions(score, quantitativeQuestionnaireTemplates[metric as keyof typeof quantitativeQuestionnaireTemplates]),
+      questions: createMetricQuestions(
+        score,
+        quantitativeQuestionnaireTemplates[
+          metric as keyof typeof quantitativeQuestionnaireTemplates
+        ]
+      ),
     })),
   };
 }
@@ -364,177 +375,213 @@ const defaultQuantitativeMetricViews = createQuantitativeMetricViews({
 });
 
 const defaultQualitativeMetrics = createQualitativeMetrics(
-  createQualitativeSemesterData(84, 9, 7, [
-    { label: "Clear explanations", mentions: 48 },
-    { label: "Approachable attitude", mentions: 39 },
-    { label: "Organized teaching", mentions: 34 },
-    { label: "Helpful feedback", mentions: 28 },
-  ], [
-    {
-      title: "Clear and Structured Explanations",
-      description: "Students consistently recognize the instructor's ability to explain lessons clearly and organize topics well.",
-    },
-    {
-      title: "Approachable Classroom Presence",
-      description: "Students value the welcoming and student-friendly attitude maintained during classes and consultations.",
-    },
-  ], [
-    {
-      title: "Feedback Turnaround",
-      description: "Written feedback on outputs can be released more consistently and within a shorter response window.",
-    },
-    {
-      title: "Active Learning Variety",
-      description: "Longer sessions would benefit from more interactive activities to sustain participation and energy.",
-    },
-  ], {
-    strengthsToMaintain: [
+  createQualitativeSemesterData(
+    84,
+    9,
+    7,
+    [
+      { label: "Clear explanations", mentions: 48 },
+      { label: "Approachable attitude", mentions: 39 },
+      { label: "Organized teaching", mentions: 34 },
+      { label: "Helpful feedback", mentions: 28 },
+    ],
+    [
       {
-        title: "Action Plan for Clear and Structured Explanations",
-        items: [
-          "Preserve the current lesson-planning structure and use it as the default teaching format.",
-          "Document best-performing classroom practices that students consistently mention positively.",
-        ],
+        title: "Clear and Structured Explanations",
+        description:
+          "Students consistently recognize the instructor's ability to explain lessons clearly and organize topics well.",
       },
       {
-        title: "Action Plan for Approachable Classroom Presence",
-        items: [
-          "Keep consultation channels welcoming and predictable for students.",
-          "Continue modeling a calm and student-friendly classroom tone across all sessions.",
-        ],
+        title: "Approachable Classroom Presence",
+        description:
+          "Students value the welcoming and student-friendly attitude maintained during classes and consultations.",
       },
     ],
-    areasForImprovement: [
+    [
       {
-        title: "Action Plan for Feedback Turnaround",
-        items: [
-          "Set a weekly turnaround target for graded activities and consultation replies.",
-          "Block dedicated review time after each assessment to avoid feedback backlogs.",
-        ],
+        title: "Feedback Turnaround",
+        description:
+          "Written feedback on outputs can be released more consistently and within a shorter response window.",
       },
       {
-        title: "Action Plan for Active Learning Variety",
-        items: [
-          "Introduce one interactive activity or discussion prompt in every major session.",
-          "Rotate quick collaborative exercises to maintain engagement during longer classes.",
-        ],
+        title: "Active Learning Variety",
+        description:
+          "Longer sessions would benefit from more interactive activities to sustain participation and energy.",
       },
     ],
-  }),
-  createQualitativeSemesterData(88, 6, 6, [
-    { label: "Engaging delivery", mentions: 52 },
-    { label: "Responsive guidance", mentions: 41 },
-    { label: "Supportive environment", mentions: 36 },
-    { label: "Fair assessment", mentions: 30 },
-  ], [
     {
-      title: "Engaging Lecture Delivery",
-      description: "Students respond well to the energetic and engaging delivery style used during class discussions.",
-    },
-    {
-      title: "Responsive Academic Guidance",
-      description: "Consultation support remains a strong point and contributes to student confidence and progress.",
-    },
-  ], [
-    {
-      title: "Follow-up Learning Resources",
-      description: "Students would benefit from more consistent posting of recap materials and follow-up references.",
-    },
-    {
-      title: "Assessment Alignment",
-      description: "Examples used in class can be aligned more directly with assessment formats and expectations.",
-    },
-  ], {
-    strengthsToMaintain: [
+      strengthsToMaintain: [
+        {
+          title: "Action Plan for Clear and Structured Explanations",
+          items: [
+            "Preserve the current lesson-planning structure and use it as the default teaching format.",
+            "Document best-performing classroom practices that students consistently mention positively.",
+          ],
+        },
+        {
+          title: "Action Plan for Approachable Classroom Presence",
+          items: [
+            "Keep consultation channels welcoming and predictable for students.",
+            "Continue modeling a calm and student-friendly classroom tone across all sessions.",
+          ],
+        },
+      ],
+      areasForImprovement: [
+        {
+          title: "Action Plan for Feedback Turnaround",
+          items: [
+            "Set a weekly turnaround target for graded activities and consultation replies.",
+            "Block dedicated review time after each assessment to avoid feedback backlogs.",
+          ],
+        },
+        {
+          title: "Action Plan for Active Learning Variety",
+          items: [
+            "Introduce one interactive activity or discussion prompt in every major session.",
+            "Rotate quick collaborative exercises to maintain engagement during longer classes.",
+          ],
+        },
+      ],
+    }
+  ),
+  createQualitativeSemesterData(
+    88,
+    6,
+    6,
+    [
+      { label: "Engaging delivery", mentions: 52 },
+      { label: "Responsive guidance", mentions: 41 },
+      { label: "Supportive environment", mentions: 36 },
+      { label: "Fair assessment", mentions: 30 },
+    ],
+    [
       {
-        title: "Action Plan for Engaging Lecture Delivery",
-        items: [
-          "Retain the current discussion-led teaching moments that students identify as engaging.",
-          "Continue using dynamic facilitation during major content discussions.",
-        ],
+        title: "Engaging Lecture Delivery",
+        description:
+          "Students respond well to the energetic and engaging delivery style used during class discussions.",
       },
       {
-        title: "Action Plan for Responsive Academic Guidance",
-        items: [
-          "Keep consultation channels open and preserve current response habits.",
-          "Maintain scheduled checkpoints for students who need additional support.",
-        ],
+        title: "Responsive Academic Guidance",
+        description:
+          "Consultation support remains a strong point and contributes to student confidence and progress.",
       },
     ],
-    areasForImprovement: [
+    [
       {
-        title: "Action Plan for Follow-up Learning Resources",
-        items: [
-          "Publish a short resource recap after each major lesson or module.",
-          "Standardize post-class uploads so students know where to find follow-up materials.",
-        ],
+        title: "Follow-up Learning Resources",
+        description:
+          "Students would benefit from more consistent posting of recap materials and follow-up references.",
       },
       {
-        title: "Action Plan for Assessment Alignment",
-        items: [
-          "Review quiz and activity examples at the end of each week to ensure assessment alignment.",
-          "Add a short assessment preview before graded tasks are released.",
-        ],
+        title: "Assessment Alignment",
+        description:
+          "Examples used in class can be aligned more directly with assessment formats and expectations.",
       },
     ],
-  }),
-  createQualitativeSemesterData(76, 12, 12, [
-    { label: "Condensed lessons", mentions: 26 },
-    { label: "Flexible pacing", mentions: 22 },
-    { label: "Practical exercises", mentions: 19 },
-    { label: "Schedule clarity", mentions: 17 },
-  ], [
     {
-      title: "Flexible Session Delivery",
-      description: "Students appreciate the adaptable handling of shortened summer-term sessions.",
-    },
-    {
-      title: "Practical Exercises",
-      description: "Hands-on activities remain useful in helping students stay engaged during the compressed term.",
-    },
-  ], [
-    {
-      title: "Schedule Communication",
-      description: "Students need clearer reminders and visibility for deadlines during the faster summer cycle.",
-    },
-    {
-      title: "Resource Availability",
-      description: "More centralized access to materials would help students keep pace in the summer term.",
-    },
-  ], {
-    strengthsToMaintain: [
+      strengthsToMaintain: [
+        {
+          title: "Action Plan for Engaging Lecture Delivery",
+          items: [
+            "Retain the current discussion-led teaching moments that students identify as engaging.",
+            "Continue using dynamic facilitation during major content discussions.",
+          ],
+        },
+        {
+          title: "Action Plan for Responsive Academic Guidance",
+          items: [
+            "Keep consultation channels open and preserve current response habits.",
+            "Maintain scheduled checkpoints for students who need additional support.",
+          ],
+        },
+      ],
+      areasForImprovement: [
+        {
+          title: "Action Plan for Follow-up Learning Resources",
+          items: [
+            "Publish a short resource recap after each major lesson or module.",
+            "Standardize post-class uploads so students know where to find follow-up materials.",
+          ],
+        },
+        {
+          title: "Action Plan for Assessment Alignment",
+          items: [
+            "Review quiz and activity examples at the end of each week to ensure assessment alignment.",
+            "Add a short assessment preview before graded tasks are released.",
+          ],
+        },
+      ],
+    }
+  ),
+  createQualitativeSemesterData(
+    76,
+    12,
+    12,
+    [
+      { label: "Condensed lessons", mentions: 26 },
+      { label: "Flexible pacing", mentions: 22 },
+      { label: "Practical exercises", mentions: 19 },
+      { label: "Schedule clarity", mentions: 17 },
+    ],
+    [
       {
-        title: "Action Plan for Flexible Session Delivery",
-        items: [
-          "Retain the current adaptive pacing approach for condensed summer classes.",
-          "Continue clarifying priorities when sessions need to cover dense material quickly.",
-        ],
+        title: "Flexible Session Delivery",
+        description:
+          "Students appreciate the adaptable handling of shortened summer-term sessions.",
       },
       {
-        title: "Action Plan for Practical Exercises",
-        items: [
-          "Keep hands-on activities in the summer course flow.",
-          "Use short applied exercises to reinforce key topics in limited class time.",
-        ],
+        title: "Practical Exercises",
+        description:
+          "Hands-on activities remain useful in helping students stay engaged during the compressed term.",
       },
     ],
-    areasForImprovement: [
+    [
       {
-        title: "Action Plan for Schedule Communication",
-        items: [
-          "Post weekly deadline summaries to improve visibility in the compressed term.",
-          "Send reminder updates before major summer deliverables are due.",
-        ],
+        title: "Schedule Communication",
+        description:
+          "Students need clearer reminders and visibility for deadlines during the faster summer cycle.",
       },
       {
-        title: "Action Plan for Resource Availability",
-        items: [
-          "Organize summer-term learning materials in one consistent location.",
-          "Upload recap materials immediately after each major session.",
-        ],
+        title: "Resource Availability",
+        description:
+          "More centralized access to materials would help students keep pace in the summer term.",
       },
     ],
-  }),
+    {
+      strengthsToMaintain: [
+        {
+          title: "Action Plan for Flexible Session Delivery",
+          items: [
+            "Retain the current adaptive pacing approach for condensed summer classes.",
+            "Continue clarifying priorities when sessions need to cover dense material quickly.",
+          ],
+        },
+        {
+          title: "Action Plan for Practical Exercises",
+          items: [
+            "Keep hands-on activities in the summer course flow.",
+            "Use short applied exercises to reinforce key topics in limited class time.",
+          ],
+        },
+      ],
+      areasForImprovement: [
+        {
+          title: "Action Plan for Schedule Communication",
+          items: [
+            "Post weekly deadline summaries to improve visibility in the compressed term.",
+            "Send reminder updates before major summer deliverables are due.",
+          ],
+        },
+        {
+          title: "Action Plan for Resource Availability",
+          items: [
+            "Organize summer-term learning materials in one consistent location.",
+            "Upload recap materials immediately after each major session.",
+          ],
+        },
+      ],
+    }
+  )
 );
 
 export const deanAnalyticsSampleData = {
@@ -548,9 +595,24 @@ export const deanAnalyticsSampleData = {
     courses: 46,
   },
   semesterSentiment: [
-    { sentiment: "Positive", firstSemester: 84, secondSemester: 88, summerSemester: 72 },
-    { sentiment: "Negative", firstSemester: 9, secondSemester: 6, summerSemester: 14 },
-    { sentiment: "Neutral", firstSemester: 7, secondSemester: 6, summerSemester: 14 },
+    {
+      sentiment: "Positive",
+      firstSemester: 84,
+      secondSemester: 88,
+      summerSemester: 72,
+    },
+    {
+      sentiment: "Negative",
+      firstSemester: 9,
+      secondSemester: 6,
+      summerSemester: 14,
+    },
+    {
+      sentiment: "Neutral",
+      firstSemester: 7,
+      secondSemester: 6,
+      summerSemester: 14,
+    },
   ],
   overallSentiment: [
     { label: "Positive", value: 172, color: "#5b8cff" },
@@ -562,12 +624,7 @@ export const deanAnalyticsSampleData = {
       facultySlug: "amelia-reyes",
       facultyName: "Dr. Amelia Reyes",
       facultyInitials: "AR",
-      subjects: [
-        "Data Structures",
-        "Algorithms",
-        "Discrete Mathematics",
-        "Automata Theory",
-      ],
+      subjects: ["Data Structures", "Algorithms", "Discrete Mathematics", "Automata Theory"],
       averageRating: 4.7,
       overallPositiveRate: "89.4%",
       responses: 412,
@@ -579,11 +636,7 @@ export const deanAnalyticsSampleData = {
       facultySlug: "marcus-dela-cruz",
       facultyName: "Prof. Marcus Dela Cruz",
       facultyInitials: "MC",
-      subjects: [
-        "Operating Systems",
-        "Computer Networks",
-        "Cybersecurity",
-      ],
+      subjects: ["Operating Systems", "Computer Networks", "Cybersecurity"],
       averageRating: 4.4,
       overallPositiveRate: "85.1%",
       responses: 376,
@@ -612,121 +665,144 @@ export const deanAnalyticsSampleData = {
         ],
       }),
       qualitativeMetrics: createQualitativeMetrics(
-        createQualitativeSemesterData(79, 11, 10, [
-          { label: "Strong subject knowledge", mentions: 33 },
-          { label: "Needs faster feedback", mentions: 24 },
-          { label: "Practical examples", mentions: 21 },
-          { label: "Better pacing", mentions: 18 },
-        ], [
+        createQualitativeSemesterData(
+          79,
+          11,
+          10,
+          [
+            { label: "Strong subject knowledge", mentions: 33 },
+            { label: "Needs faster feedback", mentions: 24 },
+            { label: "Practical examples", mentions: 21 },
+            { label: "Better pacing", mentions: 18 },
+          ],
+          [
+            {
+              title: "Strong Subject Expertise",
+              description:
+                "Students consistently note the instructor's strong command of technical content.",
+            },
+            {
+              title: "Practical Examples",
+              description:
+                "Real-world examples help students connect concepts to applied scenarios.",
+            },
+          ],
+          [
+            {
+              title: "Feedback Turnaround",
+              description: "Students want faster feedback on assignments and graded activities.",
+            },
+            {
+              title: "Lesson Pacing",
+              description:
+                "Lesson pacing can be adjusted to better support different student learning speeds.",
+            },
+          ],
           {
-            title: "Strong Subject Expertise",
-            description: "Students consistently note the instructor's strong command of technical content.",
-          },
-          {
-            title: "Practical Examples",
-            description: "Real-world examples help students connect concepts to applied scenarios.",
-          },
-        ], [
-          {
-            title: "Feedback Turnaround",
-            description: "Students want faster feedback on assignments and graded activities.",
-          },
-          {
-            title: "Lesson Pacing",
-            description: "Lesson pacing can be adjusted to better support different student learning speeds.",
-          },
-        ], {
-          strengthsToMaintain: [
-          {
-            title: "Action Plan for Strong Subject Expertise",
-            items: [
-              "Preserve depth and accuracy in explanation of core concepts.",
-              "Keep preparing subject matter examples that demonstrate expertise clearly.",
+            strengthsToMaintain: [
+              {
+                title: "Action Plan for Strong Subject Expertise",
+                items: [
+                  "Preserve depth and accuracy in explanation of core concepts.",
+                  "Keep preparing subject matter examples that demonstrate expertise clearly.",
+                ],
+              },
+              {
+                title: "Action Plan for Practical Examples",
+                items: [
+                  "Continue integrating practical examples in technical lessons.",
+                  "Collect more applied case examples from recent industry scenarios.",
+                ],
+              },
             ],
-          },
-          {
-            title: "Action Plan for Practical Examples",
-            items: [
-              "Continue integrating practical examples in technical lessons.",
-              "Collect more applied case examples from recent industry scenarios.",
+            areasForImprovement: [
+              {
+                title: "Action Plan for Feedback Turnaround",
+                items: [
+                  "Commit to a defined feedback release timeline for each graded task.",
+                  "Set aside a recurring grading block after every major submission.",
+                ],
+              },
+              {
+                title: "Action Plan for Lesson Pacing",
+                items: [
+                  "Add periodic comprehension checks to calibrate lesson pacing.",
+                  "Use short pauses and recap questions before moving to the next concept.",
+                ],
+              },
             ],
-          },
-        ],
-          areasForImprovement: [
+          }
+        ),
+        createQualitativeSemesterData(
+          83,
+          9,
+          8,
+          [
+            { label: "Better class flow", mentions: 35 },
+            { label: "Clearer instructions", mentions: 27 },
+            { label: "Accessible consultations", mentions: 23 },
+            { label: "Useful materials", mentions: 20 },
+          ],
+          [
+            {
+              title: "Improved Class Flow",
+              description:
+                "Students recognize the stronger structure and smoother sequencing of lessons.",
+            },
+            {
+              title: "Accessible Consultations",
+              description:
+                "Students appreciate the improved accessibility of consultations and support.",
+            },
+          ],
+          [
+            {
+              title: "Instruction Clarity",
+              description:
+                "Assignment and project instructions can still be made more explicit and standardized.",
+            },
+            {
+              title: "Supplementary Materials",
+              description:
+                "Students want a broader set of supporting materials for review and independent study.",
+            },
+          ],
           {
-            title: "Action Plan for Feedback Turnaround",
-            items: [
-              "Commit to a defined feedback release timeline for each graded task.",
-              "Set aside a recurring grading block after every major submission.",
+            strengthsToMaintain: [
+              {
+                title: "Action Plan for Improved Class Flow",
+                items: [
+                  "Keep the revised lesson flow and consultation schedule in the next term.",
+                  "Document the current session sequence as a repeatable teaching template.",
+                ],
+              },
+              {
+                title: "Action Plan for Accessible Consultations",
+                items: [
+                  "Maintain the current consultation structure and communication channels.",
+                  "Continue publicizing available consultation times at the start of each module.",
+                ],
+              },
             ],
-          },
-          {
-            title: "Action Plan for Lesson Pacing",
-            items: [
-              "Add periodic comprehension checks to calibrate lesson pacing.",
-              "Use short pauses and recap questions before moving to the next concept.",
+            areasForImprovement: [
+              {
+                title: "Action Plan for Instruction Clarity",
+                items: [
+                  "Use a standard instruction template for projects and graded exercises.",
+                  "Add a checklist section to reduce ambiguity in activity instructions.",
+                ],
+              },
+              {
+                title: "Action Plan for Supplementary Materials",
+                items: [
+                  "Prepare a weekly resource pack for review and extension work.",
+                  "Organize materials by topic so students can revisit them more easily.",
+                ],
+              },
             ],
-          },
-        ],
-        }),
-        createQualitativeSemesterData(83, 9, 8, [
-          { label: "Better class flow", mentions: 35 },
-          { label: "Clearer instructions", mentions: 27 },
-          { label: "Accessible consultations", mentions: 23 },
-          { label: "Useful materials", mentions: 20 },
-        ], [
-          {
-            title: "Improved Class Flow",
-            description: "Students recognize the stronger structure and smoother sequencing of lessons.",
-          },
-          {
-            title: "Accessible Consultations",
-            description: "Students appreciate the improved accessibility of consultations and support.",
-          },
-        ], [
-          {
-            title: "Instruction Clarity",
-            description: "Assignment and project instructions can still be made more explicit and standardized.",
-          },
-          {
-            title: "Supplementary Materials",
-            description: "Students want a broader set of supporting materials for review and independent study.",
-          },
-        ], {
-          strengthsToMaintain: [
-          {
-            title: "Action Plan for Improved Class Flow",
-            items: [
-              "Keep the revised lesson flow and consultation schedule in the next term.",
-              "Document the current session sequence as a repeatable teaching template.",
-            ],
-          },
-          {
-            title: "Action Plan for Accessible Consultations",
-            items: [
-              "Maintain the current consultation structure and communication channels.",
-              "Continue publicizing available consultation times at the start of each module.",
-            ],
-          },
-        ],
-          areasForImprovement: [
-          {
-            title: "Action Plan for Instruction Clarity",
-            items: [
-              "Use a standard instruction template for projects and graded exercises.",
-              "Add a checklist section to reduce ambiguity in activity instructions.",
-            ],
-          },
-          {
-            title: "Action Plan for Supplementary Materials",
-            items: [
-              "Prepare a weekly resource pack for review and extension work.",
-              "Organize materials by topic so students can revisit them more easily.",
-            ],
-          },
-        ],
-        }),
-        defaultQualitativeMetrics.summerSemester,
+          }
+        ),
+        defaultQualitativeMetrics.summerSemester
       ),
     },
     {
@@ -768,121 +844,145 @@ export const deanAnalyticsSampleData = {
         ],
       }),
       qualitativeMetrics: createQualitativeMetrics(
-        createQualitativeSemesterData(90, 6, 4, [
-          { label: "Excellent mentoring", mentions: 56 },
-          { label: "Interactive sessions", mentions: 49 },
-          { label: "Thoughtful feedback", mentions: 41 },
-          { label: "Well-structured lessons", mentions: 38 },
-        ], [
+        createQualitativeSemesterData(
+          90,
+          6,
+          4,
+          [
+            { label: "Excellent mentoring", mentions: 56 },
+            { label: "Interactive sessions", mentions: 49 },
+            { label: "Thoughtful feedback", mentions: 41 },
+            { label: "Well-structured lessons", mentions: 38 },
+          ],
+          [
+            {
+              title: "High-Quality Mentoring",
+              description:
+                "Students consistently value the mentoring and support provided throughout the term.",
+            },
+            {
+              title: "Interactive Session Structure",
+              description:
+                "The class format successfully keeps students involved and attentive during sessions.",
+            },
+          ],
+          [
+            {
+              title: "Consultation Follow-through",
+              description:
+                "Students would benefit from clearer written follow-through after major consultation sessions.",
+            },
+            {
+              title: "Assessment Visibility",
+              description:
+                "Assessment expectations can be surfaced earlier and more explicitly in each module.",
+            },
+          ],
           {
-            title: "High-Quality Mentoring",
-            description: "Students consistently value the mentoring and support provided throughout the term.",
-          },
-          {
-            title: "Interactive Session Structure",
-            description: "The class format successfully keeps students involved and attentive during sessions.",
-          },
-        ], [
-          {
-            title: "Consultation Follow-through",
-            description: "Students would benefit from clearer written follow-through after major consultation sessions.",
-          },
-          {
-            title: "Assessment Visibility",
-            description: "Assessment expectations can be surfaced earlier and more explicitly in each module.",
-          },
-        ], {
-          strengthsToMaintain: [
-          {
-            title: "Action Plan for High-Quality Mentoring",
-            items: [
-              "Continue one-on-one mentoring touchpoints for students handling major projects.",
-              "Preserve current support structures for students who need extra guidance.",
+            strengthsToMaintain: [
+              {
+                title: "Action Plan for High-Quality Mentoring",
+                items: [
+                  "Continue one-on-one mentoring touchpoints for students handling major projects.",
+                  "Preserve current support structures for students who need extra guidance.",
+                ],
+              },
+              {
+                title: "Action Plan for Interactive Session Structure",
+                items: [
+                  "Preserve interactive teaching patterns that drive participation.",
+                  "Keep discussion prompts and workshop-style learning moments in regular use.",
+                ],
+              },
             ],
-          },
-          {
-            title: "Action Plan for Interactive Session Structure",
-            items: [
-              "Preserve interactive teaching patterns that drive participation.",
-              "Keep discussion prompts and workshop-style learning moments in regular use.",
+            areasForImprovement: [
+              {
+                title: "Action Plan for Consultation Follow-through",
+                items: [
+                  "Send short follow-up notes after major advising or mentoring discussions.",
+                  "Create a simple consultation summary template for recurring use.",
+                ],
+              },
+              {
+                title: "Action Plan for Assessment Visibility",
+                items: [
+                  "Present assessment expectations in the first week of each module.",
+                  "Add a visible rubric or scoring guide before major outputs begin.",
+                ],
+              },
             ],
-          },
-        ],
-          areasForImprovement: [
+          }
+        ),
+        createQualitativeSemesterData(
+          93,
+          4,
+          3,
+          [
+            { label: "Outstanding facilitation", mentions: 61 },
+            { label: "Very supportive", mentions: 46 },
+            { label: "Real-world examples", mentions: 43 },
+            { label: "Clear expectations", mentions: 39 },
+          ],
+          [
+            {
+              title: "Outstanding Facilitation",
+              description:
+                "Students consistently describe the facilitation style as highly effective and supportive.",
+            },
+            {
+              title: "Real-world Examples",
+              description:
+                "Applied examples remain a major strength in helping students understand the material.",
+            },
+          ],
+          [
+            {
+              title: "Reusable Session Materials",
+              description:
+                "Students would benefit from easier access to materials after live sessions conclude.",
+            },
+            {
+              title: "Project Progress Checkpoints",
+              description:
+                "More formal milestone reviews can improve progress visibility during longer projects.",
+            },
+          ],
           {
-            title: "Action Plan for Consultation Follow-through",
-            items: [
-              "Send short follow-up notes after major advising or mentoring discussions.",
-              "Create a simple consultation summary template for recurring use.",
+            strengthsToMaintain: [
+              {
+                title: "Action Plan for Outstanding Facilitation",
+                items: [
+                  "Retain the current facilitation model and applied-example approach.",
+                  "Share proven engagement practices with the wider department.",
+                ],
+              },
+              {
+                title: "Action Plan for Real-world Examples",
+                items: [
+                  "Continue mapping concepts to real-world scenarios and case examples.",
+                  "Refresh applied examples each term to keep them timely and relevant.",
+                ],
+              },
             ],
-          },
-          {
-            title: "Action Plan for Assessment Visibility",
-            items: [
-              "Present assessment expectations in the first week of each module.",
-              "Add a visible rubric or scoring guide before major outputs begin.",
+            areasForImprovement: [
+              {
+                title: "Action Plan for Reusable Session Materials",
+                items: [
+                  "Upload summary resources immediately after major sessions.",
+                  "Create a central repository for reusable lesson references and recap files.",
+                ],
+              },
+              {
+                title: "Action Plan for Project Progress Checkpoints",
+                items: [
+                  "Introduce milestone reviews for project-based outputs.",
+                  "Set checkpoint reminders and status reviews at fixed intervals.",
+                ],
+              },
             ],
-          },
-        ],
-        }),
-        createQualitativeSemesterData(93, 4, 3, [
-          { label: "Outstanding facilitation", mentions: 61 },
-          { label: "Very supportive", mentions: 46 },
-          { label: "Real-world examples", mentions: 43 },
-          { label: "Clear expectations", mentions: 39 },
-        ], [
-          {
-            title: "Outstanding Facilitation",
-            description: "Students consistently describe the facilitation style as highly effective and supportive.",
-          },
-          {
-            title: "Real-world Examples",
-            description: "Applied examples remain a major strength in helping students understand the material.",
-          },
-        ], [
-          {
-            title: "Reusable Session Materials",
-            description: "Students would benefit from easier access to materials after live sessions conclude.",
-          },
-          {
-            title: "Project Progress Checkpoints",
-            description: "More formal milestone reviews can improve progress visibility during longer projects.",
-          },
-        ], {
-          strengthsToMaintain: [
-          {
-            title: "Action Plan for Outstanding Facilitation",
-            items: [
-              "Retain the current facilitation model and applied-example approach.",
-              "Share proven engagement practices with the wider department.",
-            ],
-          },
-          {
-            title: "Action Plan for Real-world Examples",
-            items: [
-              "Continue mapping concepts to real-world scenarios and case examples.",
-              "Refresh applied examples each term to keep them timely and relevant.",
-            ],
-          },
-        ],
-          areasForImprovement: [
-          {
-            title: "Action Plan for Reusable Session Materials",
-            items: [
-              "Upload summary resources immediately after major sessions.",
-              "Create a central repository for reusable lesson references and recap files.",
-            ],
-          },
-          {
-            title: "Action Plan for Project Progress Checkpoints",
-            items: [
-              "Introduce milestone reviews for project-based outputs.",
-              "Set checkpoint reminders and status reviews at fixed intervals.",
-            ],
-          },
-        ],
-        }),
-        defaultQualitativeMetrics.summerSemester,
+          }
+        ),
+        defaultQualitativeMetrics.summerSemester
       ),
     },
     {
@@ -1194,11 +1294,10 @@ export const deanAnalyticsSampleData = {
   ],
 } as const;
 
-export type DeanFacultyAnalysisRecord =
-  (typeof deanAnalyticsSampleData.facultyAnalysis)[number];
+export type DeanFacultyAnalysisRecord = (typeof deanAnalyticsSampleData.facultyAnalysis)[number];
 
 export function getDeanFacultyAnalysisBySlug(facultySlug: string) {
   return deanAnalyticsSampleData.facultyAnalysis.find(
-    (faculty) => faculty.facultySlug === facultySlug,
+    (faculty) => faculty.facultySlug === facultySlug
   );
 }

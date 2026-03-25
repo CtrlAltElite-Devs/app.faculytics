@@ -8,16 +8,18 @@ import { CoursesState } from "./_components/courses-state";
 
 export default function StudentCoursesPage() {
   const setSelectedCourse = useSelectedCourseStore((state) => state.setSelectedCourse);
-  const { data, isLoading, isError } = useMyEnrollments({ page: 1, limit: 100 });
+  const { data, isLoading, isError } = useMyEnrollments({
+    page: 1,
+    limit: 100,
+  });
   const enrolledCourses = data?.data ?? [];
-  const coursesState =
-    isLoading
-      ? "loading"
-      : isError
-        ? "error"
-        : enrolledCourses.length === 0
-          ? "empty"
-          : "ready";
+  const coursesState = isLoading
+    ? "loading"
+    : isError
+      ? "error"
+      : enrolledCourses.length === 0
+        ? "empty"
+        : "ready";
 
   return (
     <section className="md:px-16 md:py-12">

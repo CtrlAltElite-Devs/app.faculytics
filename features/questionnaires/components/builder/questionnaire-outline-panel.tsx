@@ -65,7 +65,11 @@ function OutlineNode({
           isSelected && "border-brand-blue bg-brand-blue/5"
         )}
       >
-        <button type="button" className="min-w-0 flex-1 space-y-2 text-left" onClick={() => onSelect(node.id)}>
+        <button
+          type="button"
+          className="min-w-0 flex-1 space-y-2 text-left"
+          onClick={() => onSelect(node.id)}
+        >
           <div className="flex items-center gap-2">
             {isLeaf ? (
               <ChevronRight className="size-4 text-muted-foreground" />
@@ -75,11 +79,7 @@ function OutlineNode({
             <p className="truncate text-sm font-medium">{node.title || "Untitled section"}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {isLeaf && (
-              <Badge variant="outline">
-                Weight {node.weight ?? "Unset"}
-              </Badge>
-            )}
+            {isLeaf && <Badge variant="outline">Weight {node.weight ?? "Unset"}</Badge>}
             <Badge variant="outline">
               {totalQuestions} question{totalQuestions === 1 ? "" : "s"}
             </Badge>
@@ -240,7 +240,8 @@ export function QuestionnaireOutlinePanel({
                 <Badge variant="outline">Max {qualitative.maxLength}</Badge>
                 {qualitativeIssues.length > 0 ? (
                   <Badge variant="destructive">
-                    {qualitativeIssues.length} issue{qualitativeIssues.length === 1 ? "" : "s"}
+                    {qualitativeIssues.length} issue
+                    {qualitativeIssues.length === 1 ? "" : "s"}
                   </Badge>
                 ) : null}
               </div>

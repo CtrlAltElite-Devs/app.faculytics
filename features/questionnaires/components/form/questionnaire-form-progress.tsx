@@ -16,9 +16,7 @@ export function QuestionnaireFormProgress({
   isComplete,
   trailing,
 }: QuestionnaireFormProgressProps) {
-  const percentage = totalRequired > 0
-    ? Math.round((answeredCount / totalRequired) * 100)
-    : 0;
+  const percentage = totalRequired > 0 ? Math.round((answeredCount / totalRequired) * 100) : 0;
 
   return (
     <div className="space-y-2">
