@@ -102,7 +102,6 @@ export function serializeQuestionnaireBuilderDraft(
   const leafEntries: Array<{
     section: QuestionnaireBuilderSectionNode;
     path: number[];
-    parentPath: string[];
   }> = [];
 
   const walkSections = (nodes: QuestionnaireBuilderSectionNode[], ancestorPaths: number[][]) => {
@@ -113,9 +112,6 @@ export function serializeQuestionnaireBuilderDraft(
         leafEntries.push({
           section: node,
           path,
-          parentPath: ancestorPaths.map((ancestorPath) =>
-            buildSchemaSectionId(typeCode, ancestorPath)
-          ),
         });
         return;
       }
@@ -126,12 +122,11 @@ export function serializeQuestionnaireBuilderDraft(
 
   walkSections(draft.sections, []);
 
-  const sections = leafEntries.map(({ section, path, parentPath }, index) => ({
+  const sections = leafEntries.map(({ section, path }, index) => ({
     id: buildSchemaSectionId(typeCode, path),
     order: index + 1,
     title: section.title.trim(),
     weight: section.weight ?? 0,
-    parentPath,
     questions: section.questions
       .slice()
       .sort((left, right) => left.order - right.order)
