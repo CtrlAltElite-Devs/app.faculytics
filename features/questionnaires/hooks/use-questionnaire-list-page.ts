@@ -117,7 +117,8 @@ export function useQuestionnaireListPage() {
       : versionAction?.type === "deprecate"
         ? {
             title: `Deprecate version v${versionAction.row.versionNumber}?`,
-            description: "This will mark the selected version as deprecated and remove it from active use.",
+            description:
+              "This will mark the selected version as deprecated and remove it from active use.",
             confirmLabel: "Deprecate version",
             confirmVariant: "destructive" as const,
           }

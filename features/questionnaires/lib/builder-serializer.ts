@@ -1,8 +1,5 @@
 import { DEFAULT_QUALITATIVE_MAX_LENGTH } from "@/features/questionnaires/constants/builder";
-import {
-  isLeafSection,
-  sortSections,
-} from "@/features/questionnaires/lib/builder-validator";
+import { isLeafSection, sortSections } from "@/features/questionnaires/lib/builder-validator";
 import type {
   QuestionnaireBuilderDraft,
   QuestionnaireBuilderPreviewModel,
@@ -31,7 +28,11 @@ function buildSchemaSectionId(typeCode: string, path: number[]): string {
   return `sec-${typeCode}-${path.join("-")}`;
 }
 
-function buildSchemaQuestionId(typeCode: string, sectionPath: number[], questionOrder: number): string {
+function buildSchemaQuestionId(
+  typeCode: string,
+  sectionPath: number[],
+  questionOrder: number
+): string {
   return `q-${typeCode}-${[...sectionPath, questionOrder].join("-")}`;
 }
 
@@ -104,10 +105,7 @@ export function serializeQuestionnaireBuilderDraft(
     parentPath: string[];
   }> = [];
 
-  const walkSections = (
-    nodes: QuestionnaireBuilderSectionNode[],
-    ancestorPaths: number[][]
-  ) => {
+  const walkSections = (nodes: QuestionnaireBuilderSectionNode[], ancestorPaths: number[][]) => {
     sortSections(nodes).forEach((node, index) => {
       const path = [...(ancestorPaths.at(-1) ?? []), index + 1];
 
@@ -115,7 +113,9 @@ export function serializeQuestionnaireBuilderDraft(
         leafEntries.push({
           section: node,
           path,
-          parentPath: ancestorPaths.map((ancestorPath) => buildSchemaSectionId(typeCode, ancestorPath)),
+          parentPath: ancestorPaths.map((ancestorPath) =>
+            buildSchemaSectionId(typeCode, ancestorPath)
+          ),
         });
         return;
       }
@@ -194,7 +194,12 @@ export function buildQuestionnairePreviewModel(
   draft: QuestionnaireBuilderDraft
 ): QuestionnaireBuilderPreviewModel {
   return {
-    title: (draft.metadata.title ?? draft.metadata.questionnaireTitle ?? "Untitled questionnaire").trim() || "Untitled questionnaire",
+    title:
+      (
+        draft.metadata.title ??
+        draft.metadata.questionnaireTitle ??
+        "Untitled questionnaire"
+      ).trim() || "Untitled questionnaire",
     type: draft.metadata.type,
     sections: sortSections(draft.sections).map((section) => buildPreviewSection(section, 0, [])),
     qualitative: draft.qualitative,

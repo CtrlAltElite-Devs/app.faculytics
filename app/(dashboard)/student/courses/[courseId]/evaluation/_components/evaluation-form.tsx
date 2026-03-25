@@ -67,7 +67,7 @@ export function EvaluationForm({
       formValuesRef.current = values;
       debouncedSave(values);
     },
-    [debouncedSave],
+    [debouncedSave]
   );
 
   const handleSubmit = useCallback(() => {
@@ -88,7 +88,11 @@ export function EvaluationForm({
       return;
     }
 
-    if (model.qualitative.enabled && model.qualitative.required && !values.qualitativeComment.trim()) {
+    if (
+      model.qualitative.enabled &&
+      model.qualitative.required &&
+      !values.qualitativeComment.trim()
+    ) {
       toast.error("Please provide your comments before submitting.");
       return;
     }
@@ -106,12 +110,25 @@ export function EvaluationForm({
       },
       {
         onSuccess: () => setShowSuccessDialog(true),
-      },
+      }
     );
-  }, [activeVersion.id, faculty.id, semester.id, courseId, meQuery.data?.id, model, cancelAutoSave, mutate]);
+  }, [
+    activeVersion.id,
+    faculty.id,
+    semester.id,
+    courseId,
+    meQuery.data?.id,
+    model,
+    cancelAutoSave,
+    mutate,
+  ]);
 
   return (
-    <EvaluationPageShell courseName={courseName} courseShortname={courseShortname} facultyName={facultyName}>
+    <EvaluationPageShell
+      courseName={courseName}
+      courseShortname={courseShortname}
+      facultyName={facultyName}
+    >
       <div className="mt-8">
         <QuestionnaireRatingScaleInstructions />
       </div>
@@ -158,7 +175,10 @@ export function EvaluationForm({
       </div>
 
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="text-center sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogContent
+          className="text-center sm:max-w-md"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader className="items-center">
             <CheckCircle2 className="size-12 text-green-500" />
             <DialogTitle className="font-playfair text-xl">Evaluation Submitted</DialogTitle>

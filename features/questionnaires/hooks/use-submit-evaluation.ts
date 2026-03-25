@@ -31,7 +31,9 @@ export function useSubmitEvaluation() {
    * unmounting the form before the dialog is seen.
    */
   const invalidateAndNavigate = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ["questionnaires", "submissions", "check"] });
+    queryClient.invalidateQueries({
+      queryKey: ["questionnaires", "submissions", "check"],
+    });
     queryClient.invalidateQueries({ queryKey: ["questionnaires", "drafts"] });
     router.push("/student/courses");
   }, [queryClient, router]);

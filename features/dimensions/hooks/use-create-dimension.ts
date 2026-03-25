@@ -43,7 +43,10 @@ export function useCreateDimension() {
               ...current.meta,
               totalItems: current.meta.totalItems + 1,
               itemCount: nextData.length,
-              totalPages: Math.max(1, Math.ceil((current.meta.totalItems + 1) / current.meta.limit)),
+              totalPages: Math.max(
+                1,
+                Math.ceil((current.meta.totalItems + 1) / current.meta.limit)
+              ),
             },
           };
         }

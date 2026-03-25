@@ -27,9 +27,7 @@ type QuestionnaireFormSectionProps = {
  * Recursively collects all question IDs within a section (including nested children).
  * Used to derive which answers belong to this section for progress tracking.
  */
-function collectQuestionIds(
-  section: QuestionnaireBuilderPreviewSection,
-): string[] {
+function collectQuestionIds(section: QuestionnaireBuilderPreviewSection): string[] {
   if (section.questions.length > 0) {
     return section.questions.map((q) => q.id);
   }
@@ -67,18 +65,18 @@ function QuestionnaireFormSectionBase({
   const isInternal = section.children.length > 0;
 
   // All questions within a leaf section share the same type (enforced by the builder).
-  const questionType = isLeaf
-    ? section.questions[0]?.type ?? "LIKERT_1_5"
-    : "LIKERT_1_5";
+  const questionType = isLeaf ? (section.questions[0]?.type ?? "LIKERT_1_5") : "LIKERT_1_5";
 
   return (
-    <div className={isChild ? "space-y-4 pl-4 sm:pl-6" : "space-y-4 rounded-2xl border bg-background p-4 sm:p-5"}>
+    <div
+      className={
+        isChild ? "space-y-4 pl-4 sm:pl-6" : "space-y-4 rounded-2xl border bg-background p-4 sm:p-5"
+      }
+    >
       {/* Section header: title + weight badge (preview) or progress count (interactive) */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="font-playfair text-lg font-semibold sm:text-xl">
-            {section.title}
-          </h3>
+          <h3 className="font-playfair text-lg font-semibold sm:text-xl">{section.title}</h3>
           {section.weight !== null && mode === "preview" && (
             <Badge variant="outline">Weight: {section.weight}%</Badge>
           )}

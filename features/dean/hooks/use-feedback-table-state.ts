@@ -17,11 +17,8 @@ export function useFeedbackTableState(faculty: DeanFacultyAnalysisRecord) {
   const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
 
   const filteredFeedback = faculty.feedbackRecords.filter((record) => {
-    const matchesSearch = record.feedback
-      .toLowerCase()
-      .includes(searchQuery.trim().toLowerCase());
-    const matchesSentiment =
-      selectedSentiment === "All" || record.sentiment === selectedSentiment;
+    const matchesSearch = record.feedback.toLowerCase().includes(searchQuery.trim().toLowerCase());
+    const matchesSentiment = selectedSentiment === "All" || record.sentiment === selectedSentiment;
 
     return matchesSearch && matchesSentiment;
   });

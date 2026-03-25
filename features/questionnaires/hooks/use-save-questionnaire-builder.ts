@@ -52,7 +52,8 @@ export function useSaveQuestionnaireBuilder() {
 
       if (draft.metadata.versionId) {
         const shouldSendTitle =
-          draft.metadata.questionnaireTitle === null || trimmedTitle !== draft.metadata.questionnaireTitle.trim();
+          draft.metadata.questionnaireTitle === null ||
+          trimmedTitle !== draft.metadata.questionnaireTitle.trim();
         const updatedVersion = await updateQuestionnaireVersionMutation.mutateAsync({
           versionId: draft.metadata.versionId,
           payload: {

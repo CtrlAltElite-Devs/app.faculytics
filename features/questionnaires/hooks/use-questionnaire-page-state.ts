@@ -43,20 +43,22 @@ export function useQuestionnairePageState() {
   const activePageType = availableTypes.includes(requestedType)
     ? requestedType
     : (availableTypes[0] ?? DEFAULT_QUESTIONNAIRE_TYPE);
-  const currentDraft = useQuestionnaireBuilderStore((state) => state.drafts[activePageType] ?? null);
+  const currentDraft = useQuestionnaireBuilderStore(
+    (state) => state.drafts[activePageType] ?? null
+  );
   const questionnaireVersionsQuery = useQuestionnaireVersions(requestedType, {
     enabled: questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable,
   });
   const defaultDraftVersionId =
-    questionnaireVersionsQuery.data?.versions.find((version) => version.status === "DRAFT")?.id ?? null;
+    questionnaireVersionsQuery.data?.versions.find((version) => version.status === "DRAFT")?.id ??
+    null;
   const resolvedVersionId = requestedVersionId ?? defaultDraftVersionId;
   const questionnaireVersionQuery = useQuestionnaireVersion(resolvedVersionId, {
     enabled:
-      questionnaireTypesQuery.isSuccess &&
-      !requestedTypeUnavailable &&
-      Boolean(resolvedVersionId),
+      questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable && Boolean(resolvedVersionId),
   });
-  const shouldDelayDraftHydration = Boolean(resolvedVersionId) && questionnaireVersionQuery.isLoading;
+  const shouldDelayDraftHydration =
+    Boolean(resolvedVersionId) && questionnaireVersionQuery.isLoading;
   const draftVersion = questionnaireVersionQuery.data ?? null;
 
   useEffect(() => {
@@ -84,10 +86,18 @@ export function useQuestionnairePageState() {
       versions,
       draftVersion,
       ...(questionnaireId !== null
-        ? { questionnaireId, questionnaireTitle: questionnaireTitle ?? questionnaireId }
+        ? {
+            questionnaireId,
+            questionnaireTitle: questionnaireTitle ?? questionnaireId,
+          }
         : { questionnaireId: null, questionnaireTitle: null }),
     });
-  }, [draftVersion, loadDraftFromServer, questionnaireVersionsQuery.data, shouldDelayDraftHydration]);
+  }, [
+    draftVersion,
+    loadDraftFromServer,
+    questionnaireVersionsQuery.data,
+    shouldDelayDraftHydration,
+  ]);
 
   useEffect(() => {
     if (!requestedTypeUnavailable) {
@@ -110,23 +120,26 @@ export function useQuestionnairePageState() {
     questionnaireVersionsQuery.isError ||
     questionnaireVersionQuery.isError;
   const questionnaireListHref = `/superadmin/questionnaires?type=${activePageType}`;
-  const emptyState = availableTypes.length === 0
-    ? { description: "No questionnaire types are available right now." }
-    : requestedTypeUnavailable
-      ? {
-          description: "That questionnaire type is no longer available. The stale local draft for it was discarded.",
-          actionLabel: "Open available type",
-          onAction: () => {
-            if (availableTypes[0]) {
-              router.replace(`/superadmin/questionnaires/new?type=${availableTypes[0]}`);
-            }
-          },
-        }
-      : null;
+  const emptyState =
+    availableTypes.length === 0
+      ? { description: "No questionnaire types are available right now." }
+      : requestedTypeUnavailable
+        ? {
+            description:
+              "That questionnaire type is no longer available. The stale local draft for it was discarded.",
+            actionLabel: "Open available type",
+            onAction: () => {
+              if (availableTypes[0]) {
+                router.replace(`/superadmin/questionnaires/new?type=${availableTypes[0]}`);
+              }
+            },
+          }
+        : null;
   const hasLocalBuilderDraft = hydrated && Boolean(currentDraft);
   const showBuilderLoading =
     !hasLocalBuilderDraft &&
-    (isLoading || (!requestedTypeUnavailable && availableTypes.length > 0 && !questionnaireVersionsQuery.data));
+    (isLoading ||
+      (!requestedTypeUnavailable && availableTypes.length > 0 && !questionnaireVersionsQuery.data));
   const showBuilderError = !hasLocalBuilderDraft && isError;
 
   const handleBackToQuestionnaires = () => {

@@ -1,6 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
+
 - `app/`: Next.js App Router pages and layouts (e.g., `app/(dashboard)/student/courses/page.tsx`).
 - `app/**/_components/`: route-local UI used by exactly one route.
 - `components/`: shared components only.
@@ -18,6 +19,7 @@
 - `docs/ARCHITECTURE.md`: source of truth for file placement, ownership boundaries, and state placement rules. Agents should follow this when adding or moving code.
 
 ## Build, Test, and Development Commands
+
 - `npm run dev`: start local dev server at `http://localhost:3000`.
 - `npm run build`: create production build.
 - `npm run start`: run built app.
@@ -25,6 +27,7 @@
 - `npx tsc --noEmit`: run strict type-checking (recommended before PRs).
 
 ## Coding Style & Naming Conventions
+
 - Language: TypeScript with `strict` mode enabled.
 - Indentation: 2 spaces; prefer semicolons and double quotes only when already established in file.
 - Components: PascalCase (`CourseCard`), hooks: `useXxx`, request functions: verb-first (`fetchMyEnrollments`).
@@ -34,6 +37,7 @@
 - Default to `@/*` imports across folders and feature boundaries; use relative imports only for tightly colocated route-local files inside the same route subtree.
 
 ## Architecture Rules
+
 - Treat `docs/ARCHITECTURE.md` as the governing policy for LLM agents and humans during development.
 - Keep `app/` focused on routing, guards, redirects, route composition, and route-local `_components/`.
 - Put shared shell UI in `components/layout/` and low-level reusable primitives in `components/ui/`.
@@ -42,6 +46,7 @@
 - Keep state in the lowest component that owns the behavior. Do not lift form, filter, search, or toggle state into page files unless it affects route orchestration.
 
 ## Testing Guidelines
+
 - No dedicated test framework is currently configured.
 - Minimum quality gate for changes:
   - `npm run lint`
@@ -49,6 +54,7 @@
 - When tests are added, place them next to source as `*.test.ts`/`*.test.tsx` or under a local `__tests__/` folder by feature.
 
 ## Commit & Pull Request Guidelines
+
 - Follow Conventional Commit style seen in history: `feat:`, `refactor:`, `chore:`, etc.
 - Keep commits focused and atomic.
 - PRs should include:
@@ -58,10 +64,12 @@
   - Notes on API/type changes and manual verification steps.
 
 ## Security & Configuration Tips
+
 - Keep secrets in `.env.local`; never commit env files with credentials.
 - `NEXT_PUBLIC_API_BASE_URL` controls backend target for `network/axios.ts`.
 
 ## Product Context
+
 - Faculytics serves multiple roles in one faculty-evaluation workflow:
   - Student: submits faculty feedback tied to enrolled courses.
   - Faculty: views feedback outcomes and limited analytics.

@@ -70,21 +70,21 @@ export function QuestionnaireListToolbar({
         />
 
         <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
-            {!hasDraftVersion ? (
-              <Button asChild variant="brand" className="shrink-0">
-                <Link href={createDraftHref}>Create Draft</Link>
-              </Button>
-            ) : null}
-            <QuestionnaireSearchInput
-              value={searchValue}
-              onChange={onSearchChange}
-              className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/6"
-            />
-            <QuestionnaireStatusFilter
-              value={statusFilter}
-              onValueChange={onStatusFilterChange}
-              className="w-auto shrink-0 justify-between gap-3"
-            />
+          {!hasDraftVersion ? (
+            <Button asChild variant="brand" className="shrink-0">
+              <Link href={createDraftHref}>Create Draft</Link>
+            </Button>
+          ) : null}
+          <QuestionnaireSearchInput
+            value={searchValue}
+            onChange={onSearchChange}
+            className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/6"
+          />
+          <QuestionnaireStatusFilter
+            value={statusFilter}
+            onValueChange={onStatusFilterChange}
+            className="w-auto shrink-0 justify-between gap-3"
+          />
         </div>
       </div>
     </>

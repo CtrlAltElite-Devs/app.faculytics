@@ -30,11 +30,7 @@ export default function CourseCard({
   const decodedFullname = decodeHtmlEntities(fullname);
   const decodedTeacherName = decodeHtmlEntities(teacherName);
   const titleSizeClass =
-    decodedFullname.length > 64
-      ? "text-base"
-      : decodedFullname.length > 40
-        ? "text-lg"
-        : "text-xl";
+    decodedFullname.length > 64 ? "text-base" : decodedFullname.length > 40 ? "text-lg" : "text-xl";
   const resolvedImageSrc = resolveCourseImageSrc(imageSrc);
   const teacherInitials = decodedTeacherName
     .split(" ")
@@ -66,16 +62,14 @@ export default function CourseCard({
         </div>
         <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
           <Avatar className="size-7">
-            {teacherImageSrc ? <AvatarImage src={teacherImageSrc} alt={decodedTeacherName} /> : null}
+            {teacherImageSrc ? (
+              <AvatarImage src={teacherImageSrc} alt={decodedTeacherName} />
+            ) : null}
             <AvatarFallback className="text-[10px]">{teacherInitials || "T"}</AvatarFallback>
           </Avatar>
           <p className="line-clamp-1">{decodedTeacherName}</p>
         </div>
-        <Button
-          asChild
-          variant="brand"
-          className="mt-auto w-full"
-        >
+        <Button asChild variant="brand" className="mt-auto w-full">
           <Link href={feedbackHref} onClick={onGiveFeedback}>
             Give Feedback
           </Link>

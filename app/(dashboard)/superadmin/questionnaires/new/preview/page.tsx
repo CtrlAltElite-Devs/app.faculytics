@@ -8,9 +8,7 @@ import { QuestionnaireFormRenderer } from "@/features/questionnaires/components/
 import { QuestionnaireRatingScaleInstructions } from "@/features/questionnaires/components/questionnaire-rating-scale-instructions";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
-import {
-  resolveQuestionnaireType,
-} from "@/features/questionnaires/types";
+import { resolveQuestionnaireType } from "@/features/questionnaires/types";
 
 import { QuestionnairePreviewLoadingCard } from "../../_components/questionnaire-preview-loading-card";
 import { QuestionnairePreviewStateCard } from "../../_components/questionnaire-preview-state-card";
@@ -53,8 +51,7 @@ export default function QuestionnaireBuilderPreviewPage() {
         <div>
           <h1 className="font-playfair text-3xl font-bold">{model.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Superadmin preview. This simulates the student reading experience
-            without submission.
+            Superadmin preview. This simulates the student reading experience without submission.
           </p>
         </div>
         <Button asChild variant="outline">

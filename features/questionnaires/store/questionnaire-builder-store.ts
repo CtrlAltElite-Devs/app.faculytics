@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { DEFAULT_QUALITATIVE_MAX_LENGTH, MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
+import {
+  DEFAULT_QUALITATIVE_MAX_LENGTH,
+  MAX_SECTION_NESTING_LEVEL,
+} from "@/features/questionnaires/constants/builder";
 import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
 import { draftsMatch } from "@/features/questionnaires/lib/builder-draft-utils";
 import {
@@ -232,10 +235,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             },
             hydratedFromServer: true,
           });
-          const nextDraft = createSyncedDraftSnapshot(
-            serverDraft ?? fallbackDraft,
-            context.type
-          );
+          const nextDraft = createSyncedDraftSnapshot(serverDraft ?? fallbackDraft, context.type);
           const hasPersistedUnsavedChanges =
             persistedDraft !== null && !draftsMatch(persistedDraft, persistedSyncedDraft ?? null);
           const nextSyncedDrafts = { ...state.syncedDrafts };
@@ -360,7 +360,9 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
       removeSection: (sectionId) =>
         set((state) =>
           replaceActiveDraft(state, (draft) => {
-            const nextSections = resequenceSections(removeSectionFromTree(draft.sections, sectionId));
+            const nextSections = resequenceSections(
+              removeSectionFromTree(draft.sections, sectionId)
+            );
 
             return {
               ...draft,
@@ -440,9 +442,7 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
               ...normalizeQualitativeConfig(draft.qualitative),
               ...updates,
               maxLength:
-                updates.maxLength ??
-                draft.qualitative.maxLength ??
-                DEFAULT_QUALITATIVE_MAX_LENGTH,
+                updates.maxLength ?? draft.qualitative.maxLength ?? DEFAULT_QUALITATIVE_MAX_LENGTH,
             },
           }))
         ),
@@ -498,7 +498,9 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
           return false;
         }
 
-        const syncedDraft = state.activeType ? state.syncedDrafts[state.activeType] ?? null : null;
+        const syncedDraft = state.activeType
+          ? (state.syncedDrafts[state.activeType] ?? null)
+          : null;
         if (!syncedDraft) {
           return hasMeaningfulDraftContent(activeDraft);
         }

@@ -21,11 +21,7 @@ export function QuestionnaireCallout({
 }: QuestionnaireCalloutProps) {
   return (
     <div
-      className={cn(
-        "rounded-xl border px-4 py-3 text-sm",
-        CALLOUT_CLASS_NAMES[variant],
-        className
-      )}
+      className={cn("rounded-xl border px-4 py-3 text-sm", CALLOUT_CLASS_NAMES[variant], className)}
     >
       {children}
     </div>

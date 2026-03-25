@@ -58,7 +58,7 @@
   --animate-second: moveInCircle 20s reverse infinite;
   --animate-third: moveInCircle 40s linear infinite;
   --animate-fourth: moveHorizontal 40s ease infinite;
-  --animate-fifth: moveInCircle 20s ease infinite; 
+  --animate-fifth: moveInCircle 20s ease infinite;
 }
 
 :root {
@@ -156,8 +156,16 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(circle at top left, color-mix(in oklab, var(--brand-yellow) 30%, transparent), transparent 34%),
-      radial-gradient(circle at top right, color-mix(in oklab, var(--brand-blue) 22%, transparent), transparent 38%),
+      radial-gradient(
+        circle at top left,
+        color-mix(in oklab, var(--brand-yellow) 30%, transparent),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at top right,
+        color-mix(in oklab, var(--brand-blue) 22%, transparent),
+        transparent 38%
+      ),
       linear-gradient(180deg, var(--surface) 0%, var(--background) 32%);
     background-attachment: fixed;
   }

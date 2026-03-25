@@ -2,10 +2,7 @@
 
 import { Cell, Pie, PieChart } from "recharts";
 
-import type {
-  DeanFacultyAnalysisRecord,
-  FacultyAnalysisSemesterKey,
-} from "@/features/dean";
+import type { DeanFacultyAnalysisRecord, FacultyAnalysisSemesterKey } from "@/features/dean";
 import {
   ChartContainer,
   ChartLegend,
@@ -14,13 +11,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildOverallRecommendation } from "@/features/dean/lib/recommendation-utils";
 import { useIsMobile } from "@/lib/use-mobile";
 
@@ -41,7 +32,7 @@ const qualitativeSentimentChartConfig = {
 
 function useQualitativeMetricsData(
   faculty: DeanFacultyAnalysisRecord,
-  selectedSemester: FacultyAnalysisSemesterKey,
+  selectedSemester: FacultyAnalysisSemesterKey
 ) {
   const isMobile = useIsMobile();
   const qualitativeMetrics = faculty.qualitativeMetrics[selectedSemester];
@@ -76,8 +67,10 @@ export function FacultyAnalysisQualitativeOverview({
   faculty: DeanFacultyAnalysisRecord;
   selectedSemester: FacultyAnalysisSemesterKey;
 }) {
-  const { isMobile, qualitativeMetrics, sentimentData, maxMentions } =
-    useQualitativeMetricsData(faculty, selectedSemester);
+  const { isMobile, qualitativeMetrics, sentimentData, maxMentions } = useQualitativeMetricsData(
+    faculty,
+    selectedSemester
+  );
 
   return (
     <section>
@@ -194,9 +187,7 @@ export function FacultyAnalysisActionableInsights({
                   className="rounded-lg border border-border/70 bg-background p-3"
                 >
                   <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
-                  <p className="mt-1 font-sans text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <p className="mt-1 font-sans text-sm text-muted-foreground">{item.description}</p>
                 </div>
               ))}
             </div>
@@ -225,9 +216,7 @@ export function FacultyAnalysisActionableInsights({
                   className="rounded-lg border border-border/70 bg-background p-3"
                 >
                   <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
-                  <p className="mt-1 font-sans text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <p className="mt-1 font-sans text-sm text-muted-foreground">{item.description}</p>
                 </div>
               ))}
             </div>

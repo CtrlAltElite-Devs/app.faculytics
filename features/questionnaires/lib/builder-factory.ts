@@ -75,15 +75,13 @@ export function normalizeSections(
   return sections.map((section) => {
     const questionType =
       section.questionType ??
-      section.questions
-        .slice()
-        .sort((left, right) => left.order - right.order)[0]?.type ??
+      section.questions.slice().sort((left, right) => left.order - right.order)[0]?.type ??
       DEFAULT_BUILDER_QUESTION_TYPE;
 
     return {
       ...section,
-      dimensionCode: isLeafSection(section) ? section.dimensionCode ?? null : null,
-      dimensionCodeIssue: isLeafSection(section) ? section.dimensionCodeIssue ?? null : null,
+      dimensionCode: isLeafSection(section) ? (section.dimensionCode ?? null) : null,
+      dimensionCodeIssue: isLeafSection(section) ? (section.dimensionCodeIssue ?? null) : null,
       questionType,
       questions: resequenceQuestions(
         section.questions
@@ -131,8 +129,7 @@ export function createSyncedDraftSnapshot(
     },
     sections: draft.sections,
     qualitative: draft.qualitative,
-    selectedSectionId:
-      draft.selectedSectionId ?? sortSections(draft.sections)[0]?.id ?? null,
+    selectedSectionId: draft.selectedSectionId ?? sortSections(draft.sections)[0]?.id ?? null,
     hydratedFromServer: true,
   });
 }

@@ -2,7 +2,11 @@
 
 import { useEffect, useMemo } from "react";
 
-import { getAvailableRoles, resolveActiveRole, resolveHomeFromRoles } from "@/features/auth/lib/role-route";
+import {
+  getAvailableRoles,
+  resolveActiveRole,
+  resolveHomeFromRoles,
+} from "@/features/auth/lib/role-route";
 import { useAuthStore } from "@/stores/auth-store";
 
 import { useMe } from "@/features/auth/hooks/use-me";
@@ -16,11 +20,11 @@ export function useActiveRole() {
   const availableRoles = useMemo(() => getAvailableRoles(roles), [roles]);
   const activeRole = useMemo(
     () => resolveActiveRole(roles, storedActiveRole),
-    [roles, storedActiveRole],
+    [roles, storedActiveRole]
   );
   const roleHome = useMemo(
     () => resolveHomeFromRoles(roles, storedActiveRole),
-    [roles, storedActiveRole],
+    [roles, storedActiveRole]
   );
 
   useEffect(() => {

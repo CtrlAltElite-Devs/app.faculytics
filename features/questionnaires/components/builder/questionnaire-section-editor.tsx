@@ -255,10 +255,7 @@ export function QuestionnaireSectionEditor({
                   Move Down
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={() => onRemove(section.id)}
-                >
+                <DropdownMenuItem variant="destructive" onClick={() => onRemove(section.id)}>
                   <Trash2 className="size-4" />
                   Delete Section
                 </DropdownMenuItem>
@@ -281,7 +278,9 @@ export function QuestionnaireSectionEditor({
           <QuestionnaireQuestionEditor
             questions={section.questions}
             questionIssues={questionIssues}
-            onUpdateQuestion={(questionId, updates) => onUpdateQuestion(section.id, questionId, updates)}
+            onUpdateQuestion={(questionId, updates) =>
+              onUpdateQuestion(section.id, questionId, updates)
+            }
             onRemoveQuestion={(questionId) => onRemoveQuestion(section.id, questionId)}
           />
         ) : null}

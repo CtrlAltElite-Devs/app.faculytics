@@ -10,13 +10,7 @@ import {
 } from "@/features/dean/hooks/use-feedback-table-state";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -61,11 +55,7 @@ function FacultyMetricCard({
   );
 }
 
-export function FacultyAnalysisSummary({
-  faculty,
-}: {
-  faculty: DeanFacultyAnalysisRecord;
-}) {
+export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
   const {
     searchQuery,
     setSearchQuery,
@@ -95,15 +85,11 @@ export function FacultyAnalysisSummary({
               <h1 className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
                 {faculty.facultyName}
               </h1>
-              <p className="mt-2 font-sans text-sm text-muted-foreground">
-                CCS Department Faculty
-              </p>
+              <p className="mt-2 font-sans text-sm text-muted-foreground">CCS Department Faculty</p>
             </div>
           </div>
           <div className="space-y-3 lg:w-[70%] lg:flex-none">
-            <p className="font-sans text-sm font-semibold text-muted-foreground">
-              SUBJECT HANDLED
-            </p>
+            <p className="font-sans text-sm font-semibold text-muted-foreground">SUBJECT HANDLED</p>
             <div className="flex flex-wrap gap-2">
               {faculty.subjects.map((subject) => (
                 <Badge
@@ -177,18 +163,12 @@ export function FacultyAnalysisSummary({
               <DropdownMenuRadioGroup
                 value={selectedSentiment}
                 onValueChange={(value) => {
-                  setSelectedSentiment(
-                    value as (typeof sentimentFilterOptions)[number]
-                  );
+                  setSelectedSentiment(value as (typeof sentimentFilterOptions)[number]);
                   setCurrentPage(1);
                 }}
               >
                 {sentimentFilterOptions.map((option) => (
-                  <DropdownMenuRadioItem
-                    key={option}
-                    value={option}
-                    className="font-sans text-sm"
-                  >
+                  <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
                     {option}
                   </DropdownMenuRadioItem>
                 ))}
@@ -200,26 +180,16 @@ export function FacultyAnalysisSummary({
           <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
             <TableHeader className="data-table-header">
               <TableRow>
-                <TableHead className="data-table-head w-[18%]">
-                  Date
-                </TableHead>
-                <TableHead className="data-table-head w-[62%]">
-                  Feedback
-                </TableHead>
-                <TableHead className="data-table-head w-[20%]">
-                  Sentiment
-                </TableHead>
+                <TableHead className="data-table-head w-[18%]">Date</TableHead>
+                <TableHead className="data-table-head w-[62%]">Feedback</TableHead>
+                <TableHead className="data-table-head w-[20%]">Sentiment</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="[&_tr:last-child]:border-b-0">
               {paginatedFeedback.map((record) => (
                 <TableRow key={`${record.date}-${record.feedback}`} className="data-table-row">
-                  <TableCell className="data-table-cell">
-                    {record.date}
-                  </TableCell>
-                  <TableCell className="data-table-cell">
-                    {record.feedback}
-                  </TableCell>
+                  <TableCell className="data-table-cell">{record.date}</TableCell>
+                  <TableCell className="data-table-cell">{record.feedback}</TableCell>
                   <TableCell className="data-table-cell">
                     <Badge
                       variant={record.sentiment === "Negative" ? "destructive" : "ghost"}

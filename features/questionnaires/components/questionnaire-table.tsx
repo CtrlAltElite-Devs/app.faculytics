@@ -68,12 +68,11 @@ export function QuestionnaireTable({
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id} className="data-table-row">
-              <TableCell className="data-table-cell font-medium tabular-nums">v{row.versionNumber}</TableCell>
+              <TableCell className="data-table-cell font-medium tabular-nums">
+                v{row.versionNumber}
+              </TableCell>
               <TableCell className="data-table-cell">
-                <Badge
-                  variant="ghost"
-                  className={STATUS_BADGE_CLASS_NAMES[row.status]}
-                >
+                <Badge variant="ghost" className={STATUS_BADGE_CLASS_NAMES[row.status]}>
                   {row.status}
                 </Badge>
               </TableCell>
@@ -105,19 +104,28 @@ export function QuestionnaireTable({
                       </DropdownMenuItem>
                     ) : null}
                     {row.status !== "DRAFT" && onViewVersion ? (
-                      <DropdownMenuItem disabled={disableActions} onClick={() => onViewVersion(row)}>
+                      <DropdownMenuItem
+                        disabled={disableActions}
+                        onClick={() => onViewVersion(row)}
+                      >
                         <Eye className="size-4" />
                         View
                       </DropdownMenuItem>
                     ) : null}
                     {row.status === "DRAFT" && onPublishVersion ? (
-                      <DropdownMenuItem disabled={disableActions} onClick={() => onPublishVersion(row)}>
+                      <DropdownMenuItem
+                        disabled={disableActions}
+                        onClick={() => onPublishVersion(row)}
+                      >
                         <Rocket className="size-4" />
                         Publish
                       </DropdownMenuItem>
                     ) : null}
                     {(row.status === "DRAFT" || row.status === "ACTIVE") && onDeprecateVersion ? (
-                      <DropdownMenuItem disabled={disableActions} onClick={() => onDeprecateVersion(row)}>
+                      <DropdownMenuItem
+                        disabled={disableActions}
+                        onClick={() => onDeprecateVersion(row)}
+                      >
                         <ArchiveX className="size-4" />
                         Deprecate
                       </DropdownMenuItem>

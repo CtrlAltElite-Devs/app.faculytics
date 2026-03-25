@@ -18,8 +18,13 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   const clearSession = useAuthStore((state) => state.clearSession);
   const pendingRoleHome = useAuthStore((state) => state.pendingRoleHome);
   const setPendingRoleHome = useAuthStore((state) => state.setPendingRoleHome);
-  const { activeRole, roleHome, roles, isPending: isMePending, isError: isMeError } =
-    useActiveRole();
+  const {
+    activeRole,
+    roleHome,
+    roles,
+    isPending: isMePending,
+    isError: isMeError,
+  } = useActiveRole();
   const hasAnyAllowedRole = roles.some((role) => allowedRoles.includes(role));
   const isAllowed = Boolean(activeRole && allowedRoles.includes(activeRole));
 

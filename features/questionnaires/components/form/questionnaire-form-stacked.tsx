@@ -33,10 +33,7 @@ type QuestionnaireFormStackedProps = {
  *
  * Returns "" if the question hasn't been answered yet.
  */
-function getSelectedOptionKey(
-  value: number | undefined,
-  isLikert: boolean,
-): string {
+function getSelectedOptionKey(value: number | undefined, isLikert: boolean): string {
   if (value === undefined) return "";
   return isLikert ? value.toString() : YES_NO_REVERSE_MAP[value];
 }

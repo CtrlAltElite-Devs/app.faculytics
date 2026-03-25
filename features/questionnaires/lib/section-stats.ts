@@ -5,5 +5,8 @@ export function countDescendantSections(node: QuestionnaireBuilderSectionNode): 
 }
 
 export function countNestedQuestions(node: QuestionnaireBuilderSectionNode): number {
-  return node.questions.length + node.children.reduce((total, child) => total + countNestedQuestions(child), 0);
+  return (
+    node.questions.length +
+    node.children.reduce((total, child) => total + countNestedQuestions(child), 0)
+  );
 }

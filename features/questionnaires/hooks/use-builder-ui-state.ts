@@ -65,7 +65,8 @@ export function useBuilderUiState() {
     pendingScrollToSection,
     setSaveDialogOpen: (open: boolean) => dispatch({ type: "set-save-dialog-open", open }),
     setDiscardDialogOpen: (open: boolean) => dispatch({ type: "set-discard-dialog-open", open }),
-    setPendingParentId: (sectionId: string | null) => dispatch({ type: "set-pending-parent-id", sectionId }),
+    setPendingParentId: (sectionId: string | null) =>
+      dispatch({ type: "set-pending-parent-id", sectionId }),
     requestScrollToSection: () => dispatch({ type: "request-scroll-to-section" }),
     clearPendingScrollToSection: () => dispatch({ type: "clear-pending-scroll-to-section" }),
   };

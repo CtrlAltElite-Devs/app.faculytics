@@ -79,74 +79,77 @@ export function QuestionnaireBuilderShell({
   return (
     <div className="space-y-6">
       <Card className="overflow-hidden">
-          <CardHeader className="space-y-4">
-            <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-              <div className="min-w-0 space-y-4">
-                <div className="min-w-0">
-                  <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center">
-                    <div className="w-full lg:min-w-0 lg:flex-1">
-                      <InlineEditInput
-                        id="questionnaire-title"
-                        value={draft.metadata.title}
-                        placeholder="Enter the questionnaire title"
-                        ariaInvalid={Boolean(
-                          validation?.issues.some((issue) => issue.code === "metadata.title.required")
-                        )}
-                        textClassName="min-h-11 text-xl font-semibold"
-                        inputClassName="h-11 text-xl font-semibold"
-                        onChange={updateTitle}
-                      />
-                    </div>
-                    {statusBadge ? <div className="lg:shrink-0">{statusBadge}</div> : null}
+        <CardHeader className="space-y-4">
+          <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+            <div className="min-w-0 space-y-4">
+              <div className="min-w-0">
+                <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center">
+                  <div className="w-full lg:min-w-0 lg:flex-1">
+                    <InlineEditInput
+                      id="questionnaire-title"
+                      value={draft.metadata.title}
+                      placeholder="Enter the questionnaire title"
+                      ariaInvalid={Boolean(
+                        validation?.issues.some((issue) => issue.code === "metadata.title.required")
+                      )}
+                      textClassName="min-h-11 text-xl font-semibold"
+                      inputClassName="h-11 text-xl font-semibold"
+                      onChange={updateTitle}
+                    />
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {hasExistingQuestionnaire
-                      ? "Changes to the questionnaire title will be saved to the parent questionnaire."
-                      : "Set the questionnaire title before creating the first draft version."}
-                  </p>
+                  {statusBadge ? <div className="lg:shrink-0">{statusBadge}</div> : null}
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-3 xl:items-end">
-                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap xl:justify-end">
-                  <Button asChild variant="outline">
-                    <Link href={`/superadmin/questionnaires/new/preview?type=${previewModel.type}`}>
-                      Open preview
-                    </Link>
-                  </Button>
-                  {isDirty ? (
-                    <Button type="button" variant="outline" onClick={() => setDiscardDialogOpen(true)}>
-                      Discard changes
-                    </Button>
-                  ) : null}
-                  <Button
-                    type="button"
-                    variant="brand"
-                    disabled={isPending}
-                    onClick={() => void handleSave()}
-                  >
-                    {isPending ? "Saving..." : "Save draft"}
-                  </Button>
-                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {hasExistingQuestionnaire
+                    ? "Changes to the questionnaire title will be saved to the parent questionnaire."
+                    : "Set the questionnaire title before creating the first draft version."}
+                </p>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            {validation && !validation.isValid && (
-              <QuestionnaireCallout variant="danger">
-                {validationMessages.length === 1 ? (
-                  validationMessages[0]
-                ) : (
-                  <ul className="list-disc space-y-1 pl-5">
-                    {validationMessages.slice(0, 3).map((message, index) => (
-                      <li key={`${message}-${index}`}>{message}</li>
-                    ))}
-                  </ul>
-                )}
-              </QuestionnaireCallout>
-            )}
 
-          </CardContent>
+            <div className="flex flex-col gap-3 xl:items-end">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap xl:justify-end">
+                <Button asChild variant="outline">
+                  <Link href={`/superadmin/questionnaires/new/preview?type=${previewModel.type}`}>
+                    Open preview
+                  </Link>
+                </Button>
+                {isDirty ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setDiscardDialogOpen(true)}
+                  >
+                    Discard changes
+                  </Button>
+                ) : null}
+                <Button
+                  type="button"
+                  variant="brand"
+                  disabled={isPending}
+                  onClick={() => void handleSave()}
+                >
+                  {isPending ? "Saving..." : "Save draft"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {validation && !validation.isValid && (
+            <QuestionnaireCallout variant="danger">
+              {validationMessages.length === 1 ? (
+                validationMessages[0]
+              ) : (
+                <ul className="list-disc space-y-1 pl-5">
+                  {validationMessages.slice(0, 3).map((message, index) => (
+                    <li key={`${message}-${index}`}>{message}</li>
+                  ))}
+                </ul>
+              )}
+            </QuestionnaireCallout>
+          )}
+        </CardContent>
       </Card>
 
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,2.2fr)]">
@@ -168,10 +171,7 @@ export function QuestionnaireBuilderShell({
 
         <div className="min-w-0 space-y-6">
           {draft.sections.length === 0 ? (
-            <QuestionnaireAddActionButton
-              label="Add Section"
-              onClick={handleAddRootSection}
-            />
+            <QuestionnaireAddActionButton label="Add Section" onClick={handleAddRootSection} />
           ) : (
             <>
               {draft.sections.map((section) => (
@@ -193,10 +193,7 @@ export function QuestionnaireBuilderShell({
                   onRemoveQuestion={removeQuestion}
                 />
               ))}
-              <QuestionnaireAddActionButton
-                label="Add Section"
-                onClick={handleAddRootSection}
-              />
+              <QuestionnaireAddActionButton label="Add Section" onClick={handleAddRootSection} />
             </>
           )}
 

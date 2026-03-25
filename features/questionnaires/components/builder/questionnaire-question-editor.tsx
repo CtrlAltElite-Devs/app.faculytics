@@ -49,7 +49,8 @@ export function QuestionnaireQuestionEditor({
                         className="min-w-0"
                         value={question.prompt}
                         aria-invalid={issues.some(
-                          (issue) => issue.target.type === "question" && issue.target.field === "prompt"
+                          (issue) =>
+                            issue.target.type === "question" && issue.target.field === "prompt"
                         )}
                         placeholder="Enter the statement that students will rate."
                         aria-label={`Question ${index + 1} prompt`}

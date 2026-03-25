@@ -3,12 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const chipGap = 8;
 
@@ -34,11 +29,11 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
       }
 
       const subjectWidths = subjects.map(
-        (_, index) => subjectMeasureRefs.current[index]?.offsetWidth ?? 0,
+        (_, index) => subjectMeasureRefs.current[index]?.offsetWidth ?? 0
       );
-      const moreWidths = subjects.slice(1).map(
-        (_, index) => moreMeasureRefs.current[index]?.offsetWidth ?? 0,
-      );
+      const moreWidths = subjects
+        .slice(1)
+        .map((_, index) => moreMeasureRefs.current[index]?.offsetWidth ?? 0);
 
       let usedWidth = 0;
       let fittedCount = subjects.length;
@@ -47,7 +42,8 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
         const nextChipWidth = subjectWidths[index] ?? 0;
         const nextUsedWidth = usedWidth + (index > 0 ? chipGap : 0) + nextChipWidth;
         const hiddenCount = subjects.length - (index + 1);
-        const reservedMoreWidth = hiddenCount > 0 ? (moreWidths[hiddenCount - 1] ?? 0) + chipGap : 0;
+        const reservedMoreWidth =
+          hiddenCount > 0 ? (moreWidths[hiddenCount - 1] ?? 0) + chipGap : 0;
 
         if (nextUsedWidth + reservedMoreWidth > containerWidth) {
           fittedCount = index;
@@ -116,21 +112,14 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
         </div>
         <div ref={containerRef} className="flex flex-nowrap items-center gap-2 overflow-hidden">
           {visibleSubjects.map((subject) => (
-            <Badge
-              key={subject}
-              variant="outline"
-              className={subjectChipClassName}
-            >
+            <Badge key={subject} variant="outline" className={subjectChipClassName}>
               <span className="truncate">{subject}</span>
             </Badge>
           ))}
           {hiddenSubjectCount > 0 ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge
-                  variant="outline"
-                  className={overflowChipClassName}
-                >
+                <Badge variant="outline" className={overflowChipClassName}>
                   + {hiddenSubjectCount} more
                 </Badge>
               </TooltipTrigger>

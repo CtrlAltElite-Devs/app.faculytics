@@ -28,4 +28,3 @@ export function draftsMatch(
     JSON.stringify(createComparableDraftSnapshot(right ?? null))
   );
 }
-

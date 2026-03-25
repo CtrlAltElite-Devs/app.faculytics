@@ -20,7 +20,7 @@ import type { QuestionnaireType } from "@/features/questionnaires/types";
  */
 export function useActiveQuestionnaireVersion(
   type: QuestionnaireType | null,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean }
 ) {
   const token = useAuthStore((state) => state.token);
   const isEnabled = options?.enabled ?? true;

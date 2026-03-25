@@ -49,12 +49,7 @@ export function ConfirmationDialog({
           >
             {cancelLabel}
           </Button>
-          <Button
-            type="button"
-            variant={confirmVariant}
-            disabled={isPending}
-            onClick={onConfirm}
-          >
+          <Button type="button" variant={confirmVariant} disabled={isPending} onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </DialogFooter>

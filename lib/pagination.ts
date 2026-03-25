@@ -2,10 +2,7 @@
  * Builds a compact pagination bar: shows page numbers near the current page
  * and replaces distant pages with "..." ellipsis markers.
  */
-export function getPaginationItems(
-  currentPage: number,
-  totalPages: number,
-): (number | "...")[] {
+export function getPaginationItems(currentPage: number, totalPages: number): (number | "...")[] {
   if (totalPages <= 5) {
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
