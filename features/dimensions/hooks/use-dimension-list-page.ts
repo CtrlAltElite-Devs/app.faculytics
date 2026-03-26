@@ -64,9 +64,9 @@ export function useDimensionListPage() {
 
   const deferredSearch = useDeferredValue(searchValue);
 
+  // Fetch all dimensions for the questionnaire type so search works across all items
   const queryParams: ListDimensionsRequest = {
-    page,
-    limit: pageSize,
+    limit: 100,
     questionnaireType: typeFilter,
     ...(statusFilter === "ACTIVE" && { active: true }),
     ...(statusFilter === "INACTIVE" && { active: false }),
@@ -75,23 +75,17 @@ export function useDimensionListPage() {
   const dimensionListQuery = useDimensionList(queryParams);
   const toggleStatusMutation = useToggleDimensionStatus();
 
-  const rows = dimensionListQuery.data?.data ?? [];
-  const meta = dimensionListQuery.data?.meta ?? {
-    page: 1,
-    limit: pageSize,
-    totalItems: 0,
-    totalPages: 1,
-    itemCount: 0,
-  };
+  const allRows = dimensionListQuery.data?.data ?? [];
+
   const statusFilteredRows =
     statusFilter === "ACTIVE"
-      ? rows.filter((row) => row.active)
+      ? allRows.filter((row) => row.active)
       : statusFilter === "INACTIVE"
-        ? rows.filter((row) => !row.active)
-        : rows;
+        ? allRows.filter((row) => !row.active)
+        : allRows;
 
   const normalizedSearch = deferredSearch.trim().toLowerCase();
-  const filteredRows =
+  const searchFilteredRows =
     normalizedSearch.length > 0
       ? statusFilteredRows.filter(
           (row) =>
@@ -99,6 +93,21 @@ export function useDimensionListPage() {
             row.code.toLowerCase().includes(normalizedSearch)
         )
       : statusFilteredRows;
+
+  // Client-side pagination over filtered results
+  const totalItems = searchFilteredRows.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const startIndex = (safePage - 1) * pageSize;
+  const filteredRows = searchFilteredRows.slice(startIndex, startIndex + pageSize);
+
+  const meta = {
+    page: safePage,
+    limit: pageSize,
+    totalItems,
+    totalPages,
+    itemCount: filteredRows.length,
+  };
 
   const updateSearchParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
