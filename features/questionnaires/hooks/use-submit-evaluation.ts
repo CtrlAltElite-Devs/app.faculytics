@@ -35,6 +35,7 @@ export function useSubmitEvaluation() {
       queryKey: ["questionnaires", "submissions", "check"],
     });
     queryClient.invalidateQueries({ queryKey: ["questionnaires", "drafts"] });
+    queryClient.invalidateQueries({ queryKey: ["enrollments", "me"] });
     router.push("/student/courses");
   }, [queryClient, router]);
 
