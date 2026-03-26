@@ -185,7 +185,7 @@ export function EvaluationForm({
           <DialogHeader className="items-center">
             <CheckCircle2 className="size-12 text-green-500" />
             <DialogTitle className="font-playfair text-xl">Evaluation Submitted</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-center">
               Thank you for your feedback. Your evaluation has been submitted successfully.
             </DialogDescription>
           </DialogHeader>

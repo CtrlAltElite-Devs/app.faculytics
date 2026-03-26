@@ -4,6 +4,7 @@ import {
   Building2,
   LayoutDashboard,
   Shield,
+  Tags,
   type LucideIcon,
 } from "lucide-react";
 
@@ -71,6 +72,11 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
         title: "Questionnaires",
         url: "/superadmin/questionnaires",
         icon: Shield,
+      },
+      {
+        title: "Dimensions",
+        url: "/superadmin/dimensions",
+        icon: Tags,
       },
     ],
   },
