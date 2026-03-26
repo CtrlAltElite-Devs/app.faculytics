@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Layers3 } from "lucide-react";
+import { CheckCircle2, Layers3 } from "lucide-react";
 
 import { decodeHtmlEntities, resolveCourseImageSrc } from "@/lib/string";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,6 +17,7 @@ export type CourseCardProps = {
   feedbackHref: string;
   onGiveFeedback?: () => void;
   imageSrc?: string;
+  submitted?: boolean;
 };
 
 export default function CourseCard({
@@ -28,6 +29,7 @@ export default function CourseCard({
   feedbackHref,
   onGiveFeedback,
   imageSrc,
+  submitted,
 }: CourseCardProps) {
   const decodedShortname = decodeHtmlEntities(shortname);
   const decodedFullname = decodeHtmlEntities(fullname);
@@ -81,11 +83,18 @@ export default function CourseCard({
             </div>
           )}
         </div>
-        <Button asChild variant="brand" className="mt-auto w-full">
-          <Link href={feedbackHref} onClick={onGiveFeedback}>
-            Give Feedback
-          </Link>
-        </Button>
+        {submitted ? (
+          <Button variant="outline" className="mt-auto w-full" disabled>
+            <CheckCircle2 className="size-4" />
+            Submitted
+          </Button>
+        ) : (
+          <Button asChild variant="brand" className="mt-auto w-full">
+            <Link href={feedbackHref} onClick={onGiveFeedback}>
+              Give Feedback
+            </Link>
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

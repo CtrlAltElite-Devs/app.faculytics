@@ -30,6 +30,11 @@ export type SectionShortResponseDto = {
   name: string;
 };
 
+export type SubmissionStatusDto = {
+  submitted: boolean;
+  submittedAt?: string;
+};
+
 export type EnrollmentResponseDto = {
   id: string;
   role: string;
@@ -37,6 +42,7 @@ export type EnrollmentResponseDto = {
   faculty?: FacultyShortResponseDto | null;
   semester?: SemesterShortResponseDto | null;
   section?: SectionShortResponseDto | null;
+  submission: SubmissionStatusDto;
 };
 
 export type PaginationMeta = {

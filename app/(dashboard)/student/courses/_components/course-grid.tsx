@@ -21,6 +21,7 @@ export function CourseGrid({ enrollments, onSelectCourse }: CourseGridProps) {
           imageSrc={enrollment.course.courseImage}
           feedbackHref={`/student/courses/${enrollment.course.id}/evaluation`}
           onGiveFeedback={() => onSelectCourse(enrollment)}
+          submitted={enrollment.submission?.submitted}
         />
       ))}
     </>
