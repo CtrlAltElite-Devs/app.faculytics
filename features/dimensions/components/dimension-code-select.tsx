@@ -1,12 +1,9 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
-import { Check, ChevronsUpDown, LoaderCircle, Plus } from "lucide-react";
-import { toast } from "sonner";
+import { Check, ChevronsUpDown, LoaderCircle } from "lucide-react";
 
-import { useCreateDimension } from "@/features/dimensions/hooks/use-create-dimension";
 import { useDimensions } from "@/features/dimensions/hooks/use-dimensions";
-import { resolveCreateDimensionErrorMessage } from "@/features/dimensions/lib/action-errors";
 import type { Dimension } from "@/features/dimensions/types";
 import type { QuestionnaireType } from "@/features/questionnaires/types";
 import { Button } from "@/components/ui/button";
@@ -17,7 +14,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from "@/components/ui/command";
 import {
   InputGroup,
@@ -47,10 +43,8 @@ export function DimensionCodeSelect({
   const inputId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [localMessage, setLocalMessage] = useState<string | null>(null);
 
   const dimensionsQuery = useDimensions(questionnaireType);
-  const createDimensionMutation = useCreateDimension();
   const activeDimensions = useMemo(() => dimensionsQuery.data?.data ?? [], [dimensionsQuery.data]);
 
   const selectedDimension = useMemo(
@@ -94,69 +88,11 @@ export function DimensionCodeSelect({
     });
   }, [activeDimensions, normalizedSearch]);
 
-  const hasExactMatch = useMemo(() => {
-    if (!normalizedSearch) {
-      return false;
-    }
-
-    return activeDimensions.some((dimension) => {
-      return (
-        normalizeDimensionText(dimension.displayName) === normalizedSearch ||
-        normalizeDimensionText(dimension.code) === normalizedSearch
-      );
-    });
-  }, [activeDimensions, normalizedSearch]);
-
-  const canCreate = normalizedSearch.length > 0 && !hasExactMatch;
-
-  const selectDimension = (
-    dimension: Dimension,
-    options?: {
-      toastMessage?: string;
-    }
-  ) => {
-    const nextCode = dimension.code;
-    const previousCode = value;
-
+  const selectDimension = (dimension: Dimension) => {
     onChange(dimension.code);
-    setLocalMessage(null);
     setSearchValue(dimension.displayName);
     setIsOpen(false);
-
-    if (nextCode !== previousCode && options?.toastMessage) {
-      toast.success(options.toastMessage);
-    }
   };
-
-  const handleCreateDimension = async () => {
-    const displayName = searchValue.trim();
-    if (!displayName) {
-      return;
-    }
-
-    try {
-      const createdDimension = await createDimensionMutation.mutateAsync({
-        displayName,
-        questionnaireType,
-      });
-      selectDimension(createdDimension, {
-        toastMessage: `Dimension "${createdDimension.displayName}" created and selected.`,
-      });
-    } catch (error) {
-      setLocalMessage(
-        resolveCreateDimensionErrorMessage(
-          error,
-          "Unable to create that dimension right now. Please try again."
-        )
-      );
-      await dimensionsQuery.refetch();
-      if (typeof document !== "undefined") {
-        document.getElementById(inputId)?.focus();
-      }
-    }
-  };
-
-  const helperMessage = errorMessage ?? localMessage;
 
   return (
     <div className="space-y-2">
@@ -166,8 +102,6 @@ export function DimensionCodeSelect({
           setIsOpen(open);
           if (!open) {
             setSearchValue("");
-          } else {
-            setLocalMessage(null);
           }
         }}
       >
@@ -184,7 +118,7 @@ export function DimensionCodeSelect({
                 id={inputId}
                 readOnly
                 value={selectedDisplayValue}
-                placeholder="Select or create a dimension"
+                placeholder="Select a dimension"
                 aria-invalid={ariaInvalid}
                 className="cursor-pointer"
               />
@@ -202,11 +136,8 @@ export function DimensionCodeSelect({
           <Command shouldFilter={false}>
             <CommandInput
               value={searchValue}
-              placeholder="Search or create a dimension..."
-              onValueChange={(value) => {
-                setSearchValue(value);
-                setLocalMessage(null);
-              }}
+              placeholder="Search dimensions..."
+              onValueChange={setSearchValue}
             />
             <CommandList>
               {dimensionsQuery.isLoading ? (
@@ -259,28 +190,6 @@ export function DimensionCodeSelect({
                       </CommandItem>
                     ))}
                   </CommandGroup>
-
-                  {canCreate ? (
-                    <>
-                      <CommandSeparator />
-                      <CommandGroup heading="Create New">
-                        <CommandItem
-                          value={`create-${searchValue.trim()}`}
-                          disabled={createDimensionMutation.isPending}
-                          onSelect={() => {
-                            void handleCreateDimension();
-                          }}
-                        >
-                          {createDimensionMutation.isPending ? (
-                            <LoaderCircle className="size-4 animate-spin" />
-                          ) : (
-                            <Plus className="size-4" />
-                          )}
-                          <span>Create &quot;{searchValue.trim()}&quot;</span>
-                        </CommandItem>
-                      </CommandGroup>
-                    </>
-                  ) : null}
                 </>
               )}
             </CommandList>
@@ -288,8 +197,8 @@ export function DimensionCodeSelect({
         </PopoverContent>
       </Popover>
 
-      {helperMessage ? <p className="text-sm text-destructive">{helperMessage}</p> : null}
-      {!helperMessage && unavailableSelectedDimension ? (
+      {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
+      {!errorMessage && unavailableSelectedDimension ? (
         <p className="text-sm text-amber-700">
           The saved code &quot;{unavailableSelectedDimension.code}&quot; is not in the active
           registry. Re-select it or choose a replacement before publishing.

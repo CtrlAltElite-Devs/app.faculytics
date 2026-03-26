@@ -24,7 +24,7 @@ export type DimensionsListResponse = {
 };
 
 export type ListDimensionsRequest = {
-  questionnaireType: QuestionnaireType;
+  questionnaireType?: QuestionnaireType;
   active?: boolean;
   page?: number;
   limit?: number;
@@ -34,4 +34,8 @@ export type CreateDimensionRequest = {
   displayName: string;
   questionnaireType: QuestionnaireType;
   code?: string;
+};
+
+export type UpdateDimensionRequest = {
+  displayName: string;
 };
