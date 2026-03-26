@@ -202,7 +202,17 @@ Create a PR and move ticket to "In review".
    git diff main...HEAD --stat
    ```
 4. Draft a PR:
-   - **Title**: Match the issue title or derive from commits
+   - **Title**: Use the format `[TAG][FAC-WEB-XX] description` where:
+     - `XX` is the branch number (from `fac-web-XX-...`)
+     - `TAG` is inferred from the nature of the changes:
+       - `FEAT` — new feature or functionality
+       - `FIX` — bug fix
+       - `UI` — visual/styling changes only
+       - `REFACTOR` — code restructuring without behavior change
+       - `CHORE` — tooling, config, dependencies
+       - `DOCS` — documentation only
+     - `description` is a concise summary derived from the issue title or commits
+     - Examples: `[FEAT][FAC-WEB-18] handle submission status from enrollments`, `[FIX][FAC-WEB-12] pagination reset on filter change`
    - **Body**: Use this format:
      ```markdown
      ## Summary
