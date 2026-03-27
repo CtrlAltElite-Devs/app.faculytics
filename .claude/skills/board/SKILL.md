@@ -25,7 +25,7 @@ You are a project board workflow assistant for the Faculytics frontend project. 
 
 `fac-web-{sequential_number}-{kebab-case-short-description}`
 
-**IMPORTANT:** The number is **sequential** (incrementing from the highest existing branch), NOT the GitHub issue number. Before creating a branch, run `git branch -a` to find the highest `fac-web-XX` number and use XX+1.
+**IMPORTANT:** The number is **sequential** (incrementing from the highest existing branch), NOT the GitHub issue number. Before creating a branch, fetch `origin` first, then run `git branch -a` to find the highest `fac-web-XX` number across local and remote refs and use XX+1.
 
 Examples from existing branches:
 - `fac-web-16-sync-enrollments`
@@ -135,12 +135,14 @@ Begin working on a ticket. This is the main workflow command.
 
    **c. Create and checkout a feature branch** from latest `main`:
    ```bash
+   git fetch origin
    git branch -a | grep 'fac-web-' | sed 's/.*fac-web-//' | cut -d'-' -f1 | sort -n | tail -1
    # Use that number + 1 as NEXT_NUMBER
    git checkout main && git pull origin main
    git checkout -b fac-web-{NEXT_NUMBER}-{kebab-case-description}
    ```
-   - The number is **sequential** (highest existing + 1), NOT the issue number
+   - Fetch remote refs first so branch numbering stays synced with `origin`
+   - The number is **sequential** (highest existing local or remote + 1), NOT the issue number
    - Derive the kebab-case description from the issue title (short, max 4-5 words)
 
    **d. Backend context scan** — If the issue body mentions API endpoints or backend modules:
@@ -222,8 +224,6 @@ Create a PR and move ticket to "In review".
      - [ ] <testing checklist items>
 
      Closes #ISSUE_NUMBER
-
-     🤖 Generated with [Claude Code](https://claude.com/claude-code)
      ```
 5. Show the draft to the user and ask for confirmation/edits before creating.
 6. Create the PR:

@@ -1,10 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { saveDraft } from "@/features/questionnaires/api/questionnaire.requests";
-import type { QuestionnaireFormValues, SaveDraftPayload } from "@/features/questionnaires/types";
+import { getEvaluationDraftQueryKey } from "@/features/questionnaires/hooks/use-evaluation-draft";
+import type {
+  DraftResponse,
+  QuestionnaireFormValues,
+  SaveDraftPayload,
+} from "@/features/questionnaires/types";
 
 const DEBOUNCE_MS = 3000;
 
@@ -31,9 +36,11 @@ export function useAutoSaveDraft({
   courseId,
   onStatusChange,
 }: UseAutoSaveDraftOptions) {
+  const queryClient = useQueryClient();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const mutationRef = useRef(useSaveDraft());
+  const { mutate: saveDraftMutation } = useSaveDraft();
   const onStatusChangeRef = useRef(onStatusChange);
+
   useEffect(() => {
     onStatusChangeRef.current = onStatusChange;
   }, [onStatusChange]);
@@ -58,13 +65,27 @@ export function useAutoSaveDraft({
 
         onStatusChangeRef.current?.("saving");
 
-        mutationRef.current.mutate(payload, {
-          onSuccess: () => {
+        const syncDraftCache = (draft: DraftResponse) => {
+          queryClient.setQueryData(
+            getEvaluationDraftQueryKey({
+              versionId: payload.versionId,
+              facultyId: payload.facultyId,
+              semesterId: payload.semesterId,
+              courseId: payload.courseId,
+            }),
+            draft
+          );
+        };
+
+        saveDraftMutation(payload, {
+          onSuccess: (draft) => {
+            syncDraftCache(draft);
             onStatusChangeRef.current?.("saved");
           },
           onError: () => {
-            mutationRef.current.mutate(payload, {
-              onSuccess: () => {
+            saveDraftMutation(payload, {
+              onSuccess: (draft) => {
+                syncDraftCache(draft);
                 onStatusChangeRef.current?.("saved");
               },
               onError: () => {
@@ -75,7 +96,7 @@ export function useAutoSaveDraft({
         });
       }, DEBOUNCE_MS);
     },
-    [versionId, facultyId, semesterId, courseId]
+    [versionId, facultyId, semesterId, courseId, queryClient, saveDraftMutation]
   );
 
   const cancel = useCallback(() => {
@@ -84,6 +105,8 @@ export function useAutoSaveDraft({
       timerRef.current = null;
     }
   }, []);
+
+  useEffect(() => cancel, [cancel]);
 
   return { debouncedSave, cancel };
 }

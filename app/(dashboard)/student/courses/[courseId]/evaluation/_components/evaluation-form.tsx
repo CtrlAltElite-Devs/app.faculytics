@@ -35,6 +35,7 @@ type EvaluationFormProps = {
   semester: { id: string };
   model: Parameters<typeof QuestionnaireFormRenderer>[0]["model"];
   defaultValues: Partial<QuestionnaireFormValues> | undefined;
+  draftHydrationKey: string;
 };
 
 export function EvaluationForm({
@@ -48,6 +49,7 @@ export function EvaluationForm({
   semester,
   model,
   defaultValues,
+  draftHydrationKey,
 }: EvaluationFormProps) {
   const formValuesRef = useRef<QuestionnaireFormValues | null>(null);
   const [draftStatus, setDraftStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -138,7 +140,7 @@ export function EvaluationForm({
 
       <div className="mt-8">
         <QuestionnaireFormRenderer
-          key={defaultValues ? "hydrated" : "fresh"}
+          key={draftHydrationKey}
           model={model}
           mode="interactive"
           defaultValues={defaultValues}

@@ -27,7 +27,7 @@ You are a project board workflow assistant for the Faculytics frontend project. 
 
 `fac-web-{sequential_number}-{kebab-case-short-description}`
 
-**Important:** The number is sequential, incrementing from the highest existing branch, not the GitHub issue number. Before creating a branch, run `git branch -a` to find the highest `fac-web-XX` number and use `XX + 1`.
+**Important:** The number is sequential, incrementing from the highest existing branch, not the GitHub issue number. Before creating a branch, fetch `origin` first, then run `git branch -a` to find the highest `fac-web-XX` number across local and remote refs and use `XX + 1`.
 
 Examples from existing branches:
 - `fac-web-16-sync-enrollments`
@@ -132,12 +132,14 @@ Begin working on a ticket.
 
    **c. Create and check out a feature branch** from the latest `main`:
    ```bash
+   git fetch origin
    git branch -a | grep 'fac-web-' | sed 's/.*fac-web-//' | cut -d'-' -f1 | sort -n | tail -1
    git checkout main
    git pull origin main
    git checkout -b fac-web-{NEXT_NUMBER}-{kebab-case-description}
    ```
-   - Use the highest existing branch number plus one.
+   - Fetch remote refs first so branch numbering stays in sync with `origin`.
+   - Use the highest existing branch number plus one across local and remote branches.
    - Derive a short 4 to 5 word kebab-case description from the issue title.
 
    **d. Backend context scan** if the issue body mentions API endpoints or backend modules:
@@ -203,8 +205,6 @@ Create a pull request and move the ticket to `In review`.
    - [ ] Verification checklist item
 
    Closes #ISSUE_NUMBER
-
-   Generated with Codex
    ```
 7. Show the draft to the user and ask for confirmation or edits before creating it.
 8. After confirmation, push and create the PR:

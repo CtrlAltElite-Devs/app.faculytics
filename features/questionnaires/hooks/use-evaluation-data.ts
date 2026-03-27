@@ -41,6 +41,7 @@ type ReadyData = EvaluationContext & {
   activeVersion: QuestionnaireVersionDetail;
   model: QuestionnaireBuilderPreviewModel;
   defaultValues: Partial<QuestionnaireFormValues> | undefined;
+  draftHydrationKey: string;
 };
 
 export type EvaluationDataResult =
@@ -150,6 +151,7 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
           qualitativeComment: draft.qualitativeComment ?? "",
         }
       : undefined;
+  const draftHydrationKey = draft && !isDraftStale ? draft.updatedAt : "fresh";
 
   // --- Derive display strings (safe to call unconditionally) ---
   const context = useMemo<EvaluationContext | null>(() => {
@@ -206,7 +208,7 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
 
   return {
     status: "ready",
-    data: { ...context, activeVersion, model, defaultValues },
+    data: { ...context, activeVersion, model, defaultValues, draftHydrationKey },
   };
 }
 
