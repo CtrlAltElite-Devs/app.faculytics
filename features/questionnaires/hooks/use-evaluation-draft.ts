@@ -10,6 +10,10 @@ type UseEvaluationDraftOptions = {
   enabled?: boolean;
 };
 
+export function getEvaluationDraftQueryKey(params: FetchDraftParams | null) {
+  return ["questionnaires", "drafts", params] as const;
+}
+
 export function useEvaluationDraft(
   params: FetchDraftParams | null,
   options?: UseEvaluationDraftOptions
@@ -18,8 +22,10 @@ export function useEvaluationDraft(
   const isEnabled = options?.enabled ?? true;
 
   return useQuery({
-    queryKey: ["questionnaires", "drafts", params],
+    queryKey: getEvaluationDraftQueryKey(params),
     enabled: Boolean(token) && Boolean(params) && isEnabled,
+    staleTime: 0,
+    refetchOnMount: "always",
     queryFn: () => {
       if (!params) throw new Error("Draft params are required.");
       return fetchDraft(params);
