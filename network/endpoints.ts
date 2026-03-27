@@ -26,6 +26,10 @@ export enum Endpoints {
   questionnaireDrafts = "/api/v1/questionnaires/drafts",
   questionnaireDraftsList = "/api/v1/questionnaires/drafts/list",
 
+  // Questionnaire Types (entity CRUD)
+  questionnaireTypeEntities = "/api/v1/questionnaire-types",
+  questionnaireTypeEntityById = "/api/v1/questionnaire-types/:id",
+
   // Dimensions
   dimensions = "/api/v1/dimensions",
   dimensionById = "/api/v1/dimensions/:id",

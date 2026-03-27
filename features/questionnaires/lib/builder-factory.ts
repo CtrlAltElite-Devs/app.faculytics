@@ -8,7 +8,7 @@ import type {
   QuestionnaireBuilderQualitativeConfig,
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
-  QuestionnaireType,
+  QuestionnaireTypeCode,
 } from "@/features/questionnaires/types";
 
 export function createId(prefix: string) {
@@ -98,7 +98,7 @@ export function normalizeSections(
 }
 
 export function createDraft(
-  type: QuestionnaireType,
+  type: QuestionnaireTypeCode,
   overrides?: Partial<QuestionnaireBuilderDraft>
 ): QuestionnaireBuilderDraft {
   return {
@@ -120,7 +120,7 @@ export function createDraft(
 
 export function createSyncedDraftSnapshot(
   draft: QuestionnaireBuilderDraft,
-  type: QuestionnaireType = draft.metadata.type
+  type: QuestionnaireTypeCode = draft.metadata.type
 ): QuestionnaireBuilderDraft {
   return createDraft(type, {
     metadata: {

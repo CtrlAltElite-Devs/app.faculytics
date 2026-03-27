@@ -13,12 +13,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { QUESTIONNAIRE_TYPE_LABELS } from "@/features/questionnaires/constants";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 
 type QuestionnaireTypeButtonGroupProps = {
-  types: QuestionnaireType[];
-  value: QuestionnaireType;
-  onValueChange: (value: QuestionnaireType) => void;
+  types: QuestionnaireTypeCode[];
+  value: QuestionnaireTypeCode;
+  onValueChange: (value: QuestionnaireTypeCode) => void;
   className?: string;
 };
 
@@ -41,7 +41,7 @@ export function QuestionnaireTypeButtonGroup({
           <DropdownMenuContent align="start" className="min-w-56">
             <DropdownMenuRadioGroup
               value={value}
-              onValueChange={(nextValue) => onValueChange(nextValue as QuestionnaireType)}
+              onValueChange={(nextValue) => onValueChange(nextValue as QuestionnaireTypeCode)}
             >
               {types.map((type) => (
                 <DropdownMenuRadioItem key={type} value={type}>

@@ -9,7 +9,6 @@ import type {
   FetchDraftParams,
   Questionnaire,
   QuestionnaireVersionDetail,
-  QuestionnaireType,
   QuestionnaireTypeSummary,
   QuestionnaireVersion,
   QuestionnaireVersionsResponse,
@@ -28,10 +27,11 @@ export async function fetchQuestionnaireTypes() {
 
 /**
  * Fetch questionnaire versions for a specific questionnaire type.
+ * @param typeId - UUID of the questionnaire type entity
  */
-export async function fetchQuestionnaireVersionsByType(type: QuestionnaireType) {
+export async function fetchQuestionnaireVersionsByType(typeId: string) {
   const response = await apiClient.get<QuestionnaireVersionsResponse>(
-    Endpoints.questionnaireTypeVersions.replace(":type", type)
+    Endpoints.questionnaireTypeVersions.replace(":type", typeId)
   );
   return response.data;
 }
@@ -75,7 +75,7 @@ export async function createQuestionnaireVersion({
   questionnaireId: string;
   payload: CreateQuestionnaireVersionRequest;
 }) {
-  const response = await apiClient.post<QuestionnaireVersion>(
+  const response = await apiClient.post<QuestionnaireVersionDetail>(
     Endpoints.questionnaireVersions.replace(":id", questionnaireId),
     payload
   );

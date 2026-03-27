@@ -1,9 +1,9 @@
 import { QuestionnaireAsyncContent } from "@/features/questionnaires/components/questionnaire-async-content";
 import { QuestionnaireBuilderShell } from "@/features/questionnaires/components/builder/questionnaire-builder-shell";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 
 type QuestionnaireBuilderScreenProps = {
-  activeType: QuestionnaireType;
+  activeType: QuestionnaireTypeCode;
   isHydrated: boolean;
   isLoading: boolean;
   isError: boolean;

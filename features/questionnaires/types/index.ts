@@ -7,17 +7,29 @@ import {
 } from "@/features/questionnaires/constants";
 import type { QuestionnaireVersionSchema } from "@/features/questionnaires/types/builder";
 
-export type QuestionnaireType = (typeof QUESTIONNAIRE_TYPES)[number];
+export type QuestionnaireTypeCode = (typeof QUESTIONNAIRE_TYPES)[number];
 
 export type QuestionnaireStatus = (typeof QUESTIONNAIRE_STATUSES)[number];
 
 export type QuestionnaireStatusFilter = QuestionnaireStatus | "ALL";
 
+export type QuestionnaireTypeEntity = {
+  id: string;
+  name: string;
+  code: QuestionnaireTypeCode;
+  description: string | null;
+  isSystem: boolean;
+};
+
 export type QuestionnaireTypeSummary = {
-  type: QuestionnaireType;
+  id: string;
+  name: string;
+  code: QuestionnaireTypeCode;
+  description: string | null;
+  isSystem: boolean;
   questionnaireId: string | null;
-  title: string | null;
-  status: QuestionnaireStatus | null;
+  questionnaireTitle: string | null;
+  questionnaireStatus: QuestionnaireStatus | null;
 };
 
 export type QuestionnaireVersionItem = {
@@ -37,7 +49,7 @@ export type VersionLifecycleAction =
 export type QuestionnaireVersionsResponse = {
   questionnaireId: string | null;
   questionnaireTitle: string | null;
-  type: QuestionnaireType;
+  type: QuestionnaireTypeEntity;
   versions: QuestionnaireVersionItem[];
 };
 
@@ -45,7 +57,7 @@ export type QuestionnaireVersionDetail = {
   id: string;
   questionnaireId: string;
   questionnaireTitle: string;
-  questionnaireType: QuestionnaireType;
+  questionnaireType: QuestionnaireTypeEntity;
   versionNumber: number;
   status: QuestionnaireStatus;
   isActive: boolean;
@@ -57,14 +69,14 @@ export type QuestionnaireVersionDetail = {
 
 export type CreateQuestionnaireRequest = {
   title: string;
-  type: QuestionnaireType;
+  typeId: string;
 };
 
 export type Questionnaire = {
   id: string;
   title: string;
   status: QuestionnaireStatus;
-  type: QuestionnaireType;
+  type: QuestionnaireTypeEntity;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
@@ -156,9 +168,9 @@ export type CheckSubmissionResponse = {
 
 // --- Utility functions ---
 
-export function resolveQuestionnaireType(value: string | null): QuestionnaireType {
-  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireType)) {
-    return value as QuestionnaireType;
+export function resolveQuestionnaireType(value: string | null): QuestionnaireTypeCode {
+  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireTypeCode)) {
+    return value as QuestionnaireTypeCode;
   }
 
   return DEFAULT_QUESTIONNAIRE_TYPE;

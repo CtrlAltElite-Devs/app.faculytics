@@ -1,10 +1,10 @@
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import type { QuestionnaireTypeEntity } from "@/features/questionnaires/types";
 
 export type Dimension = {
   id: string;
   code: string;
   displayName: string;
-  questionnaireType: QuestionnaireType;
+  questionnaireType: QuestionnaireTypeEntity;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -24,7 +24,7 @@ export type DimensionsListResponse = {
 };
 
 export type ListDimensionsRequest = {
-  questionnaireType?: QuestionnaireType;
+  questionnaireTypeId?: string;
   active?: boolean;
   page?: number;
   limit?: number;
@@ -32,7 +32,7 @@ export type ListDimensionsRequest = {
 
 export type CreateDimensionRequest = {
   displayName: string;
-  questionnaireType: QuestionnaireType;
+  questionnaireTypeId: string;
   code?: string;
 };
 

@@ -8,16 +8,16 @@ import { QuestionnaireTypeButtonGroup } from "@/features/questionnaires/componen
 import { Button } from "@/components/ui/button";
 import type {
   QuestionnaireStatusFilter as StatusFilter,
-  QuestionnaireType,
+  QuestionnaireTypeCode,
 } from "@/features/questionnaires/types";
 
 type QuestionnaireListToolbarProps = {
-  availableTypes: QuestionnaireType[];
-  activeType: QuestionnaireType;
+  availableTypes: QuestionnaireTypeCode[];
+  activeType: QuestionnaireTypeCode;
   statusFilter: StatusFilter;
   searchValue: string;
   hasDraftVersion: boolean;
-  onTypeChange: (nextType: QuestionnaireType) => void;
+  onTypeChange: (nextType: QuestionnaireTypeCode) => void;
   onStatusFilterChange: (value: StatusFilter) => void;
   onSearchChange: (value: string) => void;
 };

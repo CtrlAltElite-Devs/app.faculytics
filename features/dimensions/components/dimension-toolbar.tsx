@@ -17,7 +17,7 @@ import {
   QUESTIONNAIRE_TYPE_LABELS,
   QUESTIONNAIRE_TYPES,
 } from "@/features/questionnaires/constants";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 
 type DimensionStatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
@@ -27,7 +27,7 @@ const STATUS_FILTER_LABELS: Record<DimensionStatusFilter, string> = {
   INACTIVE: "Inactive",
 };
 
-type TypeFilter = QuestionnaireType;
+type TypeFilter = QuestionnaireTypeCode;
 
 type DimensionToolbarProps = {
   typeFilter: TypeFilter;

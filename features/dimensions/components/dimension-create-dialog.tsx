@@ -29,11 +29,7 @@ import {
   createDimensionSchema,
   type CreateDimensionFormValues,
 } from "@/features/dimensions/schemas/dimension.schemas";
-import {
-  QUESTIONNAIRE_TYPE_LABELS,
-  QUESTIONNAIRE_TYPES,
-} from "@/features/questionnaires/constants";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 
 type DimensionCreateDialogProps = {
   open: boolean;
@@ -42,12 +38,14 @@ type DimensionCreateDialogProps = {
 
 export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDialogProps) {
   const createMutation = useCreateDimension();
+  const typesQuery = useQuestionnaireTypes();
+  const typeSummaries = typesQuery.data ?? [];
 
   const form = useForm<CreateDimensionFormValues>({
     resolver: zodResolver(createDimensionSchema),
     defaultValues: {
       displayName: "",
-      questionnaireType: undefined,
+      questionnaireTypeId: "",
       code: "",
     },
   });
@@ -56,7 +54,7 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
     try {
       await createMutation.mutateAsync({
         displayName: values.displayName,
-        questionnaireType: values.questionnaireType as QuestionnaireType,
+        questionnaireTypeId: values.questionnaireTypeId,
         code: values.code || undefined,
       });
       toast.success("Dimension created.");
@@ -109,7 +107,7 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
             />
 
             <Controller
-              name="questionnaireType"
+              name="questionnaireTypeId"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
@@ -123,7 +121,8 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
                         aria-invalid={fieldState.invalid}
                       >
                         {field.value
-                          ? QUESTIONNAIRE_TYPE_LABELS[field.value as QuestionnaireType]
+                          ? (typeSummaries.find((t) => t.id === field.value)?.name ??
+                            "Unknown type")
                           : "Select a type"}
                         <ChevronDown className="size-4 text-muted-foreground" />
                       </Button>
@@ -133,9 +132,9 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
                         value={field.value ?? ""}
                         onValueChange={field.onChange}
                       >
-                        {QUESTIONNAIRE_TYPES.map((type) => (
-                          <DropdownMenuRadioItem key={type} value={type}>
-                            {QUESTIONNAIRE_TYPE_LABELS[type]}
+                        {typeSummaries.map((type) => (
+                          <DropdownMenuRadioItem key={type.id} value={type.id}>
+                            {type.name}
                           </DropdownMenuRadioItem>
                         ))}
                       </DropdownMenuRadioGroup>

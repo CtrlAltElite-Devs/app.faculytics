@@ -25,12 +25,12 @@ import type {
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderSectionUpdates,
-  QuestionnaireType,
+  QuestionnaireTypeCode,
   QuestionnaireBuilderValidationIssue,
 } from "@/features/questionnaires/types";
 
 type QuestionnaireSectionEditorProps = {
-  questionnaireType: QuestionnaireType;
+  questionnaireType: QuestionnaireTypeCode;
   section: QuestionnaireBuilderSectionNode;
   sectionIssues: QuestionnaireBuilderValidationIssue[];
   questionIssues: Record<string, QuestionnaireBuilderValidationIssue[]>;

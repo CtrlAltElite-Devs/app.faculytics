@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -15,6 +15,8 @@ import {
   QUESTIONNAIRE_TYPES,
   DEFAULT_QUESTIONNAIRE_TYPE,
 } from "@/features/questionnaires/constants";
+import { useQuestionnaireTypeId } from "@/features/questionnaires/hooks/use-questionnaire-type-id";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 
 type DimensionAction = { type: "toggle"; dimension: Dimension } | null;
 
@@ -58,21 +60,42 @@ export function useDimensionListPage() {
 
   const typeFilter = resolveTypeFilter(searchParams.get("type"));
   const statusFilter = resolveStatusFilter(searchParams.get("status"));
-  const searchValue = searchParams.get("search") ?? "";
   const page = resolvePositiveNumber(searchParams.get("page"), 1);
   const pageSize = resolvePageSize(searchParams.get("pageSize"));
 
-  const deferredSearch = useDeferredValue(searchValue);
+  // Local search state — only syncs to URL after debounce
+  const urlSearch = searchParams.get("search") ?? "";
+  const [searchValue, setSearchValue] = useState(urlSearch);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync local state when URL changes externally (e.g. "Clear filters")
+  useEffect(() => {
+    setSearchValue(urlSearch);
+  }, [urlSearch]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    };
+  }, []);
+
+  // Fetch questionnaire types to resolve code → UUID
+  const questionnaireTypesQuery = useQuestionnaireTypes();
+  const typeSummaries = questionnaireTypesQuery.data ?? [];
+  const typeFilterId = useQuestionnaireTypeId(typeFilter);
 
   // Fetch all dimensions for the questionnaire type so search works across all items
   const queryParams: ListDimensionsRequest = {
     limit: 100,
-    questionnaireType: typeFilter,
+    ...(typeFilterId && { questionnaireTypeId: typeFilterId }),
     ...(statusFilter === "ACTIVE" && { active: true }),
     ...(statusFilter === "INACTIVE" && { active: false }),
   };
 
-  const dimensionListQuery = useDimensionList(queryParams);
+  const dimensionListQuery = useDimensionList(queryParams, {
+    enabled: questionnaireTypesQuery.isSuccess && typeFilterId !== null,
+  });
   const toggleStatusMutation = useToggleDimensionStatus();
 
   const allRows = dimensionListQuery.data?.data ?? [];
@@ -84,7 +107,7 @@ export function useDimensionListPage() {
         ? allRows.filter((row) => !row.active)
         : allRows;
 
-  const normalizedSearch = deferredSearch.trim().toLowerCase();
+  const normalizedSearch = searchValue.trim().toLowerCase();
   const searchFilteredRows =
     normalizedSearch.length > 0
       ? statusFilteredRows.filter(
@@ -139,12 +162,24 @@ export function useDimensionListPage() {
     });
   };
 
-  const handleSearchChange = (value: string) => {
-    updateSearchParams({
-      search: value.trim().length > 0 ? value : null,
-      page: "1",
-    });
-  };
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchValue(value);
+
+      if (searchTimerRef.current) {
+        clearTimeout(searchTimerRef.current);
+      }
+
+      searchTimerRef.current = setTimeout(() => {
+        updateSearchParams({
+          search: value.trim().length > 0 ? value : null,
+          page: "1",
+        });
+      }, 300);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pathname, searchParams]
+  );
 
   const handlePageChange = (nextPage: number) => {
     updateSearchParams({
@@ -201,8 +236,9 @@ export function useDimensionListPage() {
     pageSize,
     rows: filteredRows,
     meta,
-    isLoading: dimensionListQuery.isLoading,
-    isError: dimensionListQuery.isError,
+    typeSummaries,
+    isLoading: questionnaireTypesQuery.isLoading || dimensionListQuery.isLoading,
+    isError: questionnaireTypesQuery.isError || dimensionListQuery.isError,
     createOpen,
     editDimension,
     dimensionAction,
@@ -218,6 +254,7 @@ export function useDimensionListPage() {
     onPageSizeChange: handlePageSizeChange,
     onConfirmToggle: handleConfirmToggle,
     onRetry: () => {
+      void questionnaireTypesQuery.refetch();
       void dimensionListQuery.refetch();
     },
   };

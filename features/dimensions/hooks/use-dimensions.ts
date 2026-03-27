@@ -3,30 +3,26 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { fetchDimensions } from "@/features/dimensions/api/dimension.requests";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
 import { useAuthStore } from "@/stores/auth-store";
 
 type UseDimensionsOptions = {
   enabled?: boolean;
 };
 
-export function useDimensions(
-  questionnaireType: QuestionnaireType | null,
-  options?: UseDimensionsOptions
-) {
+export function useDimensions(questionnaireTypeId: string | null, options?: UseDimensionsOptions) {
   const token = useAuthStore((state) => state.token);
   const isEnabled = options?.enabled ?? true;
 
   return useQuery({
-    queryKey: ["dimensions", questionnaireType, "active", token],
-    enabled: Boolean(token) && Boolean(questionnaireType) && isEnabled,
+    queryKey: ["dimensions", questionnaireTypeId, "active", token],
+    enabled: Boolean(token) && Boolean(questionnaireTypeId) && isEnabled,
     queryFn: async () => {
-      if (!questionnaireType) {
-        throw new Error("Questionnaire type is required.");
+      if (!questionnaireTypeId) {
+        throw new Error("Questionnaire type ID is required.");
       }
 
       return fetchDimensions({
-        questionnaireType,
+        questionnaireTypeId,
         active: true,
         limit: 100,
       });

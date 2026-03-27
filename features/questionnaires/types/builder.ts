@@ -5,7 +5,7 @@ import {
   MAX_SECTION_NESTING_LEVEL,
 } from "@/features/questionnaires/constants/builder";
 import type {
-  QuestionnaireType,
+  QuestionnaireTypeCode,
   QuestionnaireVersionDetail,
   QuestionnaireVersionItem,
 } from "@/features/questionnaires/types";
@@ -43,7 +43,7 @@ export type QuestionnaireBuilderQualitativeConfig = {
 };
 
 export type QuestionnaireBuilderMetadata = {
-  type: QuestionnaireType;
+  type: QuestionnaireTypeCode;
   title: string;
   questionnaireId: string | null;
   versionId: string | null;
@@ -60,7 +60,7 @@ export type QuestionnaireBuilderDraft = {
 };
 
 export type QuestionnaireBuilderServerContext = {
-  type: QuestionnaireType;
+  type: QuestionnaireTypeCode;
   versions: QuestionnaireVersionItem[];
   draftVersion: QuestionnaireVersionDetail | null;
 } & (
@@ -89,7 +89,7 @@ export type QuestionnaireBuilderPreviewSection = {
 
 export type QuestionnaireBuilderPreviewModel = {
   title: string;
-  type: QuestionnaireType;
+  type: QuestionnaireTypeCode;
   sections: QuestionnaireBuilderPreviewSection[];
   qualitative: QuestionnaireBuilderQualitativeConfig;
 };
@@ -131,7 +131,7 @@ export type QuestionnaireVersionSchema = {
     version: 1;
     maxScore: 5;
     scoringModel: "SECTION_WEIGHTED";
-    questionnaireType: QuestionnaireType;
+    questionnaireType: QuestionnaireTypeCode;
   };
   sectionTree?: QuestionnaireSchemaSectionTreeNode[];
   sections: QuestionnaireSchemaLeafSection[];
