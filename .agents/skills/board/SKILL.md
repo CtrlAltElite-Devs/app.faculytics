@@ -156,6 +156,12 @@ Begin working on a ticket.
    Backend context:
    - [endpoint summary if applicable]
    ```
+4. If the user is about to move from board management into implementation work, stop after the ticket setup summary and run a planning gate first.
+   - Do not jump straight from `start` into editing application code.
+   - Ask whether the user wants explicit plan mode first.
+   - If the environment supports a dedicated plan mode, switch into it or simulate it by producing a concrete implementation plan before coding.
+   - The plan should identify scope, files/features likely to change, API contract assumptions, risks, and verification steps.
+   - Only begin implementation after the planning step has been shown to the user and the user has confirmed to proceed, or has explicitly asked to continue immediately after seeing the plan.
 
 ## Command: `status`
 
@@ -253,3 +259,4 @@ Move a ticket to `Done`.
 - When creating branches, always start from the latest `main`.
 - The backend repo is at `../api.faculytics/` relative to the frontend root.
 - Use `gh api graphql` for project field updates because `gh project` does not cover every direct field mutation cleanly.
+- This skill is shared behavior guidance for whichever coding assistant is using it. Keep the planning gate above regardless of whether the active assistant is Codex, Claude, or another compatible agent.

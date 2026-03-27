@@ -162,9 +162,13 @@ Begin working on a ticket. This is the main workflow command.
 
    Backend context:
    - [endpoint summary if applicable]
-
-   Ready to implement!
    ```
+4. If the user is about to move from board management into implementation work, stop after the ticket setup summary and run a planning gate first.
+   - Do not jump straight from `start` into editing application code.
+   - Ask whether the user wants explicit plan mode first.
+   - If the environment supports a dedicated plan mode, switch into it or simulate it by producing a concrete implementation plan before coding.
+   - The plan should identify scope, files/features likely to change, API contract assumptions, risks, and verification steps.
+   - Only begin implementation after the planning step has been shown to the user and the user has confirmed to proceed, or has explicitly asked to continue immediately after seeing the plan.
 
 ---
 
