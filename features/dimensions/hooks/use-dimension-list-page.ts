@@ -15,6 +15,7 @@ import {
   QUESTIONNAIRE_TYPES,
   DEFAULT_QUESTIONNAIRE_TYPE,
 } from "@/features/questionnaires/constants";
+import { useQuestionnaireTypeId } from "@/features/questionnaires/hooks/use-questionnaire-type-id";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 
 type DimensionAction = { type: "toggle"; dimension: Dimension } | null;
@@ -82,7 +83,7 @@ export function useDimensionListPage() {
   // Fetch questionnaire types to resolve code → UUID
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const typeFilterId = typeSummaries.find((s) => s.code === typeFilter)?.id ?? null;
+  const typeFilterId = useQuestionnaireTypeId(typeFilter);
 
   // Fetch all dimensions for the questionnaire type so search works across all items
   const queryParams: ListDimensionsRequest = {

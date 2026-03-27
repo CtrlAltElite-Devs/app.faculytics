@@ -4,7 +4,7 @@ import { useId, useMemo, useState } from "react";
 import { Check, ChevronsUpDown, LoaderCircle } from "lucide-react";
 
 import { useDimensions } from "@/features/dimensions/hooks/use-dimensions";
-import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import { useQuestionnaireTypeId } from "@/features/questionnaires/hooks/use-questionnaire-type-id";
 import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,9 +50,7 @@ export function DimensionCodeSelect({
   const [searchValue, setSearchValue] = useState("");
 
   // Resolve code → UUID via cached questionnaire types
-  const typesQuery = useQuestionnaireTypes();
-  const questionnaireTypeId =
-    typesQuery.data?.find((t) => t.code === questionnaireType)?.id ?? null;
+  const questionnaireTypeId = useQuestionnaireTypeId(questionnaireType);
 
   const dimensionsQuery = useDimensions(questionnaireTypeId);
   const activeDimensions = useMemo(() => dimensionsQuery.data?.data ?? [], [dimensionsQuery.data]);
@@ -90,7 +88,7 @@ export function DimensionCodeSelect({
     setIsOpen(false);
   };
 
-  const isLoading = typesQuery.isLoading || dimensionsQuery.isLoading;
+  const isLoading = !questionnaireTypeId || dimensionsQuery.isLoading;
 
   return (
     <div className="space-y-2">

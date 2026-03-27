@@ -20,7 +20,7 @@ import { decodeHtmlEntities } from "@/lib/string";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 
 import { useActiveQuestionnaireVersion } from "./use-active-questionnaire-version";
-import { useQuestionnaireTypes } from "./use-questionnaire-types";
+import { useQuestionnaireTypeId } from "./use-questionnaire-type-id";
 import { useCheckSubmission } from "./use-check-submission";
 import { useEvaluationDraft } from "./use-evaluation-draft";
 
@@ -89,8 +89,7 @@ export function useEvaluationData(courseId: string): EvaluationDataResult {
   const semester = enrollment?.semester;
 
   // --- Step 2: Fetch active version ---
-  const typesQuery = useQuestionnaireTypes();
-  const feedbackTypeId = typesQuery.data?.find((t) => t.code === "FACULTY_FEEDBACK")?.id ?? null;
+  const feedbackTypeId = useQuestionnaireTypeId("FACULTY_FEEDBACK");
 
   const activeVersionQuery = useActiveQuestionnaireVersion(feedbackTypeId, {
     enabled:

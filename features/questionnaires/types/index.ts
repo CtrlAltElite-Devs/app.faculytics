@@ -9,9 +9,6 @@ import type { QuestionnaireVersionSchema } from "@/features/questionnaires/types
 
 export type QuestionnaireTypeCode = (typeof QUESTIONNAIRE_TYPES)[number];
 
-/** @deprecated Use QuestionnaireTypeCode instead — kept as alias during migration */
-export type QuestionnaireType = QuestionnaireTypeCode;
-
 export type QuestionnaireStatus = (typeof QUESTIONNAIRE_STATUSES)[number];
 
 export type QuestionnaireStatusFilter = QuestionnaireStatus | "ALL";

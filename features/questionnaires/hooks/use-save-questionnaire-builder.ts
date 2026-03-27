@@ -9,6 +9,7 @@ import { useCreateQuestionnaireVersion } from "@/features/questionnaires/hooks/u
 import { serializeQuestionnaireBuilderDraft } from "@/features/questionnaires/lib/builder-serializer";
 import { useUpdateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-update-questionnaire-version";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import type { QuestionnaireVersionDetail } from "@/features/questionnaires/types";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -60,7 +61,7 @@ export function useSaveQuestionnaireBuilder() {
         setQuestionnaireRootMetadata(createdQuestionnaire.id, createdQuestionnaire.title);
       }
 
-      let savedVersion: import("@/features/questionnaires/types").QuestionnaireVersionDetail;
+      let savedVersion: QuestionnaireVersionDetail;
 
       if (draft.metadata.versionId) {
         const shouldSendTitle =
