@@ -10,7 +10,10 @@ export function usePublishQuestionnaireVersion() {
   return useMutation({
     mutationFn: publishQuestionnaireVersion,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["questionnaires"] });
+      void queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === "questionnaires" && query.queryKey.includes("versions"),
+      });
     },
   });
 }

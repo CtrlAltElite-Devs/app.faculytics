@@ -1,17 +1,20 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 
-import { fetchQuestionnaireVersionById } from "@/features/questionnaires/api/questionnaire.requests";
 import { useCreateQuestionnaire } from "@/features/questionnaires/hooks/use-create-questionnaire";
 import { useCreateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-create-questionnaire-version";
 import { serializeQuestionnaireBuilderDraft } from "@/features/questionnaires/lib/builder-serializer";
 import { useUpdateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-update-questionnaire-version";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
+import { useAuthStore } from "@/stores/auth-store";
 
 export function useSaveQuestionnaireBuilder() {
+  const queryClient = useQueryClient();
+  const token = useAuthStore((state) => state.token);
   const createQuestionnaireMutation = useCreateQuestionnaire();
   const typesQuery = useQuestionnaireTypes();
   const createQuestionnaireVersionMutation = useCreateQuestionnaireVersion();
@@ -41,7 +44,6 @@ export function useSaveQuestionnaireBuilder() {
 
     try {
       let questionnaireId = draft.metadata.questionnaireId;
-      let savedVersionId = draft.metadata.versionId;
 
       if (!questionnaireId) {
         const typeId = typesQuery.data?.find((t) => t.code === draft.metadata.type)?.id;
@@ -58,32 +60,35 @@ export function useSaveQuestionnaireBuilder() {
         setQuestionnaireRootMetadata(createdQuestionnaire.id, createdQuestionnaire.title);
       }
 
+      let savedVersion: import("@/features/questionnaires/types").QuestionnaireVersionDetail;
+
       if (draft.metadata.versionId) {
         const shouldSendTitle =
           draft.metadata.questionnaireTitle === null ||
           trimmedTitle !== draft.metadata.questionnaireTitle.trim();
-        const updatedVersion = await updateQuestionnaireVersionMutation.mutateAsync({
+        savedVersion = await updateQuestionnaireVersionMutation.mutateAsync({
           versionId: draft.metadata.versionId,
           payload: {
             schema: payload,
             ...(shouldSendTitle ? { title: trimmedTitle } : {}),
           },
         });
-        savedVersionId = updatedVersion.id;
       } else {
-        const createdVersion = await createQuestionnaireVersionMutation.mutateAsync({
+        savedVersion = await createQuestionnaireVersionMutation.mutateAsync({
           questionnaireId,
           payload: {
             schema: payload,
           },
         });
-        savedVersionId = createdVersion.id;
       }
 
-      if (savedVersionId) {
-        const savedVersion = await fetchQuestionnaireVersionById(savedVersionId);
-        syncDraftVersion(savedVersion);
-      }
+      // Sync the builder store and seed the query cache with the response
+      // so the page-state hook doesn't re-fetch the same version.
+      syncDraftVersion(savedVersion);
+      queryClient.setQueryData(
+        ["questionnaires", "versions", savedVersion.id, token],
+        savedVersion
+      );
 
       toast.success("Questionnaire draft saved.");
       return { status: "saved" as const, type: draft.metadata.type };

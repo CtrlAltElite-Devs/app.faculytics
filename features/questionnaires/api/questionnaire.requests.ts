@@ -75,7 +75,7 @@ export async function createQuestionnaireVersion({
   questionnaireId: string;
   payload: CreateQuestionnaireVersionRequest;
 }) {
-  const response = await apiClient.post<QuestionnaireVersion>(
+  const response = await apiClient.post<QuestionnaireVersionDetail>(
     Endpoints.questionnaireVersions.replace(":id", questionnaireId),
     payload
   );

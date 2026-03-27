@@ -249,11 +249,24 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
             hasPersistedUnsavedChanges &&
             (!context.draftVersion || draftsMatch(nextDraft, persistedSyncedDraft ?? null));
 
+          // Always update server-owned metadata so stale localStorage IDs
+          // (e.g. after a backend migration:fresh) don't cause 404s.
+          const resolvedDraft = shouldKeepPersistedDraft
+            ? {
+                ...persistedDraft,
+                metadata: {
+                  ...persistedDraft.metadata,
+                  questionnaireId: context.questionnaireId,
+                  questionnaireTitle: context.questionnaireTitle,
+                },
+              }
+            : nextDraft;
+
           return {
             activeType: context.type,
             drafts: {
               ...state.drafts,
-              [context.type]: shouldKeepPersistedDraft ? persistedDraft : nextDraft,
+              [context.type]: resolvedDraft,
             },
             syncedDrafts: nextSyncedDrafts,
           };

@@ -10,7 +10,11 @@ export function useDeprecateQuestionnaireVersion() {
   return useMutation({
     mutationFn: deprecateQuestionnaireVersion,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["questionnaires"] });
+      // Invalidate version details + version lists, but not the types query
+      void queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === "questionnaires" && query.queryKey.includes("versions"),
+      });
     },
   });
 }

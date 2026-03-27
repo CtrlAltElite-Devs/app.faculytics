@@ -10,7 +10,10 @@ export function useCreateQuestionnaireVersion() {
   return useMutation({
     mutationFn: createQuestionnaireVersion,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["questionnaires"] });
+      void queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === "questionnaires" && query.queryKey.includes("versions"),
+      });
     },
   });
 }
