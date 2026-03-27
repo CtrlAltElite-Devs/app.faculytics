@@ -15,10 +15,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 import { Separator } from "@/components/ui/separator";
 import { useQuestionnaireBuilderController } from "@/features/questionnaires/hooks/use-questionnaire-builder-controller";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 
 type QuestionnaireBuilderShellProps = {
-  activeType: QuestionnaireType;
+  activeType: QuestionnaireTypeCode;
   isHydrated: boolean;
 };
 

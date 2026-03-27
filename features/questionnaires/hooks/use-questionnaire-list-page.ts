@@ -13,8 +13,8 @@ import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-quest
 import { useQuestionnaireVersions } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 import {
   resolveQuestionnaireType,
+  type QuestionnaireTypeCode,
   type QuestionnaireVersionItem,
-  type QuestionnaireType,
   type VersionLifecycleAction,
 } from "@/features/questionnaires/types";
 
@@ -28,16 +28,20 @@ export function useQuestionnaireListPage() {
   const publishVersionMutation = usePublishQuestionnaireVersion();
   const deprecateVersionMutation = useDeprecateQuestionnaireVersion();
   const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const fetchedTypes = typeSummaries.map((summary) => summary.type);
+  const fetchedCodes = typeSummaries.map((summary) => summary.code);
   const availableTypes =
-    fetchedTypes.length > 0
-      ? QUESTIONNAIRE_TYPES.filter((type) => fetchedTypes.includes(type))
+    fetchedCodes.length > 0
+      ? QUESTIONNAIRE_TYPES.filter((type) => fetchedCodes.includes(type))
       : [...QUESTIONNAIRE_TYPES];
   const activeType = availableTypes.includes(selectedType)
     ? selectedType
     : (availableTypes[0] ?? DEFAULT_QUESTIONNAIRE_TYPE);
-  const questionnaireVersionsQuery = useQuestionnaireVersions(activeType, {
-    enabled: questionnaireTypesQuery.isSuccess,
+
+  // Resolve code → UUID for the API call
+  const activeTypeId = typeSummaries.find((s) => s.code === activeType)?.id ?? null;
+
+  const questionnaireVersionsQuery = useQuestionnaireVersions(activeTypeId, {
+    enabled: questionnaireTypesQuery.isSuccess && activeTypeId !== null,
   });
 
   useEffect(() => {
@@ -61,7 +65,7 @@ export function useQuestionnaireListPage() {
     );
   }, [router, searchParams]);
 
-  const handleTypeChange = (nextType: QuestionnaireType) => {
+  const handleTypeChange = (nextType: QuestionnaireTypeCode) => {
     router.replace(`/superadmin/questionnaires?type=${nextType}`);
   };
 
@@ -103,7 +107,7 @@ export function useQuestionnaireListPage() {
     }
   };
 
-  const selectedSummary = typeSummaries.find((summary) => summary.type === activeType);
+  const selectedSummary = typeSummaries.find((summary) => summary.code === activeType);
   const versionRows = questionnaireVersionsQuery.data?.versions ?? [];
   const actionDialogConfig =
     versionAction?.type === "publish"

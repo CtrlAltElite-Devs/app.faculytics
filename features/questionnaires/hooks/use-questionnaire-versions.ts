@@ -7,28 +7,27 @@ import {
   fetchQuestionnaireVersionsByType,
 } from "@/features/questionnaires/api/questionnaire.requests";
 import { useAuthStore } from "@/stores/auth-store";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
 
 type UseQuestionnaireVersionsOptions = {
   enabled?: boolean;
 };
 
 export function useQuestionnaireVersions(
-  type: QuestionnaireType | null,
+  typeId: string | null,
   options?: UseQuestionnaireVersionsOptions
 ) {
   const token = useAuthStore((state) => state.token);
   const isEnabled = options?.enabled ?? true;
 
   return useQuery({
-    queryKey: ["questionnaires", "types", type, "versions", token],
-    enabled: Boolean(token) && Boolean(type) && isEnabled,
+    queryKey: ["questionnaires", "types", typeId, "versions", token],
+    enabled: Boolean(token) && Boolean(typeId) && isEnabled,
     queryFn: async () => {
-      if (!type) {
-        throw new Error("Questionnaire type is required.");
+      if (!typeId) {
+        throw new Error("Questionnaire type ID is required.");
       }
 
-      return fetchQuestionnaireVersionsByType(type);
+      return fetchQuestionnaireVersionsByType(typeId);
     },
   });
 }

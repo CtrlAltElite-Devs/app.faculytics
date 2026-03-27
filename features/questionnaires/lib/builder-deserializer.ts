@@ -157,7 +157,7 @@ export function deserializeQuestionnaireVersionToDraft(
 
   return {
     metadata: {
-      type: version.questionnaireType,
+      type: version.questionnaireType.code,
       title: version.questionnaireTitle,
       questionnaireId: version.questionnaireId,
       versionId: version.id,

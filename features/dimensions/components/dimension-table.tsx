@@ -16,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { QUESTIONNAIRE_TYPE_LABELS } from "@/features/questionnaires/constants";
 import type { Dimension } from "@/features/dimensions/types";
 
 type DimensionTableProps = {
@@ -60,7 +59,7 @@ export function DimensionTable({
                 </Badge>
               </TableCell>
               <TableCell className="data-table-cell text-muted-foreground">
-                {QUESTIONNAIRE_TYPE_LABELS[row.questionnaireType]}
+                {row.questionnaireType.name}
               </TableCell>
               <TableCell className="data-table-cell">
                 <DropdownMenu>

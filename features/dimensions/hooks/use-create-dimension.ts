@@ -13,8 +13,10 @@ export function useCreateDimension() {
   return useMutation({
     mutationFn: createDimension,
     onSuccess: (dimension) => {
+      const typeId = dimension.questionnaireType.id;
+
       queryClient.setQueryData<DimensionsListResponse | undefined>(
-        ["dimensions", dimension.questionnaireType, "active", token],
+        ["dimensions", typeId, "active", token],
         (current) => {
           if (!current) {
             return {
@@ -53,7 +55,7 @@ export function useCreateDimension() {
       );
 
       void queryClient.invalidateQueries({
-        queryKey: ["dimensions", dimension.questionnaireType],
+        queryKey: ["dimensions", typeId],
       });
     },
   });

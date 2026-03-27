@@ -4,8 +4,8 @@ import { useId, useMemo, useState } from "react";
 import { Check, ChevronsUpDown, LoaderCircle } from "lucide-react";
 
 import { useDimensions } from "@/features/dimensions/hooks/use-dimensions";
-import type { Dimension } from "@/features/dimensions/types";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -26,11 +26,16 @@ import { cn } from "@/lib/utils";
 import { normalizeDimensionText } from "@/features/dimensions/lib/dimension-utils";
 
 type DimensionCodeSelectProps = {
-  questionnaireType: QuestionnaireType;
+  questionnaireType: QuestionnaireTypeCode;
   value: string | null;
   onChange: (code: string | null) => void;
   ariaInvalid?: boolean;
   errorMessage?: string;
+};
+
+type DimensionDisplayItem = {
+  code: string;
+  displayName: string;
 };
 
 export function DimensionCodeSelect({
@@ -44,38 +49,29 @@ export function DimensionCodeSelect({
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
-  const dimensionsQuery = useDimensions(questionnaireType);
+  // Resolve code → UUID via cached questionnaire types
+  const typesQuery = useQuestionnaireTypes();
+  const questionnaireTypeId =
+    typesQuery.data?.find((t) => t.code === questionnaireType)?.id ?? null;
+
+  const dimensionsQuery = useDimensions(questionnaireTypeId);
   const activeDimensions = useMemo(() => dimensionsQuery.data?.data ?? [], [dimensionsQuery.data]);
 
   const selectedDimension = useMemo(
     () => activeDimensions.find((dimension) => dimension.code === value),
     [activeDimensions, value]
   );
-  const unavailableSelectedDimension = useMemo<Dimension | null>(() => {
+  const unavailableSelection = useMemo<DimensionDisplayItem | null>(() => {
     if (!value || selectedDimension || dimensionsQuery.isLoading || dimensionsQuery.isError) {
       return null;
     }
 
-    return {
-      id: `unavailable-${value}`,
-      code: value,
-      displayName: value,
-      questionnaireType,
-      active: false,
-      createdAt: "",
-      updatedAt: "",
-    };
-  }, [
-    dimensionsQuery.isError,
-    dimensionsQuery.isLoading,
-    questionnaireType,
-    selectedDimension,
-    value,
-  ]);
+    return { code: value, displayName: value };
+  }, [dimensionsQuery.isError, dimensionsQuery.isLoading, selectedDimension, value]);
 
   const normalizedSearch = normalizeDimensionText(searchValue);
   const selectedDisplayValue =
-    selectedDimension?.displayName ?? unavailableSelectedDimension?.displayName ?? "";
+    selectedDimension?.displayName ?? unavailableSelection?.displayName ?? "";
   const filteredDimensions = useMemo(() => {
     if (!normalizedSearch) {
       return activeDimensions;
@@ -88,11 +84,13 @@ export function DimensionCodeSelect({
     });
   }, [activeDimensions, normalizedSearch]);
 
-  const selectDimension = (dimension: Dimension) => {
-    onChange(dimension.code);
-    setSearchValue(dimension.displayName);
+  const selectDimension = (item: DimensionDisplayItem) => {
+    onChange(item.code);
+    setSearchValue(item.displayName);
     setIsOpen(false);
   };
+
+  const isLoading = typesQuery.isLoading || dimensionsQuery.isLoading;
 
   return (
     <div className="space-y-2">
@@ -124,7 +122,7 @@ export function DimensionCodeSelect({
               />
               <InputGroupAddon align="inline-end">
                 <InputGroupText className="gap-2 text-xs">
-                  {dimensionsQuery.isLoading ? "Loading..." : `${activeDimensions.length} codes`}
+                  {isLoading ? "Loading..." : `${activeDimensions.length} codes`}
                   <ChevronsUpDown className="size-4 opacity-50" />
                 </InputGroupText>
               </InputGroupAddon>
@@ -140,7 +138,7 @@ export function DimensionCodeSelect({
               onValueChange={setSearchValue}
             />
             <CommandList>
-              {dimensionsQuery.isLoading ? (
+              {isLoading ? (
                 <div className="flex items-center gap-2 px-3 py-3 text-sm text-muted-foreground">
                   <LoaderCircle className="size-4 animate-spin" />
                   Loading dimensions...
@@ -149,24 +147,22 @@ export function DimensionCodeSelect({
                 <>
                   <CommandEmpty>No matching dimensions.</CommandEmpty>
 
-                  {unavailableSelectedDimension ? (
+                  {unavailableSelection ? (
                     <CommandGroup heading="Unavailable Selection">
                       <CommandItem
-                        value={`unavailable-${unavailableSelectedDimension.code}`}
+                        value={`unavailable-${unavailableSelection.code}`}
                         className="text-amber-700"
                         onSelect={() => {
-                          selectDimension(unavailableSelectedDimension);
+                          selectDimension(unavailableSelection);
                         }}
                       >
                         <Check
                           className={cn(
                             "size-4",
-                            value === unavailableSelectedDimension.code
-                              ? "opacity-100"
-                              : "opacity-0"
+                            value === unavailableSelection.code ? "opacity-100" : "opacity-0"
                           )}
                         />
-                        <span className="truncate">{unavailableSelectedDimension.displayName}</span>
+                        <span className="truncate">{unavailableSelection.displayName}</span>
                       </CommandItem>
                     </CommandGroup>
                   ) : null}
@@ -198,10 +194,10 @@ export function DimensionCodeSelect({
       </Popover>
 
       {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
-      {!errorMessage && unavailableSelectedDimension ? (
+      {!errorMessage && unavailableSelection ? (
         <p className="text-sm text-amber-700">
-          The saved code &quot;{unavailableSelectedDimension.code}&quot; is not in the active
-          registry. Re-select it or choose a replacement before publishing.
+          The saved code &quot;{unavailableSelection.code}&quot; is not in the active registry.
+          Re-select it or choose a replacement before publishing.
         </p>
       ) : null}
     </div>

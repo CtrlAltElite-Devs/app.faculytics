@@ -29,19 +29,19 @@ import type {
   QuestionnaireBuilderSectionNode,
   QuestionnaireBuilderSectionUpdates,
   QuestionnaireBuilderServerContext,
-  QuestionnaireType,
+  QuestionnaireTypeCode,
   QuestionnaireVersionDetail,
 } from "@/features/questionnaires/types";
 
 type QuestionnaireBuilderStore = {
   hydrated: boolean;
-  activeType: QuestionnaireType | null;
-  drafts: Partial<Record<QuestionnaireType, QuestionnaireBuilderDraft>>;
-  syncedDrafts: Partial<Record<QuestionnaireType, QuestionnaireBuilderDraft>>;
+  activeType: QuestionnaireTypeCode | null;
+  drafts: Partial<Record<QuestionnaireTypeCode, QuestionnaireBuilderDraft>>;
+  syncedDrafts: Partial<Record<QuestionnaireTypeCode, QuestionnaireBuilderDraft>>;
   setHydrated: (hydrated: boolean) => void;
   loadDraftFromServer: (context: QuestionnaireBuilderServerContext) => void;
   syncDraftVersion: (version: QuestionnaireVersionDetail) => void;
-  setActiveType: (type: QuestionnaireType | null) => void;
+  setActiveType: (type: QuestionnaireTypeCode | null) => void;
   setQuestionnaireRootMetadata: (questionnaireId: string, title: string) => void;
   updateTitle: (title: string) => void;
   selectSection: (sectionId: string | null) => void;
@@ -59,7 +59,7 @@ type QuestionnaireBuilderStore = {
   removeQuestion: (sectionId: string, questionId: string) => void;
   updateQualitative: (updates: Partial<QuestionnaireBuilderQualitativeConfig>) => void;
   resetActiveDraft: () => void;
-  clearDraftForType: (type: QuestionnaireType) => void;
+  clearDraftForType: (type: QuestionnaireTypeCode) => void;
   hasUnsavedChanges: () => boolean;
 };
 
@@ -198,19 +198,20 @@ export const useQuestionnaireBuilderStore = create<QuestionnaireBuilderStore>()(
         ),
       syncDraftVersion: (version) =>
         set((state) => {
+          const typeCode = version.questionnaireType.code;
           const syncedDraft = createSyncedDraftSnapshot(
-            createDraft(version.questionnaireType, deserializeQuestionnaireVersionToDraft(version))
+            createDraft(typeCode, deserializeQuestionnaireVersionToDraft(version))
           );
 
           return {
-            activeType: version.questionnaireType,
+            activeType: typeCode,
             drafts: {
               ...state.drafts,
-              [version.questionnaireType]: syncedDraft,
+              [typeCode]: syncedDraft,
             },
             syncedDrafts: {
               ...state.syncedDrafts,
-              [version.questionnaireType]: syncedDraft,
+              [typeCode]: syncedDraft,
             },
           };
         }),

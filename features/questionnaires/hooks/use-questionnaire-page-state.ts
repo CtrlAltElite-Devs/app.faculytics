@@ -31,23 +31,28 @@ export function useQuestionnairePageState() {
   const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
 
   const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const fetchedTypes = typeSummaries.map((summary) => summary.type);
+  const fetchedCodes = typeSummaries.map((summary) => summary.code);
   const availableTypes =
-    fetchedTypes.length > 0
-      ? QUESTIONNAIRE_TYPES.filter((type) => fetchedTypes.includes(type))
+    fetchedCodes.length > 0
+      ? QUESTIONNAIRE_TYPES.filter((type) => fetchedCodes.includes(type))
       : [...QUESTIONNAIRE_TYPES];
   const requestedTypeUnavailable =
     questionnaireTypesQuery.isSuccess &&
-    fetchedTypes.length > 0 &&
-    !fetchedTypes.includes(requestedType);
+    fetchedCodes.length > 0 &&
+    !fetchedCodes.includes(requestedType);
   const activePageType = availableTypes.includes(requestedType)
     ? requestedType
     : (availableTypes[0] ?? DEFAULT_QUESTIONNAIRE_TYPE);
   const currentDraft = useQuestionnaireBuilderStore(
     (state) => state.drafts[activePageType] ?? null
   );
-  const questionnaireVersionsQuery = useQuestionnaireVersions(requestedType, {
-    enabled: questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable,
+
+  // Resolve code → UUID for the API call
+  const requestedTypeId = typeSummaries.find((s) => s.code === requestedType)?.id ?? null;
+
+  const questionnaireVersionsQuery = useQuestionnaireVersions(requestedTypeId, {
+    enabled:
+      questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable && requestedTypeId !== null,
   });
   const defaultDraftVersionId =
     questionnaireVersionsQuery.data?.versions.find((version) => version.status === "DRAFT")?.id ??
@@ -81,8 +86,9 @@ export function useQuestionnairePageState() {
     }
 
     const { questionnaireId, questionnaireTitle, type, versions } = questionnaireVersionsQuery.data;
+    const typeCode = type.code;
     loadDraftFromServer({
-      type,
+      type: typeCode,
       versions,
       draftVersion,
       ...(questionnaireId !== null

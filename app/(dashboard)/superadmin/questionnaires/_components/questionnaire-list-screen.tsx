@@ -7,16 +7,16 @@ import { QuestionnaireAsyncContent } from "@/features/questionnaires/components/
 import { QuestionnaireTable } from "@/features/questionnaires/components/questionnaire-table";
 import type {
   QuestionnaireStatusFilter as StatusFilter,
-  QuestionnaireType,
+  QuestionnaireTypeCode,
   QuestionnaireVersionItem,
 } from "@/features/questionnaires/types";
 
 type QuestionnaireListScreenProps = {
-  availableTypes: QuestionnaireType[];
-  activeType: QuestionnaireType;
+  availableTypes: QuestionnaireTypeCode[];
+  activeType: QuestionnaireTypeCode;
   hasDraftVersion: boolean;
   hasQuestionnaire: boolean;
-  onTypeChange: (nextType: QuestionnaireType) => void;
+  onTypeChange: (nextType: QuestionnaireTypeCode) => void;
   isLoading: boolean;
   isError: boolean;
   rows: QuestionnaireVersionItem[];

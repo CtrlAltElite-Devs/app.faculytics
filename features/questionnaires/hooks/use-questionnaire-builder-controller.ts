@@ -13,10 +13,10 @@ import {
   validateQuestionnaireBuilderDraft,
 } from "@/features/questionnaires/lib/builder-validator";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
-import type { QuestionnaireType } from "@/features/questionnaires/types";
+import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 
 type UseQuestionnaireBuilderControllerOptions = {
-  activeType: QuestionnaireType;
+  activeType: QuestionnaireTypeCode;
 };
 
 export function useQuestionnaireBuilderController({

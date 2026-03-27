@@ -15,6 +15,7 @@ import {
   QUESTIONNAIRE_TYPES,
   DEFAULT_QUESTIONNAIRE_TYPE,
 } from "@/features/questionnaires/constants";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 
 type DimensionAction = { type: "toggle"; dimension: Dimension } | null;
 
@@ -64,15 +65,22 @@ export function useDimensionListPage() {
 
   const deferredSearch = useDeferredValue(searchValue);
 
+  // Fetch questionnaire types to resolve code → UUID
+  const questionnaireTypesQuery = useQuestionnaireTypes();
+  const typeSummaries = questionnaireTypesQuery.data ?? [];
+  const typeFilterId = typeSummaries.find((s) => s.code === typeFilter)?.id ?? null;
+
   // Fetch all dimensions for the questionnaire type so search works across all items
   const queryParams: ListDimensionsRequest = {
     limit: 100,
-    questionnaireType: typeFilter,
+    ...(typeFilterId && { questionnaireTypeId: typeFilterId }),
     ...(statusFilter === "ACTIVE" && { active: true }),
     ...(statusFilter === "INACTIVE" && { active: false }),
   };
 
-  const dimensionListQuery = useDimensionList(queryParams);
+  const dimensionListQuery = useDimensionList(queryParams, {
+    enabled: questionnaireTypesQuery.isSuccess && typeFilterId !== null,
+  });
   const toggleStatusMutation = useToggleDimensionStatus();
 
   const allRows = dimensionListQuery.data?.data ?? [];
@@ -201,8 +209,9 @@ export function useDimensionListPage() {
     pageSize,
     rows: filteredRows,
     meta,
-    isLoading: dimensionListQuery.isLoading,
-    isError: dimensionListQuery.isError,
+    typeSummaries,
+    isLoading: questionnaireTypesQuery.isLoading || dimensionListQuery.isLoading,
+    isError: questionnaireTypesQuery.isError || dimensionListQuery.isError,
     createOpen,
     editDimension,
     dimensionAction,
@@ -218,6 +227,7 @@ export function useDimensionListPage() {
     onPageSizeChange: handlePageSizeChange,
     onConfirmToggle: handleConfirmToggle,
     onRetry: () => {
+      void questionnaireTypesQuery.refetch();
       void dimensionListQuery.refetch();
     },
   };

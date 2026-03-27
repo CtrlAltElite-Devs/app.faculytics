@@ -6,13 +6,13 @@ import type {
   QuestionnaireBuilderPreviewSection,
   QuestionnaireBuilderQuestionNode,
   QuestionnaireBuilderSectionNode,
-  QuestionnaireType,
+  QuestionnaireTypeCode,
   QuestionnaireSchemaQuestion,
   QuestionnaireSchemaSectionTreeNode,
   QuestionnaireVersionSchema,
 } from "@/features/questionnaires/types";
 
-function getQuestionnaireTypeCode(type: QuestionnaireType): string {
+function getQuestionnaireTypeCode(type: QuestionnaireTypeCode): string {
   switch (type) {
     case "FACULTY_IN_CLASSROOM":
       return "ic";

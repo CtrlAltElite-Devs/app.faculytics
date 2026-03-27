@@ -8,10 +8,12 @@ import { useCreateQuestionnaire } from "@/features/questionnaires/hooks/use-crea
 import { useCreateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-create-questionnaire-version";
 import { serializeQuestionnaireBuilderDraft } from "@/features/questionnaires/lib/builder-serializer";
 import { useUpdateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-update-questionnaire-version";
+import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 
 export function useSaveQuestionnaireBuilder() {
   const createQuestionnaireMutation = useCreateQuestionnaire();
+  const typesQuery = useQuestionnaireTypes();
   const createQuestionnaireVersionMutation = useCreateQuestionnaireVersion();
   const updateQuestionnaireVersionMutation = useUpdateQuestionnaireVersion();
   const setQuestionnaireRootMetadata = useQuestionnaireBuilderStore(
@@ -42,9 +44,15 @@ export function useSaveQuestionnaireBuilder() {
       let savedVersionId = draft.metadata.versionId;
 
       if (!questionnaireId) {
+        const typeId = typesQuery.data?.find((t) => t.code === draft.metadata.type)?.id;
+        if (!typeId) {
+          toast.error("Unable to resolve questionnaire type. Please reload and try again.");
+          return;
+        }
+
         const createdQuestionnaire = await createQuestionnaireMutation.mutateAsync({
           title: trimmedTitle,
-          type: draft.metadata.type,
+          typeId,
         });
         questionnaireId = createdQuestionnaire.id;
         setQuestionnaireRootMetadata(createdQuestionnaire.id, createdQuestionnaire.title);
