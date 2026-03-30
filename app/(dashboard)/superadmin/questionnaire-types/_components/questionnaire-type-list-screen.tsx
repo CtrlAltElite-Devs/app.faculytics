@@ -2,12 +2,10 @@
 
 import { useDeferredValue, useMemo, useState } from "react";
 
+import { type QuestionnaireTypeManagementFilter } from "@/features/questionnaires/constants";
 import { QuestionnaireTypeManagementAsyncContent } from "@/features/questionnaires/components/questionnaire-type-management-async-content";
 import { QuestionnaireTypeManagementTable } from "@/features/questionnaires/components/questionnaire-type-management-table";
-import {
-  QuestionnaireTypeManagementToolbar,
-  type QuestionnaireTypeManagementFilter,
-} from "@/features/questionnaires/components/questionnaire-type-management-toolbar";
+import { QuestionnaireTypeManagementToolbar } from "@/features/questionnaires/components/questionnaire-type-management-toolbar";
 import type { QuestionnaireTypeManagementEntity } from "@/features/questionnaires/types";
 
 type QuestionnaireTypeListScreenProps = {

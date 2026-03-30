@@ -11,14 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-
-type QuestionnaireTypeManagementFilter = "ALL" | "SYSTEM" | "CUSTOM";
-
-const FILTER_LABELS: Record<QuestionnaireTypeManagementFilter, string> = {
-  ALL: "All types",
-  SYSTEM: "System types",
-  CUSTOM: "Custom types",
-};
+import {
+  QUESTIONNAIRE_TYPE_MANAGEMENT_FILTERS,
+  QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS,
+  type QuestionnaireTypeManagementFilter,
+} from "@/features/questionnaires/constants";
 
 type QuestionnaireTypeManagementToolbarProps = {
   searchValue: string;
@@ -27,9 +24,6 @@ type QuestionnaireTypeManagementToolbarProps = {
   onFilterChange: (value: QuestionnaireTypeManagementFilter) => void;
   onCreateClick: () => void;
 };
-
-export type { QuestionnaireTypeManagementFilter };
-
 export function QuestionnaireTypeManagementToolbar({
   searchValue,
   filter,
@@ -54,7 +48,7 @@ export function QuestionnaireTypeManagementToolbar({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button type="button" variant="outline" className="w-full justify-between gap-3">
-              {FILTER_LABELS[filter]}
+              {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[filter]}
               <ChevronDown className="size-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -63,9 +57,9 @@ export function QuestionnaireTypeManagementToolbar({
               value={filter}
               onValueChange={(value) => onFilterChange(value as QuestionnaireTypeManagementFilter)}
             >
-              {(Object.keys(FILTER_LABELS) as QuestionnaireTypeManagementFilter[]).map((key) => (
+              {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTERS.map((key) => (
                 <DropdownMenuRadioItem key={key} value={key}>
-                  {FILTER_LABELS[key]}
+                  {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[key]}
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
@@ -102,7 +96,7 @@ export function QuestionnaireTypeManagementToolbar({
               variant="outline"
               className="w-auto shrink-0 justify-between gap-3"
             >
-              {FILTER_LABELS[filter]}
+              {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[filter]}
               <ChevronDown className="size-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -111,9 +105,9 @@ export function QuestionnaireTypeManagementToolbar({
               value={filter}
               onValueChange={(value) => onFilterChange(value as QuestionnaireTypeManagementFilter)}
             >
-              {(Object.keys(FILTER_LABELS) as QuestionnaireTypeManagementFilter[]).map((key) => (
+              {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTERS.map((key) => (
                 <DropdownMenuRadioItem key={key} value={key}>
-                  {FILTER_LABELS[key]}
+                  {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[key]}
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>

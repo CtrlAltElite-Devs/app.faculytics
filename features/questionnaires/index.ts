@@ -1,5 +1,4 @@
 export * from "@/features/questionnaires/constants";
-export * from "@/features/questionnaires/constants/builder";
 export * from "@/features/questionnaires/hooks/use-create-questionnaire";
 export * from "@/features/questionnaires/hooks/use-create-questionnaire-version";
 export * from "@/features/questionnaires/hooks/use-deprecate-questionnaire-version";
