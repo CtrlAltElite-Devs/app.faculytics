@@ -21,6 +21,34 @@ export type QuestionnaireTypeEntity = {
   isSystem: boolean;
 };
 
+export type QuestionnaireTypeManagementEntity = {
+  id: string;
+  name: string;
+  code: string;
+  description: string | null;
+  isSystem: boolean;
+  createdAt: string;
+};
+
+export type ListQuestionnaireTypeManagementRequest = {
+  isSystem?: boolean;
+};
+
+export type CreateQuestionnaireTypeManagementRequest = {
+  name: string;
+  code: string;
+  description?: string;
+};
+
+export type UpdateQuestionnaireTypeManagementRequest = {
+  name?: string;
+  description?: string;
+};
+
+export type DeleteQuestionnaireTypeManagementResponse = {
+  message: string;
+};
+
 export type QuestionnaireTypeSummary = {
   id: string;
   name: string;
