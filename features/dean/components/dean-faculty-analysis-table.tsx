@@ -33,7 +33,7 @@ export function DeanFacultyAnalysisTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
   const totalRows = deanAnalyticsSampleData.facultyAnalysis.length;
-  const totalPages = Math.ceil(totalRows / rowsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
   const paginatedRows = paginateArray(
     deanAnalyticsSampleData.facultyAnalysis,
     currentPage,
@@ -41,7 +41,7 @@ export function DeanFacultyAnalysisTable() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div>
         <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
           Faculty Analysis
@@ -79,13 +79,13 @@ export function DeanFacultyAnalysisTable() {
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                         Positive Rate
                       </p>
-                      <p className="font-semibold text-foreground">{faculty.overallPositiveRate}</p>
+                      <p className="font-semibold text-white">{faculty.overallPositiveRate}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                         Responses
                       </p>
-                      <p className="font-semibold text-foreground">{faculty.responses}</p>
+                      <p className="font-semibold text-white">{faculty.responses}</p>
                     </div>
                   </div>
                   <Button
@@ -131,10 +131,10 @@ export function DeanFacultyAnalysisTable() {
                   <TableCell className="data-table-cell">
                     <FacultySubjects subjects={faculty.subjects} />
                   </TableCell>
-                  <TableCell className="data-table-cell font-semibold">
+                  <TableCell className="data-table-cell font-medium text-white">
                     {faculty.overallPositiveRate}
                   </TableCell>
-                  <TableCell className="data-table-cell font-semibold">
+                  <TableCell className="data-table-cell font-medium text-white">
                     {faculty.responses}
                   </TableCell>
                   <TableCell className="data-table-cell text-right">

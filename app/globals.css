@@ -210,15 +210,15 @@
   }
 
   .data-table-header {
-    @apply bg-blue-50 text-blue-700 dark:bg-blue-900/10 dark:text-blue-300;
+    @apply bg-card text-black dark:bg-card;
   }
 
   .data-table-head {
-    @apply px-4 py-3 font-sans text-xs font-semibold lg:px-5;
+    @apply px-4 py-3 font-sans text-xs font-semibold lg:px-5 dark:text-muted-foreground;
   }
 
   .data-table-row {
-    @apply border-border/70;
+    @apply border-border/70 bg-zinc-100/40 dark:bg-zinc-900/40;
   }
 
   .data-table-cell {

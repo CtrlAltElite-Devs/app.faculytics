@@ -11,7 +11,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/lib/use-mobile";
 
 const semesterChartConfig = {
@@ -62,10 +62,6 @@ export function DeanSentimentBarChart() {
         <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
           Semester Sentiment Comparison
         </CardTitle>
-        <CardDescription className="font-sans text-sm">
-          Overall sentiment across semesters, categorized by positive, neutral, and negative
-          sentiment.
-        </CardDescription>
       </CardHeader>
       <CardContent className="pb-2">
         <ChartContainer
@@ -144,9 +140,6 @@ export function DeanOverallSentimentPieChart() {
         <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
           Overall Sentiment Distribution
         </CardTitle>
-        <CardDescription className="font-sans text-sm">
-          View of the combined sentiment across all faculties for this department.
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
