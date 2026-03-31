@@ -30,4 +30,5 @@ export type FacultyFeedbackRecord = {
   date: string;
   feedback: string;
   sentiment: "Positive" | "Neutral" | "Negative";
+  type: "In Classroom" | "Out of Classroom" | "Student Evaluation";
 };

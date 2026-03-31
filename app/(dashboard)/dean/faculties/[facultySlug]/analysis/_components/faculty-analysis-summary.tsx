@@ -7,6 +7,7 @@ import {
   useFeedbackTableState,
   rowsPerPageOptions,
   sentimentFilterOptions,
+  typeFilterOptions,
 } from "@/features/dean/hooks/use-feedback-table-state";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -117,6 +118,8 @@ export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAn
     setSearchQuery,
     selectedSentiment,
     setSelectedSentiment,
+    selectedType,
+    setSelectedType,
     currentPage,
     setCurrentPage,
     rowsPerPage,
@@ -128,61 +131,90 @@ export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAn
   } = useFeedbackTableState(faculty);
 
   return (
-    <Card className="rounded-2xl border-border/70 shadow-sm">
-      <CardHeader>
-        <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
-          Remarks List
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-xs">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={searchQuery}
-              onChange={(event) => {
-                setSearchQuery(event.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Search remarks"
-              className="w-full pl-9"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="min-w-36 justify-between font-sans"
-              >
-                <span>{selectedSentiment}</span>
-                <ChevronDown className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-36">
-              <DropdownMenuRadioGroup
-                value={selectedSentiment}
-                onValueChange={(value) => {
-                  setSelectedSentiment(value as (typeof sentimentFilterOptions)[number]);
+      <Card className="rounded-2xl border-border/70 shadow-sm">
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
+            Remarks List
+          </CardTitle>
+          <div className="flex flex-col gap-3 sm:w-fit sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="relative w-full sm:w-72">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={searchQuery}
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
                   setCurrentPage(1);
                 }}
-              >
-                {sentimentFilterOptions.map((option) => (
-                  <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
-                    {option}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="data-table-wrapper">
-          <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
+                placeholder="Search remarks"
+                className="w-full pl-9"
+              />
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="min-w-36 justify-between font-sans"
+                >
+                  <span>{selectedSentiment}</span>
+                  <ChevronDown className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-36">
+                <DropdownMenuRadioGroup
+                  value={selectedSentiment}
+                  onValueChange={(value) => {
+                    setSelectedSentiment(value as (typeof sentimentFilterOptions)[number]);
+                    setCurrentPage(1);
+                  }}
+                >
+                  {sentimentFilterOptions.map((option) => (
+                    <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
+                      {option}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="min-w-44 justify-between font-sans"
+                >
+                  <span>{selectedType}</span>
+                  <ChevronDown className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-44">
+                <DropdownMenuRadioGroup
+                  value={selectedType}
+                  onValueChange={(value) => {
+                    setSelectedType(value as (typeof typeFilterOptions)[number]);
+                    setCurrentPage(1);
+                  }}
+                >
+                  {typeFilterOptions.map((option) => (
+                    <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
+                      {option}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="data-table-wrapper">
+            <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
             <TableHeader className="data-table-header">
               <TableRow>
-                <TableHead className="data-table-head w-[18%]">Date</TableHead>
-                <TableHead className="data-table-head w-[62%]">Feedback</TableHead>
+                <TableHead className="data-table-head w-[16%]">Date</TableHead>
+                <TableHead className="data-table-head w-[42%]">Feedback</TableHead>
+                <TableHead className="data-table-head w-[22%]">Type</TableHead>
                 <TableHead className="data-table-head w-[20%]">Sentiment</TableHead>
               </TableRow>
             </TableHeader>
@@ -191,15 +223,18 @@ export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAn
                 <TableRow key={`${record.date}-${record.feedback}`} className="data-table-row">
                   <TableCell className="data-table-cell">{record.date}</TableCell>
                   <TableCell className="data-table-cell">{record.feedback}</TableCell>
+                  <TableCell className="data-table-cell text-muted-foreground">
+                    {record.type}
+                  </TableCell>
                   <TableCell className="data-table-cell">
                     <Badge
-                      variant={record.sentiment === "Negative" ? "destructive" : "ghost"}
+                      variant="ghost"
                       className={
                         record.sentiment === "Positive"
                           ? "badge-status-active"
                           : record.sentiment === "Neutral"
                             ? "badge-status-deprecated"
-                            : undefined
+                            : "badge-status-negative"
                       }
                     >
                       {record.sentiment}

@@ -6,6 +6,12 @@ import type {
   QuantitativeMetricScore,
 } from "@/features/dean/types";
 
+const feedbackTypeCycle = [
+  "In Classroom",
+  "Out of Classroom",
+  "Student Evaluation",
+] as const satisfies FacultyFeedbackRecord["type"][];
+
 const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   {
     date: "2026-01-14",
@@ -163,7 +169,10 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
     feedback: "Overall, the class is well handled and supports steady learning progress.",
     sentiment: "Positive",
   },
-] as const;
+].map((record, index) => ({
+  ...record,
+  type: feedbackTypeCycle[index % feedbackTypeCycle.length],
+})) as const;
 
 function createQualitativeSemesterData(
   positive: number,

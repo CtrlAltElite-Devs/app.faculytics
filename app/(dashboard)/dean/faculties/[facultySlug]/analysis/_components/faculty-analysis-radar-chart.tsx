@@ -162,7 +162,7 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
                 <TableBody>
                   {metricView.metrics.map((metric) => (
                     <TableRow key={`overall-${metric.metric}`} className="data-table-row">
-                      <TableCell className="data-table-cell whitespace-normal font-normal">
+                      <TableCell className="data-table-cell whitespace-normal font-normal text-muted-foreground">
                         {metric.metric}
                       </TableCell>
                       <TableCell className="data-table-cell text-center font-medium">
@@ -171,7 +171,9 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
                     </TableRow>
                   ))}
                   <TableRow className="data-table-row bg-muted/30 font-semibold hover:bg-muted/30">
-                    <TableCell className="data-table-cell">Overall Average Rating</TableCell>
+                    <TableCell className="data-table-cell text-muted-foreground">
+                      Overall Average Rating
+                    </TableCell>
                     <TableCell className="data-table-cell text-center">
                       {formatScore(overallRating)}
                     </TableCell>
