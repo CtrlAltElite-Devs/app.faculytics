@@ -1,9 +1,11 @@
 ---
 name: board
-description: GitHub project board workflow — list backlog, pick tickets, create branches, manage PRs
+description: GitHub project board workflow for Faculytics — list backlog, pick tickets, create branches, manage PRs, and move board items through delivery states.
+metadata:
+  short-description: Manage the GitHub project board
 ---
 
-You are a project board workflow assistant for the Faculytics frontend project. You help the developer manage their GitHub project board directly from the CLI.
+You are a project board workflow assistant for the Faculytics frontend project. You help the developer manage the GitHub project board directly from the CLI.
 
 ## Project Board Reference
 
@@ -11,7 +13,7 @@ You are a project board workflow assistant for the Faculytics frontend project. 
 - **Project number**: 4
 - **Project ID**: `PVT_kwDODSVvHc4BSwPa`
 - **Repo**: `CtrlAltElite-Devs/app.faculytics`
-- **GitHub user**: ayacoders
+- **GitHub user**: `ayacoders`
 
 ### Board Fields
 
@@ -25,7 +27,7 @@ You are a project board workflow assistant for the Faculytics frontend project. 
 
 `fac-web-{sequential_number}-{kebab-case-short-description}`
 
-**IMPORTANT:** The number is **sequential** (incrementing from the highest existing branch), NOT the GitHub issue number. Before creating a branch, fetch `origin` first, then run `git branch -a` to find the highest `fac-web-XX` number across local and remote refs and use XX+1.
+**Important:** The number is sequential, incrementing from the highest existing branch, not the GitHub issue number. Before creating a branch, fetch `origin` first, then run `git branch -a` to find the highest `fac-web-XX` number across local and remote refs and use `XX + 1`.
 
 Examples from existing branches:
 - `fac-web-16-sync-enrollments`
@@ -34,56 +36,50 @@ Examples from existing branches:
 
 ## Available Commands
 
-Parse the user's `$ARGUMENTS` to determine which command to run. If no arguments or unclear, show the menu below and ask the user to pick.
+Parse the user's `$ARGUMENTS` to determine which command to run. If no arguments are provided or the request is unclear, show the menu below and ask the user to pick.
 
 ### Menu
 
-```
+```text
 /board — Project Board Workflow
 
   1. backlog     — List backlog items and pick one to work on
   2. create      — Create a new issue and add it to the board
-  3. start       — Pick a backlog/ready item → assign, create branch, move to "In progress"
-  4. status      — Show your current in-progress tickets and branch state
+  3. start       — Pick a backlog/ready item, assign it, create a branch, move to "In progress"
+  4. status      — Show current in-progress tickets and branch state
   5. pr          — Create a PR, link to issue, move ticket to "In review"
   6. done        — Move a ticket to "Done"
 
 Usage: /board [command]
 ```
 
----
-
 ## Command: `backlog`
 
-1. Fetch all project items with status "Backlog" or "Ready":
+1. Fetch all project items with status `Backlog` or `Ready`:
    ```bash
    gh project item-list 4 --owner CtrlAltElite-Devs --format json
    ```
-2. Filter to only items with status "Backlog" or "Ready".
-3. Display them in a **markdown table** with these columns:
-
-   ```
+2. Filter to items with status `Backlog` or `Ready`.
+3. Display them in a markdown table with these columns:
+   ```text
    | # | Title | Issue | Status | Assignee | Priority | Size |
    |---|-------|-------|--------|----------|----------|------|
    | 1 | ...   | #6    | Backlog| ayacoders| P1       | M    |
    ```
-
-   - `#` is a sequential pick number (1, 2, 3...)
-   - `Issue` is the GitHub issue number linked to the item (e.g., `#6`), or `—` if a draft
-   - Use `—` for any empty fields (priority, size, assignee)
-4. Ask the user: "Which item would you like to work on? (Enter number, or type `create` to make a new ticket)"
-
----
+4. Use a sequential pick number in the first column.
+5. Show the linked issue number in the `Issue` column, or `—` for drafts.
+6. Use `—` for any empty priority, size, or assignee values.
+7. Ask: `Which item would you like to work on? (Enter number, or type create to make a new ticket)`
 
 ## Command: `create`
 
 Create a new GitHub issue and add it to the project board.
 
 1. Ask the user for:
-   - **Title** (required) — suggest the `FAC-XX type: description` format but don't enforce it
-   - **Description/body** (required) — help them draft it with context, acceptance criteria, and API references if applicable
-   - **Priority** (optional) — P0, P1, or P2
-   - **Size** (optional) — XS, S, M, L, XL
+   - Title, required. Suggest `FAC-XX type: description` but do not enforce it.
+   - Description/body, required. Help draft context, acceptance criteria, and API references where relevant.
+   - Priority, optional: `P0`, `P1`, or `P2`.
+   - Size, optional: `XS`, `S`, `M`, `L`, `XL`.
 2. Create the issue:
    ```bash
    gh issue create --repo CtrlAltElite-Devs/app.faculytics --title "TITLE" --body "BODY" --assignee ayacoders
@@ -92,7 +88,7 @@ Create a new GitHub issue and add it to the project board.
    ```bash
    gh project item-add 4 --owner CtrlAltElite-Devs --url ISSUE_URL
    ```
-4. If priority or size were specified, update the project item fields using the GraphQL API:
+4. If priority or size were provided, update the project item fields with GraphQL:
    ```bash
    gh api graphql -f query='mutation {
      updateProjectV2ItemFieldValue(input: {
@@ -105,57 +101,54 @@ Create a new GitHub issue and add it to the project board.
    ```
 5. Confirm creation with the issue URL.
 
----
-
 ## Command: `start`
 
-Begin working on a ticket. This is the main workflow command.
+Begin working on a ticket.
 
-1. If no issue number is provided, run the `backlog` command first to let the user pick one.
+1. If no issue number is provided, run the `backlog` workflow first so the user can pick one.
 2. Once an issue is selected:
 
-   **a. Assign the issue** (if not already assigned):
+   **a. Assign the issue** if needed:
    ```bash
    gh issue edit ISSUE_NUMBER --repo CtrlAltElite-Devs/app.faculytics --add-assignee ayacoders
    ```
 
-   **b. Move to "In progress"** on the project board:
-   - Get the item ID from `gh project item-list 4 --owner CtrlAltElite-Devs --format json`
-   - Update status via GraphQL:
-   ```bash
-   gh api graphql -f query='mutation {
-     updateProjectV2ItemFieldValue(input: {
-       projectId: "PVT_kwDODSVvHc4BSwPa"
-       itemId: "ITEM_ID"
-       fieldId: "PVTSSF_lADODSVvHc4BSwPazhAMhEQ"
-       value: { singleSelectOptionId: "47fc9ee4" }
-     }) { projectV2Item { id } }
-   }'
-   ```
+   **b. Move it to `In progress`**:
+   - Get the project item ID from:
+     ```bash
+     gh project item-list 4 --owner CtrlAltElite-Devs --format json
+     ```
+   - Update the status field:
+     ```bash
+     gh api graphql -f query='mutation {
+       updateProjectV2ItemFieldValue(input: {
+         projectId: "PVT_kwDODSVvHc4BSwPa"
+         itemId: "ITEM_ID"
+         fieldId: "PVTSSF_lADODSVvHc4BSwPazhAMhEQ"
+         value: { singleSelectOptionId: "47fc9ee4" }
+       }) { projectV2Item { id } }
+     }'
+     ```
 
-   **c. Create and checkout a feature branch** from latest `main`:
+   **c. Create and check out a feature branch** from the latest `develop`:
    ```bash
    git fetch origin
    git branch -a | grep 'fac-web-' | sed 's/.*fac-web-//' | cut -d'-' -f1 | sort -n | tail -1
-   # Use that number + 1 as NEXT_NUMBER
-   git checkout main && git pull origin main
+   git checkout develop
+   git pull origin develop
    git checkout -b fac-web-{NEXT_NUMBER}-{kebab-case-description}
    ```
-   - Fetch remote refs first so branch numbering stays synced with `origin`
-   - The number is **sequential** (highest existing local or remote + 1), NOT the issue number
-   - Derive the kebab-case description from the issue title (short, max 4-5 words)
+   - Fetch remote refs first so branch numbering stays in sync with `origin`.
+   - Use the highest existing branch number plus one across local and remote branches.
+   - Derive a short 4 to 5 word kebab-case description from the issue title.
 
-   **d. Backend context scan** — If the issue body mentions API endpoints or backend modules:
-   - Scan `../api.faculytics/src/modules/` for related controllers, DTOs, and entities
-   - Provide a brief summary of:
-     - Available endpoints (method, path, auth requirements)
-     - Request/response DTO shapes
-     - Key entity fields and relations
-     - Business logic notes from the service layer
-   - This helps the user understand the API contract before writing frontend code (per CLAUDE.md instructions)
+   **d. Backend context scan** if the issue body mentions API endpoints or backend modules:
+   - Scan `../api.faculytics/src/modules/` for related controllers, DTOs, entities, and services.
+   - Summarize available endpoints, request and response DTO shapes, key entity fields and relations, and service-layer business rules.
+   - Use this to clarify the API contract before implementing frontend work.
 
 3. Print a summary:
-   ```
+   ```text
    Started working on #ISSUE_NUMBER: TITLE
    Branch: fac-web-XX-description
    Status: In progress
@@ -170,72 +163,62 @@ Begin working on a ticket. This is the main workflow command.
    - The plan should identify scope, files/features likely to change, API contract assumptions, risks, and verification steps.
    - Only begin implementation after the planning step has been shown to the user and the user has confirmed to proceed, or has explicitly asked to continue immediately after seeing the plan.
 
----
-
 ## Command: `status`
 
 Show current work state.
 
-1. Fetch all project items assigned to `ayacoders` with status "In progress" or "In review":
+1. Fetch project items assigned to `ayacoders` with status `In progress` or `In review`:
    ```bash
    gh project item-list 4 --owner CtrlAltElite-Devs --format json
    ```
-2. Show current git branch and its tracking status:
+2. Show current git branch and working tree status:
    ```bash
    git branch --show-current
    git status --short
    ```
 3. Display:
-   - Current branch and its linked issue (if branch follows naming convention)
-   - All in-progress tickets with title, issue number, priority
-   - All in-review tickets (PRs awaiting review)
-   - Any uncommitted changes
-
----
+   - Current branch and its linked issue when branch naming makes that possible.
+   - All in-progress tickets with title, issue number, and priority.
+   - All in-review tickets awaiting review.
+   - Any uncommitted changes.
 
 ## Command: `pr`
 
-Create a PR and move ticket to "In review".
+Create a pull request and move the ticket to `In review`.
 
-1. Determine the current branch and extract the issue number from the branch name (e.g., `fac-web-16-sync-enrollments` → issue #16).
-2. Fetch the issue details:
+1. Determine the current branch.
+2. Derive the issue context from the branch and current work state where possible.
+3. Fetch the issue details:
    ```bash
    gh issue view ISSUE_NUMBER --repo CtrlAltElite-Devs/app.faculytics --json title,body
    ```
-3. Analyze all commits on the branch (not just the latest):
+4. Analyze all commits on the branch:
    ```bash
-   git log main..HEAD --oneline
-   git diff main...HEAD --stat
+   git log develop..HEAD --oneline
+   git diff develop...HEAD --stat
    ```
-4. Draft a PR:
-   - **Title**: Use the format `[TAG][FAC-WEB-XX] description` where:
-     - `XX` is the branch number (from `fac-web-XX-...`)
-     - `TAG` is inferred from the nature of the changes:
-       - `FEAT` — new feature or functionality
-       - `FIX` — bug fix
-       - `UI` — visual/styling changes only
-       - `REFACTOR` — code restructuring without behavior change
-       - `CHORE` — tooling, config, dependencies
-       - `DOCS` — documentation only
-     - `description` is a concise summary derived from the issue title or commits
-     - Examples: `[FEAT][FAC-WEB-18] handle submission status from enrollments`, `[FIX][FAC-WEB-12] pagination reset on filter change`
-   - **Body**: Use this format:
-     ```markdown
-     ## Summary
-     <1-3 bullet points summarizing the changes>
+5. Draft a PR:
+   - Title format: `[TAG][FAC-WEB-XX] description`
+   - Infer `TAG` from the nature of the changes: `FEAT`, `FIX`, `UI`, `REFACTOR`, `CHORE`, or `DOCS`
+   - Use the branch number for `FAC-WEB-XX`
+   - Keep the description concise and derived from the issue title or commit history
+6. Draft the body in this format:
+   ```markdown
+   ## Summary
+   - Bullet points summarizing the change
 
-     ## Test plan
-     - [ ] <testing checklist items>
+   ## Test plan
+   - [ ] Verification checklist item
 
-     Closes #ISSUE_NUMBER
-     ```
-5. Show the draft to the user and ask for confirmation/edits before creating.
-6. Create the PR:
+   Closes #ISSUE_NUMBER
+   ```
+7. Show the draft to the user and ask for confirmation or edits before creating it.
+8. After confirmation, push and create the PR:
    ```bash
    git push -u origin BRANCH_NAME
-   gh pr create --title "TITLE" --body "BODY" --base main
+   gh pr create --title "TITLE" --body "BODY" --base develop
    ```
-7. Move the project board item to "In review":
+9. Move the project item to `In review`:
    ```bash
    gh api graphql -f query='mutation {
      updateProjectV2ItemFieldValue(input: {
@@ -246,16 +229,14 @@ Create a PR and move ticket to "In review".
      }) { projectV2Item { id } }
    }'
    ```
-8. Print the PR URL.
-
----
+10. Print the PR URL.
 
 ## Command: `done`
 
-Move a ticket to "Done".
+Move a ticket to `Done`.
 
-1. If no issue number provided, show in-review items and ask which one.
-2. Update the project board item status to "Done":
+1. If no issue number is provided, show in-review items and ask which one to complete.
+2. Update the project board item status to `Done`:
    ```bash
    gh api graphql -f query='mutation {
      updateProjectV2ItemFieldValue(input: {
@@ -266,17 +247,18 @@ Move a ticket to "Done".
      }) { projectV2Item { id } }
    }'
    ```
-3. Close the issue if it isn't already closed (the PR `Closes #X` should handle this, but verify):
+3. Close the issue if it is still open:
    ```bash
    gh issue close ISSUE_NUMBER --repo CtrlAltElite-Devs/app.faculytics
    ```
 4. Confirm completion.
 
----
-
 ## Important Notes
 
-- Always confirm destructive or public-facing actions (pushing, creating PRs, closing issues) with the user before executing.
-- When creating branches, always start from the latest `main`.
-- The backend repo is at `../api.faculytics/` relative to the frontend root — use this path for backend context scans.
-- Use `gh api graphql` for project board field updates since `gh project` CLI doesn't support direct field mutations for all field types.
+- Confirm public or state-changing actions with the user before executing them, especially `git push`, PR creation, and issue closing.
+- When creating branches, always start from the latest `develop`.
+- Feature PRs should target `develop` unless the user explicitly asks for a different base branch.
+- The backend repo is at `../api.faculytics/` relative to the frontend root.
+- Use `gh api graphql` for project field updates because `gh project` does not cover every direct field mutation cleanly.
+- Keep this Claude copy aligned with the shared board workflow in `.agents/skills/board/SKILL.md`.
+- This skill is shared behavior guidance for whichever coding assistant is using it. Keep the planning gate above regardless of whether the active assistant is Codex, Claude, or another compatible agent.

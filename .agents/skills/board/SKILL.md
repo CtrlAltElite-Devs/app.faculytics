@@ -130,12 +130,12 @@ Begin working on a ticket.
      }'
      ```
 
-   **c. Create and check out a feature branch** from the latest `main`:
+   **c. Create and check out a feature branch** from the latest `develop`:
    ```bash
    git fetch origin
    git branch -a | grep 'fac-web-' | sed 's/.*fac-web-//' | cut -d'-' -f1 | sort -n | tail -1
-   git checkout main
-   git pull origin main
+   git checkout develop
+   git pull origin develop
    git checkout -b fac-web-{NEXT_NUMBER}-{kebab-case-description}
    ```
    - Fetch remote refs first so branch numbering stays in sync with `origin`.
@@ -194,8 +194,8 @@ Create a pull request and move the ticket to `In review`.
    ```
 4. Analyze all commits on the branch:
    ```bash
-   git log main..HEAD --oneline
-   git diff main...HEAD --stat
+   git log develop..HEAD --oneline
+   git diff develop...HEAD --stat
    ```
 5. Draft a PR:
    - Title format: `[TAG][FAC-WEB-XX] description`
@@ -216,7 +216,7 @@ Create a pull request and move the ticket to `In review`.
 8. After confirmation, push and create the PR:
    ```bash
    git push -u origin BRANCH_NAME
-   gh pr create --title "TITLE" --body "BODY" --base main
+   gh pr create --title "TITLE" --body "BODY" --base develop
    ```
 9. Move the project item to `In review`:
    ```bash
@@ -256,7 +256,9 @@ Move a ticket to `Done`.
 ## Important Notes
 
 - Confirm public or state-changing actions with the user before executing them, especially `git push`, PR creation, and issue closing.
-- When creating branches, always start from the latest `main`.
+- When creating branches, always start from the latest `develop`.
+- Feature PRs should target `develop` unless the user explicitly asks for a different base branch.
 - The backend repo is at `../api.faculytics/` relative to the frontend root.
 - Use `gh api graphql` for project field updates because `gh project` does not cover every direct field mutation cleanly.
+- Treat this file as the shared board workflow source of truth for Codex-compatible agents in this repo.
 - This skill is shared behavior guidance for whichever coding assistant is using it. Keep the planning gate above regardless of whether the active assistant is Codex, Claude, or another compatible agent.
