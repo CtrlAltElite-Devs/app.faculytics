@@ -49,17 +49,19 @@ export function QuestionnaireListToolbar({
             onChange={onSearchChange}
             className="relative w-full"
           />
-          <QuestionnaireStatusFilter
-            value={statusFilter}
-            onValueChange={onStatusFilterChange}
-            className="w-full justify-between gap-3"
-          />
+          <div className={hasDraftVersion ? "w-full" : "grid grid-cols-2 gap-3"}>
+            <QuestionnaireStatusFilter
+              value={statusFilter}
+              onValueChange={onStatusFilterChange}
+              className="w-full min-w-0 justify-between gap-3"
+            />
+            {!hasDraftVersion ? (
+              <Button asChild variant="brand" className="w-full min-w-0">
+                <Link href={createDraftHref}>Create Draft</Link>
+              </Button>
+            ) : null}
+          </div>
         </div>
-        {!hasDraftVersion ? (
-          <Button asChild variant="brand" className="w-full">
-            <Link href={createDraftHref}>Create Draft</Link>
-          </Button>
-        ) : null}
       </div>
 
       <div className="hidden lg:flex lg:min-w-0 lg:flex-wrap lg:items-start lg:gap-3">
