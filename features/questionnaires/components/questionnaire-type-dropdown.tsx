@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { getQuestionnaireTypeLabel } from "@/features/questionnaires/constants";
-import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
+import {
+  isSeededQuestionnaireTypeCode,
+  type QuestionnaireTypeCode,
+} from "@/features/questionnaires/types";
 
 type QuestionnaireTypeOption = {
   code: QuestionnaireTypeCode;
@@ -33,7 +36,9 @@ export function QuestionnaireTypeDropdown({
   className,
 }: QuestionnaireTypeDropdownProps) {
   const selectedOption = types.find((type) => type.code === value) ?? null;
-  const selectedLabel = getQuestionnaireTypeLabel(value, selectedOption?.name);
+  const selectedLabel = selectedOption
+    ? getQuestionnaireTypeLabel(value, selectedOption.name)
+    : null;
 
   return (
     <DropdownMenu>
@@ -43,7 +48,10 @@ export function QuestionnaireTypeDropdown({
           variant="outline"
           className={cn("w-full justify-between gap-3 lg:min-w-72 lg:max-w-[26rem]", className)}
         >
-          <span className="truncate">{selectedLabel}</span>
+          <span className="truncate">
+            {selectedLabel ??
+              (isSeededQuestionnaireTypeCode(value) ? getQuestionnaireTypeLabel(value) : "")}
+          </span>
           <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>

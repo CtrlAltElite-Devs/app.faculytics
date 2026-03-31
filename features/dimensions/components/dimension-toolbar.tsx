@@ -13,9 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { getQuestionnaireTypeLabel } from "@/features/questionnaires/constants";
-import type {
-  QuestionnaireTypeCode,
-  QuestionnaireTypeSummary,
+import {
+  isSeededQuestionnaireTypeCode,
+  type QuestionnaireTypeCode,
+  type QuestionnaireTypeSummary,
 } from "@/features/questionnaires/types";
 
 type DimensionStatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
@@ -54,6 +55,9 @@ export function DimensionToolbar({
   onCreateClick,
 }: DimensionToolbarProps) {
   const selectedType = typeOptions.find((type) => type.code === typeFilter) ?? null;
+  const selectedTypeLabel = selectedType
+    ? getQuestionnaireTypeLabel(typeFilter, selectedType.name)
+    : null;
 
   return (
     <>
@@ -62,7 +66,10 @@ export function DimensionToolbar({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button type="button" variant="outline" className="w-full justify-between gap-3">
-              {getQuestionnaireTypeLabel(typeFilter, selectedType?.name)}
+              {selectedTypeLabel ??
+                (isSeededQuestionnaireTypeCode(typeFilter)
+                  ? getQuestionnaireTypeLabel(typeFilter)
+                  : "")}
               <ChevronDown className="size-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -127,7 +134,10 @@ export function DimensionToolbar({
               className={cn("w-full justify-between gap-3 lg:min-w-72 lg:max-w-[26rem]")}
             >
               <span className="truncate">
-                {getQuestionnaireTypeLabel(typeFilter, selectedType?.name)}
+                {selectedTypeLabel ??
+                  (isSeededQuestionnaireTypeCode(typeFilter)
+                    ? getQuestionnaireTypeLabel(typeFilter)
+                    : "")}
               </span>
               <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
             </Button>
