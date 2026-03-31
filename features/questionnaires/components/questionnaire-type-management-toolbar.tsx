@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Plus, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -67,14 +67,12 @@ export function QuestionnaireTypeManagementToolbar({
         </DropdownMenu>
 
         <Button type="button" variant="brand" className="w-full" onClick={onCreateClick}>
-          <Plus className="size-4" />
           Create Type
         </Button>
       </div>
 
       <div className="hidden items-center justify-end gap-3 lg:flex">
         <Button type="button" variant="brand" onClick={onCreateClick}>
-          <Plus className="size-4" />
           Create Type
         </Button>
 

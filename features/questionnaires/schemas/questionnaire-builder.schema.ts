@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { QUESTIONNAIRE_TYPES } from "@/features/questionnaires/constants";
 import { BUILDER_QUESTION_TYPES } from "@/features/questionnaires/constants/builder";
 
 export const questionnaireBuilderMetadataSchema = z.object({
@@ -9,7 +8,11 @@ export const questionnaireBuilderMetadataSchema = z.object({
     .trim()
     .min(3, "Title must be at least 3 characters.")
     .max(120, "Title must be 120 characters or fewer."),
-  type: z.enum(QUESTIONNAIRE_TYPES),
+  type: z
+    .string()
+    .trim()
+    .min(1, "Questionnaire type is required.")
+    .max(255, "Questionnaire type must be 255 characters or fewer."),
 });
 
 export const questionnaireSectionInputSchema = z.object({

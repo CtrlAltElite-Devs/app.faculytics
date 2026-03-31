@@ -1,3 +1,5 @@
+// Seeded system questionnaire types. These are no longer the source of truth for
+// runtime selection, but remain useful as defaults and fallback labels.
 export const QUESTIONNAIRE_TYPES = [
   "FACULTY_FEEDBACK",
   "FACULTY_IN_CLASSROOM",
@@ -12,7 +14,15 @@ export const QUESTIONNAIRE_TYPE_LABELS = {
   FACULTY_IN_CLASSROOM: "Faculty In Classroom",
   FACULTY_OUT_OF_CLASSROOM: "Faculty Out of Classroom",
   FACULTY_FEEDBACK: "Faculty Feedback",
-} as const satisfies Record<(typeof QUESTIONNAIRE_TYPES)[number], string>;
+} as const;
+
+export function getQuestionnaireTypeLabel(code: string, fallbackName?: string | null) {
+  return (
+    QUESTIONNAIRE_TYPE_LABELS[code as keyof typeof QUESTIONNAIRE_TYPE_LABELS] ??
+    fallbackName ??
+    code
+  );
+}
 
 export const QUESTIONNAIRE_STATUS_FILTER_LABELS = {
   ALL: "All statuses",

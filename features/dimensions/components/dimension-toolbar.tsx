@@ -3,7 +3,6 @@
 import { ChevronDown, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,11 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { getQuestionnaireTypeLabel } from "@/features/questionnaires/constants";
 import {
-  QUESTIONNAIRE_TYPE_LABELS,
-  QUESTIONNAIRE_TYPES,
-} from "@/features/questionnaires/constants";
-import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
+  isSeededQuestionnaireTypeCode,
+  type QuestionnaireTypeCode,
+  type QuestionnaireTypeSummary,
+} from "@/features/questionnaires/types";
 
 type DimensionStatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
@@ -29,7 +29,10 @@ const STATUS_FILTER_LABELS: Record<DimensionStatusFilter, string> = {
 
 type TypeFilter = QuestionnaireTypeCode;
 
+type DimensionTypeOption = Pick<QuestionnaireTypeSummary, "code" | "name">;
+
 type DimensionToolbarProps = {
+  typeOptions: DimensionTypeOption[];
   typeFilter: TypeFilter;
   statusFilter: DimensionStatusFilter;
   searchValue: string;
@@ -42,6 +45,7 @@ type DimensionToolbarProps = {
 export type { DimensionStatusFilter, TypeFilter };
 
 export function DimensionToolbar({
+  typeOptions,
   typeFilter,
   statusFilter,
   searchValue,
@@ -50,6 +54,11 @@ export function DimensionToolbar({
   onSearchChange,
   onCreateClick,
 }: DimensionToolbarProps) {
+  const selectedType = typeOptions.find((type) => type.code === typeFilter) ?? null;
+  const selectedTypeLabel = selectedType
+    ? getQuestionnaireTypeLabel(typeFilter, selectedType.name)
+    : null;
+
   return (
     <>
       {/* Mobile layout */}
@@ -57,7 +66,10 @@ export function DimensionToolbar({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button type="button" variant="outline" className="w-full justify-between gap-3">
-              {QUESTIONNAIRE_TYPE_LABELS[typeFilter]}
+              {selectedTypeLabel ??
+                (isSeededQuestionnaireTypeCode(typeFilter)
+                  ? getQuestionnaireTypeLabel(typeFilter)
+                  : "")}
               <ChevronDown className="size-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -66,9 +78,9 @@ export function DimensionToolbar({
               value={typeFilter}
               onValueChange={(v) => onTypeFilterChange(v as TypeFilter)}
             >
-              {QUESTIONNAIRE_TYPES.map((type) => (
-                <DropdownMenuRadioItem key={type} value={type}>
-                  {QUESTIONNAIRE_TYPE_LABELS[type]}
+              {typeOptions.map((type) => (
+                <DropdownMenuRadioItem key={type.code} value={type.code}>
+                  {getQuestionnaireTypeLabel(type.code, type.name)}
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
@@ -114,26 +126,37 @@ export function DimensionToolbar({
 
       {/* Desktop layout */}
       <div className="hidden lg:flex lg:min-w-0 lg:flex-row lg:items-center lg:gap-3">
-        <ButtonGroup className="shrink-0">
-          {QUESTIONNAIRE_TYPES.map((type) => {
-            const isActive = type === typeFilter;
-
-            return (
-              <Button
-                key={type}
-                type="button"
-                variant={isActive ? "default" : "outline"}
-                className={cn(
-                  "min-w-0 cursor-pointer px-4",
-                  isActive && "bg-brand-blue/80 text-white hover:bg-brand-blue/70"
-                )}
-                onClick={() => onTypeFilterChange(type)}
-              >
-                {QUESTIONNAIRE_TYPE_LABELS[type]}
-              </Button>
-            );
-          })}
-        </ButtonGroup>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              className={cn("w-full justify-between gap-3 lg:min-w-72 lg:max-w-[26rem]")}
+            >
+              <span className="truncate">
+                {selectedTypeLabel ??
+                  (isSeededQuestionnaireTypeCode(typeFilter)
+                    ? getQuestionnaireTypeLabel(typeFilter)
+                    : "")}
+              </span>
+              <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[18rem] max-w-[24rem]">
+            <DropdownMenuRadioGroup
+              value={typeFilter}
+              onValueChange={(v) => onTypeFilterChange(v as TypeFilter)}
+            >
+              {typeOptions.map((type) => (
+                <DropdownMenuRadioItem key={type.code} value={type.code}>
+                  <span className="truncate">
+                    {getQuestionnaireTypeLabel(type.code, type.name)}
+                  </span>
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
           <Button type="button" variant="brand" className="shrink-0" onClick={onCreateClick}>

@@ -9,6 +9,6 @@ import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
  */
 export function useQuestionnaireTypeId(code: QuestionnaireTypeCode | null) {
   const typesQuery = useQuestionnaireTypes();
-  if (!code) return null;
+  if (!code || code.trim().length === 0) return null;
   return typesQuery.data?.find((t) => t.code === code)?.id ?? null;
 }

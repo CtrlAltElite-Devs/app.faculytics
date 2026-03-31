@@ -12,16 +12,14 @@ import type {
   QuestionnaireVersionSchema,
 } from "@/features/questionnaires/types";
 
-function getQuestionnaireTypeCode(type: QuestionnaireTypeCode): string {
-  switch (type) {
-    case "FACULTY_IN_CLASSROOM":
-      return "ic";
-    case "FACULTY_OUT_OF_CLASSROOM":
-      return "oc";
-    case "FACULTY_FEEDBACK":
-    default:
-      return "ff";
-  }
+function getQuestionnaireTypeToken(type: QuestionnaireTypeCode): string {
+  const normalized = type
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return normalized || "questionnaire";
 }
 
 function buildSchemaSectionId(typeCode: string, path: number[]): string {
@@ -88,7 +86,7 @@ function serializeSectionTree(
 export function buildQuestionnaireSectionTree(
   draft: QuestionnaireBuilderDraft
 ): QuestionnaireSchemaSectionTreeNode[] {
-  const typeCode = getQuestionnaireTypeCode(draft.metadata.type);
+  const typeCode = getQuestionnaireTypeToken(draft.metadata.type);
 
   return sortSections(draft.sections).map((section, index) =>
     serializeSectionTree(section, typeCode, [index + 1])
@@ -98,7 +96,7 @@ export function buildQuestionnaireSectionTree(
 export function serializeQuestionnaireBuilderDraft(
   draft: QuestionnaireBuilderDraft
 ): QuestionnaireVersionSchema {
-  const typeCode = getQuestionnaireTypeCode(draft.metadata.type);
+  const typeCode = getQuestionnaireTypeToken(draft.metadata.type);
   const leafEntries: Array<{
     section: QuestionnaireBuilderSectionNode;
     path: number[];

@@ -11,20 +11,22 @@ import type {
   DimensionStatusFilter,
   TypeFilter,
 } from "@/features/dimensions/components/dimension-toolbar";
-import {
-  QUESTIONNAIRE_TYPES,
-  DEFAULT_QUESTIONNAIRE_TYPE,
-} from "@/features/questionnaires/constants";
+import { DEFAULT_QUESTIONNAIRE_TYPE } from "@/features/questionnaires/constants";
 import { useQuestionnaireTypeId } from "@/features/questionnaires/hooks/use-questionnaire-type-id";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import {
+  buildQuestionnaireTypeOptions,
+  resolveActiveQuestionnaireType,
+} from "@/features/questionnaires/lib/questionnaire-type-options";
+import { normalizeTypeSearchParam } from "@/features/questionnaires/lib/questionnaire-type-routing";
 
 type DimensionAction = { type: "toggle"; dimension: Dimension } | null;
 
 export const PAGE_SIZE_OPTIONS = [5, 10, 20] as const;
 
 function resolveTypeFilter(value: string | null): TypeFilter {
-  if (value && QUESTIONNAIRE_TYPES.includes(value as TypeFilter)) {
-    return value as TypeFilter;
+  if (value && value.trim().length > 0) {
+    return value;
   }
 
   return DEFAULT_QUESTIONNAIRE_TYPE;
@@ -83,7 +85,31 @@ export function useDimensionListPage() {
   // Fetch questionnaire types to resolve code → UUID
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const typeFilterId = useQuestionnaireTypeId(typeFilter);
+  const availableTypeOptions = buildQuestionnaireTypeOptions(typeSummaries);
+  const activeTypeFilter = resolveActiveQuestionnaireType({
+    requestedType: typeFilter,
+    availableTypeOptions,
+    isResolved: questionnaireTypesQuery.isSuccess,
+  });
+  const typeFilterId = useQuestionnaireTypeId(activeTypeFilter);
+
+  useEffect(() => {
+    normalizeTypeSearchParam({
+      isResolved: questionnaireTypesQuery.isSuccess,
+      currentTypeParam: searchParams.get("type"),
+      normalizedType: activeTypeFilter,
+      pathname,
+      searchParams,
+      router,
+    });
+  }, [
+    activeTypeFilter,
+    pathname,
+    questionnaireTypesQuery.isSuccess,
+    router,
+    searchParams,
+    typeFilter,
+  ]);
 
   // Fetch all dimensions for the questionnaire type so search works across all items
   const queryParams: ListDimensionsRequest = {
@@ -229,7 +255,7 @@ export function useDimensionListPage() {
     : null;
 
   return {
-    typeFilter,
+    typeFilter: activeTypeFilter,
     statusFilter,
     searchValue,
     page,
@@ -237,6 +263,7 @@ export function useDimensionListPage() {
     rows: filteredRows,
     meta,
     typeSummaries,
+    availableTypeOptions,
     isLoading: questionnaireTypesQuery.isLoading || dimensionListQuery.isLoading,
     isError: questionnaireTypesQuery.isError || dimensionListQuery.isError,
     createOpen,
