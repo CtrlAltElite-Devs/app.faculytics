@@ -49,28 +49,30 @@ export function QuestionnaireListToolbar({
             onChange={onSearchChange}
             className="relative w-full"
           />
-          <QuestionnaireStatusFilter
-            value={statusFilter}
-            onValueChange={onStatusFilterChange}
-            className="w-full justify-between gap-3"
-          />
+          <div className={hasDraftVersion ? "w-full" : "grid grid-cols-2 gap-3"}>
+            <QuestionnaireStatusFilter
+              value={statusFilter}
+              onValueChange={onStatusFilterChange}
+              className="w-full min-w-0 justify-between gap-3"
+            />
+            {!hasDraftVersion ? (
+              <Button asChild variant="brand" className="w-full min-w-0">
+                <Link href={createDraftHref}>Create Draft</Link>
+              </Button>
+            ) : null}
+          </div>
         </div>
-        {!hasDraftVersion ? (
-          <Button asChild variant="brand" className="w-full">
-            <Link href={createDraftHref}>Create Draft</Link>
-          </Button>
-        ) : null}
       </div>
 
-      <div className="hidden lg:flex lg:min-w-0 lg:flex-row lg:items-center lg:gap-3">
+      <div className="hidden lg:flex lg:min-w-0 lg:flex-wrap lg:items-start lg:gap-3">
         <QuestionnaireTypeDropdown
           types={availableTypes}
           value={activeType}
           onValueChange={onTypeChange}
-          className="lg:shrink-0"
+          className="lg:w-auto lg:max-w-[26rem] lg:shrink-0"
         />
 
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
           {!hasDraftVersion ? (
             <Button asChild variant="brand" className="shrink-0">
               <Link href={createDraftHref}>Create Draft</Link>
@@ -79,7 +81,7 @@ export function QuestionnaireListToolbar({
           <QuestionnaireSearchInput
             value={searchValue}
             onChange={onSearchChange}
-            className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/6"
+            className="relative min-w-[15rem] flex-1 lg:max-w-xs xl:max-w-sm"
           />
           <QuestionnaireStatusFilter
             value={statusFilter}

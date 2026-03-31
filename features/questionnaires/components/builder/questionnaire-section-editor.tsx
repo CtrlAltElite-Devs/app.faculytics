@@ -106,6 +106,9 @@ export function QuestionnaireSectionEditor({
           )}
         >
           <div className="min-w-0">
+            <p className="mb-2 text-xs text-muted-foreground">
+              {depth > 0 ? "Subsection Title" : "Section Title"}
+            </p>
             <CardTitle className="font-playfair text-lg font-semibold">
               <InlineEditInput
                 id={`section-title-${section.id}`}
@@ -121,13 +124,11 @@ export function QuestionnaireSectionEditor({
                 }
               />
             </CardTitle>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {depth > 0 ? "Subsection Title" : "Section Title"}
-            </p>
           </div>
 
           {isLeaf ? (
             <div className="col-span-2 min-w-0 space-y-2 xl:col-span-1">
+              <p className="text-xs text-muted-foreground">Dimension</p>
               <DimensionCodeSelect
                 questionnaireType={questionnaireType}
                 value={section.dimensionCode}
@@ -139,13 +140,13 @@ export function QuestionnaireSectionEditor({
                   })
                 }
               />
-              <p className="text-xs text-muted-foreground">Dimension</p>
             </div>
           ) : null}
 
           {isLeaf ? (
             <div className="col-span-2 flex min-w-0 gap-2 xl:contents">
               <div className="min-w-0 flex-1 space-y-2">
+                <p className="text-xs text-muted-foreground">Question Type</p>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -177,9 +178,9 @@ export function QuestionnaireSectionEditor({
                     </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <p className="text-xs text-muted-foreground">Question Type</p>
               </div>
               <div className="w-20 shrink-0 space-y-2 xl:w-auto">
+                <p className="text-xs text-muted-foreground">Weight</p>
                 <Input
                   id={`section-weight-${section.id}`}
                   type="number"
@@ -194,12 +195,11 @@ export function QuestionnaireSectionEditor({
                     })
                   }
                 />
-                <p className="text-xs text-muted-foreground">Weight</p>
               </div>
             </div>
           ) : null}
 
-          <div className="col-start-2 row-start-1 flex items-center justify-end xl:col-start-auto xl:row-start-auto">
+          <div className="col-start-2 row-start-1 flex items-start justify-end pt-6 xl:col-start-auto xl:row-start-auto xl:items-start">
             <div className="hidden items-center gap-1 lg:flex">
               <Button
                 type="button"
