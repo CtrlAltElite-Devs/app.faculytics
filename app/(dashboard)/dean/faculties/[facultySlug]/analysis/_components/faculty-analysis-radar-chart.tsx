@@ -12,7 +12,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -119,7 +119,7 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
         </DropdownMenu>
       </CardHeader>
       <CardContent className="pb-0">
-        <div className="mt-3 grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
           <ChartContainer
             config={quantitativeMetricsChartConfig}
             className="h-[18rem] w-full items-stretch justify-start sm:h-[21rem]"
@@ -153,35 +153,45 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
               />
             </RadarChart>
           </ChartContainer>
-          <Card className="gap-4 rounded-2xl border-blue-200/70 bg-blue-50/70 shadow-sm dark:border-blue-900/70 dark:bg-blue-950/30">
-            <CardHeader className="pb-0">
-              <div className="space-y-2">
-                <CardDescription className="font-sans text-sm">
-                  Overall Average of the Report
-                </CardDescription>
-                <CardTitle className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-                  {formatScore(overallRating)}
-                </CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="font-sans text-sm text-muted-foreground">
-                {getInterpretation(overallRating)}
-              </p>
-            </CardContent>
-          </Card>
+          <div className="space-y-4 self-start">
+            <CardTitle className="font-playfair text-lg font-semibold sm:text-xl">
+              Overall Ratings
+            </CardTitle>
+            <div className="data-table-wrapper">
+              <Table>
+                <TableBody>
+                  {metricView.metrics.map((metric) => (
+                    <TableRow key={`overall-${metric.metric}`} className="data-table-row">
+                      <TableCell className="data-table-cell whitespace-normal font-normal">
+                        {metric.metric}
+                      </TableCell>
+                      <TableCell className="data-table-cell text-center font-medium">
+                        {formatScore(metric.score)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="data-table-row bg-muted/30 font-semibold hover:bg-muted/30">
+                    <TableCell className="data-table-cell">Overall Average Rating</TableCell>
+                    <TableCell className="data-table-cell text-center">
+                      {formatScore(overallRating)}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </div>
         <div className="mt-4 space-y-4">
           {metricView.metrics.map((metric) => (
             <div key={metric.metric} className="data-table-wrapper">
-              <Table>
+              <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
                 <TableHeader className="data-table-header">
                   <TableRow>
-                    <TableHead className="data-table-head min-w-[26rem]">{metric.metric}</TableHead>
-                    <TableHead className="data-table-head min-w-[8rem] text-center">
+                    <TableHead className="data-table-head w-[62%]">{metric.metric}</TableHead>
+                    <TableHead className="data-table-head w-[14%] text-center">
                       Average
                     </TableHead>
-                    <TableHead className="data-table-head min-w-[12rem]">Interpretation</TableHead>
+                    <TableHead className="data-table-head w-[24%]">Interpretation</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
