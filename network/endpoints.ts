@@ -8,6 +8,9 @@ export enum Endpoints {
   // Student
   enrollmentsMe = "/api/v1/enrollments/me",
 
+  // Dean
+  faculty = "/api/v1/faculty",
+
   // Questionnaires
   questionnaires = "/api/v1/questionnaires",
   questionnaireTypes = "/api/v1/questionnaires/types",

@@ -31,3 +31,32 @@ export type FacultyFeedbackRecord = {
   feedback: string;
   sentiment: "Positive" | "Neutral" | "Negative";
 };
+
+export type FacultyListQuery = {
+  semesterId: string;
+  departmentId?: string;
+  programId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type FacultyListItem = {
+  id: string;
+  fullName: string;
+  profilePicture: string | null;
+  subjects: string[];
+};
+
+export type FacultyListMeta = {
+  totalItems: number;
+  itemCount: number;
+  itemsPerPage: number;
+  totalPages: number;
+  currentPage: number;
+};
+
+export type FacultyListResponseDto = {
+  data: FacultyListItem[];
+  meta: FacultyListMeta;
+};
