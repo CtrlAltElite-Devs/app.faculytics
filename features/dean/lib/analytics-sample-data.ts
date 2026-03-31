@@ -6,7 +6,13 @@ import type {
   QuantitativeMetricScore,
 } from "@/features/dean/types";
 
-const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
+const questionnaireTypeCycle = [
+  "In Classroom",
+  "Out of Classroom",
+  "Student Evaluation",
+] as const satisfies readonly FacultyFeedbackRecord["questionnaireType"][];
+
+const defaultFacultyFeedbackRecordsSeed = [
   {
     date: "2026-01-14",
     feedback: "Explains difficult concepts clearly and checks if the class is keeping up.",
@@ -165,6 +171,12 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   },
 ] as const;
 
+const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] =
+  defaultFacultyFeedbackRecordsSeed.map((record, index) => ({
+    ...record,
+    questionnaireType: questionnaireTypeCycle[index % questionnaireTypeCycle.length],
+  }));
+
 function createQualitativeSemesterData(
   positive: number,
   neutral: number,
@@ -186,6 +198,20 @@ function createQualitativeSemesterData(
     });
   }
 
+  const normalizedStrengthsToMaintain = strengthsToMaintain.map((insight, index) => ({
+    ...insight,
+    mentions: insight.mentions ?? normalizedThemes[index]?.mentions ?? 0,
+  }));
+
+  const normalizedAreasForImprovement = areasForImprovement.map((insight, index) => ({
+    ...insight,
+    mentions:
+      insight.mentions ??
+      normalizedThemes[index + normalizedStrengthsToMaintain.length]?.mentions ??
+      normalizedThemes[index]?.mentions ??
+      0,
+  }));
+
   return {
     sentiment: [
       { label: "Positive", value: positive, color: "#5b8cff" },
@@ -193,8 +219,8 @@ function createQualitativeSemesterData(
       { label: "Negative", value: negative, color: "#facc15" },
     ],
     keyThemes: normalizedThemes,
-    strengthsToMaintain,
-    areasForImprovement,
+    strengthsToMaintain: normalizedStrengthsToMaintain,
+    areasForImprovement: normalizedAreasForImprovement,
     actionPlans,
   };
 }

@@ -24,10 +24,12 @@ export type QualitativeActionPlan = {
 export type QualitativeInsight = {
   title: string;
   description: string;
+  mentions?: number;
 };
 
 export type FacultyFeedbackRecord = {
   date: string;
   feedback: string;
   sentiment: "Positive" | "Neutral" | "Negative";
+  questionnaireType: "In Classroom" | "Out of Classroom" | "Student Evaluation";
 };

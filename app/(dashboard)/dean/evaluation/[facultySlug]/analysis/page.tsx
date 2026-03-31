@@ -6,10 +6,9 @@ type FacultyAnalysisDetailPageProps = {
   }>;
 };
 
-export default async function FacultyAnalysisDetailPage({
+export default async function DeanEvaluationAnalysisDetailPage({
   params,
 }: FacultyAnalysisDetailPageProps) {
   const { facultySlug } = await params;
-
   redirect(`/dean/${facultySlug}/analysis`);
 }

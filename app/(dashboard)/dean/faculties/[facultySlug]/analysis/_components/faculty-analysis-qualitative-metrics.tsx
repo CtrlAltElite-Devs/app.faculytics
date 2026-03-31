@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowUpRight, Lightbulb, Sparkles } from "lucide-react";
 import { Cell, Pie, PieChart } from "recharts";
 
 import type { DeanFacultyAnalysisRecord, FacultyAnalysisSemesterKey } from "@/features/dean";
@@ -11,7 +12,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildOverallRecommendation } from "@/features/dean/lib/recommendation-utils";
 import { useIsMobile } from "@/lib/use-mobile";
 
@@ -80,9 +82,6 @@ export function FacultyAnalysisQualitativeOverview({
             <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
               Qualitative Sentiment Overview
             </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Overall sentiment for this semester based on qualitative student feedback.
-            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-1 items-center">
             <ChartContainer
@@ -99,8 +98,8 @@ export function FacultyAnalysisQualitativeOverview({
                   data={sentimentData}
                   dataKey="value"
                   nameKey="key"
-                  innerRadius={isMobile ? 44 : 56}
-                  outerRadius={isMobile ? 72 : 88}
+                  innerRadius={isMobile ? 52 : 68}
+                  outerRadius={isMobile ? 84 : 104}
                   strokeWidth={4}
                 >
                   {sentimentData.map((item) => (
@@ -117,9 +116,6 @@ export function FacultyAnalysisQualitativeOverview({
             <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
               Key Feedback Themes
             </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Most frequent themes mentioned by students for this semester.
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {qualitativeMetrics.keyThemes.map((theme) => {
@@ -139,6 +135,15 @@ export function FacultyAnalysisQualitativeOverview({
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="xs"
+                    className="h-auto px-0 py-0 font-sans text-sm font-medium text-brand-blue hover:text-brand-blue/80"
+                  >
+                    View feedback
+                    <ArrowUpRight className="size-4" />
+                  </Button>
                 </div>
               );
             })}
@@ -165,14 +170,12 @@ export function FacultyAnalysisActionableInsights({
         <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
           Actionable Insights and Recommendations
         </CardTitle>
-        <CardDescription className="font-sans text-sm">
-          Suggested focus areas derived from the semester&apos;s qualitative feedback.
-        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <div className="rounded-xl border border-emerald-200 bg-muted/20 p-4 dark:border-emerald-900/70">
+        <div className="grid gap-4 xl:grid-cols-2 xl:items-start">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <div className="flex items-center gap-2">
+              <Sparkles className="size-4 text-emerald-700 dark:text-emerald-300" />
               <h3 className="font-playfair text-lg font-semibold text-emerald-700 dark:text-emerald-300">
                 Strengths to Maintain
               </h3>
@@ -186,22 +189,38 @@ export function FacultyAnalysisActionableInsights({
                   key={item.title}
                   className="rounded-lg border border-border/70 bg-background p-3"
                 >
-                  <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
+                  <h4 className="font-sans text-base font-semibold">{item.title}</h4>
                   <p className="mt-1 font-sans text-sm text-muted-foreground">{item.description}</p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <p className="font-sans text-xs text-muted-foreground">
+                      {item.mentions ?? 0} mentions
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="xs"
+                      className="h-auto px-0 py-0 font-sans text-xs font-medium text-brand-blue hover:text-brand-blue/80"
+                    >
+                      View feedback
+                      <ArrowUpRight className="size-3" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
             <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 dark:border-emerald-900/70 dark:bg-emerald-950/20">
-              <p className="font-playfair text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                Action Plan
-              </p>
+              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                <Lightbulb className="size-4" />
+                <p className="font-playfair text-sm font-semibold">Recommendation</p>
+              </div>
               <p className="mt-2 font-sans text-sm text-muted-foreground">
                 {strengthsRecommendation}
               </p>
             </div>
           </div>
-          <div className="rounded-xl border border-orange-200 bg-muted/20 p-4 dark:border-orange-900/70">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <div className="flex items-center gap-2">
+              <Sparkles className="size-4 text-orange-700 dark:text-orange-300" />
               <h3 className="font-playfair text-lg font-semibold text-orange-700 dark:text-orange-300">
                 Areas for Improvement
               </h3>
@@ -215,15 +234,30 @@ export function FacultyAnalysisActionableInsights({
                   key={item.title}
                   className="rounded-lg border border-border/70 bg-background p-3"
                 >
-                  <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
+                  <h4 className="font-sans text-base font-semibold">{item.title}</h4>
                   <p className="mt-1 font-sans text-sm text-muted-foreground">{item.description}</p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <p className="font-sans text-xs text-muted-foreground">
+                      {item.mentions ?? 0} mentions
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="xs"
+                      className="h-auto px-0 py-0 font-sans text-xs font-medium text-brand-blue hover:text-brand-blue/80"
+                    >
+                      View feedback
+                      <ArrowUpRight className="size-3" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
             <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50/70 p-3 dark:border-orange-900/70 dark:bg-orange-950/20">
-              <p className="font-playfair text-sm font-semibold text-orange-700 dark:text-orange-300">
-                Action Plan
-              </p>
+              <div className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
+                <Lightbulb className="size-4" />
+                <p className="font-playfair text-sm font-semibold">Recommendation</p>
+              </div>
               <p className="mt-2 font-sans text-sm text-muted-foreground">
                 {improvementRecommendation}
               </p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
@@ -11,7 +12,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -21,8 +22,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const metricViewLabels = {
   classroom: "In Classroom",
@@ -77,36 +83,40 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
           <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
             Quantitative Metric Analysis
           </CardTitle>
-          <CardDescription className="font-sans text-sm">
-            Multi-metric snapshot of faculty performance based on quantitative student evaluation
-            scores.
-          </CardDescription>
         </div>
-        <ButtonGroup className="w-fit">
-          {(Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>).map(
-            ([view, label]) => (
-              <Button
-                key={view}
-                type="button"
-                variant={selectedView === view ? "default" : "outline"}
-                size="sm"
-                className={cn(
-                  "font-sans",
-                  selectedView === view && "bg-brand-blue/80 text-white hover:bg-brand-blue/70"
-                )}
-                onClick={() => setSelectedView(view)}
-              >
-                {label}
-              </Button>
-            )
-          )}
-        </ButtonGroup>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="min-w-48 justify-between font-sans"
+            >
+              <span>{metricViewLabels[selectedView]}</span>
+              <ChevronDown className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-48">
+            <DropdownMenuRadioGroup
+              value={selectedView}
+              onValueChange={(value) => setSelectedView(value as keyof typeof metricViewLabels)}
+            >
+              {(Object.entries(metricViewLabels) as Array<
+                [keyof typeof metricViewLabels, string]
+              >).map(([view, label]) => (
+                <DropdownMenuRadioItem key={view} value={view} className="font-sans text-sm">
+                  {label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent className="pb-0">
-        <div className="mt-3 grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
+        <div className="mt-3 grid gap-4 lg:grid-cols-2 lg:items-stretch">
           <ChartContainer
             config={quantitativeMetricsChartConfig}
-            className="h-[18rem] w-full items-stretch justify-start sm:h-[21rem]"
+            className="h-[18rem] w-full items-stretch justify-start sm:h-[21rem] lg:h-full lg:min-h-[21rem]"
           >
             <RadarChart
               accessibilityLayer
@@ -137,23 +147,40 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
               />
             </RadarChart>
           </ChartContainer>
-          <Card className="gap-4 rounded-2xl border-blue-200/70 bg-blue-50/70 shadow-sm dark:border-blue-900/70 dark:bg-blue-950/30">
-            <CardHeader className="pb-0">
-              <div className="space-y-2">
-                <CardDescription className="font-sans text-sm">
-                  Overall Average of the Report
-                </CardDescription>
-                <CardTitle className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-                  {formatScore(overallRating)}
-                </CardTitle>
+          <div className="self-start">
+            <div className="flex flex-col p-4">
+              <div className="mb-2 px-4">
+                <p className="font-playfair text-lg font-semibold tracking-tight sm:text-xl">
+                  {metricViewLabels[selectedView]}
+                </p>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="font-sans text-sm text-muted-foreground">
-                {getInterpretation(overallRating)}
-              </p>
-            </CardContent>
-          </Card>
+              <Table className="w-full table-fixed">
+                <TableBody>
+                  {metricView.metrics.map((metric) => (
+                    <TableRow key={`${metric.metric}-summary`} className="data-table-row">
+                      <TableCell className="data-table-cell w-[72%] py-3 whitespace-normal font-medium">
+                        {metric.metric}
+                      </TableCell>
+                      <TableCell className="data-table-cell w-[28%] py-3 text-center">
+                        {formatScore(metric.score)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <div className="mt-3 flex items-center justify-between gap-3 border-t border-border/70 px-4 pt-3">
+                <p className="font-sans text-sm font-medium text-foreground">Overall Average Rating</p>
+                <div className="flex items-baseline gap-2 text-right">
+                  <p className="font-playfair text-lg font-semibold tracking-tight">
+                    {formatScore(overallRating)}
+                  </p>
+                  <p className="font-sans text-sm text-muted-foreground">
+                    {getInterpretation(overallRating)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="mt-4 space-y-4">
           {metricView.metrics.map((metric) => (

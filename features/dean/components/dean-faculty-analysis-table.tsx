@@ -43,12 +43,9 @@ export function DeanFacultyAnalysisTable() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h2 className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
           Faculty Analysis
         </h2>
-        <p className="mt-5 font-sans text-sm text-muted-foreground">
-          Review faculty-specific subject coverage and jump directly to individual analysis.
-        </p>
       </div>
       <div className="data-table-wrapper">
         {isMobile ? (
@@ -94,7 +91,7 @@ export function DeanFacultyAnalysisTable() {
                     size="sm"
                     className="w-full font-sans text-brand-blue hover:text-brand-blue"
                   >
-                    <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
+                    <Link href={`/dean/${faculty.facultySlug}/analysis`}>
                       View Analysis
                     </Link>
                   </Button>
@@ -144,7 +141,7 @@ export function DeanFacultyAnalysisTable() {
                       size="sm"
                       className="h-auto max-w-full whitespace-nowrap px-3 py-2 font-sans text-brand-blue hover:text-brand-blue"
                     >
-                      <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
+                      <Link href={`/dean/${faculty.facultySlug}/analysis`}>
                         View Analysis
                       </Link>
                     </Button>

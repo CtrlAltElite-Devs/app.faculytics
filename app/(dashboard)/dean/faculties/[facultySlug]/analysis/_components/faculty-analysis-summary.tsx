@@ -4,6 +4,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import type { DeanFacultyAnalysisRecord } from "@/features/dean";
 import {
+  questionnaireTypeFilterOptions,
   useFeedbackTableState,
   rowsPerPageOptions,
   sentimentFilterOptions,
@@ -56,21 +57,6 @@ function FacultyMetricCard({
 }
 
 export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
-  const {
-    searchQuery,
-    setSearchQuery,
-    selectedSentiment,
-    setSelectedSentiment,
-    currentPage,
-    setCurrentPage,
-    rowsPerPage,
-    setRowsPerPage,
-    totalRows,
-    totalPages,
-    paginatedFeedback,
-    paginationItems,
-  } = useFeedbackTableState(faculty);
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
@@ -122,20 +108,36 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
           description="Share of responses indicating positive sentiment toward the faculty."
         />
       </div>
+    </div>
+  );
+}
 
-      <div className="space-y-4">
-        <div className="space-y-2 px-1">
-          <div className="space-y-2">
-            <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
-              Remarks List
-            </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Remark entries from student evaluation associated with this faculty analysis.
-            </CardDescription>
-          </div>
-        </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-xs">
+export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedSentiment,
+    setSelectedSentiment,
+    selectedQuestionnaireType,
+    setSelectedQuestionnaireType,
+    currentPage,
+    setCurrentPage,
+    rowsPerPage,
+    setRowsPerPage,
+    totalRows,
+    totalPages,
+    paginatedFeedback,
+    paginationItems,
+  } = useFeedbackTableState(faculty);
+
+  return (
+    <Card className="rounded-2xl border-border/70 shadow-sm">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
+          Remarks List
+        </CardTitle>
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+          <div className="relative w-full sm:w-72">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={searchQuery}
@@ -175,30 +177,64 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="min-w-44 justify-between font-sans"
+              >
+                <span>{selectedQuestionnaireType}</span>
+                <ChevronDown className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-44">
+              <DropdownMenuRadioGroup
+                value={selectedQuestionnaireType}
+                onValueChange={(value) => {
+                  setSelectedQuestionnaireType(
+                    value as (typeof questionnaireTypeFilterOptions)[number]
+                  );
+                  setCurrentPage(1);
+                }}
+              >
+                {questionnaireTypeFilterOptions.map((option) => (
+                  <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
+                    {option}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <div className="data-table-wrapper">
           <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
             <TableHeader className="data-table-header">
               <TableRow>
-                <TableHead className="data-table-head w-[18%]">Date</TableHead>
-                <TableHead className="data-table-head w-[62%]">Feedback</TableHead>
-                <TableHead className="data-table-head w-[20%]">Sentiment</TableHead>
+                <TableHead className="data-table-head w-[16%]">Date</TableHead>
+                <TableHead className="data-table-head w-[20%]">Type</TableHead>
+                <TableHead className="data-table-head w-[46%]">Feedback</TableHead>
+                <TableHead className="data-table-head w-[18%]">Sentiment</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="[&_tr:last-child]:border-b-0">
               {paginatedFeedback.map((record) => (
                 <TableRow key={`${record.date}-${record.feedback}`} className="data-table-row">
                   <TableCell className="data-table-cell">{record.date}</TableCell>
+                  <TableCell className="data-table-cell">{record.questionnaireType}</TableCell>
                   <TableCell className="data-table-cell">{record.feedback}</TableCell>
                   <TableCell className="data-table-cell">
                     <Badge
-                      variant={record.sentiment === "Negative" ? "destructive" : "ghost"}
+                      variant="ghost"
                       className={
                         record.sentiment === "Positive"
                           ? "badge-status-active"
                           : record.sentiment === "Neutral"
                             ? "badge-status-deprecated"
-                            : undefined
+                            : "border-red-200 bg-red-50 text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300"
                       }
                     >
                       {record.sentiment}
@@ -209,7 +245,7 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
             </TableBody>
           </Table>
         </div>
-        <div className="flex flex-col gap-3 px-1 pt-5 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 pt-5 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="text-xs sm:text-sm">
             Showing {paginatedFeedback.length} of {totalRows} feedback records
           </div>
@@ -300,7 +336,7 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
