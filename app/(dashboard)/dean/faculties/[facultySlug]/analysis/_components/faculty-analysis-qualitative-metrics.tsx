@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowUpRight } from "lucide-react";
 import { Cell, Pie, PieChart } from "recharts";
 
 import type { DeanFacultyAnalysisRecord, FacultyAnalysisSemesterKey } from "@/features/dean";
@@ -110,11 +111,11 @@ export function FacultyAnalysisQualitativeOverview({
         </Card>
 
         <Card className="flex flex-col rounded-2xl border-border/70 shadow-sm">
-        <CardHeader>
-          <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
-            Key Feedback Themes
-          </CardTitle>
-        </CardHeader>
+          <CardHeader>
+            <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
+              Key Feedback Themes
+            </CardTitle>
+          </CardHeader>
           <CardContent className="space-y-4">
             {qualitativeMetrics.keyThemes.map((theme) => {
               const percentage = (theme.mentions / maxMentions) * 100;
@@ -133,6 +134,13 @@ export function FacultyAnalysisQualitativeOverview({
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 font-sans text-sm font-medium text-brand-blue transition-colors hover:text-brand-blue/80"
+                  >
+                    <span>View Feedback</span>
+                    <ArrowUpRight className="size-4" />
+                  </button>
                 </div>
               );
             })}

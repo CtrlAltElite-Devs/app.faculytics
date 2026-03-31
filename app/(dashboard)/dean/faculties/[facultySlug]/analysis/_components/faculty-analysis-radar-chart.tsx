@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
 
@@ -21,8 +22,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const metricViewLabels = {
   classroom: "In Classroom",
@@ -78,25 +84,39 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
             Quantitative Metric Analysis
           </CardTitle>
         </div>
-        <ButtonGroup className="w-fit">
-          {(Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>).map(
-            ([view, label]) => (
-              <Button
-                key={view}
-                type="button"
-                variant={selectedView === view ? "default" : "outline"}
-                size="sm"
-                className={cn(
-                  "font-sans",
-                  selectedView === view && "bg-brand-blue/80 text-white hover:bg-brand-blue/70"
-                )}
-                onClick={() => setSelectedView(view)}
-              >
-                {label}
-              </Button>
-            )
-          )}
-        </ButtonGroup>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="min-w-44 justify-between font-sans"
+            >
+              <span>{metricViewLabels[selectedView]}</span>
+              <ChevronDown className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-44">
+            <DropdownMenuRadioGroup
+              value={selectedView}
+              onValueChange={(value) =>
+                setSelectedView(value as keyof typeof metricViewLabels)
+              }
+            >
+              {(Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>).map(
+                ([view, label]) => (
+                  <DropdownMenuRadioItem
+                    key={view}
+                    value={view}
+                    className="font-sans text-sm"
+                  >
+                    {label}
+                  </DropdownMenuRadioItem>
+                )
+              )}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent className="pb-0">
         <div className="mt-3 grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
