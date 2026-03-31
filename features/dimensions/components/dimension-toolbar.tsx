@@ -125,13 +125,13 @@ export function DimensionToolbar({
       </div>
 
       {/* Desktop layout */}
-      <div className="hidden lg:flex lg:min-w-0 lg:flex-row lg:items-center lg:gap-3">
+      <div className="hidden lg:flex lg:min-w-0 lg:flex-wrap lg:items-start lg:gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               type="button"
               variant="outline"
-              className={cn("w-full justify-between gap-3 lg:min-w-72 lg:max-w-[26rem]")}
+              className={cn("w-full justify-between gap-3 lg:w-auto lg:min-w-72 lg:max-w-[26rem]")}
             >
               <span className="truncate">
                 {selectedTypeLabel ??
@@ -158,12 +158,12 @@ export function DimensionToolbar({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
           <Button type="button" variant="brand" className="shrink-0" onClick={onCreateClick}>
             Create Dimension
           </Button>
 
-          <div className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/6">
+          <div className="relative min-w-[15rem] flex-1 lg:max-w-xs xl:max-w-sm">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={searchValue}
