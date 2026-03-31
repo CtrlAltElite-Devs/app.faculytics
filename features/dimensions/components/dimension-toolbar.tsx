@@ -98,40 +98,46 @@ export function DimensionToolbar({
           />
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button type="button" variant="outline" className="w-full justify-between gap-3">
-              {STATUS_FILTER_LABELS[statusFilter]}
-              <ChevronDown className="size-4 text-muted-foreground" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-48">
-            <DropdownMenuRadioGroup
-              value={statusFilter}
-              onValueChange={(v) => onStatusFilterChange(v as DimensionStatusFilter)}
-            >
-              {(Object.keys(STATUS_FILTER_LABELS) as DimensionStatusFilter[]).map((key) => (
-                <DropdownMenuRadioItem key={key} value={key}>
-                  {STATUS_FILTER_LABELS[key]}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full min-w-0 justify-between gap-3"
+              >
+                {STATUS_FILTER_LABELS[statusFilter]}
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-48">
+              <DropdownMenuRadioGroup
+                value={statusFilter}
+                onValueChange={(v) => onStatusFilterChange(v as DimensionStatusFilter)}
+              >
+                {(Object.keys(STATUS_FILTER_LABELS) as DimensionStatusFilter[]).map((key) => (
+                  <DropdownMenuRadioItem key={key} value={key}>
+                    {STATUS_FILTER_LABELS[key]}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        <Button type="button" variant="brand" className="w-full" onClick={onCreateClick}>
-          Create Dimension
-        </Button>
+          <Button type="button" variant="brand" className="w-full min-w-0" onClick={onCreateClick}>
+            Create Dimension
+          </Button>
+        </div>
       </div>
 
       {/* Desktop layout */}
-      <div className="hidden lg:flex lg:min-w-0 lg:flex-row lg:items-center lg:gap-3">
+      <div className="hidden lg:flex lg:min-w-0 lg:flex-wrap lg:items-start lg:gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               type="button"
               variant="outline"
-              className={cn("w-full justify-between gap-3 lg:min-w-72 lg:max-w-[26rem]")}
+              className={cn("w-full justify-between gap-3 lg:w-auto lg:min-w-72 lg:max-w-[26rem]")}
             >
               <span className="truncate">
                 {selectedTypeLabel ??
@@ -158,12 +164,12 @@ export function DimensionToolbar({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
           <Button type="button" variant="brand" className="shrink-0" onClick={onCreateClick}>
             Create Dimension
           </Button>
 
-          <div className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/6">
+          <div className="relative min-w-[15rem] flex-1 lg:max-w-xs xl:max-w-sm">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={searchValue}
