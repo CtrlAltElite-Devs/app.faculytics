@@ -4,10 +4,11 @@ import {
   QUESTIONNAIRE_STATUS_FILTER_LABELS,
   QUESTIONNAIRE_TYPES,
   QUESTIONNAIRE_TYPE_LABELS,
+  getQuestionnaireTypeLabel,
 } from "@/features/questionnaires/constants";
 import type { QuestionnaireVersionSchema } from "@/features/questionnaires/types/builder";
 
-export type QuestionnaireTypeCode = (typeof QUESTIONNAIRE_TYPES)[number];
+export type QuestionnaireTypeCode = string;
 
 export type QuestionnaireStatus = (typeof QUESTIONNAIRE_STATUSES)[number];
 
@@ -197,11 +198,21 @@ export type CheckSubmissionResponse = {
 // --- Utility functions ---
 
 export function resolveQuestionnaireType(value: string | null): QuestionnaireTypeCode {
-  if (value && QUESTIONNAIRE_TYPES.includes(value as QuestionnaireTypeCode)) {
-    return value as QuestionnaireTypeCode;
+  if (value && value.trim().length > 0) {
+    return value;
   }
 
   return DEFAULT_QUESTIONNAIRE_TYPE;
+}
+
+export function isSeededQuestionnaireTypeCode(
+  value: string
+): value is (typeof QUESTIONNAIRE_TYPES)[number] {
+  return QUESTIONNAIRE_TYPES.includes(value as (typeof QUESTIONNAIRE_TYPES)[number]);
+}
+
+export function resolveQuestionnaireTypeLabel(code: string, fallbackName?: string | null) {
+  return getQuestionnaireTypeLabel(code, fallbackName);
 }
 
 export * from "@/features/questionnaires/types/builder";

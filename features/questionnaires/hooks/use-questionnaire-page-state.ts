@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import {
-  DEFAULT_QUESTIONNAIRE_TYPE,
-  QUESTIONNAIRE_TYPES,
-} from "@/features/questionnaires/constants";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import {
   useQuestionnaireVersion,
   useQuestionnaireVersions,
 } from "@/features/questionnaires/hooks/use-questionnaire-versions";
+import {
+  buildQuestionnaireTypeOptions,
+  resolveActiveQuestionnaireType,
+} from "@/features/questionnaires/lib/questionnaire-type-options";
+import { normalizeTypeSearchParam } from "@/features/questionnaires/lib/questionnaire-type-routing";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
 import { resolveQuestionnaireType } from "@/features/questionnaires/types";
 
@@ -31,28 +32,30 @@ export function useQuestionnairePageState() {
   const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
 
   const typeSummaries = questionnaireTypesQuery.data ?? [];
+  const availableTypeOptions = buildQuestionnaireTypeOptions(typeSummaries);
+  const availableTypes = availableTypeOptions.map((summary) => summary.code);
   const fetchedCodes = typeSummaries.map((summary) => summary.code);
-  const availableTypes =
-    fetchedCodes.length > 0
-      ? QUESTIONNAIRE_TYPES.filter((type) => fetchedCodes.includes(type))
-      : [...QUESTIONNAIRE_TYPES];
   const requestedTypeUnavailable =
     questionnaireTypesQuery.isSuccess &&
     fetchedCodes.length > 0 &&
     !fetchedCodes.includes(requestedType);
-  const activePageType = availableTypes.includes(requestedType)
-    ? requestedType
-    : (availableTypes[0] ?? DEFAULT_QUESTIONNAIRE_TYPE);
+  const activePageType = resolveActiveQuestionnaireType({
+    requestedType,
+    availableTypeOptions,
+    isResolved: questionnaireTypesQuery.isSuccess,
+  });
+  const activeTypeSummary =
+    availableTypeOptions.find((summary) => summary.code === activePageType) ?? null;
   const currentDraft = useQuestionnaireBuilderStore(
     (state) => state.drafts[activePageType] ?? null
   );
 
   // Resolve code → UUID for the API call
-  const requestedTypeId = typeSummaries.find((s) => s.code === requestedType)?.id ?? null;
+  const activeTypeId = typeSummaries.find((summary) => summary.code === activePageType)?.id ?? null;
 
-  const questionnaireVersionsQuery = useQuestionnaireVersions(requestedTypeId, {
+  const questionnaireVersionsQuery = useQuestionnaireVersions(activeTypeId, {
     enabled:
-      questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable && requestedTypeId !== null,
+      questionnaireTypesQuery.isSuccess && !requestedTypeUnavailable && activeTypeId !== null,
   });
   const defaultDraftVersionId =
     questionnaireVersionsQuery.data?.versions.find((version) => version.status === "DRAFT")?.id ??
@@ -67,14 +70,15 @@ export function useQuestionnairePageState() {
   const draftVersion = questionnaireVersionQuery.data ?? null;
 
   useEffect(() => {
-    if (searchParams.get("type") === activePageType) {
-      return;
-    }
-
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("type", activePageType);
-    router.replace(`/superadmin/questionnaires/new?${params.toString()}`);
-  }, [activePageType, router, searchParams]);
+    normalizeTypeSearchParam({
+      isResolved: questionnaireTypesQuery.isSuccess,
+      currentTypeParam: searchParams.get("type"),
+      normalizedType: activePageType,
+      pathname: "/superadmin/questionnaires/new",
+      searchParams,
+      router,
+    });
+  }, [activePageType, questionnaireTypesQuery.isSuccess, router, searchParams]);
 
   useEffect(() => {
     if (!questionnaireVersionsQuery.data) {
@@ -159,6 +163,7 @@ export function useQuestionnairePageState() {
 
   return {
     activePageType,
+    activeTypeSummary,
     hydrated,
     resolvedVersionId,
     showBuilderLoading,

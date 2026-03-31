@@ -9,8 +9,10 @@ import {
   type TypeFilter,
 } from "@/features/dimensions/components/dimension-toolbar";
 import type { Dimension, DimensionsListMeta } from "@/features/dimensions/types";
+import type { QuestionnaireTypeSummary } from "@/features/questionnaires/types";
 
 type DimensionListScreenProps = {
+  typeOptions: QuestionnaireTypeSummary[];
   typeFilter: TypeFilter;
   statusFilter: DimensionStatusFilter;
   searchValue: string;
@@ -32,6 +34,7 @@ type DimensionListScreenProps = {
 };
 
 export function DimensionListScreen({
+  typeOptions,
   typeFilter,
   statusFilter,
   searchValue,
@@ -69,6 +72,7 @@ export function DimensionListScreen({
   return (
     <div className="space-y-6">
       <DimensionToolbar
+        typeOptions={typeOptions}
         typeFilter={typeFilter}
         statusFilter={statusFilter}
         searchValue={searchValue}

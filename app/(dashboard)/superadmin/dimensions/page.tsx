@@ -20,6 +20,7 @@ export default function SuperAdminDimensionsPage() {
       </div>
 
       <DimensionListScreen
+        typeOptions={page.availableTypeOptions}
         typeFilter={page.typeFilter}
         statusFilter={page.statusFilter}
         searchValue={page.searchValue}

@@ -8,11 +8,12 @@ import { QuestionnaireTable } from "@/features/questionnaires/components/questio
 import type {
   QuestionnaireStatusFilter as StatusFilter,
   QuestionnaireTypeCode,
+  QuestionnaireTypeSummary,
   QuestionnaireVersionItem,
 } from "@/features/questionnaires/types";
 
 type QuestionnaireListScreenProps = {
-  availableTypes: QuestionnaireTypeCode[];
+  availableTypes: QuestionnaireTypeSummary[];
   activeType: QuestionnaireTypeCode;
   hasDraftVersion: boolean;
   hasQuestionnaire: boolean;

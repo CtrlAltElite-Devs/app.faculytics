@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import {
-  DEFAULT_QUESTIONNAIRE_TYPE,
-  QUESTIONNAIRE_TYPES,
-} from "@/features/questionnaires/constants";
 import { resolveQuestionnaireActionErrorMessage } from "@/features/questionnaires/lib/action-errors";
+import {
+  buildQuestionnaireTypeOptions,
+  resolveActiveQuestionnaireType,
+} from "@/features/questionnaires/lib/questionnaire-type-options";
+import { normalizeTypeSearchParam } from "@/features/questionnaires/lib/questionnaire-type-routing";
 import { useDeprecateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-deprecate-questionnaire-version";
 import { usePublishQuestionnaireVersion } from "@/features/questionnaires/hooks/use-publish-questionnaire-version";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
@@ -28,14 +29,14 @@ export function useQuestionnaireListPage() {
   const publishVersionMutation = usePublishQuestionnaireVersion();
   const deprecateVersionMutation = useDeprecateQuestionnaireVersion();
   const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const fetchedCodes = typeSummaries.map((summary) => summary.code);
-  const availableTypes =
-    fetchedCodes.length > 0
-      ? QUESTIONNAIRE_TYPES.filter((type) => fetchedCodes.includes(type))
-      : [...QUESTIONNAIRE_TYPES];
-  const activeType = availableTypes.includes(selectedType)
-    ? selectedType
-    : (availableTypes[0] ?? DEFAULT_QUESTIONNAIRE_TYPE);
+  const availableTypeOptions = buildQuestionnaireTypeOptions(typeSummaries);
+  const activeType = resolveActiveQuestionnaireType({
+    requestedType: selectedType,
+    availableTypeOptions,
+    isResolved: questionnaireTypesQuery.isSuccess,
+  });
+  const activeTypeSummary =
+    availableTypeOptions.find((summary) => summary.code === activeType) ?? null;
 
   // Resolve code → UUID for the API call
   const activeTypeId = typeSummaries.find((s) => s.code === activeType)?.id ?? null;
@@ -43,6 +44,17 @@ export function useQuestionnaireListPage() {
   const questionnaireVersionsQuery = useQuestionnaireVersions(activeTypeId, {
     enabled: questionnaireTypesQuery.isSuccess && activeTypeId !== null,
   });
+
+  useEffect(() => {
+    normalizeTypeSearchParam({
+      isResolved: questionnaireTypesQuery.isSuccess,
+      currentTypeParam: searchParams.get("type"),
+      normalizedType: activeType,
+      pathname: "/superadmin/questionnaires",
+      searchParams,
+      router,
+    });
+  }, [activeType, questionnaireTypesQuery.isSuccess, router, searchParams, selectedType]);
 
   useEffect(() => {
     const builderStatus = searchParams.get("builder");
@@ -107,7 +119,6 @@ export function useQuestionnaireListPage() {
     }
   };
 
-  const selectedSummary = typeSummaries.find((summary) => summary.code === activeType);
   const versionRows = questionnaireVersionsQuery.data?.versions ?? [];
   const actionDialogConfig =
     versionAction?.type === "publish"
@@ -130,12 +141,13 @@ export function useQuestionnaireListPage() {
 
   const isLoading = questionnaireTypesQuery.isLoading || questionnaireVersionsQuery.isLoading;
   const isError = questionnaireTypesQuery.isError || questionnaireVersionsQuery.isError;
-  const hasQuestionnaire = Boolean(selectedSummary?.questionnaireId);
+  const hasQuestionnaire = Boolean(activeTypeSummary?.questionnaireId);
   const hasDraftVersion = versionRows.some((row) => row.status === "DRAFT");
 
   return {
-    availableTypes,
+    availableTypeOptions,
     activeType,
+    activeTypeSummary,
     hasDraftVersion,
     hasQuestionnaire,
     versionRows,

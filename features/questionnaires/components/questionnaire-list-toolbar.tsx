@@ -4,15 +4,16 @@ import Link from "next/link";
 
 import { QuestionnaireSearchInput } from "@/features/questionnaires/components/questionnaire-search-input";
 import { QuestionnaireStatusFilter } from "@/features/questionnaires/components/questionnaire-status-filter";
-import { QuestionnaireTypeButtonGroup } from "@/features/questionnaires/components/questionnaire-type-button-group";
+import { QuestionnaireTypeDropdown } from "@/features/questionnaires/components/questionnaire-type-dropdown";
 import { Button } from "@/components/ui/button";
 import type {
   QuestionnaireStatusFilter as StatusFilter,
   QuestionnaireTypeCode,
+  QuestionnaireTypeSummary,
 } from "@/features/questionnaires/types";
 
 type QuestionnaireListToolbarProps = {
-  availableTypes: QuestionnaireTypeCode[];
+  availableTypes: QuestionnaireTypeSummary[];
   activeType: QuestionnaireTypeCode;
   statusFilter: StatusFilter;
   searchValue: string;
@@ -37,7 +38,7 @@ export function QuestionnaireListToolbar({
   return (
     <>
       <div className="flex flex-col gap-3 lg:hidden">
-        <QuestionnaireTypeButtonGroup
+        <QuestionnaireTypeDropdown
           types={availableTypes}
           value={activeType}
           onValueChange={onTypeChange}
@@ -62,7 +63,7 @@ export function QuestionnaireListToolbar({
       </div>
 
       <div className="hidden lg:flex lg:min-w-0 lg:flex-row lg:items-center lg:gap-3">
-        <QuestionnaireTypeButtonGroup
+        <QuestionnaireTypeDropdown
           types={availableTypes}
           value={activeType}
           onValueChange={onTypeChange}

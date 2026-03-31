@@ -17,7 +17,7 @@ export default function SuperAdminQuestionnairesPage() {
       />
 
       <QuestionnaireListScreen
-        availableTypes={page.availableTypes}
+        availableTypes={page.availableTypeOptions}
         activeType={page.activeType}
         hasDraftVersion={page.hasDraftVersion}
         hasQuestionnaire={page.hasQuestionnaire}
