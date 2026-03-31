@@ -1,8 +1,9 @@
+import { DeanFacultyAnalysisTable } from "@/features/dean";
+
 export default function DeanFacultiesPage() {
   return (
-    <section className="md:p-8">
-      <h1 className="text-2xl font-semibold">Dean Faculties</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Placeholder page for dean faculties.</p>
+    <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
+      <DeanFacultyAnalysisTable />
     </section>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
@@ -17,6 +18,7 @@ export function DeanDashboardHeader() {
   const [selectedAcademicYear, setSelectedAcademicYear] = useState(
     deanAnalyticsSampleData.selectedAcademicYear
   );
+  const featuredFaculty = deanAnalyticsSampleData.facultyAnalysis[0];
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -25,9 +27,19 @@ export function DeanDashboardHeader() {
           Department Performance Overview
         </h1>
         <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground sm:mt-5">
-          A high-level dashboard for monitoring faculty participation and response volume of
-          feedbacks.
+          Monitor response volume and department-level sentiment here, then move into the
+          dedicated analytics workspace for faculty-level analysis.
         </p>
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+          <Button asChild variant="brand" className="font-sans">
+            <Link href="/dean/faculties">Open Faculty Analytics</Link>
+          </Button>
+          <Button asChild variant="outline" className="font-sans">
+            <Link href={`/dean/faculties/${featuredFaculty.facultySlug}/analysis`}>
+              Review Featured Faculty
+            </Link>
+          </Button>
+        </div>
       </div>
       <div className="w-full md:w-auto md:text-right">
         <DropdownMenu>

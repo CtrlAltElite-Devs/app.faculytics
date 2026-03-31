@@ -1,4 +1,5 @@
 export * from "@/features/dean/types";
+export { DeanFacultyAnalysisTable } from "@/features/dean/components/dean-faculty-analysis-table";
 export {
   deanAnalyticsSampleData,
   getDeanFacultyAnalysisBySlug,

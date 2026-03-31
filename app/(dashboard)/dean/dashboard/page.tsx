@@ -1,5 +1,4 @@
 import { DeanDashboardHeader } from "@/features/dean/components/dean-dashboard-header";
-import { DeanFacultyAnalysisTable } from "@/features/dean/components/dean-faculty-analysis-table";
 import { DeanMetricsGrid } from "@/features/dean/components/dean-metrics-grid";
 import {
   DeanOverallSentimentPieChart,
@@ -16,8 +15,6 @@ export default function DeanDashboardPage() {
         <DeanSentimentBarChart />
         <DeanOverallSentimentPieChart />
       </div>
-
-      <DeanFacultyAnalysisTable />
     </section>
   );
 }

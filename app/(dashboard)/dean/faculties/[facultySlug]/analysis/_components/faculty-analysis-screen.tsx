@@ -34,7 +34,7 @@ export function FacultyAnalysisScreen({ faculty }: { faculty: DeanFacultyAnalysi
       <FacultyAnalysisActionableInsights faculty={faculty} selectedSemester={selectedSemester} />
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm" className="font-sans">
-          <Link href="/dean/dashboard">Back to Overview</Link>
+          <Link href="/dean/faculties">Back to Faculty Analytics</Link>
         </Button>
         <Button
           type="button"
