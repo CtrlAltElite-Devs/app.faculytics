@@ -98,30 +98,36 @@ export function DimensionToolbar({
           />
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button type="button" variant="outline" className="w-full justify-between gap-3">
-              {STATUS_FILTER_LABELS[statusFilter]}
-              <ChevronDown className="size-4 text-muted-foreground" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-48">
-            <DropdownMenuRadioGroup
-              value={statusFilter}
-              onValueChange={(v) => onStatusFilterChange(v as DimensionStatusFilter)}
-            >
-              {(Object.keys(STATUS_FILTER_LABELS) as DimensionStatusFilter[]).map((key) => (
-                <DropdownMenuRadioItem key={key} value={key}>
-                  {STATUS_FILTER_LABELS[key]}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full min-w-0 justify-between gap-3"
+              >
+                {STATUS_FILTER_LABELS[statusFilter]}
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-48">
+              <DropdownMenuRadioGroup
+                value={statusFilter}
+                onValueChange={(v) => onStatusFilterChange(v as DimensionStatusFilter)}
+              >
+                {(Object.keys(STATUS_FILTER_LABELS) as DimensionStatusFilter[]).map((key) => (
+                  <DropdownMenuRadioItem key={key} value={key}>
+                    {STATUS_FILTER_LABELS[key]}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        <Button type="button" variant="brand" className="w-full" onClick={onCreateClick}>
-          Create Dimension
-        </Button>
+          <Button type="button" variant="brand" className="w-full min-w-0" onClick={onCreateClick}>
+            Create Dimension
+          </Button>
+        </div>
       </div>
 
       {/* Desktop layout */}

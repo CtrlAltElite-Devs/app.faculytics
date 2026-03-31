@@ -45,30 +45,38 @@ export function QuestionnaireTypeManagementToolbar({
           />
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button type="button" variant="outline" className="w-full justify-between gap-3">
-              {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[filter]}
-              <ChevronDown className="size-4 text-muted-foreground" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-48">
-            <DropdownMenuRadioGroup
-              value={filter}
-              onValueChange={(value) => onFilterChange(value as QuestionnaireTypeManagementFilter)}
-            >
-              {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTERS.map((key) => (
-                <DropdownMenuRadioItem key={key} value={key}>
-                  {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[key]}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="grid grid-cols-2 gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full min-w-0 justify-between gap-3"
+              >
+                {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[filter]}
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-48">
+              <DropdownMenuRadioGroup
+                value={filter}
+                onValueChange={(value) =>
+                  onFilterChange(value as QuestionnaireTypeManagementFilter)
+                }
+              >
+                {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTERS.map((key) => (
+                  <DropdownMenuRadioItem key={key} value={key}>
+                    {QUESTIONNAIRE_TYPE_MANAGEMENT_FILTER_LABELS[key]}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        <Button type="button" variant="brand" className="w-full" onClick={onCreateClick}>
-          Create Type
-        </Button>
+          <Button type="button" variant="brand" className="w-full min-w-0" onClick={onCreateClick}>
+            Create Type
+          </Button>
+        </div>
       </div>
 
       <div className="hidden items-center justify-end gap-3 lg:flex">
