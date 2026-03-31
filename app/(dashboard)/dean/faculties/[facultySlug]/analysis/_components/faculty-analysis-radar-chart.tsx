@@ -77,10 +77,6 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
           <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
             Quantitative Metric Analysis
           </CardTitle>
-          <CardDescription className="font-sans text-sm">
-            Multi-metric snapshot of faculty performance based on quantitative student evaluation
-            scores.
-          </CardDescription>
         </div>
         <ButtonGroup className="w-fit">
           {(Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>).map(

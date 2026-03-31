@@ -56,21 +56,6 @@ function FacultyMetricCard({
 }
 
 export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
-  const {
-    searchQuery,
-    setSearchQuery,
-    selectedSentiment,
-    setSelectedSentiment,
-    currentPage,
-    setCurrentPage,
-    rowsPerPage,
-    setRowsPerPage,
-    totalRows,
-    totalPages,
-    paginatedFeedback,
-    paginationItems,
-  } = useFeedbackTableState(faculty);
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
@@ -122,18 +107,34 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
           description="Share of responses indicating positive sentiment toward the faculty."
         />
       </div>
+    </div>
+  );
+}
 
-      <div className="space-y-4">
-        <div className="space-y-2 px-1">
-          <div className="space-y-2">
-            <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
-              Remarks List
-            </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Remark entries from student evaluation associated with this faculty analysis.
-            </CardDescription>
-          </div>
-        </div>
+export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedSentiment,
+    setSelectedSentiment,
+    currentPage,
+    setCurrentPage,
+    rowsPerPage,
+    setRowsPerPage,
+    totalRows,
+    totalPages,
+    paginatedFeedback,
+    paginationItems,
+  } = useFeedbackTableState(faculty);
+
+  return (
+    <Card className="rounded-2xl border-border/70 shadow-sm">
+      <CardHeader>
+        <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
+          Remarks List
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="relative w-full sm:max-w-xs">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -209,7 +210,7 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
             </TableBody>
           </Table>
         </div>
-        <div className="flex flex-col gap-3 px-1 pt-5 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 pt-1 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="text-xs sm:text-sm">
             Showing {paginatedFeedback.length} of {totalRows} feedback records
           </div>
@@ -300,7 +301,7 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

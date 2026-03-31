@@ -210,7 +210,7 @@
   }
 
   .data-table-header {
-    @apply bg-card text-black dark:bg-card;
+    @apply bg-muted/50 text-black dark:bg-muted/50;
   }
 
   .data-table-head {

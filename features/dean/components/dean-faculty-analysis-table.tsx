@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
 import { FacultySubjects } from "@/features/dean/components/faculty-subjects";
-import { paginateArray } from "@/lib/pagination";
+import { getPaginationItems, paginateArray } from "@/lib/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +39,7 @@ export function DeanFacultyAnalysisTable() {
     currentPage,
     rowsPerPage
   );
+  const paginationItems = getPaginationItems(currentPage, totalPages);
 
   return (
     <div className="space-y-5">
@@ -196,28 +197,50 @@ export function DeanFacultyAnalysisTable() {
             </DropdownMenu>
           </div>
           <div className="flex items-center gap-3">
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant="outline"
-                size="icon-sm"
+                size="sm"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
-                className="border-border/70"
+                className="border-border/70 font-sans"
               >
                 <ChevronLeft className="size-4" />
+                <span className="text-white">Previous</span>
               </Button>
+              <div className="flex items-center gap-1">
+                {paginationItems.map((item, index) =>
+                  item === "..." ? (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="px-2 font-sans text-sm text-muted-foreground"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <Button
+                      key={item}
+                      type="button"
+                      variant={item === currentPage ? "brand" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(item)}
+                      className="min-w-9 border-border/70 px-3 font-sans"
+                    >
+                      {item}
+                    </Button>
+                  )
+                )}
+              </div>
               <Button
                 type="button"
                 variant="outline"
-                size="icon-sm"
+                size="sm"
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((page) => Math.min(page + 1, totalPages))}
-                className="border-border/70"
+                className="border-border/70 font-sans"
               >
+                <span className="text-white">Next</span>
                 <ChevronRight className="size-4" />
               </Button>
             </div>

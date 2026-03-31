@@ -12,7 +12,7 @@ import {
   FacultyAnalysisQualitativeOverview,
 } from "./faculty-analysis-qualitative-metrics";
 import { FacultyAnalysisRadarChart } from "./faculty-analysis-radar-chart";
-import { FacultyAnalysisSummary } from "./faculty-analysis-summary";
+import { FacultyAnalysisRemarksList, FacultyAnalysisSummary } from "./faculty-analysis-summary";
 import { FacultyAnalysisToolbar } from "./faculty-analysis-toolbar";
 
 export function FacultyAnalysisScreen({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
@@ -32,6 +32,7 @@ export function FacultyAnalysisScreen({ faculty }: { faculty: DeanFacultyAnalysi
       <FacultyAnalysisQualitativeOverview faculty={faculty} selectedSemester={selectedSemester} />
       <FacultyAnalysisRadarChart faculty={faculty} />
       <FacultyAnalysisActionableInsights faculty={faculty} selectedSemester={selectedSemester} />
+      <FacultyAnalysisRemarksList faculty={faculty} />
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm" className="font-sans">
           <Link href="/dean/faculties">Back to Faculty Analytics</Link>

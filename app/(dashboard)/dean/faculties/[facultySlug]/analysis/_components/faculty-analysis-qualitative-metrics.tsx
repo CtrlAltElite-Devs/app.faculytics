@@ -76,14 +76,11 @@ export function FacultyAnalysisQualitativeOverview({
     <section>
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-stretch">
         <Card className="flex flex-col rounded-2xl border-border/70 shadow-sm xl:h-full">
-          <CardHeader>
-            <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
-              Qualitative Sentiment Overview
-            </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Overall sentiment for this semester based on qualitative student feedback.
-            </CardDescription>
-          </CardHeader>
+        <CardHeader>
+          <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
+            Qualitative Sentiment Overview
+          </CardTitle>
+        </CardHeader>
           <CardContent className="flex flex-1 items-center">
             <ChartContainer
               config={qualitativeSentimentChartConfig}
@@ -113,14 +110,11 @@ export function FacultyAnalysisQualitativeOverview({
         </Card>
 
         <Card className="flex flex-col rounded-2xl border-border/70 shadow-sm">
-          <CardHeader>
-            <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
-              Key Feedback Themes
-            </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Most frequent themes mentioned by students for this semester.
-            </CardDescription>
-          </CardHeader>
+        <CardHeader>
+          <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
+            Key Feedback Themes
+          </CardTitle>
+        </CardHeader>
           <CardContent className="space-y-4">
             {qualitativeMetrics.keyThemes.map((theme) => {
               const percentage = (theme.mentions / maxMentions) * 100;
@@ -165,9 +159,6 @@ export function FacultyAnalysisActionableInsights({
         <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
           Actionable Insights and Recommendations
         </CardTitle>
-        <CardDescription className="font-sans text-sm">
-          Suggested focus areas derived from the semester&apos;s qualitative feedback.
-        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
