@@ -80,34 +80,36 @@ export function QuestionnaireBuilderShell({
     <div className="space-y-6">
       <Card className="overflow-hidden">
         <CardHeader className="space-y-4">
-          <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-            <div className="min-w-0 space-y-4">
-              <div className="min-w-0">
-                <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center">
-                  <div className="w-full lg:min-w-0 lg:flex-1">
-                    <InlineEditInput
-                      id="questionnaire-title"
-                      value={draft.metadata.title}
-                      placeholder="Enter the questionnaire title"
-                      ariaInvalid={Boolean(
-                        validation?.issues.some((issue) => issue.code === "metadata.title.required")
-                      )}
-                      textClassName="min-h-11 text-xl font-semibold"
-                      inputClassName="h-11 text-xl font-semibold"
-                      onChange={updateTitle}
-                    />
-                  </div>
-                  {statusBadge ? <div className="lg:shrink-0">{statusBadge}</div> : null}
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <div className="min-w-0 space-y-3 xl:flex-1">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs text-muted-foreground">
                   {hasExistingQuestionnaire
-                    ? "Changes to the questionnaire title will be saved to the parent questionnaire."
+                    ? "Questionnaire Title"
                     : "Set the questionnaire title before creating the first draft version."}
                 </p>
+                {statusBadge ? <div className="shrink-0 xl:hidden">{statusBadge}</div> : null}
+              </div>
+
+              <div className="w-full">
+                <InlineEditInput
+                  id="questionnaire-title"
+                  value={draft.metadata.title}
+                  placeholder="Enter the questionnaire title"
+                  ariaInvalid={Boolean(
+                    validation?.issues.some((issue) => issue.code === "metadata.title.required")
+                  )}
+                  textClassName="min-h-11 text-xl font-semibold"
+                  inputClassName="h-11 text-xl font-semibold"
+                  onChange={updateTitle}
+                />
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 xl:items-end">
+            <div className="flex flex-col gap-3 xl:max-w-md xl:items-end">
+              {statusBadge ? (
+                <div className="hidden shrink-0 xl:block xl:self-end">{statusBadge}</div>
+              ) : null}
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap xl:justify-end">
                 <Button asChild variant="outline">
                   <Link href={`/superadmin/questionnaires/new/preview?type=${previewModel.type}`}>
@@ -135,8 +137,8 @@ export function QuestionnaireBuilderShell({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-5">
-          {validation && !validation.isValid && (
+        {validation && !validation.isValid ? (
+          <CardContent className="space-y-5">
             <QuestionnaireCallout variant="danger">
               {validationMessages.length === 1 ? (
                 validationMessages[0]
@@ -148,8 +150,8 @@ export function QuestionnaireBuilderShell({
                 </ul>
               )}
             </QuestionnaireCallout>
-          )}
-        </CardContent>
+          </CardContent>
+        ) : null}
       </Card>
 
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,2.2fr)]">
