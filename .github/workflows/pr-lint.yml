@@ -1,0 +1,105 @@
+name: PR Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+      - develop
+      - "**"
+
+jobs:
+  lint:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check lint status
+        id: lint-status
+        run: |
+          if bun run lint; then
+            echo "LINT_STATUS=✅ Frontend lint passed" >> "$GITHUB_ENV"
+            echo "EMBED_COLOR=3066993" >> "$GITHUB_ENV"
+          else
+            echo "LINT_STATUS=❌ Frontend lint failed" >> "$GITHUB_ENV"
+            echo "EMBED_COLOR=15158332" >> "$GITHUB_ENV"
+          fi
+
+      - name: Discord notification
+        if: ${{ github.event_name == 'pull_request' }}
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: >
+            [
+              {
+                "author": {
+                  "name": "${{ github.event.pull_request.user.login }}",
+                  "icon_url": "${{ github.event.pull_request.user.avatar_url }}"
+                },
+                "title": "Frontend PR Lint Result",
+                "url": "${{ github.event.pull_request.html_url }}",
+                "description": "${{ env.LINT_STATUS }}",
+                "color": ${{ env.EMBED_COLOR }},
+                "fields": [
+                  {
+                    "name": "Branch",
+                    "value": "${{ github.event.pull_request.head.ref }} -> ${{ github.event.pull_request.base.ref }}"
+                  },
+                  {
+                    "name": "PR",
+                    "value": "${{ github.event.pull_request.title }}"
+                  },
+                  {
+                    "name": "Commit",
+                    "value": "${{ github.sha }}"
+                  },
+                  {
+                    "name": "Repository",
+                    "value": "${{ github.repository }}"
+                  }
+                ],
+                "timestamp": "${{ github.event.pull_request.updated_at }}"
+              }
+            ]
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "DISCORD_WEBHOOK is not configured; skipping Discord notification."
+            exit 0
+          fi
+
+          payload=$(jq -nc --argjson embeds "$DISCORD_EMBEDS" '{embeds: $embeds}')
+
+          curl \
+            --fail \
+            --show-error \
+            --silent \
+            -H "Content-Type: application/json" \
+            -d "$payload" \
+            "$DISCORD_WEBHOOK"
