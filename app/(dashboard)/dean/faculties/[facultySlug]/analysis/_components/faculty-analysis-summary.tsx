@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 import type { DeanFacultyAnalysisRecord } from "@/features/dean";
 import {
@@ -21,6 +21,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -228,7 +237,6 @@ export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAn
                   </TableCell>
                   <TableCell className="data-table-cell">
                     <Badge
-                      variant="ghost"
                       className={
                         record.sentiment === "Positive"
                           ? "badge-status-active"
@@ -286,53 +294,66 @@ export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAn
               </DropdownMenu>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
-                  className="border-border/70 font-sans"
-                >
-                  <ChevronLeft className="size-4" />
-                  <span className="text-white">Previous</span>
-                </Button>
-                <div className="flex items-center gap-1">
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <Pagination className="mx-0 w-auto justify-start sm:justify-end">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      aria-disabled={currentPage === 1}
+                      tabIndex={currentPage === 1 ? -1 : undefined}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (currentPage > 1) {
+                          setCurrentPage((page) => Math.max(page - 1, 1));
+                        }
+                      }}
+                    />
+                  </PaginationItem>
                   {paginationItems.map((item, index) =>
                     item === "..." ? (
-                      <span
-                        key={`ellipsis-${index}`}
-                        className="px-2 font-sans text-sm text-muted-foreground"
-                      >
-                        ...
-                      </span>
+                      <PaginationItem key={`ellipsis-${index}`}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
                     ) : (
-                      <Button
-                        key={item}
-                        type="button"
-                        variant={item === currentPage ? "brand" : "outline"}
-                        size="sm"
-                        onClick={() => setCurrentPage(item)}
-                        className="min-w-9 border-border/70 px-3 font-sans"
-                      >
-                        {item}
-                      </Button>
+                      <PaginationItem key={item}>
+                        <PaginationLink
+                          href="#"
+                          isActive={item === currentPage}
+                          aria-disabled={item === currentPage}
+                          tabIndex={item === currentPage ? -1 : undefined}
+                          className={item === currentPage ? "pointer-events-none" : undefined}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            setCurrentPage(item);
+                          }}
+                        >
+                          {item}
+                        </PaginationLink>
+                      </PaginationItem>
                     )
                   )}
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((page) => Math.min(page + 1, totalPages))}
-                  className="border-border/70 font-sans"
-                >
-                  <span className="text-white">Next</span>
-                  <ChevronRight className="size-4" />
-                </Button>
-              </div>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      aria-disabled={currentPage === totalPages}
+                      tabIndex={currentPage === totalPages ? -1 : undefined}
+                      className={
+                        currentPage === totalPages ? "pointer-events-none opacity-50" : undefined
+                      }
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (currentPage < totalPages) {
+                          setCurrentPage((page) => Math.min(page + 1, totalPages));
+                        }
+                      }}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -17,6 +17,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
   Table,
   TableBody,
   TableCell,
@@ -24,12 +33,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useIsMobile } from "@/lib/use-mobile";
-
 const rowsPerPageOptions = [5, 10, 20, 50] as const;
 
 export function DeanFacultyAnalysisTable() {
-  const isMobile = useIsMobile();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
   const totalRows = deanAnalyticsSampleData.facultyAnalysis.length;
@@ -52,109 +58,70 @@ export function DeanFacultyAnalysisTable() {
         </p>
       </div>
       <div className="data-table-wrapper">
-        {isMobile ? (
-          <div className="divide-y divide-border/70">
-            {paginatedRows.map((faculty) => (
-              <div key={faculty.facultyName} className="space-y-4 p-4">
-                <div className="flex items-center gap-3">
-                  <Avatar size="default" className="border border-border/70">
-                    <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
-                      {faculty.facultyInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <p className="font-sans text-sm font-semibold text-foreground">
-                      {faculty.facultyName}
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-3 font-sans text-sm">
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Subjects
-                    </p>
-                    <FacultySubjects subjects={faculty.subjects} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Positive Rate
-                      </p>
-                      <p className="font-semibold text-white">{faculty.overallPositiveRate}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Responses
-                      </p>
-                      <p className="font-semibold text-white">{faculty.responses}</p>
-                    </div>
-                  </div>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    size="sm"
-                    className="w-full font-sans text-brand-blue hover:text-brand-blue"
-                  >
-                    <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
-                      View Analysis
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
+        <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
             <TableHeader className="data-table-header">
               <TableRow>
-                <TableHead className="data-table-head w-[24%]">Faculty</TableHead>
-                <TableHead className="data-table-head w-[32%]">Subjects</TableHead>
-                <TableHead className="data-table-head w-[16%]">Overall Positive Rate</TableHead>
-                <TableHead className="data-table-head w-[10%]">Responses</TableHead>
-                <TableHead className="data-table-head w-[18%] text-right">Action</TableHead>
+                <TableHead className="data-table-head w-[24%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
+                  Faculty
+                </TableHead>
+                <TableHead className="data-table-head w-[28%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
+                  Subjects
+                </TableHead>
+                <TableHead className="data-table-head w-[18%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
+                  Overall Positive Rate
+                </TableHead>
+                <TableHead className="data-table-head w-[12%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
+                  Responses
+                </TableHead>
+                <TableHead className="data-table-head w-[18%] px-2 text-right text-[11px] md:px-3 md:text-xs lg:px-5">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="[&_tr:last-child]:border-b-0">
               {paginatedRows.map((faculty) => (
                 <TableRow key={faculty.facultyName} className="data-table-row">
-                  <TableCell className="data-table-cell">
+                  <TableCell className="data-table-cell px-2 md:px-3 lg:px-5">
                     <div className="flex min-w-0 items-center gap-3">
-                      <Avatar size="default" className="border border-border/70">
+                      <Avatar size="default" className="hidden border border-border/70 xl:flex">
                         <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
                           {faculty.facultyInitials}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="truncate font-sans text-sm font-semibold text-foreground">
+                      <span className="truncate font-sans text-xs font-semibold text-foreground md:text-sm">
                         {faculty.facultyName}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="data-table-cell">
-                    <FacultySubjects subjects={faculty.subjects} />
+                  <TableCell className="data-table-cell px-2 md:px-3 lg:px-5">
+                    <div className="min-w-0">
+                      <FacultySubjects subjects={faculty.subjects} />
+                    </div>
                   </TableCell>
-                  <TableCell className="data-table-cell font-medium text-white">
+                  <TableCell className="data-table-cell px-2 font-medium text-foreground md:px-3 lg:px-5">
                     {faculty.overallPositiveRate}
                   </TableCell>
-                  <TableCell className="data-table-cell font-medium text-white">
+                  <TableCell className="data-table-cell px-2 font-medium text-foreground md:px-3 lg:px-5">
                     {faculty.responses}
                   </TableCell>
-                  <TableCell className="data-table-cell text-right">
+                  <TableCell className="data-table-cell px-2 text-right md:px-3 lg:px-5">
                     <Button
                       asChild
                       variant="ghost"
                       size="sm"
-                      className="h-auto max-w-full whitespace-nowrap px-3 py-2 font-sans text-brand-blue hover:text-brand-blue"
+                      className="h-auto max-w-full px-1 py-2 font-sans text-brand-blue hover:text-brand-blue md:px-2 xl:px-3"
                     >
                       <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
-                        View Analysis
+                        <span className="md:hidden">View</span>
+                        <span className="hidden md:inline xl:hidden">Details</span>
+                        <span className="hidden xl:inline">View Analysis</span>
                       </Link>
                     </Button>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-        )}
+        </Table>
       </div>
       <div className="flex flex-col gap-3 pt-4 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="text-xs sm:text-sm">
@@ -197,53 +164,66 @@ export function DeanFacultyAnalysisTable() {
             </DropdownMenu>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
-                className="border-border/70 font-sans"
-              >
-                <ChevronLeft className="size-4" />
-                <span className="text-white">Previous</span>
-              </Button>
-              <div className="flex items-center gap-1">
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <Pagination className="mx-0 w-auto justify-start sm:justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    aria-disabled={currentPage === 1}
+                    tabIndex={currentPage === 1 ? -1 : undefined}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      if (currentPage > 1) {
+                        setCurrentPage((page) => Math.max(page - 1, 1));
+                      }
+                    }}
+                  />
+                </PaginationItem>
                 {paginationItems.map((item, index) =>
                   item === "..." ? (
-                    <span
-                      key={`ellipsis-${index}`}
-                      className="px-2 font-sans text-sm text-muted-foreground"
-                    >
-                      ...
-                    </span>
+                    <PaginationItem key={`ellipsis-${index}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
                   ) : (
-                    <Button
-                      key={item}
-                      type="button"
-                      variant={item === currentPage ? "brand" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(item)}
-                      className="min-w-9 border-border/70 px-3 font-sans"
-                    >
-                      {item}
-                    </Button>
+                    <PaginationItem key={item}>
+                      <PaginationLink
+                        href="#"
+                        isActive={item === currentPage}
+                        aria-disabled={item === currentPage}
+                        tabIndex={item === currentPage ? -1 : undefined}
+                        className={item === currentPage ? "pointer-events-none" : undefined}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          setCurrentPage(item);
+                        }}
+                      >
+                        {item}
+                      </PaginationLink>
+                    </PaginationItem>
                   )
                 )}
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((page) => Math.min(page + 1, totalPages))}
-                className="border-border/70 font-sans"
-              >
-                <span className="text-white">Next</span>
-                <ChevronRight className="size-4" />
-              </Button>
-            </div>
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    aria-disabled={currentPage === totalPages}
+                    tabIndex={currentPage === totalPages ? -1 : undefined}
+                    className={
+                      currentPage === totalPages ? "pointer-events-none opacity-50" : undefined
+                    }
+                    onClick={(event) => {
+                      event.preventDefault();
+                      if (currentPage < totalPages) {
+                        setCurrentPage((page) => Math.min(page + 1, totalPages));
+                      }
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </div>
       </div>

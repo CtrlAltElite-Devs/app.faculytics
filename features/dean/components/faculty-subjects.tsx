@@ -8,10 +8,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 const chipGap = 8;
 
 const subjectChipClassName =
-  "max-w-32 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2.5 py-1 font-sans text-[11px] text-brand-blue";
+  "max-w-24 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2 py-1 font-sans text-[11px] text-brand-blue lg:max-w-32 lg:px-2.5";
 
 const overflowChipClassName =
-  "cursor-default rounded-full border-brand-blue/20 bg-brand-blue/8 px-2.5 py-1 font-sans text-[11px] text-brand-blue";
+  "cursor-default rounded-full border-brand-blue/20 bg-brand-blue/8 px-2 py-1 font-sans text-[11px] text-brand-blue lg:px-2.5";
 
 export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
