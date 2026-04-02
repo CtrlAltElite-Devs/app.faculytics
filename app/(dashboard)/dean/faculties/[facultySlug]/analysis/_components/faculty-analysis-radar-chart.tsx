@@ -99,21 +99,15 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
           <DropdownMenuContent align="end" className="min-w-44">
             <DropdownMenuRadioGroup
               value={selectedView}
-              onValueChange={(value) =>
-                setSelectedView(value as keyof typeof metricViewLabels)
-              }
+              onValueChange={(value) => setSelectedView(value as keyof typeof metricViewLabels)}
             >
-              {(Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>).map(
-                ([view, label]) => (
-                  <DropdownMenuRadioItem
-                    key={view}
-                    value={view}
-                    className="font-sans text-sm"
-                  >
-                    {label}
-                  </DropdownMenuRadioItem>
-                )
-              )}
+              {(
+                Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>
+              ).map(([view, label]) => (
+                <DropdownMenuRadioItem key={view} value={view} className="font-sans text-sm">
+                  {label}
+                </DropdownMenuRadioItem>
+              ))}
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -155,7 +149,7 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
           </ChartContainer>
           <div className="space-y-4 self-start">
             <CardTitle className="font-playfair text-lg font-semibold sm:text-xl">
-              Overall Ratings
+              Metric Summary
             </CardTitle>
             <div className="data-table-wrapper">
               <Table>
@@ -190,9 +184,7 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
                 <TableHeader className="data-table-header">
                   <TableRow>
                     <TableHead className="data-table-head w-[62%]">{metric.metric}</TableHead>
-                    <TableHead className="data-table-head w-[14%] text-center">
-                      Average
-                    </TableHead>
+                    <TableHead className="data-table-head w-[14%] text-center">Average</TableHead>
                     <TableHead className="data-table-head w-[24%]">Interpretation</TableHead>
                   </TableRow>
                 </TableHeader>

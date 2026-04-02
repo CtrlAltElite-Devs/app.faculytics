@@ -207,6 +207,20 @@
     @apply border-red-200 bg-red-50 px-2.5 py-1 font-medium text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300;
   }
 
+  /* ── Faculytics: Analytics subject chips ─────────────────────────── */
+
+  .analytics-subject-chip {
+    @apply max-w-24 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2 py-1 font-sans text-[11px] text-brand-blue lg:max-w-32 lg:px-2.5;
+  }
+
+  .analytics-subject-chip-overflow {
+    @apply cursor-default rounded-full border-brand-blue/20 bg-brand-blue/8 px-2 py-1 font-sans text-[11px] text-brand-blue lg:px-2.5;
+  }
+
+  .course-code-badge {
+    @apply rounded-md bg-brand-blue/25 px-2 py-1 text-sm font-medium text-brand-blue hover:bg-brand-blue/25;
+  }
+
   /* ── Faculytics: Data table ──────────────────────────────────────── */
 
   .data-table-wrapper {

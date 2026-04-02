@@ -12,7 +12,7 @@ const feedbackTypeCycle = [
   "Student Evaluation",
 ] as const satisfies FacultyFeedbackRecord["type"][];
 
-const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
+const defaultFacultyFeedbackRecordsBase = [
   {
     date: "2026-01-14",
     feedback: "Explains difficult concepts clearly and checks if the class is keeping up.",
@@ -169,10 +169,13 @@ const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
     feedback: "Overall, the class is well handled and supports steady learning progress.",
     sentiment: "Positive",
   },
-].map((record, index) => ({
-  ...record,
-  type: feedbackTypeCycle[index % feedbackTypeCycle.length],
-})) as const;
+] satisfies readonly Omit<FacultyFeedbackRecord, "type">[];
+
+const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] =
+  defaultFacultyFeedbackRecordsBase.map((record, index) => ({
+    ...record,
+    type: feedbackTypeCycle[index % feedbackTypeCycle.length],
+  }));
 
 function createQualitativeSemesterData(
   positive: number,

@@ -9,6 +9,7 @@ import {
   sentimentFilterOptions,
   typeFilterOptions,
 } from "@/features/dean/hooks/use-feedback-table-state";
+import { FacultySubjects } from "@/features/dean/components/faculty-subjects";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,21 +81,15 @@ export function FacultyAnalysisSummary({ faculty }: { faculty: DeanFacultyAnalys
               <h1 className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
                 {faculty.facultyName}
               </h1>
-              <p className="mt-2 font-sans text-sm text-muted-foreground">CCS Department Faculty</p>
+              <p className="mt-2 font-sans text-sm text-muted-foreground">Department faculty</p>
             </div>
           </div>
           <div className="space-y-3 lg:w-[70%] lg:flex-none">
-            <p className="font-sans text-sm font-semibold text-muted-foreground">SUBJECT HANDLED</p>
-            <div className="flex flex-wrap gap-2">
-              {faculty.subjects.map((subject) => (
-                <Badge
-                  key={subject}
-                  variant="outline"
-                  className="rounded-full border-brand-blue/30 bg-brand-blue/10 px-3 py-1 font-sans text-xs text-brand-blue"
-                >
-                  {subject}
-                </Badge>
-              ))}
+            <p className="font-sans text-sm font-semibold text-muted-foreground">
+              SUBJECTS HANDLED
+            </p>
+            <div className="max-w-full">
+              <FacultySubjects subjects={faculty.subjects} />
             </div>
           </div>
         </div>
@@ -140,85 +135,85 @@ export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAn
   } = useFeedbackTableState(faculty);
 
   return (
-      <Card className="rounded-2xl border-border/70 shadow-sm">
-        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
-            Remarks List
-          </CardTitle>
-          <div className="flex flex-col gap-3 sm:w-fit sm:flex-row sm:flex-wrap sm:items-center">
-            <div className="relative w-full sm:w-72">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={searchQuery}
-                onChange={(event) => {
-                  setSearchQuery(event.target.value);
+    <Card className="rounded-2xl border-border/70 shadow-sm">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <CardTitle className="font-playfair text-xl font-semibold tracking-tight sm:text-2xl">
+          Remarks List
+        </CardTitle>
+        <div className="flex flex-col gap-3 sm:w-fit sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="relative w-full sm:w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={searchQuery}
+              onChange={(event) => {
+                setSearchQuery(event.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search remarks"
+              className="w-full pl-9"
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="min-w-36 justify-between font-sans"
+              >
+                <span>{selectedSentiment}</span>
+                <ChevronDown className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-36">
+              <DropdownMenuRadioGroup
+                value={selectedSentiment}
+                onValueChange={(value) => {
+                  setSelectedSentiment(value as (typeof sentimentFilterOptions)[number]);
                   setCurrentPage(1);
                 }}
-                placeholder="Search remarks"
-                className="w-full pl-9"
-              />
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="min-w-36 justify-between font-sans"
-                >
-                  <span>{selectedSentiment}</span>
-                  <ChevronDown className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-36">
-                <DropdownMenuRadioGroup
-                  value={selectedSentiment}
-                  onValueChange={(value) => {
-                    setSelectedSentiment(value as (typeof sentimentFilterOptions)[number]);
-                    setCurrentPage(1);
-                  }}
-                >
-                  {sentimentFilterOptions.map((option) => (
-                    <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
-                      {option}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="min-w-44 justify-between font-sans"
-                >
-                  <span>{selectedType}</span>
-                  <ChevronDown className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-44">
-                <DropdownMenuRadioGroup
-                  value={selectedType}
-                  onValueChange={(value) => {
-                    setSelectedType(value as (typeof typeFilterOptions)[number]);
-                    setCurrentPage(1);
-                  }}
-                >
-                  {typeFilterOptions.map((option) => (
-                    <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
-                      {option}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="data-table-wrapper">
-            <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
+              >
+                {sentimentFilterOptions.map((option) => (
+                  <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
+                    {option}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="min-w-44 justify-between font-sans"
+              >
+                <span>{selectedType}</span>
+                <ChevronDown className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-44">
+              <DropdownMenuRadioGroup
+                value={selectedType}
+                onValueChange={(value) => {
+                  setSelectedType(value as (typeof typeFilterOptions)[number]);
+                  setCurrentPage(1);
+                }}
+              >
+                {typeFilterOptions.map((option) => (
+                  <DropdownMenuRadioItem key={option} value={option} className="font-sans text-sm">
+                    {option}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="data-table-wrapper">
+          <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
             <TableHeader className="data-table-header">
               <TableRow>
                 <TableHead className="data-table-head w-[16%]">Date</TableHead>

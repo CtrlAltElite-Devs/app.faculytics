@@ -35,7 +35,7 @@ export function FacultyAnalysisScreen({ faculty }: { faculty: DeanFacultyAnalysi
       <FacultyAnalysisRemarksList faculty={faculty} />
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm" className="font-sans">
-          <Link href="/dean/faculties">Back to Faculty Analytics</Link>
+          <Link href="/dean/faculties">Back to Analytics</Link>
         </Button>
         <Button
           type="button"

@@ -22,10 +22,10 @@ export function DeanDashboardHeader() {
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0">
         <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-          Department Performance Overview
+          Department Analytics Overview
         </h1>
         <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground sm:mt-5">
-          Monitor response volume and department-level sentiment
+          Monitor response volume and department-level sentiment across the current academic year.
         </p>
       </div>
       <div className="w-full md:w-auto md:text-right">

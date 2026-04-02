@@ -1,6 +1,7 @@
 import {
   BarChart3,
   BookOpen,
+  Building2,
   ChartNoAxesColumn,
   LayoutDashboard,
   ListChecks,
@@ -55,7 +56,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     routePrefix: "/chairperson",
     navItems: [
       { title: "Dashboard", url: "/chairperson/dashboard", icon: LayoutDashboard },
-      { title: "Faculties", url: "/chairperson/faculties", icon: ChartNoAxesColumn },
+      { title: "Faculties", url: "/chairperson/faculties", icon: Building2 },
     ],
   },
   [APP_ROLES.ADMIN]: {

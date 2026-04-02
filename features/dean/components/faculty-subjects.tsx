@@ -5,14 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const chipGap = 8;
-
-const subjectChipClassName =
-  "max-w-24 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2 py-1 font-sans text-[11px] text-brand-blue lg:max-w-32 lg:px-2.5";
-
-const overflowChipClassName =
-  "cursor-default rounded-full border-brand-blue/20 bg-brand-blue/8 px-2 py-1 font-sans text-[11px] text-brand-blue lg:px-2.5";
-
 export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const subjectMeasureRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -40,10 +32,9 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
 
       for (let index = 0; index < subjects.length; index += 1) {
         const nextChipWidth = subjectWidths[index] ?? 0;
-        const nextUsedWidth = usedWidth + (index > 0 ? chipGap : 0) + nextChipWidth;
+        const nextUsedWidth = usedWidth + (index > 0 ? 8 : 0) + nextChipWidth;
         const hiddenCount = subjects.length - (index + 1);
-        const reservedMoreWidth =
-          hiddenCount > 0 ? (moreWidths[hiddenCount - 1] ?? 0) + chipGap : 0;
+        const reservedMoreWidth = hiddenCount > 0 ? (moreWidths[hiddenCount - 1] ?? 0) + 8 : 0;
 
         if (nextUsedWidth + reservedMoreWidth > containerWidth) {
           fittedCount = index;
@@ -87,7 +78,7 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
                   subjectMeasureRefs.current[index] = node;
                 }}
                 variant="outline"
-                className={subjectChipClassName}
+                className="analytics-subject-chip"
               >
                 {subject}
               </Badge>
@@ -102,7 +93,7 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
                     moreMeasureRefs.current[index] = node;
                   }}
                   variant="outline"
-                  className={overflowChipClassName}
+                  className="analytics-subject-chip-overflow"
                 >
                   + {count} more
                 </Badge>
@@ -112,14 +103,14 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
         </div>
         <div ref={containerRef} className="flex flex-nowrap items-center gap-2 overflow-hidden">
           {visibleSubjects.map((subject) => (
-            <Badge key={subject} variant="outline" className={subjectChipClassName}>
+            <Badge key={subject} variant="outline" className="analytics-subject-chip">
               <span className="truncate">{subject}</span>
             </Badge>
           ))}
           {hiddenSubjectCount > 0 ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge variant="outline" className={overflowChipClassName}>
+                <Badge variant="outline" className="analytics-subject-chip-overflow">
                   + {hiddenSubjectCount} more
                 </Badge>
               </TooltipTrigger>
