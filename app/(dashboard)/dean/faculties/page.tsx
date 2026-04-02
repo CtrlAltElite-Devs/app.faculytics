@@ -1,9 +1,5 @@
-import { DeanFacultyAnalysisTable } from "@/features/dean";
+import { DeanFacultyAnalyticsScreen } from "@/features/faculty-analytics";
 
 export default function DeanFacultiesPage() {
-  return (
-    <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
-      <DeanFacultyAnalysisTable />
-    </section>
-  );
+  return <DeanFacultyAnalyticsScreen />;
 }

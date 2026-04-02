@@ -4,7 +4,7 @@ import type {
   QualitativeInsight,
   QualitativeTheme,
   QuantitativeMetricScore,
-} from "@/features/dean/types";
+} from "@/features/faculty-analytics/types";
 
 const feedbackTypeCycle = [
   "In Classroom",

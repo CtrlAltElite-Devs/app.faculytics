@@ -2,7 +2,10 @@
 
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
 
-import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
+import type {
+  DeanOverallSentimentDatum,
+  DeanSemesterSentimentDatum,
+} from "@/features/faculty-analytics/lib/dean-analytics-view-model";
 import {
   ChartContainer,
   ChartLegend,
@@ -44,16 +47,11 @@ const overallSentimentChartConfig = {
   },
 } satisfies ChartConfig;
 
-const overallSentimentData = deanAnalyticsSampleData.overallSentiment.map((item) => ({
-  ...item,
-  key: item.label.toLowerCase(),
-}));
-
-const semesterSentimentData = deanAnalyticsSampleData.semesterSentiment.map((item) => ({
-  ...item,
-}));
-
-export function DeanSentimentBarChart() {
+export function DeanSentimentBarChart({
+  semesterSentiment,
+}: {
+  semesterSentiment: DeanSemesterSentimentDatum[];
+}) {
   const isMobile = useIsMobile();
 
   return (
@@ -70,7 +68,7 @@ export function DeanSentimentBarChart() {
         >
           <BarChart
             accessibilityLayer
-            data={semesterSentimentData}
+            data={semesterSentiment}
             margin={{ top: 12, right: 8, left: 8, bottom: 12 }}
             barCategoryGap={isMobile ? 10 : 18}
           >
@@ -131,8 +129,16 @@ export function DeanSentimentBarChart() {
   );
 }
 
-export function DeanOverallSentimentPieChart() {
+export function DeanOverallSentimentPieChart({
+  overallSentiment,
+}: {
+  overallSentiment: DeanOverallSentimentDatum[];
+}) {
   const isMobile = useIsMobile();
+  const overallSentimentData = overallSentiment.map((item) => ({
+    ...item,
+    key: item.label.toLowerCase(),
+  }));
 
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">

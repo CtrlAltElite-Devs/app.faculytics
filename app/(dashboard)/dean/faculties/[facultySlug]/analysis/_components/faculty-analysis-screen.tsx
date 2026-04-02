@@ -4,7 +4,10 @@ import { useState } from "react";
 import { ChevronUp } from "lucide-react";
 import Link from "next/link";
 
-import type { DeanFacultyAnalysisRecord, FacultyAnalysisSemesterKey } from "@/features/dean";
+import type {
+  DeanFacultyAnalysisRecord,
+  FacultyAnalysisSemesterKey,
+} from "@/features/faculty-analytics";
 import { Button } from "@/components/ui/button";
 
 import {

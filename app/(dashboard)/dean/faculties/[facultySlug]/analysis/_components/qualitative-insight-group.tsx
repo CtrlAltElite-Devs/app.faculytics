@@ -2,7 +2,7 @@
 
 import { Lightbulb, Sparkles } from "lucide-react";
 
-import type { QualitativeInsight } from "@/features/dean";
+import type { QualitativeInsight } from "@/features/faculty-analytics";
 
 import { QualitativeFeedbackPlaceholderButton } from "./qualitative-feedback-placeholder-button";
 

@@ -1,6 +1,6 @@
 // Temporary types derived from mock data.
 // Replace with backend DTOs when wiring to the real API.
-// See features/dean/MIGRATION.md for the target response shapes.
+// See features/faculty-analytics/MIGRATION.md for the target response shapes.
 
 export type QuantitativeMetricScore = {
   metric: string;

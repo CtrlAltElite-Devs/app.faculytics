@@ -2,7 +2,10 @@
 
 import { Cell, Pie, PieChart } from "recharts";
 
-import type { DeanFacultyAnalysisRecord, FacultyAnalysisSemesterKey } from "@/features/dean";
+import type {
+  DeanFacultyAnalysisRecord,
+  FacultyAnalysisSemesterKey,
+} from "@/features/faculty-analytics";
 import {
   ChartContainer,
   ChartLegend,
@@ -12,7 +15,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { buildOverallRecommendation } from "@/features/dean/lib/recommendation-utils";
+import { buildOverallRecommendation } from "@/features/faculty-analytics/lib/recommendation-utils";
 import { useIsMobile } from "@/lib/use-mobile";
 
 import { QualitativeFeedbackPlaceholderButton } from "./qualitative-feedback-placeholder-button";

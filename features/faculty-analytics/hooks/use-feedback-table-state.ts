@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { DeanFacultyAnalysisRecord } from "@/features/dean";
+import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics";
 import { getPaginationItems, paginateArray } from "@/lib/pagination";
 
 const rowsPerPageOptions = [5, 10, 20] as const;

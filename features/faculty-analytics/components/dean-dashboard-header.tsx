@@ -1,9 +1,8 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
 
-import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
+import type { DeanAcademicYear } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,11 +12,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function DeanDashboardHeader() {
-  const [selectedAcademicYear, setSelectedAcademicYear] = useState(
-    deanAnalyticsSampleData.selectedAcademicYear
-  );
+type DeanDashboardHeaderProps = {
+  academicYears: readonly DeanAcademicYear[];
+  selectedAcademicYear: DeanAcademicYear;
+  onAcademicYearChange: (value: DeanAcademicYear) => void;
+  lastUpdated: string;
+};
 
+export function DeanDashboardHeader({
+  academicYears,
+  selectedAcademicYear,
+  onAcademicYearChange,
+  lastUpdated,
+}: DeanDashboardHeaderProps) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0">
@@ -45,13 +52,9 @@ export function DeanDashboardHeader() {
           >
             <DropdownMenuRadioGroup
               value={selectedAcademicYear}
-              onValueChange={(value) => {
-                setSelectedAcademicYear(
-                  value as (typeof deanAnalyticsSampleData.academicYears)[number]
-                );
-              }}
+              onValueChange={(value) => onAcademicYearChange(value as DeanAcademicYear)}
             >
-              {deanAnalyticsSampleData.academicYears.map((year) => (
+              {academicYears.map((year) => (
                 <DropdownMenuRadioItem key={year} value={year} className="font-sans text-sm">
                   {year}
                 </DropdownMenuRadioItem>
@@ -59,9 +62,7 @@ export function DeanDashboardHeader() {
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <p className="mt-2 font-sans text-sm text-muted-foreground">
-          Last updated: {deanAnalyticsSampleData.lastUpdated}
-        </p>
+        <p className="mt-2 font-sans text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
       </div>
     </div>
   );

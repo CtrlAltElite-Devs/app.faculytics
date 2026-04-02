@@ -4,8 +4,8 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
-import { FacultySubjects } from "@/features/dean/components/faculty-subjects";
+import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
+import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics/lib/analytics-sample-data";
 import { getPaginationItems, paginateArray } from "@/lib/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -35,16 +35,16 @@ import {
 } from "@/components/ui/table";
 const rowsPerPageOptions = [5, 10, 20, 50] as const;
 
-export function DeanFacultyAnalysisTable() {
+export function DeanFacultyAnalysisTable({
+  facultyAnalysis,
+}: {
+  facultyAnalysis: readonly DeanFacultyAnalysisRecord[];
+}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
-  const totalRows = deanAnalyticsSampleData.facultyAnalysis.length;
+  const totalRows = facultyAnalysis.length;
   const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
-  const paginatedRows = paginateArray(
-    deanAnalyticsSampleData.facultyAnalysis,
-    currentPage,
-    rowsPerPage
-  );
+  const paginatedRows = paginateArray(facultyAnalysis, currentPage, rowsPerPage);
   const paginationItems = getPaginationItems(currentPage, totalPages);
 
   return (

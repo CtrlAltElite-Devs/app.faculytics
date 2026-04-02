@@ -145,15 +145,15 @@ faculty = "/api/v1/faculty",
 facultySubmissionCount = "/api/v1/faculty/:facultyId/submission-count",
 ```
 
-### 2. Create `features/dean/api/dean.requests.ts`
+### 2. Create `features/faculty-analytics/api/dean.requests.ts`
 
 Request functions for each endpoint. Keep them thin — call API, return `response.data`.
 
-### 3. Create `features/dean/types/index.ts` (replace current temporary types)
+### 3. Create `features/faculty-analytics/types/index.ts` (replace current temporary types)
 
 Define proper frontend DTOs matching the backend response shapes above. Drop the mock-data types (`QuantitativeMetricScore`, `QualitativeTheme`, etc.) once they are no longer needed.
 
-### 4. Create hooks in `features/dean/hooks/`
+### 4. Create hooks in `features/faculty-analytics/hooks/`
 
 | Hook                         | Wraps                               | Used by                                       |
 | ---------------------------- | ----------------------------------- | --------------------------------------------- |
@@ -174,9 +174,9 @@ Replace `deanAnalyticsSampleData` imports in each component with hook calls:
 
 ### 6. Clean up
 
-- Delete `features/dean/lib/analytics-sample-data.ts` once all components use real data
-- Remove temporary mock types from `features/dean/types/`
-- Update `features/dean/index.ts` barrel to export hooks and new types
+- Delete `features/faculty-analytics/lib/analytics-sample-data.ts` once all components use real data
+- Remove temporary mock types from `features/faculty-analytics/types/`
+- Update `features/faculty-analytics/index.ts` barrel to export hooks and new types
 
 ---
 

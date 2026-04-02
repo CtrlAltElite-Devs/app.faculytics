@@ -1,4 +1,4 @@
-import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
+import type { DeanDashboardViewModel } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 function formatMetric(value: number, suffix?: string) {
@@ -35,27 +35,27 @@ function DeanMetricCard({
   );
 }
 
-export function DeanMetricsGrid() {
+export function DeanMetricsGrid({ summary }: { summary: DeanDashboardViewModel["summary"] }) {
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <DeanMetricCard
         title="Faculty Members"
-        value={formatMetric(deanAnalyticsSampleData.summary.faculties)}
+        value={formatMetric(summary.faculties)}
         description="Active faculty members across the department"
       />
       <DeanMetricCard
         title="Student Responses"
-        value={formatMetric(deanAnalyticsSampleData.summary.studentResponses)}
+        value={formatMetric(summary.studentResponses)}
         description="Submitted evaluation responses this term"
       />
       <DeanMetricCard
         title="Positive Sentiment Rate"
-        value={formatMetric(deanAnalyticsSampleData.summary.positiveSentimentRate, "%")}
+        value={formatMetric(summary.positiveSentimentRate, "%")}
         description="Average favorable sentiment across all faculties"
       />
       <DeanMetricCard
         title="Department Courses"
-        value={formatMetric(deanAnalyticsSampleData.summary.courses)}
+        value={formatMetric(summary.courses)}
         description="Courses currently handled by the department"
       />
     </div>

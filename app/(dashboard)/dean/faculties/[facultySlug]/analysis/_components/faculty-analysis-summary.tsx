@@ -2,14 +2,14 @@
 
 import { ChevronDown, Search } from "lucide-react";
 
-import type { DeanFacultyAnalysisRecord } from "@/features/dean";
+import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics";
 import {
   useFeedbackTableState,
   rowsPerPageOptions,
   sentimentFilterOptions,
   typeFilterOptions,
-} from "@/features/dean/hooks/use-feedback-table-state";
-import { FacultySubjects } from "@/features/dean/components/faculty-subjects";
+} from "@/features/faculty-analytics/hooks/use-feedback-table-state";
+import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

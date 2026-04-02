@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
 
-import type { DeanFacultyAnalysisRecord } from "@/features/dean";
+import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics";
 import {
   ChartContainer,
   ChartTooltip,
