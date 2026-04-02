@@ -87,10 +87,10 @@ export function FacultyAnalysisQualitativeOverview({
               Qualitative Sentiment Overview
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-1 items-center">
+          <CardContent className="flex flex-1 items-center overflow-hidden">
             <ChartContainer
               config={qualitativeSentimentChartConfig}
-              className="mx-auto h-full min-h-[18rem] w-full max-w-md [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-legend-item]:!mr-3"
+              className="mx-auto aspect-auto h-[18rem] min-h-[18rem] w-full max-w-[20rem] [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-default-legend]:gap-y-1 [&_.recharts-legend-item]:!mr-3 sm:max-w-md"
             >
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="key" hideLabel />} />
@@ -102,8 +102,8 @@ export function FacultyAnalysisQualitativeOverview({
                   data={sentimentData}
                   dataKey="value"
                   nameKey="key"
-                  innerRadius={isMobile ? 54 : 72}
-                  outerRadius={isMobile ? 88 : 112}
+                  innerRadius={isMobile ? 42 : 72}
+                  outerRadius={isMobile ? 68 : 112}
                   strokeWidth={4}
                 >
                   {sentimentData.map((item) => (

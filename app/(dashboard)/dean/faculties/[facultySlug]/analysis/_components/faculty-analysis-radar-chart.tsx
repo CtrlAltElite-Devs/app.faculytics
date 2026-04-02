@@ -29,6 +29,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/lib/use-mobile";
 
 const metricViewLabels = {
   classroom: "In Classroom",
@@ -68,6 +69,7 @@ function getInterpretation(score: number) {
 }
 
 export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
+  const isMobile = useIsMobile();
   const [selectedView, setSelectedView] = useState<keyof typeof metricViewLabels>("classroom");
   const metricView = faculty.quantitativeMetrics[selectedView];
   const radarData = metricView.metrics.map((metric) => ({
@@ -116,26 +118,31 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
         <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
           <ChartContainer
             config={quantitativeMetricsChartConfig}
-            className="h-[18rem] w-full items-stretch justify-start sm:h-[21rem]"
+            className="aspect-auto h-[18rem] min-h-[18rem] w-full items-stretch justify-start sm:h-[20rem] lg:h-[21rem]"
           >
             <RadarChart
               accessibilityLayer
               data={radarData}
-              outerRadius="72%"
-              margin={{ top: 12, right: 24, bottom: 12, left: 24 }}
+              outerRadius={isMobile ? "62%" : "72%"}
+              margin={{
+                top: 12,
+                right: isMobile ? 8 : 24,
+                bottom: 12,
+                left: isMobile ? 8 : 24,
+              }}
             >
               <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
               <PolarGrid />
               <PolarAngleAxis
                 dataKey="metric"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: isMobile ? 10 : 12 }}
                 className="dark:[&_text]:fill-slate-400"
               />
               <PolarRadiusAxis
                 angle={90}
                 domain={[0, 5]}
                 tickCount={6}
-                tick={{ fill: "hsl(var(--foreground))", fontSize: 11 }}
+                tick={{ fill: "hsl(var(--foreground))", fontSize: isMobile ? 10 : 11 }}
               />
               <Radar
                 name="score"
@@ -147,7 +154,7 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
               />
             </RadarChart>
           </ChartContainer>
-          <div className="space-y-4 self-start">
+          <div className="space-y-4 self-start lg:min-w-0">
             <CardTitle className="font-playfair text-lg font-semibold sm:text-xl">
               Metric Summary
             </CardTitle>

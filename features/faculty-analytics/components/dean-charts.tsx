@@ -61,15 +61,20 @@ export function DeanSentimentBarChart({
           Semester Sentiment Comparison
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-2">
+      <CardContent className="overflow-hidden pb-2">
         <ChartContainer
           config={semesterChartConfig}
-          className="h-[18rem] w-full items-stretch justify-start sm:h-[21rem] [&_.recharts-legend-wrapper]:bottom-0! [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-legend-item]:!mr-3"
+          className="aspect-auto h-[16rem] min-h-[16rem] w-full items-stretch justify-start sm:h-[18rem] lg:h-[21rem] [&_.recharts-legend-wrapper]:bottom-0! [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-default-legend]:gap-y-1 [&_.recharts-legend-item]:!mr-3"
         >
           <BarChart
             accessibilityLayer
             data={semesterSentiment}
-            margin={{ top: 12, right: 8, left: 8, bottom: 12 }}
+            margin={{
+              top: 12,
+              right: isMobile ? 0 : 8,
+              left: isMobile ? -8 : 8,
+              bottom: 12,
+            }}
             barCategoryGap={isMobile ? 10 : 18}
           >
             <CartesianGrid vertical={false} />
@@ -147,10 +152,10 @@ export function DeanOverallSentimentPieChart({
           Overall Sentiment Distribution
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-hidden">
         <ChartContainer
           config={overallSentimentChartConfig}
-          className="mx-auto h-72 w-full max-w-md [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-legend-item]:!mr-3 sm:h-88"
+          className="mx-auto aspect-auto h-[18rem] min-h-[18rem] w-full max-w-[20rem] [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-default-legend]:gap-y-1 [&_.recharts-legend-item]:!mr-3 sm:h-[20rem] sm:max-w-md lg:h-[22rem]"
         >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent nameKey="key" hideLabel />} />
@@ -162,8 +167,8 @@ export function DeanOverallSentimentPieChart({
               data={overallSentimentData}
               dataKey="value"
               nameKey="key"
-              innerRadius={isMobile ? 44 : 56}
-              outerRadius={isMobile ? 72 : 88}
+              innerRadius={isMobile ? 40 : 56}
+              outerRadius={isMobile ? 64 : 88}
               strokeWidth={4}
             >
               {overallSentimentData.map((item) => (

@@ -79,7 +79,7 @@ export function DeanFacultyAnalysisTable({
           </TableHeader>
           <TableBody className="[&_tr:last-child]:border-b-0">
             {paginatedRows.map((faculty) => (
-              <TableRow key={faculty.facultyName} className="data-table-row">
+              <TableRow key={faculty.facultyName} className="data-table-row w-full">
                 <TableCell className="data-table-cell px-2 md:px-3 lg:px-5">
                   <div className="flex min-w-0 items-center gap-3">
                     <Avatar size="default" className="hidden border border-border/70 xl:flex">
@@ -92,8 +92,8 @@ export function DeanFacultyAnalysisTable({
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="data-table-cell px-2 md:px-3 lg:px-5">
-                  <div className="min-w-0">
+                <TableCell className="data-table-cell w-0 px-2 md:px-3 lg:px-5">
+                  <div className="w-full min-w-0">
                     <FacultySubjects subjects={faculty.subjects} />
                   </div>
                 </TableCell>

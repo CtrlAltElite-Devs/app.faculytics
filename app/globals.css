@@ -224,7 +224,7 @@
   /* ── Faculytics: Data table ──────────────────────────────────────── */
 
   .data-table-wrapper {
-    @apply overflow-hidden rounded-xl border border-border/70;
+    @apply max-w-full overflow-x-auto overflow-y-hidden rounded-xl border border-border/70;
   }
 
   .data-table-header {

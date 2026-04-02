@@ -69,7 +69,7 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
   return (
     <TooltipProvider>
       <>
-        <div aria-hidden="true" className="pointer-events-none absolute -z-10 opacity-0">
+        <div aria-hidden="true" className="pointer-events-none fixed left-0 top-0 -z-10 opacity-0">
           <div className="flex gap-2">
             {subjects.map((subject, index) => (
               <Badge
@@ -101,16 +101,19 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
             })}
           </div>
         </div>
-        <div ref={containerRef} className="flex flex-nowrap items-center gap-2 overflow-hidden">
+        <div
+          ref={containerRef}
+          className="flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-hidden"
+        >
           {visibleSubjects.map((subject) => (
-            <Badge key={subject} variant="outline" className="analytics-subject-chip">
+            <Badge key={subject} variant="outline" className="analytics-subject-chip shrink-0">
               <span className="truncate">{subject}</span>
             </Badge>
           ))}
           {hiddenSubjectCount > 0 ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge variant="outline" className="analytics-subject-chip-overflow">
+                <Badge variant="outline" className="analytics-subject-chip-overflow shrink-0">
                   + {hiddenSubjectCount} more
                 </Badge>
               </TooltipTrigger>
