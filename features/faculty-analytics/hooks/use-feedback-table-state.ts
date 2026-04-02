@@ -1,9 +1,8 @@
 import { useState } from "react";
 
 import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics";
-import { getPaginationItems, paginateArray } from "@/lib/pagination";
+import { DEFAULT_PAGE_SIZE_OPTIONS, getPaginationItems, paginateArray } from "@/lib/pagination";
 
-const rowsPerPageOptions = [5, 10, 20] as const;
 const sentimentFilterOptions = ["All Sentiments", "Positive", "Neutral", "Negative"] as const;
 const typeFilterOptions = [
   "All Types",
@@ -15,14 +14,14 @@ const typeFilterOptions = [
 export type SentimentFilter = (typeof sentimentFilterOptions)[number];
 export type FeedbackTypeFilter = (typeof typeFilterOptions)[number];
 
-export { rowsPerPageOptions, sentimentFilterOptions, typeFilterOptions };
+export { sentimentFilterOptions, typeFilterOptions };
 
 export function useFeedbackTableState(faculty: DeanFacultyAnalysisRecord) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSentiment, setSelectedSentiment] = useState<SentimentFilter>("All Sentiments");
   const [selectedType, setSelectedType] = useState<FeedbackTypeFilter>("All Types");
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
 
   const filteredFeedback = faculty.feedbackRecords.filter((record) => {
     const matchesSearch = record.feedback.toLowerCase().includes(searchQuery.trim().toLowerCase());

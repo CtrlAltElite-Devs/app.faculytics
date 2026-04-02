@@ -14,6 +14,7 @@ import type {
 import { DEFAULT_QUESTIONNAIRE_TYPE } from "@/features/questionnaires/constants";
 import { useQuestionnaireTypeId } from "@/features/questionnaires/hooks/use-questionnaire-type-id";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import { resolvePageSizeOption } from "@/lib/pagination";
 import {
   buildQuestionnaireTypeOptions,
   resolveActiveQuestionnaireType,
@@ -21,8 +22,6 @@ import {
 import { normalizeTypeSearchParam } from "@/features/questionnaires/lib/questionnaire-type-routing";
 
 type DimensionAction = { type: "toggle"; dimension: Dimension } | null;
-
-export const PAGE_SIZE_OPTIONS = [5, 10, 20] as const;
 
 function resolveTypeFilter(value: string | null): TypeFilter {
   if (value && value.trim().length > 0) {
@@ -47,11 +46,6 @@ function resolvePositiveNumber(value: string | null, fallback: number) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function resolvePageSize(value: string | null) {
-  const parsed = resolvePositiveNumber(value, 10);
-  return PAGE_SIZE_OPTIONS.includes(parsed as (typeof PAGE_SIZE_OPTIONS)[number]) ? parsed : 10;
-}
-
 export function useDimensionListPage() {
   const router = useRouter();
   const pathname = usePathname();
@@ -63,7 +57,7 @@ export function useDimensionListPage() {
   const typeFilter = resolveTypeFilter(searchParams.get("type"));
   const statusFilter = resolveStatusFilter(searchParams.get("status"));
   const page = resolvePositiveNumber(searchParams.get("page"), 1);
-  const pageSize = resolvePageSize(searchParams.get("pageSize"));
+  const pageSize = resolvePageSizeOption(searchParams.get("pageSize"));
 
   // Local search state — only syncs to URL after debounce
   const urlSearch = searchParams.get("search") ?? "";

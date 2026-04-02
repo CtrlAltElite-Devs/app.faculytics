@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
 import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics/lib/analytics-sample-data";
-import { getPaginationItems, paginateArray } from "@/lib/pagination";
+import { DEFAULT_PAGE_SIZE_OPTIONS, getPaginationItems, paginateArray } from "@/lib/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +33,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-const rowsPerPageOptions = [5, 10, 20, 50] as const;
 
 export function DeanFacultyAnalysisTable({
   facultyAnalysis,
@@ -41,7 +40,7 @@ export function DeanFacultyAnalysisTable({
   facultyAnalysis: readonly DeanFacultyAnalysisRecord[];
 }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(rowsPerPageOptions[0]);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
   const totalRows = facultyAnalysis.length;
   const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
   const paginatedRows = paginateArray(facultyAnalysis, currentPage, rowsPerPage);
@@ -150,7 +149,7 @@ export function DeanFacultyAnalysisTable({
                     setCurrentPage(1);
                   }}
                 >
-                  {rowsPerPageOptions.map((option) => (
+                  {DEFAULT_PAGE_SIZE_OPTIONS.map((option) => (
                     <DropdownMenuRadioItem
                       key={option}
                       value={String(option)}

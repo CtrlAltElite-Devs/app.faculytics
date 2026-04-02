@@ -5,11 +5,11 @@ import { ChevronDown, Search } from "lucide-react";
 import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics";
 import {
   useFeedbackTableState,
-  rowsPerPageOptions,
   sentimentFilterOptions,
   typeFilterOptions,
 } from "@/features/faculty-analytics/hooks/use-feedback-table-state";
 import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/lib/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -275,7 +275,7 @@ export function FacultyAnalysisRemarksList({ faculty }: { faculty: DeanFacultyAn
                       setCurrentPage(1);
                     }}
                   >
-                    {rowsPerPageOptions.map((option) => (
+                    {DEFAULT_PAGE_SIZE_OPTIONS.map((option) => (
                       <DropdownMenuRadioItem
                         key={option}
                         value={String(option)}
