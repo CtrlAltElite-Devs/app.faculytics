@@ -50,10 +50,10 @@ export function DeanFacultyAnalysisTable({
     <div className="space-y-5">
       <div>
         <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-          Faculty Analytics
+          Faculties
         </h2>
         <p className="mt-5 font-sans text-sm text-muted-foreground">
-          Browse faculty-level analytics and open individual analysis views.
+          Browse faculty records and open individual analysis views.
         </p>
       </div>
       <div className="data-table-wrapper">

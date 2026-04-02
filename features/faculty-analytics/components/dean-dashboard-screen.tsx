@@ -19,7 +19,9 @@ export function DeanDashboardScreen() {
     overallSentiment,
     semesterSentiment,
     isLoading,
+    isRefreshing,
     isError,
+    refresh,
     retry,
   } = useDeanDashboardViewModel();
 
@@ -46,6 +48,8 @@ export function DeanDashboardScreen() {
           selectedAcademicYear={selectedAcademicYear}
           onAcademicYearChange={setSelectedAcademicYear}
           lastUpdated={lastUpdated}
+          isRefreshing={isRefreshing}
+          onRefresh={refresh}
         />
         <DeanMetricsGrid summary={summary} />
 

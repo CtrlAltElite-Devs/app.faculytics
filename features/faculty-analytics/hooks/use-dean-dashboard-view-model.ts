@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTransition, useState } from "react";
 
 import {
   getDeanDashboardViewModel,
@@ -11,6 +12,8 @@ const dashboardViewModel = getDeanDashboardViewModel();
 const noop = () => undefined;
 
 export function useDeanDashboardViewModel() {
+  const router = useRouter();
+  const [isRefreshing, startTransition] = useTransition();
   const [selectedAcademicYear, setSelectedAcademicYear] = useState<DeanAcademicYear>(
     dashboardViewModel.defaultAcademicYear
   );
@@ -20,7 +23,13 @@ export function useDeanDashboardViewModel() {
     selectedAcademicYear,
     setSelectedAcademicYear,
     isLoading: false,
+    isRefreshing,
     isError: false,
     retry: noop,
+    refresh: () => {
+      startTransition(() => {
+        router.refresh();
+      });
+    },
   };
 }

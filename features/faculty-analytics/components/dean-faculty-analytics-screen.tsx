@@ -20,8 +20,8 @@ export function DeanFacultyAnalyticsScreen() {
       isLoading={isLoading}
       isError={isError}
       onRetry={retry}
-      loadingMessage="Loading faculty analytics..."
-      errorMessage="Unable to load the faculty analytics list."
+      loadingMessage="Loading faculties..."
+      errorMessage="Unable to load the faculties list."
       emptyState={emptyState}
     >
       <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
