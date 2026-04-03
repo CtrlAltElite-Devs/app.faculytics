@@ -1,35 +1,93 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useTransition, useState } from "react";
+import { useMemo, useState } from "react";
 
+import { useMe } from "@/features/auth/hooks/use-me";
 import {
-  getDeanDashboardViewModel,
-  type DeanAcademicYear,
+  STATIC_DEAN_KEY_THEMES,
+  mapDepartmentOverviewToDashboardViewModel,
+  mapSemesterOptionsToViewModel,
 } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
-
-const dashboardViewModel = getDeanDashboardViewModel();
-const noop = () => undefined;
+import { useDepartmentOverview } from "@/features/faculty-analytics/hooks/use-department-overview";
+import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
+import { formatRelativeTime } from "@/lib/date";
 
 export function useDeanDashboardViewModel() {
-  const router = useRouter();
-  const [isRefreshing, startTransition] = useTransition();
-  const [selectedAcademicYear, setSelectedAcademicYear] = useState<DeanAcademicYear>(
-    dashboardViewModel.defaultAcademicYear
+  const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
+  const meQuery = useMe();
+  const campusId = meQuery.data?.campus?.id;
+  const semestersQuery = useSemesterOptions(campusId ? { campusId } : undefined, {
+    enabled: !meQuery.isLoading && !meQuery.isError,
+  });
+  const semesters = useMemo(
+    () => mapSemesterOptionsToViewModel(semestersQuery.data?.data ?? []),
+    [semestersQuery.data]
+  );
+  const selectedSemesterId =
+    selectedSemesterIdState && semesters.some((semester) => semester.id === selectedSemesterIdState)
+      ? selectedSemesterIdState
+      : (semesters[0]?.id ?? null);
+
+  const overviewQuery = useDepartmentOverview(
+    { semesterId: selectedSemesterId ?? "" },
+    { enabled: Boolean(selectedSemesterId) }
   );
 
+  const selectedSemester =
+    semesters.find((semester) => semester.id === selectedSemesterId) ?? semesters[0] ?? null;
+
+  const dashboardViewModel = overviewQuery.data
+    ? mapDepartmentOverviewToDashboardViewModel({
+        overview: overviewQuery.data,
+        semesters,
+        selectedSemesterId,
+        lastUpdatedLabel: overviewQuery.data.lastRefreshedAt
+          ? formatRelativeTime(overviewQuery.data.lastRefreshedAt)
+          : "Not yet available",
+      })
+    : null;
+
+  const isLoading =
+    meQuery.isLoading ||
+    semestersQuery.isLoading ||
+    (Boolean(selectedSemesterId) && overviewQuery.isLoading);
+  const isError = meQuery.isError || semestersQuery.isError || overviewQuery.isError;
+  const isRefreshing = meQuery.isFetching || semestersQuery.isFetching || overviewQuery.isFetching;
+
   return {
-    ...dashboardViewModel,
-    selectedAcademicYear,
-    setSelectedAcademicYear,
-    isLoading: false,
-    isRefreshing,
-    isError: false,
-    retry: noop,
-    refresh: () => {
-      startTransition(() => {
-        router.refresh();
-      });
+    semesters,
+    selectedSemesterId,
+    selectedSemesterLabel: selectedSemester?.label ?? "Select semester",
+    lastUpdatedLabel: dashboardViewModel?.lastUpdatedLabel ?? "Not yet available",
+    summary: dashboardViewModel?.summary ?? {
+      totalFaculty: 0,
+      totalSubmissions: 0,
+      totalAnalyzed: 0,
+      positiveCount: 0,
+      negativeCount: 0,
+      neutralCount: 0,
     },
+    overallSentiment: dashboardViewModel?.overallSentiment ?? [],
+    keyThemes: dashboardViewModel?.keyThemes ?? STATIC_DEAN_KEY_THEMES,
+    coveragePercentage: dashboardViewModel?.coveragePercentage ?? 0,
+    overview: overviewQuery.data ?? null,
+    isLoading,
+    isRefreshing,
+    isError,
+    retry: () => {
+      void meQuery.refetch();
+      void semestersQuery.refetch();
+      if (selectedSemesterId) {
+        void overviewQuery.refetch();
+      }
+    },
+    refresh: () => {
+      void meQuery.refetch();
+      void semestersQuery.refetch();
+      if (selectedSemesterId) {
+        void overviewQuery.refetch();
+      }
+    },
+    setSelectedSemesterId,
   };
 }

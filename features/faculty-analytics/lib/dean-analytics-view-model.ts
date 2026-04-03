@@ -3,14 +3,24 @@ import {
   getDeanFacultyAnalysisBySlug,
   type DeanFacultyAnalysisRecord,
 } from "@/features/faculty-analytics/lib/analytics-sample-data";
+import type {
+  DepartmentOverviewResponseDto,
+  SemesterOptionDto,
+} from "@/features/faculty-analytics/types";
 
-export type DeanAcademicYear = (typeof deanAnalyticsSampleData.academicYears)[number];
+export type DeanSemesterOption = {
+  id: string;
+  label: string;
+  academicYear?: string;
+};
 
 export type DeanSummaryMetrics = {
-  faculties: number;
-  studentResponses: number;
-  positiveSentimentRate: number;
-  courses: number;
+  totalFaculty: number;
+  totalSubmissions: number;
+  totalAnalyzed: number;
+  positiveCount: number;
+  negativeCount: number;
+  neutralCount: number;
 };
 
 export type DeanOverallSentimentDatum = {
@@ -27,12 +37,21 @@ export type DeanSemesterSentimentDatum = {
 };
 
 export type DeanDashboardViewModel = {
-  academicYears: readonly DeanAcademicYear[];
-  defaultAcademicYear: DeanAcademicYear;
-  lastUpdated: string;
+  semesters: DeanSemesterOption[];
+  selectedSemesterId: string | null;
+  selectedSemesterLabel: string;
+  lastUpdatedLabel: string;
   summary: DeanSummaryMetrics;
   overallSentiment: DeanOverallSentimentDatum[];
-  semesterSentiment: DeanSemesterSentimentDatum[];
+  coveragePercentage: number;
+  keyThemes: DeanKeyTheme[];
+};
+
+export type DeanKeyTheme = {
+  label: string;
+  mentions: number;
+  sentiment: "Mixed" | "Positive" | "Negative";
+  context: string;
 };
 
 export type DeanFacultyAnalyticsListViewModel = {
@@ -43,28 +62,107 @@ export type DeanFacultyAnalysisDetailViewModel = {
   faculty: DeanFacultyAnalysisRecord;
 };
 
-export function getDeanDashboardViewModel(): DeanDashboardViewModel {
+export const STATIC_DEAN_KEY_THEMES: DeanKeyTheme[] = [
+  {
+    label: "Clear explanations",
+    mentions: 18,
+    sentiment: "Positive",
+    context: "Students frequently mention instructors who break down difficult topics clearly.",
+  },
+  {
+    label: "Pacing and time management",
+    mentions: 14,
+    sentiment: "Mixed",
+    context: "Comments often reference lecture pacing, rushed topics, or uneven time allocation.",
+  },
+  {
+    label: "Hands-on examples",
+    mentions: 11,
+    sentiment: "Positive",
+    context:
+      "Practical demonstrations and real-world coding examples appear repeatedly in feedback.",
+  },
+  {
+    label: "Responsiveness outside class",
+    mentions: 9,
+    sentiment: "Mixed",
+    context:
+      "Students commonly mention follow-up support, consultation access, and reply turnaround.",
+  },
+];
+
+export function mapSemesterOptionsToViewModel(
+  semesters: SemesterOptionDto[]
+): DeanSemesterOption[] {
+  return semesters.map((semester) => ({
+    id: semester.id,
+    label: semester.label ?? [semester.code, semester.academicYear].filter(Boolean).join(" • "),
+    academicYear: semester.academicYear,
+  }));
+}
+
+export function mapDepartmentOverviewToDashboardViewModel({
+  overview,
+  semesters,
+  selectedSemesterId,
+  lastUpdatedLabel,
+}: {
+  overview: DepartmentOverviewResponseDto;
+  semesters: DeanSemesterOption[];
+  selectedSemesterId: string | null;
+  lastUpdatedLabel: string;
+}): DeanDashboardViewModel {
+  const totalSentiment =
+    overview.summary.positiveCount + overview.summary.negativeCount + overview.summary.neutralCount;
+  const selectedSemester =
+    semesters.find((semester) => semester.id === selectedSemesterId) ?? semesters[0];
+
   return {
-    academicYears: [...deanAnalyticsSampleData.academicYears],
-    defaultAcademicYear: deanAnalyticsSampleData.selectedAcademicYear,
-    lastUpdated: deanAnalyticsSampleData.lastUpdated,
+    semesters,
+    selectedSemesterId,
+    selectedSemesterLabel: selectedSemester?.label ?? "Select semester",
+    lastUpdatedLabel,
     summary: {
-      faculties: deanAnalyticsSampleData.summary.faculties,
-      studentResponses: deanAnalyticsSampleData.summary.studentResponses,
-      positiveSentimentRate: deanAnalyticsSampleData.summary.positiveSentimentRate,
-      courses: deanAnalyticsSampleData.summary.courses,
+      totalFaculty: overview.summary.totalFaculty,
+      totalSubmissions: overview.summary.totalSubmissions,
+      totalAnalyzed: overview.summary.totalAnalyzed,
+      positiveCount: overview.summary.positiveCount,
+      negativeCount: overview.summary.negativeCount,
+      neutralCount: overview.summary.neutralCount,
     },
-    overallSentiment: deanAnalyticsSampleData.overallSentiment.map((item) => ({
-      label: item.label,
-      value: item.value,
-      color: item.color,
-    })),
-    semesterSentiment: deanAnalyticsSampleData.semesterSentiment.map((item) => ({
-      sentiment: item.sentiment,
-      firstSemester: item.firstSemester,
-      secondSemester: item.secondSemester,
-      summerSemester: item.summerSemester,
-    })),
+    overallSentiment: [
+      {
+        label: "Positive",
+        value:
+          totalSentiment > 0
+            ? Number(((overview.summary.positiveCount / totalSentiment) * 100).toFixed(1))
+            : 0,
+        color: "#5b8cff",
+      },
+      {
+        label: "Neutral",
+        value:
+          totalSentiment > 0
+            ? Number(((overview.summary.neutralCount / totalSentiment) * 100).toFixed(1))
+            : 0,
+        color: "#d1d5db",
+      },
+      {
+        label: "Negative",
+        value:
+          totalSentiment > 0
+            ? Number(((overview.summary.negativeCount / totalSentiment) * 100).toFixed(1))
+            : 0,
+        color: "#facc15",
+      },
+    ],
+    coveragePercentage:
+      overview.summary.totalFaculty > 0
+        ? Number(
+            ((overview.summary.totalAnalyzed / overview.summary.totalFaculty) * 100).toFixed(1)
+          )
+        : 0,
+    keyThemes: STATIC_DEAN_KEY_THEMES,
   };
 }
 

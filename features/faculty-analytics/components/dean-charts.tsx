@@ -1,6 +1,7 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import type { LegendProps } from "recharts";
 
 import type {
   DeanOverallSentimentDatum,
@@ -9,12 +10,12 @@ import type {
 import {
   ChartContainer,
   ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/lib/use-mobile";
 
 const semesterChartConfig = {
@@ -46,6 +47,59 @@ const overallSentimentChartConfig = {
     color: "#facc15",
   },
 } satisfies ChartConfig;
+
+function resolveLegendLabel(dataKey: unknown, value: unknown) {
+  if (typeof dataKey === "string") {
+    const overallLabel = (overallSentimentChartConfig as Record<string, { label?: string }>)[
+      dataKey
+    ]?.label;
+    if (overallLabel) {
+      return overallLabel;
+    }
+
+    const semesterLabel = (semesterChartConfig as Record<string, { label?: string }>)[dataKey]
+      ?.label;
+    if (semesterLabel) {
+      return semesterLabel;
+    }
+
+    return dataKey;
+  }
+
+  return typeof value === "string" ? value : "Legend item";
+}
+
+function FacultyAnalyticsLegendContent({
+  payload,
+  className,
+}: Pick<LegendProps, "payload"> & {
+  className?: string;
+}) {
+  if (!payload?.length) {
+    return null;
+  }
+
+  return (
+    <div className={cn("flex items-center justify-center gap-4 pt-3", className)}>
+      {payload
+        .filter((item) => item.type !== "none")
+        .map((item, index) => (
+          <div
+            key={`${item.dataKey ?? item.value ?? "legend"}-${index}`}
+            className="flex items-center gap-1.5"
+          >
+            <div
+              className="h-2 w-2 shrink-0 rounded-[2px]"
+              style={{ backgroundColor: item.color }}
+            />
+            <span className="font-sans text-sm text-muted-foreground">
+              {resolveLegendLabel(item.dataKey, item.value)}
+            </span>
+          </div>
+        ))}
+    </div>
+  );
+}
 
 export function DeanSentimentBarChart({
   semesterSentiment,
@@ -107,7 +161,7 @@ export function DeanSentimentBarChart({
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
             <ChartLegend
               verticalAlign="bottom"
-              content={<ChartLegendContent className="pt-1 font-sans" />}
+              content={<FacultyAnalyticsLegendContent className="pt-1" />}
             />
             <Bar
               dataKey="firstSemester"
@@ -134,7 +188,7 @@ export function DeanSentimentBarChart({
   );
 }
 
-export function DeanOverallSentimentPieChart({
+export function DeanOverallSentimentBarChart({
   overallSentiment,
 }: {
   overallSentiment: DeanOverallSentimentDatum[];
@@ -152,30 +206,46 @@ export function DeanOverallSentimentPieChart({
           Overall Sentiment Distribution
         </CardTitle>
       </CardHeader>
-      <CardContent className="overflow-hidden">
+      <CardContent className="overflow-hidden pb-2">
         <ChartContainer
           config={overallSentimentChartConfig}
-          className="mx-auto aspect-auto h-[18rem] min-h-[18rem] w-full max-w-[20rem] [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-default-legend]:gap-y-1 [&_.recharts-legend-item]:!mr-3 sm:h-[20rem] sm:max-w-md lg:h-[22rem]"
+          className="aspect-auto h-[18rem] min-h-[18rem] w-full items-stretch justify-start sm:h-[20rem] lg:h-[22rem]"
         >
-          <PieChart>
-            <ChartTooltip content={<ChartTooltipContent nameKey="key" hideLabel />} />
-            <ChartLegend
-              verticalAlign="bottom"
-              content={<ChartLegendContent nameKey="key" className="font-sans" />}
+          <BarChart
+            accessibilityLayer
+            data={overallSentimentData}
+            margin={{
+              top: 12,
+              right: isMobile ? 0 : 8,
+              left: isMobile ? -8 : 8,
+              bottom: 12,
+            }}
+            barCategoryGap={isMobile ? 18 : 28}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="label"
+              axisLine={false}
+              tickLine={false}
+              tickMargin={10}
+              interval={0}
+              tick={{ fontSize: isMobile ? 10 : 11 }}
             />
-            <Pie
-              data={overallSentimentData}
-              dataKey="value"
-              nameKey="key"
-              innerRadius={isMobile ? 40 : 56}
-              outerRadius={isMobile ? 64 : 88}
-              strokeWidth={4}
-            >
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tickMargin={8}
+              allowDecimals={false}
+              tick={{ fontSize: isMobile ? 10 : 11 }}
+              width={isMobile ? 30 : 36}
+            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={isMobile ? 40 : 64}>
               {overallSentimentData.map((item) => (
                 <Cell key={item.key} fill={item.color} />
               ))}
-            </Pie>
-          </PieChart>
+            </Bar>
+          </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>

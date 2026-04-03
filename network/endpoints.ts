@@ -8,6 +8,9 @@ export enum Endpoints {
   // Student
   enrollmentsMe = "/api/v1/enrollments/me",
 
+  // Semesters
+  semesters = "/api/v1/semesters",
+
   // Questionnaires
   questionnaires = "/api/v1/questionnaires",
   questionnaireTypes = "/api/v1/questionnaires/types",
@@ -35,4 +38,7 @@ export enum Endpoints {
   dimensionById = "/api/v1/dimensions/:id",
   dimensionActivate = "/api/v1/dimensions/:id/activate",
   dimensionDeactivate = "/api/v1/dimensions/:id/deactivate",
+
+  // Faculty Analytics
+  analyticsOverview = "/api/v1/analytics/overview",
 }
