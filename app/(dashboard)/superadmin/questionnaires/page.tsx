@@ -31,6 +31,7 @@ export default function SuperAdminQuestionnairesPage() {
         onPublishVersion={(row) => page.setVersionAction({ type: "publish", row })}
         onDeprecateVersion={(row) => page.setVersionAction({ type: "deprecate", row })}
         disableActions={page.isVersionActionPending}
+        questionnaireId={page.activeTypeSummary?.questionnaireId ?? null}
       />
 
       {page.actionDialogConfig && (

@@ -27,6 +27,7 @@ type QuestionnaireListScreenProps = {
   onPublishVersion: (row: QuestionnaireVersionItem) => void;
   onDeprecateVersion: (row: QuestionnaireVersionItem) => void;
   disableActions?: boolean;
+  questionnaireId: string | null;
 };
 
 export function QuestionnaireListScreen({
@@ -44,6 +45,7 @@ export function QuestionnaireListScreen({
   onPublishVersion,
   onDeprecateVersion,
   disableActions = false,
+  questionnaireId,
 }: QuestionnaireListScreenProps) {
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
@@ -79,6 +81,8 @@ export function QuestionnaireListScreen({
           }
         : null;
 
+  const templateVersions = rows.filter((v) => v.status !== "DRAFT");
+
   return (
     <div className="space-y-6">
       <QuestionnaireListToolbar
@@ -94,6 +98,8 @@ export function QuestionnaireListScreen({
         }}
         onStatusFilterChange={setStatusFilter}
         onSearchChange={setSearchValue}
+        questionnaireId={questionnaireId}
+        templateVersions={templateVersions}
       />
 
       <QuestionnaireAsyncContent

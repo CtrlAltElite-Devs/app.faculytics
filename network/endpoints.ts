@@ -17,6 +17,7 @@ export enum Endpoints {
   questionnaireLatestActiveVersion = "/api/v1/questionnaires/:id/latest-active-version",
   questionnaireVersionPublish = "/api/v1/questionnaires/versions/:versionId/publish",
   questionnaireVersionDeprecate = "/api/v1/questionnaires/versions/:versionId/deprecate",
+  questionnaireVersionFromTemplate = "/api/v1/questionnaires/:id/versions/from-template",
 
   // Questionnaire Submissions
   questionnaireSubmissions = "/api/v1/questionnaires/submissions",
