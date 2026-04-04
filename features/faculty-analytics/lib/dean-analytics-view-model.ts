@@ -1,7 +1,6 @@
 import {
   deanAnalyticsSampleData,
   getDeanFacultyAnalysisBySlug,
-  type DeanFacultyAnalysisRecord,
 } from "@/features/faculty-analytics/lib/analytics-sample-data";
 import type {
   DepartmentOverviewResponseDto,
@@ -46,12 +45,8 @@ export type DeanDashboardViewModel = {
   coveragePercentage: number;
 };
 
-export type DeanFacultyAnalyticsListViewModel = {
-  facultyAnalysis: DeanFacultyAnalysisRecord[];
-};
-
 export type DeanFacultyAnalysisDetailViewModel = {
-  faculty: DeanFacultyAnalysisRecord;
+  faculty: (typeof deanAnalyticsSampleData.facultyAnalysis)[number];
 };
 
 export function mapSemesterOptionsToViewModel(
@@ -125,12 +120,6 @@ export function mapDepartmentOverviewToDashboardViewModel({
             ((overview.summary.totalAnalyzed / overview.summary.totalFaculty) * 100).toFixed(1)
           )
         : 0,
-  };
-}
-
-export function getDeanFacultyAnalyticsListViewModel(): DeanFacultyAnalyticsListViewModel {
-  return {
-    facultyAnalysis: [...deanAnalyticsSampleData.facultyAnalysis],
   };
 }
 

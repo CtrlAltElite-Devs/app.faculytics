@@ -1,6 +1,5 @@
-// Temporary types derived from mock data.
-// Replace with backend DTOs when wiring to the real API.
-// See features/faculty-analytics/MIGRATION.md for the target response shapes.
+// Mixed DTOs for the current backend-integrated dean analytics screens and the
+// remaining mock-backed faculty detail view pending migration.
 
 export type QuantitativeMetricScore = {
   metric: string;
@@ -53,6 +52,14 @@ export type ListSemestersQuery = {
   campusId?: string;
 };
 
+export type PaginationMetaDto = {
+  totalItems: number;
+  itemCount: number;
+  itemsPerPage: number;
+  totalPages: number;
+  currentPage: number;
+};
+
 export type DepartmentOverviewQuery = {
   semesterId: string;
   programCode?: string;
@@ -60,6 +67,25 @@ export type DepartmentOverviewQuery = {
 
 export type AttentionListQuery = {
   semesterId: string;
+};
+
+export type FacultyListQuery = {
+  semesterId: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type FacultyListItemDto = {
+  id: string;
+  fullName: string;
+  profilePicture: string | null;
+  subjects: string[];
+};
+
+export type FacultyListResponseDto = {
+  data: FacultyListItemDto[];
+  meta: PaginationMetaDto;
 };
 
 export type DepartmentOverviewFacultyDto = {

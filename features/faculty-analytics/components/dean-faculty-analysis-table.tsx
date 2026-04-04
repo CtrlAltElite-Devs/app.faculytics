@@ -1,12 +1,10 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
 
 import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
-import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics/lib/analytics-sample-data";
-import { DEFAULT_PAGE_SIZE_OPTIONS, getPaginationItems, paginateArray } from "@/lib/pagination";
+import type { FacultyListItemDto, PaginationMetaDto } from "@/features/faculty-analytics/types";
+import { DEFAULT_PAGE_SIZE_OPTIONS, getPaginationItems } from "@/lib/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,43 +32,43 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+type DeanFacultyAnalysisTableProps = {
+  facultyList: readonly FacultyListItemDto[];
+  pagination: PaginationMetaDto;
+  onPageChange: (page: number) => void;
+  onRowsPerPageChange: (value: number) => void;
+};
+
+function getFacultyInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
 export function DeanFacultyAnalysisTable({
-  facultyAnalysis,
-}: {
-  facultyAnalysis: readonly DeanFacultyAnalysisRecord[];
-}) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
-  const totalRows = facultyAnalysis.length;
-  const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
-  const paginatedRows = paginateArray(facultyAnalysis, currentPage, rowsPerPage);
+  facultyList,
+  pagination,
+  onPageChange,
+  onRowsPerPageChange,
+}: DeanFacultyAnalysisTableProps) {
+  const currentPage = pagination.currentPage > 0 ? pagination.currentPage : 1;
+  const totalPages = Math.max(pagination.totalPages, 1);
   const paginationItems = getPaginationItems(currentPage, totalPages);
 
   return (
     <div className="space-y-5">
-      <div>
-        <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-          Faculties
-        </h2>
-        <p className="mt-5 font-sans text-sm text-muted-foreground">
-          Browse faculty records and open individual analysis views.
-        </p>
-      </div>
       <div className="data-table-wrapper">
         <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
           <TableHeader className="data-table-header">
             <TableRow>
-              <TableHead className="data-table-head w-[24%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
+              <TableHead className="data-table-head w-[28%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
                 Faculty
               </TableHead>
-              <TableHead className="data-table-head w-[28%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
+              <TableHead className="data-table-head w-[54%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
                 Subjects
-              </TableHead>
-              <TableHead className="data-table-head w-[18%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
-                Overall Positive Rate
-              </TableHead>
-              <TableHead className="data-table-head w-[12%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
-                Responses
               </TableHead>
               <TableHead className="data-table-head w-[18%] px-2 text-right text-[11px] md:px-3 md:text-xs lg:px-5">
                 Action
@@ -78,17 +76,17 @@ export function DeanFacultyAnalysisTable({
             </TableRow>
           </TableHeader>
           <TableBody className="[&_tr:last-child]:border-b-0">
-            {paginatedRows.map((faculty) => (
-              <TableRow key={faculty.facultyName} className="data-table-row w-full">
+            {facultyList.map((faculty) => (
+              <TableRow key={faculty.id} className="data-table-row w-full">
                 <TableCell className="data-table-cell px-2 md:px-3 lg:px-5">
                   <div className="flex min-w-0 items-center gap-3">
                     <Avatar size="default" className="hidden border border-border/70 xl:flex">
                       <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
-                        {faculty.facultyInitials}
+                        {getFacultyInitials(faculty.fullName)}
                       </AvatarFallback>
                     </Avatar>
                     <span className="truncate font-sans text-xs font-semibold text-foreground md:text-sm">
-                      {faculty.facultyName}
+                      {faculty.fullName}
                     </span>
                   </div>
                 </TableCell>
@@ -97,24 +95,18 @@ export function DeanFacultyAnalysisTable({
                     <FacultySubjects subjects={faculty.subjects} />
                   </div>
                 </TableCell>
-                <TableCell className="data-table-cell px-2 font-medium text-foreground md:px-3 lg:px-5">
-                  {faculty.overallPositiveRate}
-                </TableCell>
-                <TableCell className="data-table-cell px-2 font-medium text-foreground md:px-3 lg:px-5">
-                  {faculty.responses}
-                </TableCell>
                 <TableCell className="data-table-cell px-2 text-right md:px-3 lg:px-5">
                   <Button
-                    asChild
+                    type="button"
                     variant="ghost"
                     size="sm"
-                    className="h-auto max-w-full px-1 py-2 font-sans text-brand-blue hover:text-brand-blue md:px-2 xl:px-3"
+                    disabled
+                    title="Faculty analysis detail is not wired yet."
+                    className="h-auto max-w-full px-1 py-2 font-sans text-brand-blue/70 disabled:pointer-events-none disabled:opacity-100 md:px-2 xl:px-3"
                   >
-                    <Link href={`/dean/faculties/${faculty.facultySlug}/analysis`}>
-                      <span className="md:hidden">View</span>
-                      <span className="hidden md:inline xl:hidden">Details</span>
-                      <span className="hidden xl:inline">View Analysis</span>
-                    </Link>
+                    <span className="md:hidden">View</span>
+                    <span className="hidden md:inline xl:hidden">Details</span>
+                    <span className="hidden xl:inline">View Analysis</span>
                   </Button>
                 </TableCell>
               </TableRow>
@@ -124,7 +116,7 @@ export function DeanFacultyAnalysisTable({
       </div>
       <div className="flex flex-col gap-3 pt-4 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="text-xs sm:text-sm">
-          Showing {paginatedRows.length} of {totalRows} faculty records
+          Showing {pagination.itemCount} of {pagination.totalItems} faculty records
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-6">
           <div className="flex items-center gap-3">
@@ -137,16 +129,15 @@ export function DeanFacultyAnalysisTable({
                   size="sm"
                   className="min-w-16 justify-between font-sans"
                 >
-                  <span>{rowsPerPage}</span>
+                  <span>{pagination.itemsPerPage}</span>
                   <ChevronDown className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-16">
                 <DropdownMenuRadioGroup
-                  value={String(rowsPerPage)}
+                  value={String(pagination.itemsPerPage)}
                   onValueChange={(value) => {
-                    setRowsPerPage(Number(value));
-                    setCurrentPage(1);
+                    onRowsPerPageChange(Number(value));
                   }}
                 >
                   {DEFAULT_PAGE_SIZE_OPTIONS.map((option) => (
@@ -177,7 +168,7 @@ export function DeanFacultyAnalysisTable({
                     onClick={(event) => {
                       event.preventDefault();
                       if (currentPage > 1) {
-                        setCurrentPage((page) => Math.max(page - 1, 1));
+                        onPageChange(Math.max(currentPage - 1, 1));
                       }
                     }}
                   />
@@ -197,7 +188,7 @@ export function DeanFacultyAnalysisTable({
                         className={item === currentPage ? "pointer-events-none" : undefined}
                         onClick={(event) => {
                           event.preventDefault();
-                          setCurrentPage(item);
+                          onPageChange(item);
                         }}
                       >
                         {item}
@@ -216,7 +207,7 @@ export function DeanFacultyAnalysisTable({
                     onClick={(event) => {
                       event.preventDefault();
                       if (currentPage < totalPages) {
-                        setCurrentPage((page) => Math.min(page + 1, totalPages));
+                        onPageChange(Math.min(currentPage + 1, totalPages));
                       }
                     }}
                   />

@@ -12,6 +12,10 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
   const [visibleCount, setVisibleCount] = useState(subjects.length);
 
   useEffect(() => {
+    if (subjects.length === 0) {
+      return;
+    }
+
     const calculateVisibleCount = () => {
       const containerWidth = containerRef.current?.clientWidth ?? 0;
 
@@ -66,6 +70,10 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
   const hiddenSubjects = subjects.slice(visibleCount);
   const hiddenSubjectCount = hiddenSubjects.length;
 
+  if (subjects.length === 0) {
+    return <span className="font-sans text-xs text-muted-foreground">No subjects assigned</span>;
+  }
+
   return (
     <TooltipProvider>
       <>
@@ -106,7 +114,12 @@ export function FacultySubjects({ subjects }: { subjects: readonly string[] }) {
           className="flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-hidden"
         >
           {visibleSubjects.map((subject) => (
-            <Badge key={subject} variant="outline" className="analytics-subject-chip shrink-0">
+            <Badge
+              key={subject}
+              variant="outline"
+              className="analytics-subject-chip shrink-0"
+              title={subject}
+            >
               <span className="truncate">{subject}</span>
             </Badge>
           ))}

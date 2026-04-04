@@ -6,6 +6,5 @@ export {
   mapDepartmentOverviewToDashboardViewModel,
   mapSemesterOptionsToViewModel,
   getDeanFacultyAnalysisDetailViewModel,
-  getDeanFacultyAnalyticsListViewModel,
 } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
 export type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics/lib/analytics-sample-data";

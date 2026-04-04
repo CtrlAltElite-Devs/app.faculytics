@@ -210,7 +210,7 @@
   /* ── Faculytics: Analytics subject chips ─────────────────────────── */
 
   .analytics-subject-chip {
-    @apply max-w-24 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2 py-1 font-sans text-[11px] text-brand-blue lg:max-w-32 lg:px-2.5;
+    @apply max-w-40 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2 py-1 font-sans text-[11px] text-brand-blue lg:max-w-56 lg:px-2.5;
   }
 
   .analytics-subject-chip-overflow {
