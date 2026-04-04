@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 /**
  * Formats a date string or Date object into a human-readable date.
@@ -16,9 +16,4 @@ export function formatDate(date: string | Date, pattern = "MMMM d, yyyy"): strin
 export function formatDateTime(date: string | Date, pattern = "MMMM d, yyyy 'at' h:mm a"): string {
   const parsed = typeof date === "string" ? parseISO(date) : date;
   return format(parsed, pattern);
-}
-
-export function formatRelativeTime(date: string | Date): string {
-  const parsed = typeof date === "string" ? parseISO(date) : date;
-  return formatDistanceToNow(parsed, { addSuffix: true });
 }

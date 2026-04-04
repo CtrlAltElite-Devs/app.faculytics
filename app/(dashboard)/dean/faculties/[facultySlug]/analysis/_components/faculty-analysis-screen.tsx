@@ -4,10 +4,7 @@ import { useState } from "react";
 import { ChevronUp } from "lucide-react";
 import Link from "next/link";
 
-import type {
-  DeanFacultyAnalysisRecord,
-  FacultyAnalysisSemesterKey,
-} from "@/features/faculty-analytics";
+import type { DeanFacultyAnalysisRecord, FacultyAnalysisSemesterKey } from "@/features/dean";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -15,7 +12,7 @@ import {
   FacultyAnalysisQualitativeOverview,
 } from "./faculty-analysis-qualitative-metrics";
 import { FacultyAnalysisRadarChart } from "./faculty-analysis-radar-chart";
-import { FacultyAnalysisRemarksList, FacultyAnalysisSummary } from "./faculty-analysis-summary";
+import { FacultyAnalysisSummary } from "./faculty-analysis-summary";
 import { FacultyAnalysisToolbar } from "./faculty-analysis-toolbar";
 
 export function FacultyAnalysisScreen({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
@@ -35,10 +32,9 @@ export function FacultyAnalysisScreen({ faculty }: { faculty: DeanFacultyAnalysi
       <FacultyAnalysisQualitativeOverview faculty={faculty} selectedSemester={selectedSemester} />
       <FacultyAnalysisRadarChart faculty={faculty} />
       <FacultyAnalysisActionableInsights faculty={faculty} selectedSemester={selectedSemester} />
-      <FacultyAnalysisRemarksList faculty={faculty} />
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm" className="font-sans">
-          <Link href="/dean/faculties">Back to Faculties</Link>
+          <Link href="/dean/dashboard">Back to Overview</Link>
         </Button>
         <Button
           type="button"

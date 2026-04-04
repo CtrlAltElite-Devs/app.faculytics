@@ -1,18 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
 
-import type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics";
+import type { DeanFacultyAnalysisRecord } from "@/features/dean";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -22,14 +21,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useIsMobile } from "@/lib/use-mobile";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { cn } from "@/lib/utils";
 
 const metricViewLabels = {
   classroom: "In Classroom",
@@ -69,7 +62,6 @@ function getInterpretation(score: number) {
 }
 
 export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
-  const isMobile = useIsMobile();
   const [selectedView, setSelectedView] = useState<keyof typeof metricViewLabels>("classroom");
   const metricView = faculty.quantitativeMetrics[selectedView];
   const radarData = metricView.metrics.map((metric) => ({
@@ -85,64 +77,55 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
           <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
             Quantitative Metric Analysis
           </CardTitle>
+          <CardDescription className="font-sans text-sm">
+            Multi-metric snapshot of faculty performance based on quantitative student evaluation
+            scores.
+          </CardDescription>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="min-w-44 justify-between font-sans"
-            >
-              <span>{metricViewLabels[selectedView]}</span>
-              <ChevronDown className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-44">
-            <DropdownMenuRadioGroup
-              value={selectedView}
-              onValueChange={(value) => setSelectedView(value as keyof typeof metricViewLabels)}
-            >
-              {(
-                Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>
-              ).map(([view, label]) => (
-                <DropdownMenuRadioItem key={view} value={view} className="font-sans text-sm">
-                  {label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ButtonGroup className="w-fit">
+          {(Object.entries(metricViewLabels) as Array<[keyof typeof metricViewLabels, string]>).map(
+            ([view, label]) => (
+              <Button
+                key={view}
+                type="button"
+                variant={selectedView === view ? "default" : "outline"}
+                size="sm"
+                className={cn(
+                  "font-sans",
+                  selectedView === view && "bg-brand-blue/80 text-white hover:bg-brand-blue/70"
+                )}
+                onClick={() => setSelectedView(view)}
+              >
+                {label}
+              </Button>
+            )
+          )}
+        </ButtonGroup>
       </CardHeader>
       <CardContent className="pb-0">
-        <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
+        <div className="mt-3 grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
           <ChartContainer
             config={quantitativeMetricsChartConfig}
-            className="aspect-auto h-[18rem] min-h-[18rem] w-full items-stretch justify-start sm:h-[20rem] lg:h-[21rem]"
+            className="h-[18rem] w-full items-stretch justify-start sm:h-[21rem]"
           >
             <RadarChart
               accessibilityLayer
               data={radarData}
-              outerRadius={isMobile ? "62%" : "72%"}
-              margin={{
-                top: 12,
-                right: isMobile ? 8 : 24,
-                bottom: 12,
-                left: isMobile ? 8 : 24,
-              }}
+              outerRadius="72%"
+              margin={{ top: 12, right: 24, bottom: 12, left: 24 }}
             >
               <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
               <PolarGrid />
               <PolarAngleAxis
                 dataKey="metric"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: isMobile ? 10 : 12 }}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
                 className="dark:[&_text]:fill-slate-400"
               />
               <PolarRadiusAxis
                 angle={90}
                 domain={[0, 5]}
                 tickCount={6}
-                tick={{ fill: "hsl(var(--foreground))", fontSize: isMobile ? 10 : 11 }}
+                tick={{ fill: "hsl(var(--foreground))", fontSize: 11 }}
               />
               <Radar
                 name="score"
@@ -154,45 +137,35 @@ export function FacultyAnalysisRadarChart({ faculty }: { faculty: DeanFacultyAna
               />
             </RadarChart>
           </ChartContainer>
-          <div className="space-y-4 self-start lg:min-w-0">
-            <CardTitle className="font-playfair text-lg font-semibold sm:text-xl">
-              Metric Summary
-            </CardTitle>
-            <div className="data-table-wrapper">
-              <Table>
-                <TableBody>
-                  {metricView.metrics.map((metric) => (
-                    <TableRow key={`overall-${metric.metric}`} className="data-table-row">
-                      <TableCell className="data-table-cell whitespace-normal font-normal text-muted-foreground">
-                        {metric.metric}
-                      </TableCell>
-                      <TableCell className="data-table-cell text-center font-medium">
-                        {formatScore(metric.score)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow className="data-table-row bg-muted/30 font-semibold hover:bg-muted/30">
-                    <TableCell className="data-table-cell text-muted-foreground">
-                      Overall Average Rating
-                    </TableCell>
-                    <TableCell className="data-table-cell text-center">
-                      {formatScore(overallRating)}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          </div>
+          <Card className="gap-4 rounded-2xl border-blue-200/70 bg-blue-50/70 shadow-sm dark:border-blue-900/70 dark:bg-blue-950/30">
+            <CardHeader className="pb-0">
+              <div className="space-y-2">
+                <CardDescription className="font-sans text-sm">
+                  Overall Average of the Report
+                </CardDescription>
+                <CardTitle className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
+                  {formatScore(overallRating)}
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="font-sans text-sm text-muted-foreground">
+                {getInterpretation(overallRating)}
+              </p>
+            </CardContent>
+          </Card>
         </div>
         <div className="mt-4 space-y-4">
           {metricView.metrics.map((metric) => (
             <div key={metric.metric} className="data-table-wrapper">
-              <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
+              <Table>
                 <TableHeader className="data-table-header">
                   <TableRow>
-                    <TableHead className="data-table-head w-[62%]">{metric.metric}</TableHead>
-                    <TableHead className="data-table-head w-[14%] text-center">Average</TableHead>
-                    <TableHead className="data-table-head w-[24%]">Interpretation</TableHead>
+                    <TableHead className="data-table-head min-w-[26rem]">{metric.metric}</TableHead>
+                    <TableHead className="data-table-head min-w-[8rem] text-center">
+                      Average
+                    </TableHead>
+                    <TableHead className="data-table-head min-w-[12rem]">Interpretation</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

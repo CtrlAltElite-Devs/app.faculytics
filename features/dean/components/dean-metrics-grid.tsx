@@ -1,4 +1,4 @@
-import type { DeanDashboardViewModel } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+import { deanAnalyticsSampleData } from "@/features/dean/lib/analytics-sample-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 function formatMetric(value: number, suffix?: string) {
@@ -35,28 +35,28 @@ function DeanMetricCard({
   );
 }
 
-export function DeanMetricsGrid({ summary }: { summary: DeanDashboardViewModel["summary"] }) {
+export function DeanMetricsGrid() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <DeanMetricCard
-        title="Total Faculty"
-        value={formatMetric(summary.totalFaculty)}
-        description="Faculty included in the selected semester overview"
+        title="Faculty Members"
+        value={formatMetric(deanAnalyticsSampleData.summary.faculties)}
+        description="Active faculty members across the department"
       />
       <DeanMetricCard
-        title="Total Submissions"
-        value={formatMetric(summary.totalSubmissions)}
-        description="Submitted evaluation responses in the selected semester"
-      />
-      <DeanMetricCard
-        title="Total Analyzed"
-        value={formatMetric(summary.totalAnalyzed)}
-        description="Faculty records with generated analytics available"
+        title="Student Responses"
+        value={formatMetric(deanAnalyticsSampleData.summary.studentResponses)}
+        description="Submitted evaluation responses this term"
       />
       <DeanMetricCard
         title="Positive Sentiment Rate"
-        value={formatMetric(summary.positiveSentimentRate, "%")}
-        description="Share of analyzed sentiment marked positive in the selected semester"
+        value={formatMetric(deanAnalyticsSampleData.summary.positiveSentimentRate, "%")}
+        description="Average favorable sentiment across all faculties"
+      />
+      <DeanMetricCard
+        title="Department Courses"
+        value={formatMetric(deanAnalyticsSampleData.summary.courses)}
+        description="Courses currently handled by the department"
       />
     </div>
   );

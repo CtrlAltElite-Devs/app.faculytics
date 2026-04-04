@@ -48,6 +48,12 @@ function getNumericValue(option: string, isLikert: boolean): number {
   return isLikert ? Number(option) : YES_NO_VALUE_MAP[option];
 }
 
+// Shared className for each option pill.
+// The `has-[[data-state=checked]]` selector targets Radix's checked state
+// on the hidden RadioGroupItem inside the label.
+const PILL_CLASS =
+  "flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50";
+
 /**
  * Mobile stacked layout for questionnaire questions.
  *
@@ -86,10 +92,7 @@ function QuestionnaireFormStackedBase({
               className="flex flex-wrap justify-center gap-8"
             >
               {options.map((option) => (
-                <Label
-                  key={option}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
-                >
+                <Label key={option} className={PILL_CLASS}>
                   <RadioGroupItem value={option} className="sr-only" />
                   <span className="font-medium">{option}</span>
                 </Label>

@@ -2,22 +2,6 @@
  * Builds a compact pagination bar: shows page numbers near the current page
  * and replaces distant pages with "..." ellipsis markers.
  */
-export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20] as const;
-export const DEFAULT_PAGE_SIZE = DEFAULT_PAGE_SIZE_OPTIONS[1];
-
-export function resolvePageSizeOption(
-  value: string | null,
-  options: readonly number[] = DEFAULT_PAGE_SIZE_OPTIONS,
-  fallback = DEFAULT_PAGE_SIZE
-) {
-  if (!value) {
-    return fallback;
-  }
-
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && options.includes(parsed) ? parsed : fallback;
-}
-
 export function getPaginationItems(currentPage: number, totalPages: number): (number | "...")[] {
   if (totalPages <= 5) {
     return Array.from({ length: totalPages }, (_, index) => index + 1);

@@ -4,15 +4,9 @@ import type {
   QualitativeInsight,
   QualitativeTheme,
   QuantitativeMetricScore,
-} from "@/features/faculty-analytics/types";
+} from "@/features/dean/types";
 
-const feedbackTypeCycle = [
-  "In Classroom",
-  "Out of Classroom",
-  "Student Evaluation",
-] as const satisfies FacultyFeedbackRecord["type"][];
-
-const defaultFacultyFeedbackRecordsBase = [
+const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] = [
   {
     date: "2026-01-14",
     feedback: "Explains difficult concepts clearly and checks if the class is keeping up.",
@@ -169,13 +163,7 @@ const defaultFacultyFeedbackRecordsBase = [
     feedback: "Overall, the class is well handled and supports steady learning progress.",
     sentiment: "Positive",
   },
-] satisfies readonly Omit<FacultyFeedbackRecord, "type">[];
-
-const defaultFacultyFeedbackRecords: readonly FacultyFeedbackRecord[] =
-  defaultFacultyFeedbackRecordsBase.map((record, index) => ({
-    ...record,
-    type: feedbackTypeCycle[index % feedbackTypeCycle.length],
-  }));
+] as const;
 
 function createQualitativeSemesterData(
   positive: number,
