@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { FacultyAnalysisScreen } from "./_components/faculty-analysis-screen";
 
-import { getDeanFacultyAnalysisBySlug } from "@/features/dean";
+import { getDeanFacultyAnalysisDetailViewModel } from "@/features/faculty-analytics";
 
 type FacultyAnalysisDetailPageProps = {
   params: Promise<{
@@ -14,11 +14,11 @@ export default async function FacultyAnalysisDetailPage({
   params,
 }: FacultyAnalysisDetailPageProps) {
   const { facultySlug } = await params;
-  const faculty = getDeanFacultyAnalysisBySlug(facultySlug);
+  const viewModel = getDeanFacultyAnalysisDetailViewModel(facultySlug);
 
-  if (!faculty) {
+  if (!viewModel) {
     notFound();
   }
 
-  return <FacultyAnalysisScreen faculty={faculty} />;
+  return <FacultyAnalysisScreen faculty={viewModel.faculty} />;
 }

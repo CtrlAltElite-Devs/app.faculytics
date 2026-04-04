@@ -8,6 +8,12 @@ export enum Endpoints {
   // Student
   enrollmentsMe = "/api/v1/enrollments/me",
 
+  // Semesters
+  semesters = "/api/v1/semesters",
+
+  // Curriculum
+  curriculumPrograms = "/api/v1/curriculum/programs",
+
   // Questionnaires
   questionnaires = "/api/v1/questionnaires",
   questionnaireTypes = "/api/v1/questionnaires/types",
@@ -17,6 +23,7 @@ export enum Endpoints {
   questionnaireLatestActiveVersion = "/api/v1/questionnaires/:id/latest-active-version",
   questionnaireVersionPublish = "/api/v1/questionnaires/versions/:versionId/publish",
   questionnaireVersionDeprecate = "/api/v1/questionnaires/versions/:versionId/deprecate",
+  questionnaireVersionFromTemplate = "/api/v1/questionnaires/:id/versions/from-template",
 
   // Questionnaire Submissions
   questionnaireSubmissions = "/api/v1/questionnaires/submissions",
@@ -35,4 +42,11 @@ export enum Endpoints {
   dimensionById = "/api/v1/dimensions/:id",
   dimensionActivate = "/api/v1/dimensions/:id/activate",
   dimensionDeactivate = "/api/v1/dimensions/:id/deactivate",
+
+  // Faculty Analytics
+  analyticsOverview = "/api/v1/analytics/overview",
+  analyticsAttention = "/api/v1/analytics/attention",
+
+  // Faculty
+  faculty = "/api/v1/faculty",
 }

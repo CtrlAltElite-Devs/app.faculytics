@@ -2,7 +2,10 @@
 
 import { Cell, Pie, PieChart } from "recharts";
 
-import type { DeanFacultyAnalysisRecord, FacultyAnalysisSemesterKey } from "@/features/dean";
+import type {
+  DeanFacultyAnalysisRecord,
+  FacultyAnalysisSemesterKey,
+} from "@/features/faculty-analytics";
 import {
   ChartContainer,
   ChartLegend,
@@ -11,9 +14,12 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { buildOverallRecommendation } from "@/features/dean/lib/recommendation-utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { buildOverallRecommendation } from "@/features/faculty-analytics/lib/recommendation-utils";
 import { useIsMobile } from "@/lib/use-mobile";
+
+import { QualitativeFeedbackPlaceholderButton } from "./qualitative-feedback-placeholder-button";
+import { QualitativeInsightGroup } from "./qualitative-insight-group";
 
 const qualitativeSentimentChartConfig = {
   positive: {
@@ -80,14 +86,11 @@ export function FacultyAnalysisQualitativeOverview({
             <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
               Qualitative Sentiment Overview
             </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Overall sentiment for this semester based on qualitative student feedback.
-            </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-1 items-center">
+          <CardContent className="flex flex-1 items-center overflow-hidden">
             <ChartContainer
               config={qualitativeSentimentChartConfig}
-              className="mx-auto h-full min-h-[18rem] w-full max-w-md [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-legend-item]:!mr-3"
+              className="mx-auto aspect-auto h-[18rem] min-h-[18rem] w-full max-w-[20rem] [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:justify-center [&_.recharts-default-legend]:gap-y-1 [&_.recharts-legend-item]:!mr-3 sm:max-w-md"
             >
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="key" hideLabel />} />
@@ -99,8 +102,8 @@ export function FacultyAnalysisQualitativeOverview({
                   data={sentimentData}
                   dataKey="value"
                   nameKey="key"
-                  innerRadius={isMobile ? 44 : 56}
-                  outerRadius={isMobile ? 72 : 88}
+                  innerRadius={isMobile ? 42 : 72}
+                  outerRadius={isMobile ? 68 : 112}
                   strokeWidth={4}
                 >
                   {sentimentData.map((item) => (
@@ -117,9 +120,6 @@ export function FacultyAnalysisQualitativeOverview({
             <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
               Key Feedback Themes
             </CardTitle>
-            <CardDescription className="font-sans text-sm">
-              Most frequent themes mentioned by students for this semester.
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {qualitativeMetrics.keyThemes.map((theme) => {
@@ -139,6 +139,7 @@ export function FacultyAnalysisQualitativeOverview({
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
+                  <QualitativeFeedbackPlaceholderButton />
                 </div>
               );
             })}
@@ -165,70 +166,23 @@ export function FacultyAnalysisActionableInsights({
         <CardTitle className="font-playfair text-xl font-semibold sm:text-2xl">
           Actionable Insights and Recommendations
         </CardTitle>
-        <CardDescription className="font-sans text-sm">
-          Suggested focus areas derived from the semester&apos;s qualitative feedback.
-        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <div className="rounded-xl border border-emerald-200 bg-muted/20 p-4 dark:border-emerald-900/70">
-            <div className="flex items-center gap-2">
-              <h3 className="font-playfair text-lg font-semibold text-emerald-700 dark:text-emerald-300">
-                Strengths to Maintain
-              </h3>
-              <span className="font-sans text-xs text-muted-foreground">
-                {qualitativeMetrics.strengthsToMaintain.length} generated answers
-              </span>
-            </div>
-            <div className="mt-3 space-y-3">
-              {qualitativeMetrics.strengthsToMaintain.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-lg border border-border/70 bg-background p-3"
-                >
-                  <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
-                  <p className="mt-1 font-sans text-sm text-muted-foreground">{item.description}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 dark:border-emerald-900/70 dark:bg-emerald-950/20">
-              <p className="font-playfair text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                Action Plan
-              </p>
-              <p className="mt-2 font-sans text-sm text-muted-foreground">
-                {strengthsRecommendation}
-              </p>
-            </div>
-          </div>
-          <div className="rounded-xl border border-orange-200 bg-muted/20 p-4 dark:border-orange-900/70">
-            <div className="flex items-center gap-2">
-              <h3 className="font-playfair text-lg font-semibold text-orange-700 dark:text-orange-300">
-                Areas for Improvement
-              </h3>
-              <span className="font-sans text-xs text-muted-foreground">
-                {qualitativeMetrics.areasForImprovement.length} generated answers
-              </span>
-            </div>
-            <div className="mt-3 space-y-3">
-              {qualitativeMetrics.areasForImprovement.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-lg border border-border/70 bg-background p-3"
-                >
-                  <h4 className="font-playfair text-base font-semibold">{item.title}</h4>
-                  <p className="mt-1 font-sans text-sm text-muted-foreground">{item.description}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50/70 p-3 dark:border-orange-900/70 dark:bg-orange-950/20">
-              <p className="font-playfair text-sm font-semibold text-orange-700 dark:text-orange-300">
-                Action Plan
-              </p>
-              <p className="mt-2 font-sans text-sm text-muted-foreground">
-                {improvementRecommendation}
-              </p>
-            </div>
-          </div>
+        <div className="grid gap-4 xl:grid-cols-2">
+          <QualitativeInsightGroup
+            title="Strengths to Maintain"
+            accentClassName="text-emerald-700 dark:text-emerald-300"
+            summaryCountLabel={`${qualitativeMetrics.strengthsToMaintain.length} generated answers`}
+            recommendation={strengthsRecommendation}
+            items={qualitativeMetrics.strengthsToMaintain}
+          />
+          <QualitativeInsightGroup
+            title="Areas for Improvement"
+            accentClassName="text-orange-700 dark:text-orange-300"
+            summaryCountLabel={`${qualitativeMetrics.areasForImprovement.length} generated answers`}
+            recommendation={improvementRecommendation}
+            items={qualitativeMetrics.areasForImprovement}
+          />
         </div>
       </CardContent>
     </Card>

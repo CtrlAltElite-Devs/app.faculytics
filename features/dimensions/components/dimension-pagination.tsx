@@ -20,7 +20,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { PAGE_SIZE_OPTIONS } from "@/features/dimensions/hooks/use-dimension-list-page";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/lib/pagination";
 import type { DimensionsListMeta } from "@/features/dimensions/types";
 
 type DimensionPaginationProps = {
@@ -80,7 +80,7 @@ export function DimensionPagination({
                 value={String(pageSize)}
                 onValueChange={(v) => onPageSizeChange(Number(v))}
               >
-                {PAGE_SIZE_OPTIONS.map((size) => (
+                {DEFAULT_PAGE_SIZE_OPTIONS.map((size) => (
                   <DropdownMenuRadioItem
                     key={size}
                     value={String(size)}
