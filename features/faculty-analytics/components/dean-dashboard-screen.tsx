@@ -75,7 +75,7 @@ export function DeanDashboardScreen() {
 
             <DeanMetricsGrid summary={summary} />
 
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+            <div className="grid gap-6 min-[900px]:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]">
               <DeanOverallSentimentBarChart overallSentiment={overallSentiment} />
               <DeanAttentionCard
                 items={attentionItems}

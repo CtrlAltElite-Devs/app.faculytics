@@ -5,6 +5,10 @@ import { useMemo, useState } from "react";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useAttentionList } from "@/features/faculty-analytics/hooks/use-attention-list";
 import {
+  ALL_PROGRAMS_LABEL,
+  ALL_PROGRAMS_VALUE,
+} from "@/features/faculty-analytics/constants/filters";
+import {
   mapDepartmentOverviewToDashboardViewModel,
   mapProgramOptionsToViewModel,
   mapSemesterOptionsToViewModel,
@@ -13,8 +17,6 @@ import { useDepartmentOverview } from "@/features/faculty-analytics/hooks/use-de
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
 import { formatRelativeTime } from "@/lib/date";
-
-const ALL_PROGRAMS_VALUE = "__all_programs__";
 
 export function useDeanDashboardViewModel() {
   const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
@@ -91,7 +93,7 @@ export function useDeanDashboardViewModel() {
     selectedSemesterId,
     selectedSemesterLabel: selectedSemester?.label ?? "Select semester",
     selectedProgramCode,
-    selectedProgramLabel: selectedProgram?.label ?? "All Programs",
+    selectedProgramLabel: selectedProgram?.label ?? ALL_PROGRAMS_LABEL,
     lastUpdatedLabel: dashboardViewModel?.lastUpdatedLabel ?? "Not yet available",
     summary: dashboardViewModel?.summary ?? {
       totalFaculty: 0,
@@ -100,6 +102,7 @@ export function useDeanDashboardViewModel() {
       positiveCount: 0,
       negativeCount: 0,
       neutralCount: 0,
+      positiveSentimentRate: 0,
     },
     overallSentiment: dashboardViewModel?.overallSentiment ?? [],
     attentionItems: attentionQuery.data?.items ?? [],

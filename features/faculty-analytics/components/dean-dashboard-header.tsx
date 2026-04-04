@@ -2,6 +2,7 @@
 
 import { ChevronDown, RefreshCw } from "lucide-react";
 
+import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
 import type {
   DeanProgramOption,
   DeanSemesterOption,
@@ -59,7 +60,7 @@ export function DeanDashboardHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:min-w-56"
+                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-48 md:max-w-48"
                 disabled={programs.length === 0}
               >
                 <span className="truncate">{selectedProgramLabel}</span>
@@ -71,13 +72,13 @@ export function DeanDashboardHeader({
               className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
             >
               <DropdownMenuRadioGroup
-                value={selectedProgramCode ?? "__all_programs__"}
+                value={selectedProgramCode ?? ALL_PROGRAMS_VALUE}
                 onValueChange={onProgramChange}
               >
                 {programs.map((program) => (
                   <DropdownMenuRadioItem
-                    key={program.code ?? "__all_programs__"}
-                    value={program.code ?? "__all_programs__"}
+                    key={program.code ?? ALL_PROGRAMS_VALUE}
+                    value={program.code ?? ALL_PROGRAMS_VALUE}
                     className="font-sans text-sm"
                   >
                     {program.label}
@@ -90,7 +91,7 @@ export function DeanDashboardHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:min-w-56"
+                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-48 md:max-w-48"
                 disabled={semesters.length === 0}
               >
                 <span className="truncate">{selectedSemesterLabel}</span>

@@ -6,6 +6,7 @@ import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components
 import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
 import { DeanAnalyticsLoadingState } from "@/features/faculty-analytics/components/dean-analytics-loading-state";
 import { DeanFacultyAnalysisTable } from "@/features/faculty-analytics/components/dean-faculty-analysis-table";
+import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
 import { useDeanFacultyAnalyticsListViewModel } from "@/features/faculty-analytics/hooks/use-dean-faculty-analytics-list-view-model";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -80,13 +81,13 @@ export function DeanFacultyAnalyticsScreen() {
                 className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
               >
                 <DropdownMenuRadioGroup
-                  value={selectedProgramId ?? "__all_programs__"}
+                  value={selectedProgramId ?? ALL_PROGRAMS_VALUE}
                   onValueChange={setSelectedProgramId}
                 >
                   {programs.map((program) => (
                     <DropdownMenuRadioItem
-                      key={program.id ?? "__all_programs__"}
-                      value={program.id ?? "__all_programs__"}
+                      key={program.id ?? ALL_PROGRAMS_VALUE}
+                      value={program.id ?? ALL_PROGRAMS_VALUE}
                       className="font-sans text-sm"
                     >
                       {program.label}

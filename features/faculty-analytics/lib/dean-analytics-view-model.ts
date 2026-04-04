@@ -2,6 +2,7 @@ import {
   deanAnalyticsSampleData,
   getDeanFacultyAnalysisBySlug,
 } from "@/features/faculty-analytics/lib/analytics-sample-data";
+import { ALL_PROGRAMS_LABEL } from "@/features/faculty-analytics/constants/filters";
 import type {
   DepartmentOverviewResponseDto,
   ProgramOptionDto,
@@ -21,6 +22,7 @@ export type DeanSummaryMetrics = {
   positiveCount: number;
   negativeCount: number;
   neutralCount: number;
+  positiveSentimentRate: number;
 };
 
 export type DeanProgramOption = {
@@ -48,6 +50,10 @@ export type DeanFacultyAnalysisDetailViewModel = {
   faculty: (typeof deanAnalyticsSampleData.facultyAnalysis)[number];
 };
 
+function toSentimentRate(count: number, total: number) {
+  return total > 0 ? Number(((count / total) * 100).toFixed(1)) : 0;
+}
+
 export function mapSemesterOptionsToViewModel(
   semesters: SemesterOptionDto[]
 ): DeanSemesterOption[] {
@@ -60,7 +66,7 @@ export function mapSemesterOptionsToViewModel(
 
 export function mapProgramOptionsToViewModel(programs: ProgramOptionDto[]): DeanProgramOption[] {
   return [
-    { id: null, code: null, label: "All Programs" },
+    { id: null, code: null, label: ALL_PROGRAMS_LABEL },
     ...programs.map((program) => ({
       id: program.id,
       code: program.code,
@@ -97,30 +103,22 @@ export function mapDepartmentOverviewToDashboardViewModel({
       positiveCount: overview.summary.positiveCount,
       negativeCount: overview.summary.negativeCount,
       neutralCount: overview.summary.neutralCount,
+      positiveSentimentRate: toSentimentRate(overview.summary.positiveCount, totalSentiment),
     },
     overallSentiment: [
       {
         label: "Positive",
-        value:
-          totalSentiment > 0
-            ? Number(((overview.summary.positiveCount / totalSentiment) * 100).toFixed(1))
-            : 0,
+        value: toSentimentRate(overview.summary.positiveCount, totalSentiment),
         color: "#5b8cff",
       },
       {
         label: "Neutral",
-        value:
-          totalSentiment > 0
-            ? Number(((overview.summary.neutralCount / totalSentiment) * 100).toFixed(1))
-            : 0,
+        value: toSentimentRate(overview.summary.neutralCount, totalSentiment),
         color: "#d1d5db",
       },
       {
         label: "Negative",
-        value:
-          totalSentiment > 0
-            ? Number(((overview.summary.negativeCount / totalSentiment) * 100).toFixed(1))
-            : 0,
+        value: toSentimentRate(overview.summary.negativeCount, totalSentiment),
         color: "#facc15",
       },
     ],

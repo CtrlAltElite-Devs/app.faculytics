@@ -37,7 +37,7 @@ function DeanMetricCard({
 
 export function DeanMetricsGrid({ summary }: { summary: DeanDashboardViewModel["summary"] }) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <DeanMetricCard
         title="Total Faculty"
         value={formatMetric(summary.totalFaculty)}
@@ -52,6 +52,11 @@ export function DeanMetricsGrid({ summary }: { summary: DeanDashboardViewModel["
         title="Total Analyzed"
         value={formatMetric(summary.totalAnalyzed)}
         description="Faculty records with generated analytics available"
+      />
+      <DeanMetricCard
+        title="Positive Sentiment Rate"
+        value={formatMetric(summary.positiveSentimentRate, "%")}
+        description="Share of analyzed sentiment marked positive in the selected semester"
       />
     </div>
   );

@@ -4,6 +4,10 @@ import { useDeferredValue, useMemo, useState } from "react";
 
 import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
 import { useMe } from "@/features/auth/hooks/use-me";
+import {
+  ALL_PROGRAMS_LABEL,
+  ALL_PROGRAMS_VALUE,
+} from "@/features/faculty-analytics/constants/filters";
 import { useFacultyList } from "@/features/faculty-analytics/hooks/use-faculty-list";
 import {
   mapProgramOptionsToViewModel,
@@ -11,8 +15,6 @@ import {
 } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
-
-const ALL_PROGRAMS_VALUE = "__all_programs__";
 
 export function useDeanFacultyAnalyticsListViewModel() {
   const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
@@ -70,7 +72,7 @@ export function useDeanFacultyAnalyticsListViewModel() {
     selectedSemesterId,
     selectedSemesterLabel: selectedSemester?.label ?? "Select semester",
     selectedProgramId,
-    selectedProgramLabel: selectedProgram?.label ?? "All Programs",
+    selectedProgramLabel: selectedProgram?.label ?? ALL_PROGRAMS_LABEL,
     facultyList: facultyListQuery.data?.data ?? [],
     pagination: facultyListQuery.data?.meta ?? {
       totalItems: 0,
