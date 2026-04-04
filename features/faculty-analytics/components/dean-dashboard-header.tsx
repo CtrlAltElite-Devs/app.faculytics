@@ -2,7 +2,10 @@
 
 import { ChevronDown, RefreshCw } from "lucide-react";
 
-import type { DeanSemesterOption } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+import type {
+  DeanProgramOption,
+  DeanSemesterOption,
+} from "@/features/faculty-analytics/lib/dean-analytics-view-model";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +18,13 @@ import {
 
 type DeanDashboardHeaderProps = {
   semesters: readonly DeanSemesterOption[];
+  programs: readonly DeanProgramOption[];
   selectedSemesterId: string | null;
   selectedSemesterLabel: string;
   onSemesterChange: (value: string) => void;
+  selectedProgramCode: string | null;
+  selectedProgramLabel: string;
+  onProgramChange: (value: string) => void;
   lastUpdatedLabel: string;
   isRefreshing: boolean;
   onRefresh: () => void;
@@ -25,9 +32,13 @@ type DeanDashboardHeaderProps = {
 
 export function DeanDashboardHeader({
   semesters,
+  programs,
   selectedSemesterId,
   selectedSemesterLabel,
   onSemesterChange,
+  selectedProgramCode,
+  selectedProgramLabel,
+  onProgramChange,
   lastUpdatedLabel,
   isRefreshing,
   onRefresh,
@@ -49,9 +60,40 @@ export function DeanDashboardHeader({
               <Button
                 variant="outline"
                 className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:min-w-56"
+                disabled={programs.length === 0}
+              >
+                <span className="truncate">{selectedProgramLabel}</span>
+                <ChevronDown className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+            >
+              <DropdownMenuRadioGroup
+                value={selectedProgramCode ?? "__all_programs__"}
+                onValueChange={onProgramChange}
+              >
+                {programs.map((program) => (
+                  <DropdownMenuRadioItem
+                    key={program.code ?? "__all_programs__"}
+                    value={program.code ?? "__all_programs__"}
+                    className="font-sans text-sm"
+                  >
+                    {program.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:min-w-56"
                 disabled={semesters.length === 0}
               >
-                <span>{selectedSemesterLabel}</span>
+                <span className="truncate">{selectedSemesterLabel}</span>
                 <ChevronDown className="size-4" />
               </Button>
             </DropdownMenuTrigger>

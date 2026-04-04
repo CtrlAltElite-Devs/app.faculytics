@@ -7,7 +7,9 @@ import type {
   DepartmentOverviewResponseDto,
   FacultyListQuery,
   FacultyListResponseDto,
+  ListProgramsQuery,
   ListSemestersQuery,
+  ProgramListResponseDto,
   SemesterListResponseDto,
 } from "@/features/faculty-analytics/types";
 
@@ -29,6 +31,14 @@ export async function fetchAttentionList(params: AttentionListQuery) {
 
 export async function fetchFacultyList(params: FacultyListQuery) {
   const response = await apiClient.get<FacultyListResponseDto>(Endpoints.faculty, {
+    params,
+  });
+
+  return response.data;
+}
+
+export async function fetchProgramOptions(params: ListProgramsQuery) {
+  const response = await apiClient.get<ProgramListResponseDto>(Endpoints.curriculumPrograms, {
     params,
   });
 

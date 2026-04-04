@@ -5,11 +5,18 @@ import { useDeferredValue, useMemo, useState } from "react";
 import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useFacultyList } from "@/features/faculty-analytics/hooks/use-faculty-list";
-import { mapSemesterOptionsToViewModel } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+import {
+  mapProgramOptionsToViewModel,
+  mapSemesterOptionsToViewModel,
+} from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
+
+const ALL_PROGRAMS_VALUE = "__all_programs__";
 
 export function useDeanFacultyAnalyticsListViewModel() {
   const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
+  const [selectedProgramIdState, setSelectedProgramId] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(DEFAULT_PAGE_SIZE);
@@ -31,9 +38,22 @@ export function useDeanFacultyAnalyticsListViewModel() {
       ? selectedSemesterIdState
       : (semesters[0]?.id ?? null);
 
+  const programOptionsQuery = useProgramOptions(
+    { semesterId: selectedSemesterId ?? "", limit: 100 },
+    { enabled: Boolean(selectedSemesterId) }
+  );
+  const programs = useMemo(
+    () => mapProgramOptionsToViewModel(programOptionsQuery.data?.data ?? []),
+    [programOptionsQuery.data]
+  );
+  const selectedProgram =
+    programs.find((program) => program.id === selectedProgramIdState) ?? programs[0] ?? null;
+  const selectedProgramId = selectedProgram?.id ?? null;
+
   const facultyListQuery = useFacultyList(
     {
       semesterId: selectedSemesterId ?? "",
+      programId: selectedProgramId ?? undefined,
       search: deferredSearchValue || undefined,
       page: currentPage,
       limit: rowsPerPage,
@@ -46,8 +66,11 @@ export function useDeanFacultyAnalyticsListViewModel() {
 
   return {
     semesters,
+    programs,
     selectedSemesterId,
     selectedSemesterLabel: selectedSemester?.label ?? "Select semester",
+    selectedProgramId,
+    selectedProgramLabel: selectedProgram?.label ?? "All Programs",
     facultyList: facultyListQuery.data?.data ?? [],
     pagination: facultyListQuery.data?.meta ?? {
       totalItems: 0,
@@ -60,12 +83,24 @@ export function useDeanFacultyAnalyticsListViewModel() {
     isLoading:
       meQuery.isLoading ||
       semestersQuery.isLoading ||
+      (Boolean(selectedSemesterId) && programOptionsQuery.isLoading) ||
       (Boolean(selectedSemesterId) && facultyListQuery.isLoading),
-    isError: meQuery.isError || semestersQuery.isError || facultyListQuery.isError,
-    isFetching: meQuery.isFetching || semestersQuery.isFetching || facultyListQuery.isFetching,
+    isError:
+      meQuery.isError ||
+      semestersQuery.isError ||
+      programOptionsQuery.isError ||
+      facultyListQuery.isError,
+    isFetching:
+      meQuery.isFetching ||
+      semestersQuery.isFetching ||
+      programOptionsQuery.isFetching ||
+      facultyListQuery.isFetching,
     retry: () => {
       void meQuery.refetch();
       void semestersQuery.refetch();
+      if (selectedSemesterId) {
+        void programOptionsQuery.refetch();
+      }
       if (selectedSemesterId) {
         void facultyListQuery.refetch();
       }
@@ -74,11 +109,19 @@ export function useDeanFacultyAnalyticsListViewModel() {
       void meQuery.refetch();
       void semestersQuery.refetch();
       if (selectedSemesterId) {
+        void programOptionsQuery.refetch();
+      }
+      if (selectedSemesterId) {
         void facultyListQuery.refetch();
       }
     },
     setSelectedSemesterId: (value: string) => {
       setSelectedSemesterId(value);
+      setSelectedProgramId(null);
+      setCurrentPage(1);
+    },
+    setSelectedProgramId: (value: string) => {
+      setSelectedProgramId(value === ALL_PROGRAMS_VALUE ? null : value);
       setCurrentPage(1);
     },
     setSearchValue: (value: string) => {

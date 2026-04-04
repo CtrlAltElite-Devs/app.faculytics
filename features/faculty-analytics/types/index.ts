@@ -52,12 +52,32 @@ export type ListSemestersQuery = {
   campusId?: string;
 };
 
+export type ProgramOptionDto = {
+  id: string;
+  code: string;
+  name: string | null;
+  departmentId: string;
+};
+
 export type PaginationMetaDto = {
   totalItems: number;
   itemCount: number;
   itemsPerPage: number;
   totalPages: number;
   currentPage: number;
+};
+
+export type ProgramListResponseDto = {
+  data: ProgramOptionDto[];
+  meta: PaginationMetaDto;
+};
+
+export type ListProgramsQuery = {
+  semesterId: string;
+  departmentId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
 };
 
 export type DepartmentOverviewQuery = {
@@ -67,10 +87,12 @@ export type DepartmentOverviewQuery = {
 
 export type AttentionListQuery = {
   semesterId: string;
+  programCode?: string;
 };
 
 export type FacultyListQuery = {
   semesterId: string;
+  programId?: string;
   search?: string;
   page?: number;
   limit?: number;

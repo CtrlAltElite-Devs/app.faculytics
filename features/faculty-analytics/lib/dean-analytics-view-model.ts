@@ -4,6 +4,7 @@ import {
 } from "@/features/faculty-analytics/lib/analytics-sample-data";
 import type {
   DepartmentOverviewResponseDto,
+  ProgramOptionDto,
   SemesterOptionDto,
 } from "@/features/faculty-analytics/types";
 
@@ -20,6 +21,12 @@ export type DeanSummaryMetrics = {
   positiveCount: number;
   negativeCount: number;
   neutralCount: number;
+};
+
+export type DeanProgramOption = {
+  id: string | null;
+  code: string | null;
+  label: string;
 };
 
 export type DeanOverallSentimentDatum = {
@@ -49,6 +56,17 @@ export function mapSemesterOptionsToViewModel(
     label: semester.label ?? [semester.code, semester.academicYear].filter(Boolean).join(" • "),
     academicYear: semester.academicYear,
   }));
+}
+
+export function mapProgramOptionsToViewModel(programs: ProgramOptionDto[]): DeanProgramOption[] {
+  return [
+    { id: null, code: null, label: "All Programs" },
+    ...programs.map((program) => ({
+      id: program.id,
+      code: program.code,
+      label: program.name?.trim() ? `${program.code} • ${program.name}` : program.code,
+    })),
+  ];
 }
 
 export function mapDepartmentOverviewToDashboardViewModel({

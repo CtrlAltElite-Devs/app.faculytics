@@ -21,8 +21,11 @@ import { Input } from "@/components/ui/input";
 export function DeanFacultyAnalyticsScreen() {
   const {
     semesters,
+    programs,
     selectedSemesterId,
     selectedSemesterLabel,
+    selectedProgramId,
+    selectedProgramLabel,
     facultyList,
     pagination,
     searchValue,
@@ -32,6 +35,7 @@ export function DeanFacultyAnalyticsScreen() {
     retry,
     refresh,
     setSelectedSemesterId,
+    setSelectedProgramId,
     setSearchValue,
     setCurrentPage,
     setRowsPerPage,
@@ -65,9 +69,40 @@ export function DeanFacultyAnalyticsScreen() {
                 <Button
                   variant="outline"
                   className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm lg:w-56 lg:shrink-0"
+                  disabled={programs.length === 0}
+                >
+                  <span className="truncate">{selectedProgramLabel}</span>
+                  <ChevronDown className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+              >
+                <DropdownMenuRadioGroup
+                  value={selectedProgramId ?? "__all_programs__"}
+                  onValueChange={setSelectedProgramId}
+                >
+                  {programs.map((program) => (
+                    <DropdownMenuRadioItem
+                      key={program.id ?? "__all_programs__"}
+                      value={program.id ?? "__all_programs__"}
+                      className="font-sans text-sm"
+                    >
+                      {program.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm lg:w-56 lg:shrink-0"
                   disabled={semesters.length === 0}
                 >
-                  <span>{selectedSemesterLabel}</span>
+                  <span className="truncate">{selectedSemesterLabel}</span>
                   <ChevronDown className="size-4" />
                 </Button>
               </DropdownMenuTrigger>

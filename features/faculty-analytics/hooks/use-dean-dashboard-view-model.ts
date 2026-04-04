@@ -6,14 +6,19 @@ import { useMe } from "@/features/auth/hooks/use-me";
 import { useAttentionList } from "@/features/faculty-analytics/hooks/use-attention-list";
 import {
   mapDepartmentOverviewToDashboardViewModel,
+  mapProgramOptionsToViewModel,
   mapSemesterOptionsToViewModel,
 } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
 import { useDepartmentOverview } from "@/features/faculty-analytics/hooks/use-department-overview";
+import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
 import { formatRelativeTime } from "@/lib/date";
 
+const ALL_PROGRAMS_VALUE = "__all_programs__";
+
 export function useDeanDashboardViewModel() {
   const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
+  const [selectedProgramCodeState, setSelectedProgramCode] = useState<string | null>(null);
   const meQuery = useMe();
   const campusId = meQuery.data?.campus?.id;
   const semestersQuery = useSemesterOptions(campusId ? { campusId } : undefined, {
@@ -28,12 +33,24 @@ export function useDeanDashboardViewModel() {
       ? selectedSemesterIdState
       : (semesters[0]?.id ?? null);
 
+  const programOptionsQuery = useProgramOptions(
+    { semesterId: selectedSemesterId ?? "", limit: 100 },
+    { enabled: Boolean(selectedSemesterId) }
+  );
+  const programs = useMemo(
+    () => mapProgramOptionsToViewModel(programOptionsQuery.data?.data ?? []),
+    [programOptionsQuery.data]
+  );
+  const selectedProgram =
+    programs.find((program) => program.code === selectedProgramCodeState) ?? programs[0] ?? null;
+  const selectedProgramCode = selectedProgram?.code ?? null;
+
   const overviewQuery = useDepartmentOverview(
-    { semesterId: selectedSemesterId ?? "" },
+    { semesterId: selectedSemesterId ?? "", programCode: selectedProgramCode ?? undefined },
     { enabled: Boolean(selectedSemesterId) }
   );
   const attentionQuery = useAttentionList(
-    { semesterId: selectedSemesterId ?? "" },
+    { semesterId: selectedSemesterId ?? "", programCode: selectedProgramCode ?? undefined },
     { enabled: Boolean(selectedSemesterId) }
   );
 
@@ -54,18 +71,27 @@ export function useDeanDashboardViewModel() {
   const isLoading =
     meQuery.isLoading ||
     semestersQuery.isLoading ||
+    (Boolean(selectedSemesterId) && programOptionsQuery.isLoading) ||
     (Boolean(selectedSemesterId) && overviewQuery.isLoading);
-  const isError = meQuery.isError || semestersQuery.isError || overviewQuery.isError;
+  const isError =
+    meQuery.isError ||
+    semestersQuery.isError ||
+    programOptionsQuery.isError ||
+    overviewQuery.isError;
   const isRefreshing =
     meQuery.isFetching ||
     semestersQuery.isFetching ||
+    programOptionsQuery.isFetching ||
     overviewQuery.isFetching ||
     attentionQuery.isFetching;
 
   return {
     semesters,
+    programs,
     selectedSemesterId,
     selectedSemesterLabel: selectedSemester?.label ?? "Select semester",
+    selectedProgramCode,
+    selectedProgramLabel: selectedProgram?.label ?? "All Programs",
     lastUpdatedLabel: dashboardViewModel?.lastUpdatedLabel ?? "Not yet available",
     summary: dashboardViewModel?.summary ?? {
       totalFaculty: 0,
@@ -86,6 +112,9 @@ export function useDeanDashboardViewModel() {
       void meQuery.refetch();
       void semestersQuery.refetch();
       if (selectedSemesterId) {
+        void programOptionsQuery.refetch();
+      }
+      if (selectedSemesterId) {
         void overviewQuery.refetch();
         void attentionQuery.refetch();
       }
@@ -94,10 +123,19 @@ export function useDeanDashboardViewModel() {
       void meQuery.refetch();
       void semestersQuery.refetch();
       if (selectedSemesterId) {
+        void programOptionsQuery.refetch();
+      }
+      if (selectedSemesterId) {
         void overviewQuery.refetch();
         void attentionQuery.refetch();
       }
     },
-    setSelectedSemesterId,
+    setSelectedSemesterId: (value: string) => {
+      setSelectedSemesterId(value);
+      setSelectedProgramCode(null);
+    },
+    setSelectedProgramCode: (value: string) => {
+      setSelectedProgramCode(value === ALL_PROGRAMS_VALUE ? null : value);
+    },
   };
 }

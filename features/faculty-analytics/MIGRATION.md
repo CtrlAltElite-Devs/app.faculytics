@@ -15,8 +15,14 @@ All endpoints require JWT and are scoped to `DEAN` or `SUPER_ADMIN` roles. Deans
 | Method | Path                   | Query Params                                                       | Response DTO                    |
 | ------ | ---------------------- | ------------------------------------------------------------------ | ------------------------------- |
 | GET    | `/analytics/overview`  | `semesterId` (required), `programCode?`                            | `DepartmentOverviewResponseDto` |
-| GET    | `/analytics/attention` | `semesterId` (required)                                            | `AttentionListResponseDto`      |
+| GET    | `/analytics/attention` | `semesterId` (required), `programCode?`                            | `AttentionListResponseDto`      |
 | GET    | `/analytics/trends`    | `semesterId?`, `minSemesters?` (default 3), `minR2?` (default 0.5) | `FacultyTrendsResponseDto`      |
+
+### Curriculum Module (`/api/v1/curriculum`)
+
+| Method | Path                   | Query Params                                                           | Response DTO             |
+| ------ | ---------------------- | ---------------------------------------------------------------------- | ------------------------ |
+| GET    | `/curriculum/programs` | `semesterId` (required), `departmentId?`, `search?`, `page?`, `limit?` | `ProgramListResponseDto` |
 
 ### Faculty Module (`/api/v1/faculty`)
 
@@ -120,6 +126,26 @@ All endpoints require JWT and are scoped to `DEAN` or `SUPER_ADMIN` roles. Deans
 }
 ```
 
+### ProgramListResponseDto
+
+```ts
+{
+  data: Array<{
+    id: string;
+    code: string;
+    name: string | null;
+    departmentId: string;
+  }>;
+  meta: {
+    totalItems: number;
+    itemCount: number;
+    itemsPerPage: number;
+    totalPages: number;
+    currentPage: number;
+  }
+}
+```
+
 ### SubmissionCountResponseDto
 
 ```ts
@@ -140,6 +166,9 @@ analyticsOverview = "/api/v1/analytics/overview",
 analyticsAttention = "/api/v1/analytics/attention",
 analyticsTrends = "/api/v1/analytics/trends",
 
+// Curriculum
+curriculumPrograms = "/api/v1/curriculum/programs",
+
 // Faculty
 faculty = "/api/v1/faculty",
 facultySubmissionCount = "/api/v1/faculty/:facultyId/submission-count",
@@ -159,6 +188,7 @@ Define proper frontend DTOs matching the backend response shapes above. Drop the
 | ---------------------------- | ----------------------------------- | --------------------------------------------- |
 | `use-department-overview.ts` | `GET /analytics/overview`           | Dashboard metrics grid, charts, faculty table |
 | `use-attention-list.ts`      | `GET /analytics/attention`          | (future) attention flags UI                   |
+| `use-program-options.ts`     | `GET /curriculum/programs`          | Scoped dean/chairperson program filters       |
 | `use-faculty-trends.ts`      | `GET /analytics/trends`             | (future) trends visualization                 |
 | `use-faculty-list.ts`        | `GET /faculty`                      | Faculty table with pagination + search        |
 | `use-submission-count.ts`    | `GET /faculty/:id/submission-count` | Faculty detail page                           |
@@ -170,6 +200,7 @@ Replace `deanAnalyticsSampleData` imports in each component with hook calls:
 - **`dean-metrics-grid.tsx`** — Use `summary` from `useDepartmentOverview()`
 - **`dean-charts.tsx`** — Sentiment data comes from the overview response (calculate from positive/negative/neutral counts)
 - **`dean-dashboard-header.tsx`** — Semester selector should drive the `semesterId` query param passed to hooks
+- **`dean-dashboard-header.tsx` / `dean-faculty-analytics-screen.tsx`** — Program selector should come from `GET /curriculum/programs`; analytics queries use `programCode`, faculty list uses `programId`
 - **`dean-faculty-analysis-table.tsx`** — Use `faculty` array from overview, or `useFacultyList()` for paginated search
 
 ### 6. Clean up

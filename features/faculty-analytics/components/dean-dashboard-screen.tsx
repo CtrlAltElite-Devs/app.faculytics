@@ -10,9 +10,13 @@ import { useDeanDashboardViewModel } from "@/features/faculty-analytics/hooks/us
 export function DeanDashboardScreen() {
   const {
     semesters,
+    programs,
     selectedSemesterId,
     setSelectedSemesterId,
     selectedSemesterLabel,
+    selectedProgramCode,
+    setSelectedProgramCode,
+    selectedProgramLabel,
     lastUpdatedLabel,
     summary,
     overallSentiment,
@@ -43,9 +47,13 @@ export function DeanDashboardScreen() {
       <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
         <DeanDashboardHeader
           semesters={semesters}
+          programs={programs}
           selectedSemesterId={selectedSemesterId}
           selectedSemesterLabel={selectedSemesterLabel}
           onSemesterChange={setSelectedSemesterId}
+          selectedProgramCode={selectedProgramCode}
+          selectedProgramLabel={selectedProgramLabel}
+          onProgramChange={setSelectedProgramCode}
           lastUpdatedLabel={lastUpdatedLabel}
           isRefreshing={isRefreshing}
           onRefresh={refresh}
