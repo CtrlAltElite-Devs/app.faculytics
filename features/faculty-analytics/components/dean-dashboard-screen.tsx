@@ -1,9 +1,9 @@
 "use client";
 
 import { DeanDashboardHeader } from "@/features/faculty-analytics/components/dean-dashboard-header";
+import { DeanAttentionCard } from "@/features/faculty-analytics/components/dean-attention-card";
 import { DeanOverallSentimentBarChart } from "@/features/faculty-analytics/components/dean-charts";
 import { DeanAnalyticsAsyncContent } from "@/features/faculty-analytics/components/dean-analytics-async-content";
-import { DeanKeyThemesCard } from "@/features/faculty-analytics/components/dean-key-themes-card";
 import { DeanMetricsGrid } from "@/features/faculty-analytics/components/dean-metrics-grid";
 import { useDeanDashboardViewModel } from "@/features/faculty-analytics/hooks/use-dean-dashboard-view-model";
 
@@ -16,9 +16,10 @@ export function DeanDashboardScreen() {
     lastUpdatedLabel,
     summary,
     overallSentiment,
-    keyThemes,
+    attentionItems,
     overview,
     isLoading,
+    isAttentionLoading,
     isRefreshing,
     isError,
     refresh,
@@ -68,7 +69,11 @@ export function DeanDashboardScreen() {
 
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
               <DeanOverallSentimentBarChart overallSentiment={overallSentiment} />
-              <DeanKeyThemesCard themes={keyThemes} />
+              <DeanAttentionCard
+                items={attentionItems}
+                isLoading={isAttentionLoading}
+                hasAnalyticsData={overview?.lastRefreshedAt !== null}
+              />
             </div>
           </>
         )}

@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 
 import { useMe } from "@/features/auth/hooks/use-me";
+import { useAttentionList } from "@/features/faculty-analytics/hooks/use-attention-list";
 import {
-  STATIC_DEAN_KEY_THEMES,
   mapDepartmentOverviewToDashboardViewModel,
   mapSemesterOptionsToViewModel,
 } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
@@ -32,6 +32,10 @@ export function useDeanDashboardViewModel() {
     { semesterId: selectedSemesterId ?? "" },
     { enabled: Boolean(selectedSemesterId) }
   );
+  const attentionQuery = useAttentionList(
+    { semesterId: selectedSemesterId ?? "" },
+    { enabled: Boolean(selectedSemesterId) }
+  );
 
   const selectedSemester =
     semesters.find((semester) => semester.id === selectedSemesterId) ?? semesters[0] ?? null;
@@ -52,7 +56,11 @@ export function useDeanDashboardViewModel() {
     semestersQuery.isLoading ||
     (Boolean(selectedSemesterId) && overviewQuery.isLoading);
   const isError = meQuery.isError || semestersQuery.isError || overviewQuery.isError;
-  const isRefreshing = meQuery.isFetching || semestersQuery.isFetching || overviewQuery.isFetching;
+  const isRefreshing =
+    meQuery.isFetching ||
+    semestersQuery.isFetching ||
+    overviewQuery.isFetching ||
+    attentionQuery.isFetching;
 
   return {
     semesters,
@@ -68,9 +76,10 @@ export function useDeanDashboardViewModel() {
       neutralCount: 0,
     },
     overallSentiment: dashboardViewModel?.overallSentiment ?? [],
-    keyThemes: dashboardViewModel?.keyThemes ?? STATIC_DEAN_KEY_THEMES,
     coveragePercentage: dashboardViewModel?.coveragePercentage ?? 0,
+    attentionItems: attentionQuery.data?.items ?? [],
     overview: overviewQuery.data ?? null,
+    isAttentionLoading: Boolean(selectedSemesterId) && attentionQuery.isLoading,
     isLoading,
     isRefreshing,
     isError,
@@ -79,6 +88,7 @@ export function useDeanDashboardViewModel() {
       void semestersQuery.refetch();
       if (selectedSemesterId) {
         void overviewQuery.refetch();
+        void attentionQuery.refetch();
       }
     },
     refresh: () => {
@@ -86,6 +96,7 @@ export function useDeanDashboardViewModel() {
       void semestersQuery.refetch();
       if (selectedSemesterId) {
         void overviewQuery.refetch();
+        void attentionQuery.refetch();
       }
     },
     setSelectedSemesterId,

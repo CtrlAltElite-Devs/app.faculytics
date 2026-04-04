@@ -58,6 +58,10 @@ export type DepartmentOverviewQuery = {
   programCode?: string;
 };
 
+export type AttentionListQuery = {
+  semesterId: string;
+};
+
 export type DepartmentOverviewFacultyDto = {
   facultyId: string;
   facultyName: string;
@@ -87,5 +91,25 @@ export type DepartmentOverviewSummaryDto = {
 export type DepartmentOverviewResponseDto = {
   summary: DepartmentOverviewSummaryDto;
   faculty: DepartmentOverviewFacultyDto[];
+  lastRefreshedAt: string | null;
+};
+
+export type AttentionFlagType = "declining_trend" | "quant_qual_gap" | "low_coverage";
+
+export type AttentionFlagDto = {
+  type: AttentionFlagType;
+  description: string;
+  metrics: Record<string, number>;
+};
+
+export type AttentionItemDto = {
+  facultyId: string;
+  facultyName: string;
+  departmentCode: string;
+  flags: AttentionFlagDto[];
+};
+
+export type AttentionListResponseDto = {
+  items: AttentionItemDto[];
   lastRefreshedAt: string | null;
 };

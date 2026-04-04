@@ -44,14 +44,6 @@ export type DeanDashboardViewModel = {
   summary: DeanSummaryMetrics;
   overallSentiment: DeanOverallSentimentDatum[];
   coveragePercentage: number;
-  keyThemes: DeanKeyTheme[];
-};
-
-export type DeanKeyTheme = {
-  label: string;
-  mentions: number;
-  sentiment: "Mixed" | "Positive" | "Negative";
-  context: string;
 };
 
 export type DeanFacultyAnalyticsListViewModel = {
@@ -61,35 +53,6 @@ export type DeanFacultyAnalyticsListViewModel = {
 export type DeanFacultyAnalysisDetailViewModel = {
   faculty: DeanFacultyAnalysisRecord;
 };
-
-export const STATIC_DEAN_KEY_THEMES: DeanKeyTheme[] = [
-  {
-    label: "Clear explanations",
-    mentions: 18,
-    sentiment: "Positive",
-    context: "Students frequently mention instructors who break down difficult topics clearly.",
-  },
-  {
-    label: "Pacing and time management",
-    mentions: 14,
-    sentiment: "Mixed",
-    context: "Comments often reference lecture pacing, rushed topics, or uneven time allocation.",
-  },
-  {
-    label: "Hands-on examples",
-    mentions: 11,
-    sentiment: "Positive",
-    context:
-      "Practical demonstrations and real-world coding examples appear repeatedly in feedback.",
-  },
-  {
-    label: "Responsiveness outside class",
-    mentions: 9,
-    sentiment: "Mixed",
-    context:
-      "Students commonly mention follow-up support, consultation access, and reply turnaround.",
-  },
-];
 
 export function mapSemesterOptionsToViewModel(
   semesters: SemesterOptionDto[]
@@ -162,7 +125,6 @@ export function mapDepartmentOverviewToDashboardViewModel({
             ((overview.summary.totalAnalyzed / overview.summary.totalFaculty) * 100).toFixed(1)
           )
         : 0,
-    keyThemes: STATIC_DEAN_KEY_THEMES,
   };
 }
 
