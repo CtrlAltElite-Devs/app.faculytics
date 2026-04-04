@@ -203,22 +203,40 @@
     @apply border-slate-200 bg-slate-50 px-2.5 py-1 font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-300;
   }
 
+  .badge-status-negative {
+    @apply border-red-200 bg-red-50 px-2.5 py-1 font-medium text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300;
+  }
+
+  /* ── Faculytics: Analytics subject chips ─────────────────────────── */
+
+  .analytics-subject-chip {
+    @apply max-w-40 rounded-full border-brand-blue/30 bg-brand-blue/10 px-2 py-1 font-sans text-[11px] text-brand-blue lg:max-w-56 lg:px-2.5;
+  }
+
+  .analytics-subject-chip-overflow {
+    @apply cursor-default rounded-full border-brand-blue/20 bg-brand-blue/8 px-2 py-1 font-sans text-[11px] text-brand-blue lg:px-2.5;
+  }
+
+  .course-code-badge {
+    @apply rounded-md bg-brand-blue/25 px-2 py-1 text-sm font-medium text-brand-blue hover:bg-brand-blue/25;
+  }
+
   /* ── Faculytics: Data table ──────────────────────────────────────── */
 
   .data-table-wrapper {
-    @apply overflow-hidden rounded-xl border border-border/70;
+    @apply max-w-full overflow-x-auto overflow-y-hidden rounded-xl border border-border/70;
   }
 
   .data-table-header {
-    @apply bg-blue-50 text-blue-700 dark:bg-blue-900/10 dark:text-blue-300;
+    @apply bg-muted/50 text-black dark:bg-muted/50;
   }
 
   .data-table-head {
-    @apply px-4 py-3 font-sans text-xs font-semibold lg:px-5;
+    @apply px-4 py-3 font-sans text-xs font-semibold lg:px-5 dark:text-muted-foreground;
   }
 
   .data-table-row {
-    @apply border-border/70;
+    @apply border-border/70 bg-zinc-100/40 dark:bg-zinc-900/40;
   }
 
   .data-table-cell {

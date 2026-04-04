@@ -64,9 +64,7 @@ export function CourseList({ enrollments, onSelectCourse }: CourseListProps) {
             return (
               <TableRow key={enrollment.id} className="data-table-row">
                 <TableCell className="data-table-cell">
-                  <Badge className="rounded-md bg-brand-blue/25 px-2 py-1 text-sm font-medium text-brand-blue hover:bg-brand-blue/25">
-                    {courseShortname}
-                  </Badge>
+                  <Badge className="course-code-badge">{courseShortname}</Badge>
                 </TableCell>
                 <TableCell className="data-table-cell font-medium whitespace-normal">
                   {courseFullname}

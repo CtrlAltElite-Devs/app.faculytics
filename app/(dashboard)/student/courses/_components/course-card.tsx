@@ -58,9 +58,7 @@ export default function CourseCard({
         />
       </div>
       <CardContent className="flex h-full flex-col gap-3 p-3 sm:gap-4 sm:p-4">
-        <Badge className="self-start rounded-md bg-brand-blue/25 px-2 py-1 text-sm font-medium text-brand-blue hover:bg-brand-blue/25">
-          {decodedShortname}
-        </Badge>
+        <Badge className="course-code-badge self-start">{decodedShortname}</Badge>
         <div className="flex items-center gap-2">
           <h2 className={`font-playfair leading-snug text-foreground ${titleSizeClass} `}>
             {decodedFullname}
