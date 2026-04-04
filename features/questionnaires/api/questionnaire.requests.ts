@@ -154,6 +154,23 @@ export async function createQuestionnaireVersion({
 }
 
 /**
+ * Create a new draft version by copying the schema from an existing version.
+ */
+export async function createVersionFromTemplate({
+  questionnaireId,
+  sourceVersionId,
+}: {
+  questionnaireId: string;
+  sourceVersionId: string;
+}) {
+  const response = await apiClient.post<QuestionnaireVersionDetail>(
+    Endpoints.questionnaireVersionFromTemplate.replace(":id", questionnaireId),
+    { sourceVersionId }
+  );
+  return response.data;
+}
+
+/**
  * Update an existing draft questionnaire version.
  */
 export async function updateQuestionnaireVersion({
