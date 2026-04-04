@@ -76,7 +76,6 @@ export function useDeanDashboardViewModel() {
       neutralCount: 0,
     },
     overallSentiment: dashboardViewModel?.overallSentiment ?? [],
-    coveragePercentage: dashboardViewModel?.coveragePercentage ?? 0,
     attentionItems: attentionQuery.data?.items ?? [],
     overview: overviewQuery.data ?? null,
     isAttentionLoading: Boolean(selectedSemesterId) && attentionQuery.isLoading,

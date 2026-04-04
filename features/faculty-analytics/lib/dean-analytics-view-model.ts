@@ -28,13 +28,6 @@ export type DeanOverallSentimentDatum = {
   color: string;
 };
 
-export type DeanSemesterSentimentDatum = {
-  sentiment: string;
-  firstSemester: number;
-  secondSemester: number;
-  summerSemester: number;
-};
-
 export type DeanDashboardViewModel = {
   semesters: DeanSemesterOption[];
   selectedSemesterId: string | null;
@@ -42,7 +35,6 @@ export type DeanDashboardViewModel = {
   lastUpdatedLabel: string;
   summary: DeanSummaryMetrics;
   overallSentiment: DeanOverallSentimentDatum[];
-  coveragePercentage: number;
 };
 
 export type DeanFacultyAnalysisDetailViewModel = {
@@ -114,12 +106,6 @@ export function mapDepartmentOverviewToDashboardViewModel({
         color: "#facc15",
       },
     ],
-    coveragePercentage:
-      overview.summary.totalFaculty > 0
-        ? Number(
-            ((overview.summary.totalAnalyzed / overview.summary.totalFaculty) * 100).toFixed(1)
-          )
-        : 0,
   };
 }
 
