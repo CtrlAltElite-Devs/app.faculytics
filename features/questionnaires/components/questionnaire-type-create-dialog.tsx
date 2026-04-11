@@ -57,7 +57,7 @@ export function QuestionnaireTypeCreateDialog({
       toast.error(
         resolveCreateQuestionnaireTypeManagementErrorMessage(
           error,
-          "Unable to create questionnaire type."
+          "The questionnaire type could not be created."
         )
       );
     }
@@ -75,9 +75,9 @@ export function QuestionnaireTypeCreateDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Questionnaire Type</DialogTitle>
+          <DialogTitle>Create questionnaire type</DialogTitle>
           <DialogDescription>
-            Add a custom questionnaire type for Super Admin management.
+            Add a custom questionnaire type for questionnaire creation and version management.
           </DialogDescription>
         </DialogHeader>
 
@@ -159,7 +159,7 @@ export function QuestionnaireTypeCreateDialog({
                   Creating...
                 </>
               ) : (
-                "Create"
+                "Create type"
               )}
             </Button>
           </DialogFooter>
