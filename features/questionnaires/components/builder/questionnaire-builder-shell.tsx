@@ -59,7 +59,7 @@ export function QuestionnaireBuilderShell({
   } = useQuestionnaireBuilderController({ activeType });
 
   if (!isHydrated || !draft || !previewModel) {
-    return <Card className="p-6 text-sm text-muted-foreground">Loading builder draft...</Card>;
+    return <Card className="p-6 text-sm text-muted-foreground">Loading the current draft...</Card>;
   }
 
   const hasExistingQuestionnaire = Boolean(draft.metadata.questionnaireId);
@@ -85,8 +85,8 @@ export function QuestionnaireBuilderShell({
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs text-muted-foreground">
                   {hasExistingQuestionnaire
-                    ? "Questionnaire Title"
-                    : "Set the questionnaire title before creating the first draft version."}
+                    ? "Questionnaire title"
+                    : "Add a questionnaire title before creating the first saved draft."}
                 </p>
                 {statusBadge ? <div className="shrink-0 xl:hidden">{statusBadge}</div> : null}
               </div>
@@ -214,7 +214,7 @@ export function QuestionnaireBuilderShell({
         open={discardDialogOpen}
         onOpenChange={setDiscardDialogOpen}
         title="Discard unsaved changes?"
-        description="This discards changes that have not been saved to the backend and restores the last synced draft state for this questionnaire type."
+        description="This will discard unsaved changes and restore the last saved draft for this questionnaire type."
         cancelLabel="Keep editing"
         confirmLabel="Discard changes"
         confirmVariant="destructive"
@@ -235,7 +235,7 @@ export function QuestionnaireBuilderShell({
                 pendingConversionState.questionCount === 1 ? "" : "s"
               } will be removed.`
             : ""
-        }${pendingConversionState.hasWeight ? " This section weight will also be cleared." : ""}`}
+        }${pendingConversionState.hasWeight ? " The section weight will also be cleared." : ""}`}
         cancelLabel="Cancel"
         confirmLabel="Convert section"
         onConfirm={handleConfirmParentConversion}
@@ -245,7 +245,7 @@ export function QuestionnaireBuilderShell({
         open={saveDialogOpen}
         onOpenChange={setSaveDialogOpen}
         title="Questionnaire draft saved"
-        description="Your changes were saved successfully. You can keep editing here or go back to the questionnaire list."
+        description="Your changes were saved. You can keep editing here or return to the questionnaire list."
         cancelLabel="Keep editing"
         confirmLabel="Go back to questionnaires"
         onConfirm={() => {
