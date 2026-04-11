@@ -16,7 +16,7 @@ export function useAuthSessionState() {
   const hydrated = useAuthStore((state) => state.hydrated);
   const token = useAuthStore((state) => state.token);
   const activeRoleState = useActiveRole();
-  const { me, activeRole, roleHome, isPending, isError, roles } = activeRoleState;
+  const { me, activeRole, roleHome, isPending, isError } = activeRoleState;
 
   let status: AuthSessionStatus;
 
@@ -39,8 +39,6 @@ export function useAuthSessionState() {
   return {
     ...activeRoleState,
     hydrated,
-    token,
-    roles,
     status,
   };
 }

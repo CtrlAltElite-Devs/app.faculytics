@@ -6,7 +6,6 @@ import type { AppRole } from "@/constants/roles";
 type AuthStore = {
   token: string | null;
   refreshToken: string | null;
-  isAuthenticated: boolean;
   hydrated: boolean;
   activeRole: AppRole | null;
   pendingRedirectPath: string | null;
@@ -22,7 +21,6 @@ export const useAuthStore = create<AuthStore>()(
     (set) => ({
       token: null,
       refreshToken: null,
-      isAuthenticated: false,
       hydrated: false,
       activeRole: null,
       pendingRedirectPath: null,
@@ -32,7 +30,6 @@ export const useAuthStore = create<AuthStore>()(
         set({
           token,
           refreshToken,
-          isAuthenticated: Boolean(token),
           hydrated: true,
         }),
       setActiveRole: (activeRole) => set({ activeRole }),
@@ -41,7 +38,6 @@ export const useAuthStore = create<AuthStore>()(
         set({
           token: null,
           refreshToken: null,
-          isAuthenticated: false,
           hydrated: true,
           activeRole: null,
           pendingRedirectPath: null,
@@ -53,7 +49,6 @@ export const useAuthStore = create<AuthStore>()(
       partialize: (state) => ({
         token: state.token,
         refreshToken: state.refreshToken,
-        isAuthenticated: state.isAuthenticated,
         activeRole: state.activeRole,
       }),
       onRehydrateStorage: () => (state) => {
