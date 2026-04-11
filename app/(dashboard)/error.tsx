@@ -19,13 +19,13 @@ export default function DashboardError({ error, reset }: ErrorBoundaryProps) {
     <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
       <AlertCircle className="text-destructive size-10" />
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold">Something went wrong</h2>
+        <h2 className="text-lg font-semibold">This page could not be loaded</h2>
         <p className="text-muted-foreground text-sm">
-          An unexpected error occurred. Please try again.
+          Something interrupted the request. Try loading the page again.
         </p>
       </div>
       <Button variant="outline" onClick={reset}>
-        Try again
+        Reload page
       </Button>
     </div>
   );
