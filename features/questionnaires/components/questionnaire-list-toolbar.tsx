@@ -98,9 +98,11 @@ export function QuestionnaireListToolbar({
         },
         onError: (error) => {
           if (isAxiosErrorWithStatus(error, 409)) {
-            toast.error("A draft already exists — edit it or deprecate it first.");
+            toast.error(
+              "A draft already exists for this questionnaire type. Open it or deprecate it first."
+            );
           } else {
-            toast.error("Failed to create version from template.");
+            toast.error("The draft could not be created from the selected version.");
           }
         },
       }
@@ -175,9 +177,9 @@ export function QuestionnaireListToolbar({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create new draft</DialogTitle>
+            <DialogTitle>Create a draft</DialogTitle>
             <DialogDescription>
-              Start from scratch or use a previous version as a template.
+              Start a new draft from scratch or copy an existing version as a starting point.
             </DialogDescription>
           </DialogHeader>
 
@@ -202,6 +204,7 @@ export function QuestionnaireListToolbar({
             {choice === "template" && (
               <div className="space-y-2">
                 <Label htmlFor="template-version-select">Select version</Label>
+
                 <select
                   id="template-version-select"
                   value={selectedVersionId}

@@ -39,11 +39,11 @@ export default function QuestionnaireVersionPreviewPage() {
     return (
       <QuestionnairePreviewShell
         title="Loading preview"
-        description="Preparing the questionnaire preview."
+        description="Preparing the selected questionnaire version for preview."
         backHref="/superadmin/questionnaires"
         backLabel="Back to questionnaires"
       >
-        <QuestionnairePreviewLoadingCard message="Loading questionnaire preview..." />
+        <QuestionnairePreviewLoadingCard message="Loading the questionnaire preview..." />
       </QuestionnairePreviewShell>
     );
   }
@@ -52,13 +52,13 @@ export default function QuestionnaireVersionPreviewPage() {
     return (
       <QuestionnairePreviewShell
         title="Preview unavailable"
-        description="The requested questionnaire version could not be loaded."
+        description="The selected questionnaire version could not be loaded."
         backHref="/superadmin/questionnaires"
         backLabel="Back to questionnaires"
       >
         <QuestionnairePreviewStateCard
           title="Preview unavailable"
-          description="The requested questionnaire version could not be loaded."
+          description="The selected questionnaire version could not be loaded."
         />
       </QuestionnairePreviewShell>
     );
@@ -73,7 +73,7 @@ export default function QuestionnaireVersionPreviewPage() {
   return (
     <QuestionnairePreviewShell
       title={model.title}
-      description="Questionnaire preview. Review the structure, sections, and prompts before publishing."
+      description="Review the questionnaire structure, sections, and prompts before publishing."
       backHref="/superadmin/questionnaires"
       backLabel="Back to questionnaires"
     >
