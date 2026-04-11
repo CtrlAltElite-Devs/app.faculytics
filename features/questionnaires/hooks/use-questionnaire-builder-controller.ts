@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { useBuilderUiState } from "@/features/questionnaires/hooks/use-builder-ui-state";
@@ -69,10 +69,16 @@ export function useQuestionnaireBuilderController({
   }, [draft?.selectedSectionId, pendingScrollToSection, clearPendingScrollToSection]);
 
   // Always compute live — used for totalLeafWeight, and for error display after first save attempt.
-  const liveValidation = draft ? validateQuestionnaireBuilderDraft(draft) : null;
+  const liveValidation = useMemo(
+    () => (draft ? validateQuestionnaireBuilderDraft(draft) : null),
+    [draft]
+  );
   const validation = hasAttemptedSave ? liveValidation : null;
 
-  const previewModel = draft ? buildQuestionnairePreviewModel(draft) : null;
+  const previewModel = useMemo(
+    () => (draft ? buildQuestionnairePreviewModel(draft) : null),
+    [draft]
+  );
   const isDirty = hasUnsavedChanges();
   const isSaved = !isDirty && Boolean(draft?.metadata.versionId);
   const pendingConversionState = canConvertSectionToParent(
@@ -117,9 +123,9 @@ export function useQuestionnaireBuilderController({
   const handleSave = async () => {
     if (draft) {
       setHasAttemptedSave(true);
-      const result = validateQuestionnaireBuilderDraft(draft);
+      const result = liveValidation;
 
-      if (!result.isValid) return;
+      if (result && !result.isValid) return;
     }
 
     const result = await save();

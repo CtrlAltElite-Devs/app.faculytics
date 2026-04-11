@@ -1,28 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import { useQuestionnaireTypeResolution } from "@/features/questionnaires/hooks/use-questionnaire-type-resolution";
 import {
   useQuestionnaireVersion,
   useQuestionnaireVersions,
 } from "@/features/questionnaires/hooks/use-questionnaire-versions";
-import {
-  buildQuestionnaireTypeOptions,
-  resolveActiveQuestionnaireType,
-} from "@/features/questionnaires/lib/questionnaire-type-options";
 import { normalizeTypeSearchParam } from "@/features/questionnaires/lib/questionnaire-type-routing";
 import { useQuestionnaireBuilderStore } from "@/features/questionnaires/store/questionnaire-builder-store";
-import { resolveQuestionnaireType } from "@/features/questionnaires/types";
 
 export function useQuestionnairePageState() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
-  const requestedType = resolveQuestionnaireType(searchParams.get("type"));
+  const {
+    searchParams,
+    questionnaireTypesQuery,
+    requestedType,
+    requestedTypeUnavailable,
+    availableTypes,
+    activeType: activePageType,
+    activeTypeSummary,
+    activeTypeId,
+  } = useQuestionnaireTypeResolution();
   const requestedVersionId = searchParams.get("versionId");
-  const questionnaireTypesQuery = useQuestionnaireTypes();
   const hydrated = useQuestionnaireBuilderStore((state) => state.hydrated);
   const activeType = useQuestionnaireBuilderStore((state) => state.activeType);
   const loadDraftFromServer = useQuestionnaireBuilderStore((state) => state.loadDraftFromServer);
@@ -30,28 +32,9 @@ export function useQuestionnairePageState() {
   const setActiveType = useQuestionnaireBuilderStore((state) => state.setActiveType);
   const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
   const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
-
-  const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const availableTypeOptions = buildQuestionnaireTypeOptions(typeSummaries);
-  const availableTypes = availableTypeOptions.map((summary) => summary.code);
-  const fetchedCodes = typeSummaries.map((summary) => summary.code);
-  const requestedTypeUnavailable =
-    questionnaireTypesQuery.isSuccess &&
-    fetchedCodes.length > 0 &&
-    !fetchedCodes.includes(requestedType);
-  const activePageType = resolveActiveQuestionnaireType({
-    requestedType,
-    availableTypeOptions,
-    isResolved: questionnaireTypesQuery.isSuccess,
-  });
-  const activeTypeSummary =
-    availableTypeOptions.find((summary) => summary.code === activePageType) ?? null;
   const currentDraft = useQuestionnaireBuilderStore(
     (state) => state.drafts[activePageType] ?? null
   );
-
-  // Resolve code → UUID for the API call
-  const activeTypeId = typeSummaries.find((summary) => summary.code === activePageType)?.id ?? null;
 
   const questionnaireVersionsQuery = useQuestionnaireVersions(activeTypeId, {
     enabled:
