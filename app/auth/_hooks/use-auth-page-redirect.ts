@@ -3,21 +3,17 @@
 import { startTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import type { AuthSessionStatus } from "@/features/auth/hooks/use-auth-session-state";
+
 type UseAuthPageRedirectParams = {
-  token: string | null;
-  isMePending: boolean;
-  isMeError: boolean;
-  hasProfile: boolean;
+  status: AuthSessionStatus;
   roleHome: string | null;
   clearSession: () => void;
   setUnsupportedRoleMessage: (message: string | null) => void;
 };
 
 export function useAuthPageRedirect({
-  token,
-  isMePending,
-  isMeError,
-  hasProfile,
+  status,
   roleHome,
   clearSession,
   setUnsupportedRoleMessage,
@@ -25,14 +21,16 @@ export function useAuthPageRedirect({
   const router = useRouter();
 
   useEffect(() => {
-    if (!token || isMePending) return;
+    if (status === "signed-out" || status === "hydrating" || status === "loading-profile") {
+      return;
+    }
 
-    if (isMeError) {
+    if (status === "invalid-session") {
       clearSession();
       return;
     }
 
-    if (roleHome) {
+    if (status === "authenticated" && roleHome) {
       startTransition(() => {
         setUnsupportedRoleMessage(null);
       });
@@ -40,7 +38,7 @@ export function useAuthPageRedirect({
       return;
     }
 
-    if (hasProfile) {
+    if (status === "unsupported-role") {
       startTransition(() => {
         setUnsupportedRoleMessage(
           "Your account does not have a supported role for Faculytics yet. Contact your administrator."
@@ -48,14 +46,5 @@ export function useAuthPageRedirect({
       });
       clearSession();
     }
-  }, [
-    clearSession,
-    hasProfile,
-    isMeError,
-    isMePending,
-    roleHome,
-    router,
-    setUnsupportedRoleMessage,
-    token,
-  ]);
+  }, [clearSession, roleHome, router, setUnsupportedRoleMessage, status]);
 }

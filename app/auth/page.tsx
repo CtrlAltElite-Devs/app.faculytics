@@ -5,8 +5,7 @@ import { useState } from "react";
 import { AppBrand } from "@/components/layout/app-brand";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
-import { useActiveRole } from "@/features/auth/hooks/use-active-role";
-import { useMe } from "@/features/auth/hooks/use-me";
+import { useAuthSessionState } from "@/features/auth/hooks/use-auth-session-state";
 import { branding } from "@/constants/branding";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -14,18 +13,13 @@ import { AuthLoginForm } from "./_components/auth-login-form";
 import { useAuthPageRedirect } from "./_hooks/use-auth-page-redirect";
 
 export default function AuthPage() {
-  const { data: me, isPending: isMePending, isError: isMeError } = useMe();
-  const { roleHome } = useActiveRole();
+  const { roleHome, status } = useAuthSessionState();
   const clearSession = useAuthStore((state) => state.clearSession);
-  const token = useAuthStore((state) => state.token);
   const [unsupportedRoleMessage, setUnsupportedRoleMessage] = useState<string | null>(null);
-  const isAuthenticating = Boolean(token) && isMePending;
+  const isAuthenticating = status === "loading-profile";
 
   useAuthPageRedirect({
-    token,
-    isMePending,
-    isMeError,
-    hasProfile: Boolean(me),
+    status,
     roleHome,
     clearSession,
     setUnsupportedRoleMessage,
