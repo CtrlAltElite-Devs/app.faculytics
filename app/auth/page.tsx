@@ -1,7 +1,6 @@
 "use client";
 
-import { startTransition, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { AppBrand } from "@/components/layout/app-brand";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -12,42 +11,25 @@ import { branding } from "@/constants/branding";
 import { useAuthStore } from "@/stores/auth-store";
 
 import { AuthLoginForm } from "./_components/auth-login-form";
+import { useAuthPageRedirect } from "./_hooks/use-auth-page-redirect";
 
 export default function AuthPage() {
-  const router = useRouter();
   const { data: me, isPending: isMePending, isError: isMeError } = useMe();
   const { roleHome } = useActiveRole();
   const clearSession = useAuthStore((state) => state.clearSession);
   const token = useAuthStore((state) => state.token);
   const [unsupportedRoleMessage, setUnsupportedRoleMessage] = useState<string | null>(null);
   const isAuthenticating = Boolean(token) && isMePending;
-  const statusMessage = unsupportedRoleMessage;
 
-  useEffect(() => {
-    if (!token || isMePending) return;
-
-    if (isMeError) {
-      clearSession();
-      return;
-    }
-
-    if (roleHome) {
-      startTransition(() => {
-        setUnsupportedRoleMessage(null);
-      });
-      router.replace(roleHome);
-      return;
-    }
-
-    if (me) {
-      startTransition(() => {
-        setUnsupportedRoleMessage(
-          "Your account does not have a supported role for this app yet. Contact your administrator."
-        );
-      });
-      clearSession();
-    }
-  }, [clearSession, isMeError, isMePending, me, roleHome, router, token]);
+  useAuthPageRedirect({
+    token,
+    isMePending,
+    isMeError,
+    hasProfile: Boolean(me),
+    roleHome,
+    clearSession,
+    setUnsupportedRoleMessage,
+  });
 
   return (
     <div className="grid h-screen grid-cols-1 lg:grid-cols-10">
@@ -67,11 +49,10 @@ export default function AuthPage() {
           <div className="pointer-events-none absolute inset-0 z-50 flex flex-col justify-end p-16 text-white">
             <div className="mb-16 space-y-6">
               <h1 className="text-5xl font-playfair font-semibold leading-tight">
-                Data-driven decisions for better education
+                Faculty evaluation insights for academic teams
               </h1>
               <p className="max-w-lg text-xl font-medium opacity-90">
-                Powered by artificial intelligence to deliver real-time insights and smart
-                recommendations.
+                Track feedback, monitor teaching trends, and support better academic decisions.
               </p>
             </div>
             <div className="text-sm opacity-70">{branding.APP_COPYRIGHT}</div>
@@ -91,7 +72,10 @@ export default function AuthPage() {
         </div>
 
         <div className="flex grow items-center justify-center px-6 sm:px-10 lg:px-12">
-          <AuthLoginForm isAuthenticating={isAuthenticating} statusMessage={statusMessage} />
+          <AuthLoginForm
+            isAuthenticating={isAuthenticating}
+            statusMessage={unsupportedRoleMessage}
+          />
         </div>
       </div>
     </div>

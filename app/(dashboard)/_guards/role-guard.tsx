@@ -17,8 +17,8 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const clearSession = useAuthStore((state) => state.clearSession);
-  const pendingRoleHome = useAuthStore((state) => state.pendingRoleHome);
-  const setPendingRoleHome = useAuthStore((state) => state.setPendingRoleHome);
+  const pendingRedirectPath = useAuthStore((state) => state.pendingRedirectPath);
+  const setPendingRedirectPath = useAuthStore((state) => state.setPendingRedirectPath);
   const {
     activeRole,
     roleHome,
@@ -32,9 +32,9 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   useEffect(() => {
     if (isMePending) return;
 
-    if (pendingRoleHome && roleHome === pendingRoleHome) {
-      if (pathname === pendingRoleHome) {
-        setPendingRoleHome(null);
+    if (pendingRedirectPath && roleHome === pendingRedirectPath) {
+      if (pathname === pendingRedirectPath) {
+        setPendingRedirectPath(null);
       }
 
       return;
@@ -67,10 +67,10 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
     isMeError,
     isMePending,
     pathname,
-    pendingRoleHome,
+    pendingRedirectPath,
     roleHome,
     router,
-    setPendingRoleHome,
+    setPendingRedirectPath,
   ]);
 
   if (isMePending || !roleHome) {
