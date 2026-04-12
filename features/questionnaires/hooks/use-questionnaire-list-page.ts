@@ -73,7 +73,7 @@ export function useQuestionnaireListPage() {
   };
 
   const handleViewVersion = (row: QuestionnaireVersionItem) => {
-    router.push(`/superadmin/questionnaires/preview?versionId=${row.id}`);
+    router.push(`/superadmin/questionnaires/preview?type=${activeType}&versionId=${row.id}`);
   };
 
   const isVersionActionPending =
