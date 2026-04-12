@@ -1,12 +1,12 @@
 import { FacultyCard } from "@/features/faculty-evaluation/components/faculty-card";
 import type {
+  FacultyEvaluationListItem,
   FacultyEvaluationRoleContext,
-  FacultyEvaluationRow,
 } from "@/features/faculty-evaluation/types";
 import type { QuestionnaireTypeSummary } from "@/features/questionnaires/types";
 
 type FacultyGridProps = {
-  facultyRows: FacultyEvaluationRow[];
+  facultyRows: FacultyEvaluationListItem[];
   role: FacultyEvaluationRoleContext;
   semesterId: string;
   semesterLabel: string;

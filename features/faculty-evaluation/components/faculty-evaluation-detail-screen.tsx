@@ -14,6 +14,21 @@ type FacultyEvaluationDetailScreenProps = {
   facultyId: string;
 };
 
+function getSelectedQuestionnaireTypeName(
+  detailResult: ReturnType<typeof useFacultyEvaluationDetail>,
+  selectedTypeId: string | null
+) {
+  if (detailResult.status === "ready") {
+    return detailResult.data.selectedType.name;
+  }
+
+  if (!selectedTypeId) {
+    return undefined;
+  }
+
+  return detailResult.availableTypes.find((type) => type.id === selectedTypeId)?.name;
+}
+
 export function FacultyEvaluationDetailScreen({
   role,
   facultyId,
@@ -33,20 +48,7 @@ export function FacultyEvaluationDetailScreen({
   const returnHref = semesterId
     ? `${role.rolePath}/evaluation?semesterId=${semesterId}`
     : `${role.rolePath}/evaluation`;
-
-  const typeOptions =
-    detailResult.status === "ready"
-      ? detailResult.data.availableTypes
-      : detailResult.availableTypes;
-  const selectedTypeName =
-    typeOptions.find(
-      (type) =>
-        type.id ===
-        (selectedTypeId ??
-          (detailResult.status === "ready"
-            ? detailResult.data.selectedTypeId
-            : detailResult.selectedTypeId))
-    )?.name ?? undefined;
+  const selectedTypeName = getSelectedQuestionnaireTypeName(detailResult, selectedTypeId);
 
   if (detailResult.status === "ready") {
     return (

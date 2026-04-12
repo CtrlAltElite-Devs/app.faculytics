@@ -6,14 +6,16 @@ import { DimensionTable } from "@/features/dimensions/components/dimension-table
 import {
   DimensionToolbar,
   type DimensionStatusFilter,
-  type TypeFilter,
 } from "@/features/dimensions/components/dimension-toolbar";
 import type { Dimension, DimensionsListMeta } from "@/features/dimensions/types";
-import type { QuestionnaireTypeSummary } from "@/features/questionnaires/types";
+import type {
+  QuestionnaireTypeCode,
+  QuestionnaireTypeSummary,
+} from "@/features/questionnaires/types";
 
 type DimensionListScreenProps = {
   typeOptions: QuestionnaireTypeSummary[];
-  typeFilter: TypeFilter;
+  typeFilter: QuestionnaireTypeCode;
   statusFilter: DimensionStatusFilter;
   searchValue: string;
   currentPage: number;
@@ -23,7 +25,7 @@ type DimensionListScreenProps = {
   isLoading: boolean;
   isError: boolean;
   disableActions: boolean;
-  onTypeFilterChange: (value: TypeFilter) => void;
+  onTypeFilterChange: (value: QuestionnaireTypeCode) => void;
   onStatusFilterChange: (value: DimensionStatusFilter) => void;
   onSearchChange: (value: string) => void;
   onClearFilters: () => void;

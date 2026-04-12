@@ -4,13 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { EvaluateActionMenu } from "@/features/faculty-evaluation/components/evaluate-action-menu";
 import type {
+  FacultyEvaluationListItem,
   FacultyEvaluationRoleContext,
-  FacultyEvaluationRow,
 } from "@/features/faculty-evaluation/types";
 import type { QuestionnaireTypeSummary } from "@/features/questionnaires/types";
 
 type FacultyCardProps = {
-  faculty: FacultyEvaluationRow;
+  faculty: FacultyEvaluationListItem;
   role: FacultyEvaluationRoleContext;
   semesterId: string;
   semesterLabel: string;

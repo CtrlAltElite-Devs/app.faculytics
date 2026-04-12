@@ -4,10 +4,7 @@ import { useState } from "react";
 import { ChevronUp } from "lucide-react";
 import Link from "next/link";
 
-import type {
-  DeanFacultyAnalysisRecord,
-  FacultyAnalysisSemesterKey,
-} from "@/features/faculty-analytics";
+import type { DeanFacultyAnalysisRecord, SemesterKey } from "@/features/faculty-analytics";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -19,8 +16,7 @@ import { FacultyAnalysisRemarksList, FacultyAnalysisSummary } from "./faculty-an
 import { FacultyAnalysisToolbar } from "./faculty-analysis-toolbar";
 
 export function FacultyAnalysisScreen({ faculty }: { faculty: DeanFacultyAnalysisRecord }) {
-  const [selectedSemester, setSelectedSemester] =
-    useState<FacultyAnalysisSemesterKey>("firstSemester");
+  const [selectedSemester, setSelectedSemester] = useState<SemesterKey>("firstSemester");
 
   return (
     <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">

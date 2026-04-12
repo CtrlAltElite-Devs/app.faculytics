@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { buildFacultyEvaluationHref } from "@/features/faculty-evaluation/lib/faculty-evaluation-routes";
 import type { FacultyEvaluationRoleContext } from "@/features/faculty-evaluation/types";
 import type { QuestionnaireTypeSummary } from "@/features/questionnaires/types";
 
@@ -36,14 +37,16 @@ export function EvaluateActionMenu({
   const router = useRouter();
 
   const handleSelect = (typeId: string) => {
-    const params = new URLSearchParams({
+    const href = buildFacultyEvaluationHref({
+      role,
+      facultyId,
       facultyName,
       semesterId,
       semesterLabel,
       typeId,
     });
 
-    router.push(`${role.rolePath}/evaluation/${facultyId}?${params.toString()}`);
+    router.push(href);
   };
 
   return (

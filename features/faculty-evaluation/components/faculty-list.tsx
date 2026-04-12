@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/table";
 import { EvaluateActionMenu } from "@/features/faculty-evaluation/components/evaluate-action-menu";
 import type {
+  FacultyEvaluationListItem,
   FacultyEvaluationRoleContext,
-  FacultyEvaluationRow,
 } from "@/features/faculty-evaluation/types";
 import type { QuestionnaireTypeSummary } from "@/features/questionnaires/types";
 
 type FacultyListProps = {
-  facultyRows: FacultyEvaluationRow[];
+  facultyRows: FacultyEvaluationListItem[];
   role: FacultyEvaluationRoleContext;
   semesterId: string;
   semesterLabel: string;

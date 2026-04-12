@@ -33,13 +33,6 @@ export type FacultyEvaluationListResponse = {
   meta: FacultyEvaluationListMeta;
 };
 
-export type FacultyEvaluationRow = {
-  id: string;
-  fullName: string;
-  profilePicture: string | null;
-  subjects: string[];
-};
-
 export type FacultyEvaluationRoleContext = {
   roleLabel: "Dean" | "Chairperson";
   rolePath: "/dean" | "/chairperson";

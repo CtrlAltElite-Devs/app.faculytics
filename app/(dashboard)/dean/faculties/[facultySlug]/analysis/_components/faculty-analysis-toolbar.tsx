@@ -3,7 +3,7 @@
 import { ChevronDown, Upload } from "lucide-react";
 import { useId, useState } from "react";
 
-import type { FacultyAnalysisSemesterKey } from "@/features/faculty-analytics";
+import type { SemesterKey } from "@/features/faculty-analytics";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const semesterLabels: Record<FacultyAnalysisSemesterKey, string> = {
+const semesterLabels: Record<SemesterKey, string> = {
   firstSemester: "First Semester",
   secondSemester: "Second Semester",
   summerSemester: "Summer",
@@ -32,8 +32,8 @@ export function FacultyAnalysisToolbar({
   selectedSemester,
   onSemesterChange,
 }: {
-  selectedSemester: FacultyAnalysisSemesterKey;
-  onSemesterChange: (semester: FacultyAnalysisSemesterKey) => void;
+  selectedSemester: SemesterKey;
+  onSemesterChange: (semester: SemesterKey) => void;
 }) {
   const fileInputId = useId();
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
@@ -55,9 +55,9 @@ export function FacultyAnalysisToolbar({
         <DropdownMenuContent align="end" className="min-w-44">
           <DropdownMenuRadioGroup
             value={selectedSemester}
-            onValueChange={(value) => onSemesterChange(value as FacultyAnalysisSemesterKey)}
+            onValueChange={(value) => onSemesterChange(value as SemesterKey)}
           >
-            {(Object.entries(semesterLabels) as Array<[FacultyAnalysisSemesterKey, string]>).map(
+            {(Object.entries(semesterLabels) as Array<[SemesterKey, string]>).map(
               ([value, label]) => (
                 <DropdownMenuRadioItem key={value} value={value} className="font-sans text-sm">
                   {label}
