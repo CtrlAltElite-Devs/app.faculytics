@@ -1,6 +1,5 @@
 "use client";
 
-import type { AxiosError } from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
@@ -25,6 +24,7 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useCreateDimension } from "@/features/dimensions/hooks/use-create-dimension";
+import { resolveCreateDimensionErrorMessage } from "@/features/dimensions/lib/action-errors";
 import {
   createDimensionSchema,
   type CreateDimensionFormValues,
@@ -61,10 +61,7 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
       form.reset();
       onOpenChange(false);
     } catch (error) {
-      const message =
-        (error as AxiosError<{ message: string }>)?.response?.data?.message ??
-        "Unable to create dimension.";
-      toast.error(message);
+      toast.error(resolveCreateDimensionErrorMessage(error, "The dimension could not be created."));
     }
   };
 
@@ -80,9 +77,9 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Dimension</DialogTitle>
+          <DialogTitle>Create dimension</DialogTitle>
           <DialogDescription>
-            Add a new dimension code for questionnaire sections.
+            Add a dimension code and assign it to the questionnaire type where it should be used.
           </DialogDescription>
         </DialogHeader>
 
@@ -96,7 +93,7 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
                   <FieldLabel>Display Name</FieldLabel>
                   <Input
                     {...field}
-                    placeholder="e.g. Classroom Management"
+                    placeholder="e.g. Classroom management"
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.error?.message ? (
@@ -123,7 +120,7 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
                         {field.value
                           ? (typeSummaries.find((t) => t.id === field.value)?.name ??
                             "Unknown type")
-                          : "Select a type"}
+                          : "Select a questionnaire type"}
                         <ChevronDown className="size-4 text-muted-foreground" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -187,7 +184,7 @@ export function DimensionCreateDialog({ open, onOpenChange }: DimensionCreateDia
                   Creating...
                 </>
               ) : (
-                "Create"
+                "Create dimension"
               )}
             </Button>
           </DialogFooter>

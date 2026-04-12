@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { MAX_SECTION_NESTING_LEVEL } from "@/features/questionnaires/constants/builder";
 import { useBuilderUiState } from "@/features/questionnaires/hooks/use-builder-ui-state";
@@ -22,20 +23,39 @@ type UseQuestionnaireBuilderControllerOptions = {
 export function useQuestionnaireBuilderController({
   activeType,
 }: UseQuestionnaireBuilderControllerOptions) {
-  const draft = useQuestionnaireBuilderStore((state) => state.drafts[activeType] ?? null);
-  const updateTitle = useQuestionnaireBuilderStore((state) => state.updateTitle);
-  const selectSection = useQuestionnaireBuilderStore((state) => state.selectSection);
-  const addRootSection = useQuestionnaireBuilderStore((state) => state.addRootSection);
-  const addChildSection = useQuestionnaireBuilderStore((state) => state.addChildSection);
-  const updateSection = useQuestionnaireBuilderStore((state) => state.updateSection);
-  const removeSection = useQuestionnaireBuilderStore((state) => state.removeSection);
-  const moveSection = useQuestionnaireBuilderStore((state) => state.moveSection);
-  const addQuestion = useQuestionnaireBuilderStore((state) => state.addQuestion);
-  const updateQuestion = useQuestionnaireBuilderStore((state) => state.updateQuestion);
-  const removeQuestion = useQuestionnaireBuilderStore((state) => state.removeQuestion);
-  const updateQualitative = useQuestionnaireBuilderStore((state) => state.updateQualitative);
-  const resetActiveDraft = useQuestionnaireBuilderStore((state) => state.resetActiveDraft);
-  const hasUnsavedChanges = useQuestionnaireBuilderStore((state) => state.hasUnsavedChanges);
+  const {
+    draft,
+    updateTitle,
+    selectSection,
+    addRootSection,
+    addChildSection,
+    updateSection,
+    removeSection,
+    moveSection,
+    addQuestion,
+    updateQuestion,
+    removeQuestion,
+    updateQualitative,
+    resetActiveDraft,
+    hasUnsavedChanges,
+  } = useQuestionnaireBuilderStore(
+    useShallow((state) => ({
+      draft: state.drafts[activeType] ?? null,
+      updateTitle: state.updateTitle,
+      selectSection: state.selectSection,
+      addRootSection: state.addRootSection,
+      addChildSection: state.addChildSection,
+      updateSection: state.updateSection,
+      removeSection: state.removeSection,
+      moveSection: state.moveSection,
+      addQuestion: state.addQuestion,
+      updateQuestion: state.updateQuestion,
+      removeQuestion: state.removeQuestion,
+      updateQualitative: state.updateQualitative,
+      resetActiveDraft: state.resetActiveDraft,
+      hasUnsavedChanges: state.hasUnsavedChanges,
+    }))
+  );
   const { save, isPending } = useSaveQuestionnaireBuilder();
   const ui = useBuilderUiState();
 
@@ -69,10 +89,16 @@ export function useQuestionnaireBuilderController({
   }, [draft?.selectedSectionId, pendingScrollToSection, clearPendingScrollToSection]);
 
   // Always compute live — used for totalLeafWeight, and for error display after first save attempt.
-  const liveValidation = draft ? validateQuestionnaireBuilderDraft(draft) : null;
+  const liveValidation = useMemo(
+    () => (draft ? validateQuestionnaireBuilderDraft(draft) : null),
+    [draft]
+  );
   const validation = hasAttemptedSave ? liveValidation : null;
 
-  const previewModel = draft ? buildQuestionnairePreviewModel(draft) : null;
+  const previewModel = useMemo(
+    () => (draft ? buildQuestionnairePreviewModel(draft) : null),
+    [draft]
+  );
   const isDirty = hasUnsavedChanges();
   const isSaved = !isDirty && Boolean(draft?.metadata.versionId);
   const pendingConversionState = canConvertSectionToParent(
@@ -117,9 +143,9 @@ export function useQuestionnaireBuilderController({
   const handleSave = async () => {
     if (draft) {
       setHasAttemptedSave(true);
-      const result = validateQuestionnaireBuilderDraft(draft);
+      const result = liveValidation;
 
-      if (!result.isValid) return;
+      if (result && !result.isValid) return;
     }
 
     const result = await save();

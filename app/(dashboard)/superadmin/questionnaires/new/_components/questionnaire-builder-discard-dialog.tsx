@@ -16,7 +16,7 @@ export function QuestionnaireBuilderDiscardDialog({
       open={open}
       onOpenChange={onOpenChange}
       title="Discard unsaved changes?"
-      description="Going back to questionnaires will discard the unsaved changes in this builder."
+      description="Returning to the questionnaire list will discard any unsaved changes in this draft."
       cancelLabel="Keep editing"
       confirmLabel="Discard changes"
       confirmVariant="destructive"

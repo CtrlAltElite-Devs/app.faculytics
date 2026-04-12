@@ -19,3 +19,5 @@ export function useQuestionnaireTypes(options?: UseQuestionnaireTypesOptions) {
     queryFn: fetchQuestionnaireTypes,
   });
 }
+
+export type UseQuestionnaireTypesResult = ReturnType<typeof useQuestionnaireTypes>;

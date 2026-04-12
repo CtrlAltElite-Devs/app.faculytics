@@ -27,7 +27,9 @@ export function DimensionAsyncContent({
     return (
       <div className="flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed px-6 text-center">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
-        <p className="mt-3 text-sm text-muted-foreground">Loading dimensions...</p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Loading the dimensions for this questionnaire type...
+        </p>
       </div>
     );
   }
@@ -35,7 +37,9 @@ export function DimensionAsyncContent({
   if (isError) {
     return (
       <div className="flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed px-6 text-center">
-        <p className="max-w-xl text-sm text-muted-foreground">Unable to load dimensions.</p>
+        <p className="max-w-xl text-sm text-muted-foreground">
+          The dimensions could not be loaded right now.
+        </p>
         <Button type="button" variant="outline" className="mt-5" onClick={onRetry}>
           Retry
         </Button>

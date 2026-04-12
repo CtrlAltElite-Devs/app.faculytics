@@ -74,14 +74,14 @@ export function QuestionnaireTypeManagementToolbar({
           </DropdownMenu>
 
           <Button type="button" variant="brand" className="w-full min-w-0" onClick={onCreateClick}>
-            Create Type
+            Create type
           </Button>
         </div>
       </div>
 
       <div className="hidden items-center justify-end gap-3 lg:flex">
         <Button type="button" variant="brand" onClick={onCreateClick}>
-          Create Type
+          Create type
         </Button>
 
         <div className="relative w-full min-w-0 lg:w-2/5 lg:flex-none xl:w-1/5">

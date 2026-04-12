@@ -7,6 +7,7 @@ import { QuestionnaireRatingScaleInstructions } from "@/features/questionnaires/
 import { deserializeQuestionnaireVersionToDraft } from "@/features/questionnaires/lib/builder-deserializer";
 import { buildQuestionnairePreviewModel } from "@/features/questionnaires/lib/builder-serializer";
 import { useQuestionnaireVersion } from "@/features/questionnaires/hooks/use-questionnaire-versions";
+import { resolveQuestionnaireType } from "@/features/questionnaires/types";
 
 import { QuestionnairePreviewLoadingCard } from "../_components/questionnaire-preview-loading-card";
 import { QuestionnairePreviewShell } from "../_components/questionnaire-preview-shell";
@@ -15,18 +16,16 @@ import { QuestionnairePreviewStateCard } from "../_components/questionnaire-prev
 export default function QuestionnaireVersionPreviewPage() {
   const searchParams = useSearchParams();
   const versionId = searchParams.get("versionId");
+  const requestedType = resolveQuestionnaireType(searchParams.get("type"));
   const versionQuery = useQuestionnaireVersion(versionId, {
     enabled: Boolean(versionId),
   });
+  const resolvedType = versionQuery.data?.questionnaireType.code ?? requestedType;
+  const backHref = `/superadmin/questionnaires?type=${resolvedType}`;
 
   if (!versionId) {
     return (
-      <QuestionnairePreviewShell
-        title="Preview unavailable"
-        description="No questionnaire version was selected for preview."
-        backHref="/superadmin/questionnaires"
-        backLabel="Back to questionnaires"
-      >
+      <QuestionnairePreviewShell backHref={backHref} backLabel="Back to questionnaires">
         <QuestionnairePreviewStateCard
           title="Preview unavailable"
           description="No questionnaire version was selected for preview."
@@ -39,26 +38,21 @@ export default function QuestionnaireVersionPreviewPage() {
     return (
       <QuestionnairePreviewShell
         title="Loading preview"
-        description="Preparing the questionnaire preview."
-        backHref="/superadmin/questionnaires"
+        description="Preparing the selected questionnaire version for preview."
+        backHref={backHref}
         backLabel="Back to questionnaires"
       >
-        <QuestionnairePreviewLoadingCard message="Loading questionnaire preview..." />
+        <QuestionnairePreviewLoadingCard message="Loading the questionnaire preview..." />
       </QuestionnairePreviewShell>
     );
   }
 
   if (versionQuery.isError || !versionQuery.data) {
     return (
-      <QuestionnairePreviewShell
-        title="Preview unavailable"
-        description="The requested questionnaire version could not be loaded."
-        backHref="/superadmin/questionnaires"
-        backLabel="Back to questionnaires"
-      >
+      <QuestionnairePreviewShell backHref={backHref} backLabel="Back to questionnaires">
         <QuestionnairePreviewStateCard
           title="Preview unavailable"
-          description="The requested questionnaire version could not be loaded."
+          description="The selected questionnaire version could not be loaded."
         />
       </QuestionnairePreviewShell>
     );
@@ -73,8 +67,8 @@ export default function QuestionnaireVersionPreviewPage() {
   return (
     <QuestionnairePreviewShell
       title={model.title}
-      description="Questionnaire preview. Review the structure, sections, and prompts before publishing."
-      backHref="/superadmin/questionnaires"
+      description="Review the questionnaire structure, sections, and prompts before publishing."
+      backHref={backHref}
       backLabel="Back to questionnaires"
     >
       <div>

@@ -17,9 +17,9 @@ export default function SuperAdminQuestionnaireTypesPage() {
   return (
     <section className="space-y-6 px-4 py-5 sm:px-6 md:p-8">
       <div>
-        <h1 className="font-playfair text-2xl font-semibold">Questionnaire Types</h1>
+        <h1 className="font-playfair text-2xl font-semibold">Questionnaire types</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Manage the questionnaire type catalog used by Super Admin questionnaire flows.
+          Manage the questionnaire type catalog used across questionnaire creation and versioning.
         </p>
       </div>
 
@@ -54,7 +54,7 @@ export default function SuperAdminQuestionnaireTypesPage() {
             }
           }}
           title={`Delete "${deleteTarget.name}"?`}
-          description="This will soft-delete the questionnaire type. System types cannot be deleted, and the backend may reject deletion if the type is already associated with a questionnaire."
+          description="This will archive the questionnaire type. System types cannot be deleted, and the backend may reject the request if the type is already linked to a questionnaire."
           cancelLabel="Cancel"
           confirmLabel="Delete type"
           confirmVariant="destructive"

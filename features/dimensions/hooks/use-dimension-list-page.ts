@@ -1,108 +1,66 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import { useEffect, useMemo, useState } from "react";
 
 import { useDimensionList } from "@/features/dimensions/hooks/use-dimension-list";
-import { useToggleDimensionStatus } from "@/features/dimensions/hooks/use-toggle-dimension-status";
+import { useDimensionListRouteState } from "@/features/dimensions/hooks/use-dimension-list-route-state";
+import { useDimensionToggleFlow } from "@/features/dimensions/hooks/use-dimension-toggle-flow";
 import type { Dimension, ListDimensionsRequest } from "@/features/dimensions/types";
-import type {
-  DimensionStatusFilter,
-  TypeFilter,
-} from "@/features/dimensions/components/dimension-toolbar";
-import { DEFAULT_QUESTIONNAIRE_TYPE } from "@/features/questionnaires/constants";
-import { useQuestionnaireTypeId } from "@/features/questionnaires/hooks/use-questionnaire-type-id";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
-import { resolvePageSizeOption } from "@/lib/pagination";
 import {
   buildQuestionnaireTypeOptions,
   resolveActiveQuestionnaireType,
 } from "@/features/questionnaires/lib/questionnaire-type-options";
+import type { QuestionnaireTypeSummary } from "@/features/questionnaires/types";
 import { normalizeTypeSearchParam } from "@/features/questionnaires/lib/questionnaire-type-routing";
 
-type DimensionAction = { type: "toggle"; dimension: Dimension } | null;
-
-function resolveTypeFilter(value: string | null): TypeFilter {
-  if (value && value.trim().length > 0) {
-    return value;
-  }
-
-  return DEFAULT_QUESTIONNAIRE_TYPE;
-}
-
-function resolveStatusFilter(value: string | null): DimensionStatusFilter {
-  if (value === "ACTIVE" || value === "INACTIVE" || value === "ALL") {
-    return value;
-  }
-
-  return "ALL";
-}
-
-function resolvePositiveNumber(value: string | null, fallback: number) {
-  if (!value) return fallback;
-
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
-}
+const EMPTY_TYPE_SUMMARIES: QuestionnaireTypeSummary[] = [];
 
 export function useDimensionListPage() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [createOpen, setCreateOpen] = useState(false);
   const [editDimension, setEditDimension] = useState<Dimension | null>(null);
-  const [dimensionAction, setDimensionAction] = useState<DimensionAction>(null);
-
-  const typeFilter = resolveTypeFilter(searchParams.get("type"));
-  const statusFilter = resolveStatusFilter(searchParams.get("status"));
-  const page = resolvePositiveNumber(searchParams.get("page"), 1);
-  const pageSize = resolvePageSizeOption(searchParams.get("pageSize"));
-
-  // Local search state — only syncs to URL after debounce
-  const urlSearch = searchParams.get("search") ?? "";
-  const [searchValue, setSearchValue] = useState(urlSearch);
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Sync local state when URL changes externally (e.g. "Clear filters")
-  useEffect(() => {
-    setSearchValue(urlSearch);
-  }, [urlSearch]);
-
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    };
-  }, []);
+  const {
+    dimensionAction,
+    toggleDialogConfig,
+    isTogglePending,
+    setDimensionAction,
+    onConfirmToggle,
+  } = useDimensionToggleFlow();
 
   // Fetch questionnaire types to resolve code → UUID
   const questionnaireTypesQuery = useQuestionnaireTypes();
-  const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const availableTypeOptions = buildQuestionnaireTypeOptions(typeSummaries);
+  const typeSummaries = questionnaireTypesQuery.data ?? EMPTY_TYPE_SUMMARIES;
+  const availableTypeOptions = useMemo(
+    () => buildQuestionnaireTypeOptions(typeSummaries),
+    [typeSummaries]
+  );
+  const routeState = useDimensionListRouteState();
+  const { statusFilter, page, pageSize, searchValue } = routeState;
   const activeTypeFilter = resolveActiveQuestionnaireType({
-    requestedType: typeFilter,
+    requestedType: routeState.typeFilter,
     availableTypeOptions,
     isResolved: questionnaireTypesQuery.isSuccess,
   });
-  const typeFilterId = useQuestionnaireTypeId(activeTypeFilter);
+  const typeFilterId = useMemo(
+    () => typeSummaries.find((summary) => summary.code === activeTypeFilter)?.id ?? null,
+    [activeTypeFilter, typeSummaries]
+  );
 
   useEffect(() => {
     normalizeTypeSearchParam({
       isResolved: questionnaireTypesQuery.isSuccess,
-      currentTypeParam: searchParams.get("type"),
+      currentTypeParam: routeState.searchParams.get("type"),
       normalizedType: activeTypeFilter,
-      pathname,
-      searchParams,
-      router,
+      pathname: routeState.pathname,
+      searchParams: routeState.searchParams,
+      router: routeState.router,
     });
   }, [
     activeTypeFilter,
-    pathname,
     questionnaireTypesQuery.isSuccess,
-    router,
-    searchParams,
-    typeFilter,
+    routeState.pathname,
+    routeState.router,
+    routeState.searchParams,
   ]);
 
   // Fetch all dimensions for the questionnaire type so search works across all items
@@ -116,7 +74,6 @@ export function useDimensionListPage() {
   const dimensionListQuery = useDimensionList(queryParams, {
     enabled: questionnaireTypesQuery.isSuccess && typeFilterId !== null,
   });
-  const toggleStatusMutation = useToggleDimensionStatus();
 
   const allRows = dimensionListQuery.data?.data ?? [];
 
@@ -152,102 +109,6 @@ export function useDimensionListPage() {
     itemCount: filteredRows.length,
   };
 
-  const updateSearchParams = (updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === null || value === "") {
-        params.delete(key);
-        return;
-      }
-
-      params.set(key, value);
-    });
-
-    const nextQuery = params.toString();
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname);
-  };
-
-  const handleTypeFilterChange = (value: TypeFilter) => {
-    updateSearchParams({
-      type: value,
-      page: "1",
-    });
-  };
-
-  const handleStatusFilterChange = (value: DimensionStatusFilter) => {
-    updateSearchParams({
-      status: value === "ALL" ? null : value,
-      page: "1",
-    });
-  };
-
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      setSearchValue(value);
-
-      if (searchTimerRef.current) {
-        clearTimeout(searchTimerRef.current);
-      }
-
-      searchTimerRef.current = setTimeout(() => {
-        updateSearchParams({
-          search: value.trim().length > 0 ? value : null,
-          page: "1",
-        });
-      }, 300);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pathname, searchParams]
-  );
-
-  const handlePageChange = (nextPage: number) => {
-    updateSearchParams({
-      page: String(nextPage),
-    });
-  };
-
-  const handlePageSizeChange = (size: number) => {
-    updateSearchParams({
-      pageSize: String(size),
-      page: "1",
-    });
-  };
-
-  const handleConfirmToggle = async () => {
-    if (!dimensionAction) return;
-
-    const { dimension } = dimensionAction;
-    const action = dimension.active ? "deactivated" : "activated";
-
-    try {
-      await toggleStatusMutation.mutateAsync({
-        id: dimension.id,
-        active: dimension.active,
-      });
-      toast.success(`Dimension ${action}.`);
-      setDimensionAction(null);
-    } catch {
-      toast.error(`Unable to ${dimension.active ? "deactivate" : "activate"} dimension.`);
-    }
-  };
-
-  const toggleDialogConfig = dimensionAction
-    ? dimensionAction.dimension.active
-      ? {
-          title: `Deactivate "${dimensionAction.dimension.displayName}"?`,
-          description: "This dimension will no longer be selectable in the questionnaire builder.",
-          confirmLabel: "Deactivate",
-          confirmVariant: "destructive" as const,
-        }
-      : {
-          title: `Activate "${dimensionAction.dimension.displayName}"?`,
-          description: "This dimension will become selectable again in the questionnaire builder.",
-          confirmLabel: "Activate",
-          confirmVariant: "brand" as const,
-        }
-    : null;
-
   return {
     typeFilter: activeTypeFilter,
     statusFilter,
@@ -264,16 +125,16 @@ export function useDimensionListPage() {
     editDimension,
     dimensionAction,
     toggleDialogConfig,
-    isTogglePending: toggleStatusMutation.isPending,
+    isTogglePending,
     setCreateOpen,
     setEditDimension,
     setDimensionAction,
-    onTypeFilterChange: handleTypeFilterChange,
-    onStatusFilterChange: handleStatusFilterChange,
-    onSearchChange: handleSearchChange,
-    onPageChange: handlePageChange,
-    onPageSizeChange: handlePageSizeChange,
-    onConfirmToggle: handleConfirmToggle,
+    onTypeFilterChange: routeState.onTypeFilterChange,
+    onStatusFilterChange: routeState.onStatusFilterChange,
+    onSearchChange: routeState.onSearchChange,
+    onPageSizeChange: routeState.onPageSizeChange,
+    onClearFilters: routeState.onClearFilters,
+    onConfirmToggle,
     onRetry: () => {
       void questionnaireTypesQuery.refetch();
       void dimensionListQuery.refetch();

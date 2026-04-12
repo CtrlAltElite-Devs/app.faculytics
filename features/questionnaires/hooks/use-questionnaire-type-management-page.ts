@@ -28,7 +28,7 @@ export function useQuestionnaireTypeManagementPage() {
       toast.error(
         resolveDeleteQuestionnaireTypeManagementErrorMessage(
           error,
-          "Unable to delete questionnaire type."
+          "The questionnaire type could not be deleted."
         )
       );
     }

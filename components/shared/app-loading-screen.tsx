@@ -8,9 +8,7 @@ type AppLoadingScreenProps = {
   message?: string;
 };
 
-export function AppLoadingScreen({
-  message = "Preparing your workspace...",
-}: AppLoadingScreenProps) {
+export function AppLoadingScreen({ message = "Loading your workspace..." }: AppLoadingScreenProps) {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6">
       <div className="absolute inset-0 bg-background/40 backdrop-blur-xl" />

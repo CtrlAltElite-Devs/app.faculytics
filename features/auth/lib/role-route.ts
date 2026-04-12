@@ -96,14 +96,14 @@ export function getAvailableRoles(roles?: readonly string[] | null): AppRole[] {
 }
 
 export function resolveActiveRole(roles?: readonly AppRole[] | null, activeRole?: AppRole | null) {
-  const availableRoles = roles ?? [];
-  if (!availableRoles.length) return null;
+  const resolvedRoles = roles ?? [];
+  if (!resolvedRoles.length) return null;
 
-  if (activeRole && availableRoles.includes(activeRole)) {
+  if (activeRole && resolvedRoles.includes(activeRole)) {
     return activeRole;
   }
 
-  return availableRoles[0];
+  return resolvedRoles[0];
 }
 
 export function resolveHomeFromRoles(

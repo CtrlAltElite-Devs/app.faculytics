@@ -13,35 +13,29 @@ import { useMe } from "@/features/auth/hooks/use-me";
 
 export function useActiveRole() {
   const { data: me, isPending, isError } = useMe();
-  const storedActiveRole = useAuthStore((state) => state.activeRole);
+  const persistedRole = useAuthStore((state) => state.activeRole);
   const setActiveRole = useAuthStore((state) => state.setActiveRole);
-  const rawRoles = useMemo(() => me?.roles ?? [], [me?.roles]);
-
-  const availableRoles = useMemo(() => getAvailableRoles(rawRoles), [rawRoles]);
-  const activeRole = useMemo(
-    () => resolveActiveRole(availableRoles, storedActiveRole),
-    [availableRoles, storedActiveRole]
-  );
+  const roles = useMemo(() => getAvailableRoles(me?.roles), [me?.roles]);
+  const activeRole = useMemo(() => resolveActiveRole(roles, persistedRole), [persistedRole, roles]);
   const roleHome = useMemo(
-    () => resolveHomeFromRoles(availableRoles, storedActiveRole),
-    [availableRoles, storedActiveRole]
+    () => resolveHomeFromRoles(roles, persistedRole),
+    [persistedRole, roles]
   );
 
   useEffect(() => {
     if (isPending || isError) return;
 
-    if (storedActiveRole !== activeRole) {
+    if (persistedRole !== activeRole) {
       setActiveRole(activeRole);
     }
-  }, [activeRole, isError, isPending, setActiveRole, storedActiveRole]);
+  }, [activeRole, isError, isPending, persistedRole, setActiveRole]);
 
   return {
     me,
-    roles: availableRoles,
+    roles,
     isPending,
     isError,
     activeRole,
-    availableRoles,
     roleHome,
     setActiveRole,
   };

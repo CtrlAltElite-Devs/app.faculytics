@@ -3,19 +3,23 @@ export type LoginRequest = {
   password: string;
 };
 
-export type RefreshTokenRequestBody = {
+export type RefreshTokenPayload = {
   refreshToken: string;
 };
-export type LoginResponse = {
+
+export type AuthSession = {
   token: string;
   refreshToken: string;
 };
+
+export type LoginResponse = AuthSession;
+export type RefreshTokenRequestBody = RefreshTokenPayload;
 
 export type LogoutResponse = {
   message: string;
 };
 
-export type AuthErrorResponse = {
+export type AuthErrorPayload = {
   message: string;
   error: string;
   statusCode: number;

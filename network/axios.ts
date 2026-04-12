@@ -1,5 +1,5 @@
 import { Endpoints } from "@/network/endpoints";
-import type { LoginResponse } from "@/features/auth/types";
+import type { AuthSession } from "@/features/auth/types";
 import { useAuthStore } from "@/stores/auth-store";
 import axios, { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
@@ -40,7 +40,7 @@ const refreshClient = axios.create({
   },
 });
 
-let refreshPromise: Promise<LoginResponse> | null = null;
+let refreshPromise: Promise<AuthSession> | null = null;
 let lastRateLimitToastAt = 0;
 
 function getRateLimitMessage(error: AxiosError) {
@@ -73,8 +73,9 @@ function notifyRateLimit(error: AxiosError) {
 
 function refreshAccessToken(refreshToken: string) {
   if (!refreshPromise) {
+    // Use a separate client here so the refresh request does not trigger the same auth interceptor flow.
     refreshPromise = refreshClient
-      .post<LoginResponse>(Endpoints.refresh, { refreshToken })
+      .post<AuthSession>(Endpoints.refresh, { refreshToken })
       .then((response) => response.data)
       .finally(() => {
         refreshPromise = null;
@@ -112,6 +113,7 @@ apiClient.interceptors.response.use(
       !originalRequest ||
       !isUnauthorized ||
       originalRequest._retry ||
+      // Avoid retry loops when an authentication endpoint itself fails with 401.
       isAuthEndpoint(originalRequest.url)
     ) {
       return Promise.reject(error);
