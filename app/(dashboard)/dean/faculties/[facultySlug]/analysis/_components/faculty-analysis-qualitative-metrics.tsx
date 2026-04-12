@@ -2,10 +2,7 @@
 
 import { Cell, Pie, PieChart } from "recharts";
 
-import type {
-  DeanFacultyAnalysisRecord,
-  FacultyAnalysisSemesterKey,
-} from "@/features/faculty-analytics";
+import type { DeanFacultyAnalysisRecord, SemesterKey } from "@/features/faculty-analytics";
 import {
   ChartContainer,
   ChartLegend,
@@ -38,7 +35,7 @@ const qualitativeSentimentChartConfig = {
 
 function useQualitativeMetricsData(
   faculty: DeanFacultyAnalysisRecord,
-  selectedSemester: FacultyAnalysisSemesterKey
+  selectedSemester: SemesterKey
 ) {
   const isMobile = useIsMobile();
   const qualitativeMetrics = faculty.qualitativeMetrics[selectedSemester];
@@ -71,7 +68,7 @@ export function FacultyAnalysisQualitativeOverview({
   selectedSemester,
 }: {
   faculty: DeanFacultyAnalysisRecord;
-  selectedSemester: FacultyAnalysisSemesterKey;
+  selectedSemester: SemesterKey;
 }) {
   const { isMobile, qualitativeMetrics, sentimentData, maxMentions } = useQualitativeMetricsData(
     faculty,
@@ -155,7 +152,7 @@ export function FacultyAnalysisActionableInsights({
   selectedSemester,
 }: {
   faculty: DeanFacultyAnalysisRecord;
-  selectedSemester: FacultyAnalysisSemesterKey;
+  selectedSemester: SemesterKey;
 }) {
   const { qualitativeMetrics, strengthsRecommendation, improvementRecommendation } =
     useQualitativeMetricsData(faculty, selectedSemester);

@@ -3,16 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import type {
-  DimensionStatusFilter,
-  TypeFilter,
-} from "@/features/dimensions/components/dimension-toolbar";
+import type { DimensionStatusFilter } from "@/features/dimensions/components/dimension-toolbar";
 import { DEFAULT_QUESTIONNAIRE_TYPE } from "@/features/questionnaires/constants";
+import type { QuestionnaireTypeCode } from "@/features/questionnaires/types";
 import { resolvePageSizeOption } from "@/lib/pagination";
 
-function resolveTypeFilter(value: string | null): TypeFilter {
+function resolveTypeFilter(value: string | null): QuestionnaireTypeCode {
   if (value && value.trim().length > 0) {
-    return value;
+    return value as QuestionnaireTypeCode;
   }
 
   return DEFAULT_QUESTIONNAIRE_TYPE;
@@ -76,7 +74,7 @@ export function useDimensionListRouteState() {
     [pathname, router, searchParams]
   );
 
-  const handleTypeFilterChange = (value: TypeFilter) => {
+  const handleTypeFilterChange = (value: QuestionnaireTypeCode) => {
     updateSearchParams({
       type: value,
       page: "1",

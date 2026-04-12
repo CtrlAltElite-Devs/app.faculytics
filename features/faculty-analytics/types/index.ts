@@ -8,8 +8,6 @@ export type QuantitativeMetricScore = {
 
 export type SemesterKey = "firstSemester" | "secondSemester" | "summerSemester";
 
-export type FacultyAnalysisSemesterKey = SemesterKey;
-
 export type QualitativeTheme = {
   label: string;
   mentions: number;
