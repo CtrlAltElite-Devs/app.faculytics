@@ -5,6 +5,7 @@ import {
   ChartNoAxesColumn,
   LayoutDashboard,
   ListChecks,
+  NotebookPen,
   Shield,
   Tags,
   type LucideIcon,
@@ -48,6 +49,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     navItems: [
       { title: "Dashboard", url: "/dean/dashboard", icon: LayoutDashboard },
       { title: "Faculties", url: "/dean/faculties", icon: ChartNoAxesColumn },
+      { title: "Evaluation", url: "/dean/evaluation", icon: NotebookPen },
     ],
   },
   [APP_ROLES.CHAIRPERSON]: {
@@ -57,6 +59,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     navItems: [
       { title: "Dashboard", url: "/chairperson/dashboard", icon: LayoutDashboard },
       { title: "Faculties", url: "/chairperson/faculties", icon: Building2 },
+      { title: "Evaluation", url: "/chairperson/evaluation", icon: NotebookPen },
     ],
   },
   [APP_ROLES.ADMIN]: {
