@@ -192,7 +192,7 @@ export function FacultyEvaluationListScreen({ role }: { role: FacultyEvaluationR
       <div
         className={
           viewMode === "card"
-            ? "mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            ? "mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6"
             : "mt-8 space-y-4"
         }
       >

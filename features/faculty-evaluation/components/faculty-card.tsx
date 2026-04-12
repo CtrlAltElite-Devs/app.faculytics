@@ -40,7 +40,7 @@ export function FacultyCard({
   return (
     <Card className="h-full gap-0 overflow-hidden py-0">
       <CardContent className="flex h-full flex-col gap-4 p-4 sm:p-5">
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-3">
           <Avatar className="size-11 border border-border/70">
             {faculty.profilePicture ? (
               <AvatarImage src={faculty.profilePicture} alt={faculty.fullName} />
