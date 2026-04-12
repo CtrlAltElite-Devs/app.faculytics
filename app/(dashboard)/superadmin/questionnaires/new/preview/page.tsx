@@ -36,8 +36,6 @@ export default function QuestionnaireBuilderPreviewPage() {
   if (!draft || !hasPreviewContent) {
     return (
       <QuestionnairePreviewShell
-        title="Preview unavailable"
-        description="There is no draft available to preview yet. Return to the builder and add questionnaire content first."
         backHref={`/superadmin/questionnaires/new?type=${requestedType}`}
         backLabel="Back to builder"
       >

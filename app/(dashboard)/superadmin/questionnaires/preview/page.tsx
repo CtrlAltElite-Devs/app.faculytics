@@ -22,8 +22,6 @@ export default function QuestionnaireVersionPreviewPage() {
   if (!versionId) {
     return (
       <QuestionnairePreviewShell
-        title="Preview unavailable"
-        description="No questionnaire version was selected for preview."
         backHref="/superadmin/questionnaires"
         backLabel="Back to questionnaires"
       >
@@ -51,8 +49,6 @@ export default function QuestionnaireVersionPreviewPage() {
   if (versionQuery.isError || !versionQuery.data) {
     return (
       <QuestionnairePreviewShell
-        title="Preview unavailable"
-        description="The selected questionnaire version could not be loaded."
         backHref="/superadmin/questionnaires"
         backLabel="Back to questionnaires"
       >
