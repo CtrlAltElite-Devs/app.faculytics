@@ -125,7 +125,7 @@ export function DimensionToolbar({
           </DropdownMenu>
 
           <Button type="button" variant="brand" className="w-full min-w-0" onClick={onCreateClick}>
-            Create Dimension
+            New dimension
           </Button>
         </div>
       </div>
@@ -166,7 +166,7 @@ export function DimensionToolbar({
 
         <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
           <Button type="button" variant="brand" className="shrink-0" onClick={onCreateClick}>
-            Create Dimension
+            New dimension
           </Button>
 
           <div className="relative min-w-[15rem] flex-1 lg:max-w-xs xl:max-w-sm">

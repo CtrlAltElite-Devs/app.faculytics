@@ -78,9 +78,10 @@ export function DimensionEditDialog({ open, onOpenChange, dimension }: Dimension
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Dimension</DialogTitle>
+          <DialogTitle>Edit dimension</DialogTitle>
           <DialogDescription>
-            Update the display name for <strong>{dimension?.code}</strong>.
+            Update the display name for <strong>{dimension?.code}</strong>. The dimension code stays
+            the same.
           </DialogDescription>
         </DialogHeader>
 
@@ -92,7 +93,11 @@ export function DimensionEditDialog({ open, onOpenChange, dimension }: Dimension
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>Display Name</FieldLabel>
-                  <Input {...field} aria-invalid={fieldState.invalid} />
+                  <Input
+                    {...field}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="e.g. Classroom management"
+                  />
                   {fieldState.error?.message ? (
                     <FieldError>{fieldState.error.message}</FieldError>
                   ) : null}
@@ -120,7 +125,7 @@ export function DimensionEditDialog({ open, onOpenChange, dimension }: Dimension
                   Saving...
                 </>
               ) : (
-                "Save"
+                "Save changes"
               )}
             </Button>
           </DialogFooter>

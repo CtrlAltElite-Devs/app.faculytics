@@ -26,6 +26,7 @@ type DimensionListScreenProps = {
   onTypeFilterChange: (value: TypeFilter) => void;
   onStatusFilterChange: (value: DimensionStatusFilter) => void;
   onSearchChange: (value: string) => void;
+  onClearFilters: () => void;
   onCreateClick: () => void;
   onPageSizeChange: (size: number) => void;
   onEdit: (row: Dimension) => void;
@@ -48,6 +49,7 @@ export function DimensionListScreen({
   onTypeFilterChange,
   onStatusFilterChange,
   onSearchChange,
+  onClearFilters,
   onCreateClick,
   onPageSizeChange,
   onEdit,
@@ -59,14 +61,11 @@ export function DimensionListScreen({
     rows.length === 0 && !isLoading && !isError
       ? hasFilters
         ? {
-            description: "No matching dimensions.",
+            description: "No dimensions match the current filters.",
             actionLabel: "Clear filters",
-            onAction: () => {
-              onSearchChange("");
-              onStatusFilterChange("ALL");
-            },
+            onAction: onClearFilters,
           }
-        : { description: "No dimensions yet. Create one to get started." }
+        : { description: "No dimensions are available for this questionnaire type yet." }
       : null;
 
   return (

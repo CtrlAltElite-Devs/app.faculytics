@@ -40,7 +40,7 @@ export function DimensionTable({
             <TableHead className="data-table-head w-[15%]">Code</TableHead>
             <TableHead className="data-table-head w-[15%]">Status</TableHead>
             <TableHead className="data-table-head w-[25%]">Type</TableHead>
-            <TableHead className="data-table-head w-[15%]">Action</TableHead>
+            <TableHead className="data-table-head w-[15%]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
