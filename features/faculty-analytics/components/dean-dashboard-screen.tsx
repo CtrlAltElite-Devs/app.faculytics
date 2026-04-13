@@ -24,17 +24,14 @@ export function DeanDashboardScreen() {
     overview,
     isLoading,
     isAttentionLoading,
-    isRefreshing,
     isError,
-    refresh,
     retry,
   } = useDeanDashboardViewModel();
 
   const emptyStateDescription =
     semesters.length === 0
       ? "Semester options will appear here once academic terms are available."
-      : "Analytics data has not been refreshed yet for the selected semester.";
-  const shouldShowInlineNotice = semesters.length > 0 && overview?.lastRefreshedAt === null;
+      : "No analyzed faculty data is available for the selected semester yet.";
 
   return (
     <DeanAnalyticsAsyncContent
@@ -55,8 +52,6 @@ export function DeanDashboardScreen() {
           selectedProgramLabel={selectedProgramLabel}
           onProgramChange={setSelectedProgramCode}
           lastUpdatedLabel={lastUpdatedLabel}
-          isRefreshing={isRefreshing}
-          onRefresh={refresh}
         />
 
         {semesters.length === 0 ? (
@@ -67,12 +62,6 @@ export function DeanDashboardScreen() {
           </div>
         ) : (
           <>
-            {shouldShowInlineNotice ? (
-              <div className="rounded-lg border border-dashed px-4 py-3">
-                <p className="font-sans text-sm text-muted-foreground">{emptyStateDescription}</p>
-              </div>
-            ) : null}
-
             <DeanMetricsGrid summary={summary} />
 
             <div className="grid gap-6 min-[900px]:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]">

@@ -1,14 +1,15 @@
 "use client";
 
-import { ChevronDown, RefreshCw, Search } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Search } from "lucide-react";
 
 import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
 import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
 import { DeanAnalyticsLoadingState } from "@/features/faculty-analytics/components/dean-analytics-loading-state";
 import { DeanFacultyAnalysisTable } from "@/features/faculty-analytics/components/dean-faculty-analysis-table";
+import { BatchReportExportDialog } from "@/features/faculty-analytics/components/batch-report-export-dialog";
 import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
 import { useDeanFacultyAnalyticsListViewModel } from "@/features/faculty-analytics/hooks/use-dean-faculty-analytics-list-view-model";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 export function DeanFacultyAnalyticsScreen() {
+  const [isBatchExportDialogOpen, setIsBatchExportDialogOpen] = useState(false);
   const {
     semesters,
     programs,
@@ -32,9 +34,7 @@ export function DeanFacultyAnalyticsScreen() {
     searchValue,
     isLoading,
     isError,
-    isFetching,
     retry,
-    refresh,
     setSelectedSemesterId,
     setSelectedProgramId,
     setSearchValue,
@@ -50,12 +50,21 @@ export function DeanFacultyAnalyticsScreen() {
             Faculties
           </h1>
           <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground sm:mt-5">
-            Review faculty teaching assignments for the selected semester.
+            All faculties for the selected semester.
           </p>
         </div>
-        <div className="flex w-full flex-col gap-3 xl:max-w-4xl">
-          <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-end">
-            <div className="relative w-full lg:min-w-[20rem] lg:flex-1">
+        <div className="flex w-full flex-col gap-3 xl:max-w-5xl">
+          <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center md:justify-end">
+            <Button
+              type="button"
+              variant="brand"
+              className="w-full px-4 py-2.5 font-sans text-sm md:w-auto md:shrink-0"
+              onClick={() => setIsBatchExportDialogOpen(true)}
+              disabled={!selectedSemesterId}
+            >
+              Batch Export PDF
+            </Button>
+            <div className="relative w-full md:min-w-[18rem] md:flex-1">
               <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={searchValue}
@@ -69,7 +78,7 @@ export function DeanFacultyAnalyticsScreen() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm lg:w-56 lg:shrink-0"
+                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-[13rem] md:shrink-0"
                   disabled={programs.length === 0}
                 >
                   <span className="truncate">{selectedProgramLabel}</span>
@@ -100,7 +109,7 @@ export function DeanFacultyAnalyticsScreen() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm lg:w-56 lg:shrink-0"
+                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-[13rem] md:shrink-0"
                   disabled={semesters.length === 0}
                 >
                   <span className="truncate">{selectedSemesterLabel}</span>
@@ -127,16 +136,6 @@ export function DeanFacultyAnalyticsScreen() {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full px-4 py-2.5 font-sans text-sm lg:w-auto lg:shrink-0"
-              onClick={refresh}
-              disabled={isFetching}
-            >
-              <RefreshCw className={cn("mr-2 size-4", isFetching && "animate-spin")} />
-              Refresh
-            </Button>
           </div>
         </div>
       </div>
@@ -167,6 +166,18 @@ export function DeanFacultyAnalyticsScreen() {
           onRowsPerPageChange={setRowsPerPage}
         />
       ) : null}
+
+      <BatchReportExportDialog
+        open={isBatchExportDialogOpen}
+        onOpenChange={setIsBatchExportDialogOpen}
+        semesterId={selectedSemesterId}
+        semesterLabel={selectedSemesterLabel}
+        programId={selectedProgramId}
+        programs={programs.map((program) => ({
+          id: program.id,
+          label: program.label,
+        }))}
+      />
     </section>
   );
 }

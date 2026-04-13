@@ -107,16 +107,6 @@ export function useDeanFacultyAnalyticsListViewModel() {
         void facultyListQuery.refetch();
       }
     },
-    refresh: () => {
-      void meQuery.refetch();
-      void semestersQuery.refetch();
-      if (selectedSemesterId) {
-        void programOptionsQuery.refetch();
-      }
-      if (selectedSemesterId) {
-        void facultyListQuery.refetch();
-      }
-    },
     setSelectedSemesterId: (value: string) => {
       setSelectedSemesterId(value);
       setSelectedProgramId(null);

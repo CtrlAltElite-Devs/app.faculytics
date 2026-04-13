@@ -80,13 +80,6 @@ export function useDeanDashboardViewModel() {
     semestersQuery.isError ||
     programOptionsQuery.isError ||
     overviewQuery.isError;
-  const isRefreshing =
-    meQuery.isFetching ||
-    semestersQuery.isFetching ||
-    programOptionsQuery.isFetching ||
-    overviewQuery.isFetching ||
-    attentionQuery.isFetching;
-
   return {
     semesters,
     programs,
@@ -109,20 +102,8 @@ export function useDeanDashboardViewModel() {
     overview: overviewQuery.data ?? null,
     isAttentionLoading: Boolean(selectedSemesterId) && attentionQuery.isLoading,
     isLoading,
-    isRefreshing,
     isError,
     retry: () => {
-      void meQuery.refetch();
-      void semestersQuery.refetch();
-      if (selectedSemesterId) {
-        void programOptionsQuery.refetch();
-      }
-      if (selectedSemesterId) {
-        void overviewQuery.refetch();
-        void attentionQuery.refetch();
-      }
-    },
-    refresh: () => {
       void meQuery.refetch();
       void semestersQuery.refetch();
       if (selectedSemesterId) {

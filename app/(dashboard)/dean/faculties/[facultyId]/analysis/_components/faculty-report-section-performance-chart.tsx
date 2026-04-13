@@ -51,6 +51,8 @@ export function FacultyReportSectionPerformanceChart({
     average: Number(section.sectionAverage.toFixed(2)),
     weight: section.weight,
   }));
+  const rowHeight = isMobile ? 42 : 48;
+  const chartHeight = Math.max(isMobile ? 280 : 320, chartData.length * rowHeight);
 
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">
@@ -65,17 +67,21 @@ export function FacultyReportSectionPerformanceChart({
       <CardContent>
         <ChartContainer
           config={sectionPerformanceChartConfig}
-          className="aspect-auto h-[18rem] min-h-[18rem] w-full items-stretch justify-start sm:h-[20rem] lg:h-[22rem]"
+          className="aspect-auto w-full items-stretch justify-start"
+          style={{ height: chartHeight }}
         >
           <BarChart
             accessibilityLayer
             data={chartData}
             layout="vertical"
             margin={{
+              top: 8,
+              bottom: 8,
               right: isMobile ? 18 : 24,
               left: 0,
             }}
-            barCategoryGap={isMobile ? 14 : 16}
+            barCategoryGap={isMobile ? 10 : 12}
+            maxBarSize={isMobile ? 24 : 28}
           >
             <CartesianGrid horizontal={false} />
             <XAxis dataKey="average" type="number" domain={[0, 5]} hide />
