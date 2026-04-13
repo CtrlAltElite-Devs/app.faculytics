@@ -88,7 +88,7 @@ export function DeanFacultyAnalysisTable({
                     asChild
                     variant="secondary"
                     size="sm"
-                    className="h-auto max-w-full px-3 py-2 font-sans"
+                    className="h-auto max-w-full whitespace-normal px-3 py-2 text-center font-sans leading-tight"
                   >
                     <Link
                       href={buildDeanFacultyAnalysisHref({
@@ -97,6 +97,7 @@ export function DeanFacultyAnalysisTable({
                         semesterId: selectedSemesterId,
                         semesterLabel: selectedSemesterLabel,
                       })}
+                      className="block whitespace-normal text-center leading-tight"
                     >
                       View Analysis
                     </Link>

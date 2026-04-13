@@ -161,16 +161,18 @@ export function ReportExportDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={generateReportMutation.isPending}
+            className="w-full sm:w-auto"
           >
             Close
           </Button>
 
-          <div className="flex flex-wrap justify-end gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
             {!jobId ? (
               <Button
                 type="button"
                 onClick={handleGenerate}
                 disabled={generateReportMutation.isPending}
+                className="w-full sm:w-auto"
               >
                 {generateReportMutation.isPending ? "Queueing..." : "Generate PDF"}
               </Button>
@@ -181,6 +183,7 @@ export function ReportExportDialog({
                 type="button"
                 onClick={handleGenerate}
                 disabled={generateReportMutation.isPending}
+                className="w-full sm:w-auto"
               >
                 Retry Export
               </Button>
@@ -194,10 +197,15 @@ export function ReportExportDialog({
                   onClick={() => {
                     void statusQuery.refetch();
                   }}
+                  className="w-full sm:w-auto"
                 >
                   Refresh Link
                 </Button>
-                <Button asChild variant="outline" disabled={!status?.downloadUrl || urlExpired}>
+                <Button
+                  asChild
+                  disabled={!status?.downloadUrl || urlExpired}
+                  className="w-full sm:w-auto"
+                >
                   <a href={status?.downloadUrl} target="_blank" rel="noreferrer">
                     View PDF
                   </a>

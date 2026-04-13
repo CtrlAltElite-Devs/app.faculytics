@@ -268,9 +268,9 @@ export function BatchReportExportDialog({
                       align="start"
                       className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
                     >
-                    <DropdownMenuRadioGroup
-                      value={effectiveQuestionnaireTypeCode}
-                      onValueChange={setSelectedQuestionnaireTypeCode}
+                      <DropdownMenuRadioGroup
+                        value={effectiveQuestionnaireTypeCode}
+                        onValueChange={setSelectedQuestionnaireTypeCode}
                     >
                         {questionnaireTypes.map((type) => (
                           <DropdownMenuRadioItem
@@ -499,7 +499,7 @@ export function BatchReportExportDialog({
               disabled={
                 generateBatchReportMutation.isPending ||
                 !semesterId ||
-                !selectedQuestionnaireTypeCode ||
+                !effectiveQuestionnaireTypeCode ||
                 questionnaireTypesQuery.isLoading
               }
             >
