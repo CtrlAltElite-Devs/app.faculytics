@@ -1,28 +1,13 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
+import { PaginationFooter } from "@/components/shared/pagination-footer";
 import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
+import { buildDeanFacultyAnalysisHref } from "@/features/faculty-analytics/lib/faculty-analysis-routes";
 import type { FacultyListItemDto, PaginationMetaDto } from "@/features/faculty-analytics/types";
-import { DEFAULT_PAGE_SIZE_OPTIONS, getPaginationItems } from "@/lib/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -35,6 +20,8 @@ import {
 type DeanFacultyAnalysisTableProps = {
   facultyList: readonly FacultyListItemDto[];
   pagination: PaginationMetaDto;
+  selectedSemesterId: string;
+  selectedSemesterLabel: string;
   onPageChange: (page: number) => void;
   onRowsPerPageChange: (value: number) => void;
 };
@@ -51,13 +38,11 @@ function getFacultyInitials(name: string) {
 export function DeanFacultyAnalysisTable({
   facultyList,
   pagination,
+  selectedSemesterId,
+  selectedSemesterLabel,
   onPageChange,
   onRowsPerPageChange,
 }: DeanFacultyAnalysisTableProps) {
-  const currentPage = pagination.currentPage > 0 ? pagination.currentPage : 1;
-  const totalPages = Math.max(pagination.totalPages, 1);
-  const paginationItems = getPaginationItems(currentPage, totalPages);
-
   return (
     <div className="space-y-5">
       <div className="data-table-wrapper">
@@ -97,16 +82,23 @@ export function DeanFacultyAnalysisTable({
                 </TableCell>
                 <TableCell className="data-table-cell px-2 text-right md:px-3 lg:px-5">
                   <Button
-                    type="button"
+                    asChild
                     variant="ghost"
                     size="sm"
-                    disabled
-                    title="Faculty analysis detail is not wired yet."
                     className="h-auto max-w-full px-1 py-2 font-sans text-brand-blue/70 disabled:pointer-events-none disabled:opacity-100 md:px-2 xl:px-3"
                   >
-                    <span className="md:hidden">View</span>
-                    <span className="hidden md:inline xl:hidden">Details</span>
-                    <span className="hidden xl:inline">View Analysis</span>
+                    <Link
+                      href={buildDeanFacultyAnalysisHref({
+                        facultyId: faculty.id,
+                        facultyName: faculty.fullName,
+                        semesterId: selectedSemesterId,
+                        semesterLabel: selectedSemesterLabel,
+                      })}
+                    >
+                      <span className="md:hidden">View</span>
+                      <span className="hidden md:inline xl:hidden">Details</span>
+                      <span className="hidden xl:inline">View Analysis</span>
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>
@@ -114,109 +106,16 @@ export function DeanFacultyAnalysisTable({
           </TableBody>
         </Table>
       </div>
-      <div className="flex flex-col gap-3 pt-4 font-sans text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <div className="text-xs sm:text-sm">
-          Showing {pagination.itemCount} of {pagination.totalItems} faculty records
-        </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-6">
-          <div className="flex items-center gap-3">
-            <span>Rows per page</span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="min-w-16 justify-between font-sans"
-                >
-                  <span>{pagination.itemsPerPage}</span>
-                  <ChevronDown className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-16">
-                <DropdownMenuRadioGroup
-                  value={String(pagination.itemsPerPage)}
-                  onValueChange={(value) => {
-                    onRowsPerPageChange(Number(value));
-                  }}
-                >
-                  {DEFAULT_PAGE_SIZE_OPTIONS.map((option) => (
-                    <DropdownMenuRadioItem
-                      key={option}
-                      value={String(option)}
-                      className="font-sans text-sm"
-                    >
-                      {option}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="flex items-center gap-3">
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <Pagination className="mx-0 w-auto justify-start sm:justify-end">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    aria-disabled={currentPage === 1}
-                    tabIndex={currentPage === 1 ? -1 : undefined}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      if (currentPage > 1) {
-                        onPageChange(Math.max(currentPage - 1, 1));
-                      }
-                    }}
-                  />
-                </PaginationItem>
-                {paginationItems.map((item, index) =>
-                  item === "..." ? (
-                    <PaginationItem key={`ellipsis-${index}`}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  ) : (
-                    <PaginationItem key={item}>
-                      <PaginationLink
-                        href="#"
-                        isActive={item === currentPage}
-                        aria-disabled={item === currentPage}
-                        tabIndex={item === currentPage ? -1 : undefined}
-                        className={item === currentPage ? "pointer-events-none" : undefined}
-                        onClick={(event) => {
-                          event.preventDefault();
-                          onPageChange(item);
-                        }}
-                      >
-                        {item}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )
-                )}
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    aria-disabled={currentPage === totalPages}
-                    tabIndex={currentPage === totalPages ? -1 : undefined}
-                    className={
-                      currentPage === totalPages ? "pointer-events-none opacity-50" : undefined
-                    }
-                    onClick={(event) => {
-                      event.preventDefault();
-                      if (currentPage < totalPages) {
-                        onPageChange(Math.min(currentPage + 1, totalPages));
-                      }
-                    }}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        </div>
-      </div>
+      <PaginationFooter
+        itemCount={pagination.itemCount}
+        totalItems={pagination.totalItems}
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        itemLabel="faculty records"
+        rowsPerPage={pagination.itemsPerPage}
+        onRowsPerPageChange={onRowsPerPageChange}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 }
