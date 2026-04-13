@@ -26,6 +26,7 @@ type FacultyReportHeaderProps = {
   isRefreshing: boolean;
   onQuestionnaireTypeChange: (value: string) => void;
   onRefresh: () => void;
+  onExport: () => void;
 };
 
 export function FacultyReportHeader({
@@ -39,6 +40,7 @@ export function FacultyReportHeader({
   isRefreshing,
   onQuestionnaireTypeChange,
   onRefresh,
+  onExport,
 }: FacultyReportHeaderProps) {
   return (
     <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -84,6 +86,15 @@ export function FacultyReportHeader({
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Button
+          type="button"
+          variant="brand"
+          className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
+          onClick={onExport}
+        >
+          Export PDF
+        </Button>
 
         <Button
           type="button"

@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
 import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
 import { DeanAnalyticsLoadingState } from "@/features/faculty-analytics/components/dean-analytics-loading-state";
+import { ReportExportDialog } from "@/features/faculty-analytics/components/report-export-dialog";
 import { useFacultyReportDetailViewModel } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
 import { hasFacultyReportAnalyticsData } from "@/features/faculty-analytics/lib/faculty-report-detail";
 
@@ -19,6 +21,7 @@ type FacultyReportScreenProps = {
 };
 
 export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
 
   if (!viewModel.hasSemesterContext) {
@@ -86,6 +89,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         isRefreshing={viewModel.isRefreshing}
         onQuestionnaireTypeChange={viewModel.updateQuestionnaireType}
         onRefresh={viewModel.retryAll}
+        onExport={() => setIsExportDialogOpen(true)}
       />
 
       {!hasAnalyticsData ? (
@@ -116,6 +120,17 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
           />
         </>
       )}
+
+      <ReportExportDialog
+        open={isExportDialogOpen}
+        onOpenChange={setIsExportDialogOpen}
+        facultyId={facultyId}
+        facultyName={viewModel.report.faculty.name}
+        semesterId={viewModel.semesterId}
+        semesterLabel={viewModel.semesterLabel}
+        questionnaireTypeCode={viewModel.questionnaireTypeCode}
+        questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
+      />
     </section>
   );
 }
