@@ -83,9 +83,9 @@ export function DeanFacultyAnalysisTable({
                 <TableCell className="data-table-cell px-2 text-right md:px-3 lg:px-5">
                   <Button
                     asChild
-                    variant="ghost"
+                    variant="secondary"
                     size="sm"
-                    className="h-auto max-w-full px-1 py-2 font-sans text-brand-blue/70 disabled:pointer-events-none disabled:opacity-100 md:px-2 xl:px-3"
+                    className="h-auto max-w-full px-3 py-2 font-sans"
                   >
                     <Link
                       href={buildDeanFacultyAnalysisHref({
@@ -95,9 +95,7 @@ export function DeanFacultyAnalysisTable({
                         semesterLabel: selectedSemesterLabel,
                       })}
                     >
-                      <span className="md:hidden">View</span>
-                      <span className="hidden md:inline xl:hidden">Details</span>
-                      <span className="hidden xl:inline">View Analysis</span>
+                      View Analysis
                     </Link>
                   </Button>
                 </TableCell>

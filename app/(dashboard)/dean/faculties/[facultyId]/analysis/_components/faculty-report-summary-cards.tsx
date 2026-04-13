@@ -1,6 +1,9 @@
 "use client";
 
-import { formatFacultyReportScore } from "@/features/faculty-analytics/lib/faculty-report-detail";
+import {
+  formatFacultyReportScore,
+  getFacultyReportInterpretationTextClass,
+} from "@/features/faculty-analytics/lib/faculty-report-detail";
 
 type FacultyReportSummaryCardsProps = {
   submissionCount: number;
@@ -11,7 +14,7 @@ type FacultyReportSummaryCardsProps = {
 
 type SummaryCardProps = {
   label: string;
-  value: string;
+  value: React.ReactNode;
   description: string;
 };
 
@@ -33,6 +36,8 @@ export function FacultyReportSummaryCards({
   commentsCount,
   overallInterpretation,
 }: FacultyReportSummaryCardsProps) {
+  const resolvedOverallInterpretation = overallInterpretation ?? "No interpretation available";
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <SummaryCard
@@ -52,7 +57,11 @@ export function FacultyReportSummaryCards({
       />
       <SummaryCard
         label="Overall Interpretation"
-        value={overallInterpretation ?? "No interpretation available"}
+        value={
+          <span className={getFacultyReportInterpretationTextClass(resolvedOverallInterpretation)}>
+            {resolvedOverallInterpretation}
+          </span>
+        }
         description="Performance label derived from the overall weighted rating"
       />
     </div>

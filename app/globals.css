@@ -207,6 +207,30 @@
     @apply border-red-200 bg-red-50 px-2.5 py-1 font-medium text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300;
   }
 
+  .badge-interpretation-excellent {
+    @apply border-emerald-200 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/20 dark:text-emerald-300;
+  }
+
+  .badge-interpretation-very-satisfactory {
+    @apply border-blue-200 bg-blue-50 px-2.5 py-1 font-medium text-blue-700 dark:border-blue-900/70 dark:bg-blue-950/20 dark:text-blue-300;
+  }
+
+  .badge-interpretation-satisfactory {
+    @apply border-amber-200 bg-amber-50 px-2.5 py-1 font-medium text-amber-700 dark:border-amber-900/70 dark:bg-amber-950/20 dark:text-amber-300;
+  }
+
+  .badge-interpretation-fair {
+    @apply border-orange-200 bg-orange-50 px-2.5 py-1 font-medium text-orange-700 dark:border-orange-900/70 dark:bg-orange-950/20 dark:text-orange-300;
+  }
+
+  .badge-interpretation-needs-improvement {
+    @apply border-red-200 bg-red-50 px-2.5 py-1 font-medium text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300;
+  }
+
+  .badge-interpretation-default {
+    @apply border-slate-200 bg-slate-50 px-2.5 py-1 font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-300;
+  }
+
   /* ── Faculytics: Analytics subject chips ─────────────────────────── */
 
   .analytics-subject-chip {

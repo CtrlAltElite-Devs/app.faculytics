@@ -4,6 +4,33 @@ import {
 } from "@/features/questionnaires/types";
 import type { FacultyReportResponseDto } from "@/features/faculty-analytics/types";
 
+const FACULTY_REPORT_INTERPRETATION_STYLE_MAP = {
+  "EXCELLENT PERFORMANCE": {
+    badgeClass: "badge-interpretation-excellent",
+    textClass: "text-emerald-700 dark:text-emerald-300",
+  },
+  "VERY SATISFACTORY PERFORMANCE": {
+    badgeClass: "badge-interpretation-very-satisfactory",
+    textClass: "text-blue-700 dark:text-blue-300",
+  },
+  "SATISFACTORY PERFORMANCE": {
+    badgeClass: "badge-interpretation-satisfactory",
+    textClass: "text-amber-700 dark:text-amber-300",
+  },
+  "FAIR PERFORMANCE": {
+    badgeClass: "badge-interpretation-fair",
+    textClass: "text-orange-700 dark:text-orange-300",
+  },
+  "NEEDS IMPROVEMENT": {
+    badgeClass: "badge-interpretation-needs-improvement",
+    textClass: "text-red-700 dark:text-red-300",
+  },
+} as const;
+
+function normalizeFacultyReportInterpretation(interpretation: string | null | undefined) {
+  return interpretation?.trim().toUpperCase() ?? "";
+}
+
 export function buildFacultyReportHref(
   pathname: string,
   currentParams: URLSearchParams,
@@ -53,8 +80,7 @@ export function hasFacultyReportAnalyticsData(
   commentsCount: number
 ) {
   const hasInterpretation =
-    typeof report.overallInterpretation === "string" &&
-    report.overallInterpretation.trim().length > 0;
+    normalizeFacultyReportInterpretation(report.overallInterpretation).length > 0;
 
   return (
     report.submissionCount > 0 ||
@@ -62,5 +88,27 @@ export function hasFacultyReportAnalyticsData(
     commentsCount > 0 ||
     report.overallRating !== null ||
     hasInterpretation
+  );
+}
+
+export function getFacultyReportInterpretationBadgeClass(
+  interpretation: string | null | undefined
+) {
+  const normalizedInterpretation = normalizeFacultyReportInterpretation(interpretation);
+
+  return (
+    FACULTY_REPORT_INTERPRETATION_STYLE_MAP[
+      normalizedInterpretation as keyof typeof FACULTY_REPORT_INTERPRETATION_STYLE_MAP
+    ]?.badgeClass ?? "badge-interpretation-default"
+  );
+}
+
+export function getFacultyReportInterpretationTextClass(interpretation: string | null | undefined) {
+  const normalizedInterpretation = normalizeFacultyReportInterpretation(interpretation);
+
+  return (
+    FACULTY_REPORT_INTERPRETATION_STYLE_MAP[
+      normalizedInterpretation as keyof typeof FACULTY_REPORT_INTERPRETATION_STYLE_MAP
+    ]?.textClass ?? "text-foreground"
   );
 }

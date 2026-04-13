@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -9,7 +10,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
-import { formatFacultyReportScore } from "@/features/faculty-analytics/lib/faculty-report-detail";
+import {
+  formatFacultyReportScore,
+  getFacultyReportInterpretationBadgeClass,
+} from "@/features/faculty-analytics/lib/faculty-report-detail";
 import type { FacultyReportSectionDto } from "@/features/faculty-analytics/types";
 
 type FacultyReportSectionsProps = {
@@ -30,7 +34,12 @@ function FacultyReportSectionTable({ section }: { section: FacultyReportSectionD
           <div className="text-left font-sans text-sm text-muted-foreground sm:text-right">
             <div>Weight: {section.weight}%</div>
             <div>Average: {formatFacultyReportScore(section.sectionAverage)}</div>
-            <div>{section.sectionInterpretation}</div>
+            <Badge
+              variant="ghost"
+              className={getFacultyReportInterpretationBadgeClass(section.sectionInterpretation)}
+            >
+              {section.sectionInterpretation}
+            </Badge>
           </div>
         </div>
       </div>
@@ -55,7 +64,12 @@ function FacultyReportSectionTable({ section }: { section: FacultyReportSectionD
                   {formatFacultyReportScore(question.average)}
                 </TableCell>
                 <TableCell className="data-table-cell px-3 font-sans text-sm">
-                  {question.interpretation}
+                  <Badge
+                    variant="ghost"
+                    className={getFacultyReportInterpretationBadgeClass(question.interpretation)}
+                  >
+                    {question.interpretation}
+                  </Badge>
                 </TableCell>
               </TableRow>
             ))}

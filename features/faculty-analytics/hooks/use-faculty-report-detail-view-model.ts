@@ -25,6 +25,10 @@ export function useFacultyReportDetailViewModel({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
+  const currentSearchParams = useMemo(
+    () => new URLSearchParams(searchParamsString),
+    [searchParamsString]
+  );
 
   const facultyNameParam = searchParams.get("facultyName") ?? "";
   const semesterId = searchParams.get("semesterId") ?? "";
@@ -77,20 +81,16 @@ export function useFacultyReportDetailViewModel({
     }
 
     const fallbackType = questionnaireTypes[0];
-    const nextHref = buildFacultyReportHref(pathname, new URLSearchParams(searchParamsString), {
+    const nextHref = buildFacultyReportHref(pathname, currentSearchParams, {
       questionnaireTypeCode: fallbackType?.code ?? null,
       page: "1",
     });
 
     router.replace(nextHref, { scroll: false });
-  }, [pathname, questionnaireTypeCode, questionnaireTypes, router, searchParamsString]);
+  }, [currentSearchParams, pathname, questionnaireTypeCode, questionnaireTypes, router]);
 
   const updateSearchParams = (updates: Record<string, string | null>) => {
-    const nextHref = buildFacultyReportHref(
-      pathname,
-      new URLSearchParams(searchParamsString),
-      updates
-    );
+    const nextHref = buildFacultyReportHref(pathname, currentSearchParams, updates);
     router.replace(nextHref, { scroll: false });
   };
 
