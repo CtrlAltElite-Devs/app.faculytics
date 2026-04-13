@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
-import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
-import { DeanAnalyticsLoadingState } from "@/features/faculty-analytics/components/dean-analytics-loading-state";
+import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
+import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
+import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
 import { ReportExportDialog } from "@/features/faculty-analytics/components/report-export-dialog";
 import { useFacultyReportDetailViewModel } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
 import { hasFacultyReportAnalyticsData } from "@/features/faculty-analytics/lib/faculty-report-detail";
@@ -32,7 +32,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
             <Link href={viewModel.backHref}>Back to Faculties</Link>
           </Button>
         </div>
-        <DeanAnalyticsErrorState
+        <ScopedAnalyticsErrorState
           onRetry={viewModel.goBackToFaculties}
           message="Missing semester context. Start from the faculties list to open a faculty report."
         />
@@ -53,7 +53,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
             </p>
           </div>
         </div>
-        <DeanAnalyticsLoadingState message="Loading faculty report..." />
+        <ScopedAnalyticsLoadingState message="Loading faculty report..." />
       </section>
     );
   }
@@ -66,7 +66,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
             <Link href={viewModel.backHref}>Back to Faculties</Link>
           </Button>
         </div>
-        <DeanAnalyticsErrorState
+        <ScopedAnalyticsErrorState
           onRetry={viewModel.retryAll}
           message="Unable to load the faculty evaluation report."
         />
@@ -91,7 +91,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
       />
 
       {!hasAnalyticsData ? (
-        <DeanAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected semester and questionnaire type yet." />
+        <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected semester and questionnaire type yet." />
       ) : (
         <>
           <FacultyReportSummaryCards

@@ -1,9 +1,9 @@
 "use client";
 
 import { PaginationFooter } from "@/components/shared/pagination-footer";
-import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
-import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
-import { DeanAnalyticsLoadingState } from "@/features/faculty-analytics/components/dean-analytics-loading-state";
+import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
+import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
+import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
 import type {
   FacultyReportCommentDto,
   PaginationMetaDto,
@@ -46,13 +46,13 @@ export function FacultyReportComments({
 
       {isLoading ? (
         <div className="px-5 py-8">
-          <DeanAnalyticsLoadingState message="Loading qualitative comments..." />
+          <ScopedAnalyticsLoadingState message="Loading qualitative comments..." />
         </div>
       ) : null}
 
       {!isLoading && isError ? (
         <div className="px-5 py-8">
-          <DeanAnalyticsErrorState
+          <ScopedAnalyticsErrorState
             onRetry={onRetry}
             message="Unable to load qualitative comments."
           />
@@ -61,7 +61,7 @@ export function FacultyReportComments({
 
       {!isLoading && !isError && comments.length === 0 ? (
         <div className="px-5 py-8">
-          <DeanAnalyticsEmptyState description="No qualitative comments were submitted for this report context." />
+          <ScopedAnalyticsEmptyState description="No qualitative comments were submitted for this report context." />
         </div>
       ) : null}
 

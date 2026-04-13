@@ -5,13 +5,13 @@ import type {
   SemesterOptionDto,
 } from "@/features/faculty-analytics/types";
 
-export type DeanSemesterOption = {
+export type ScopedSemesterOption = {
   id: string;
   label: string;
   academicYear?: string;
 };
 
-export type DeanSummaryMetrics = {
+export type ScopedSummaryMetrics = {
   totalFaculty: number;
   totalSubmissions: number;
   totalAnalyzed: number;
@@ -21,25 +21,25 @@ export type DeanSummaryMetrics = {
   positiveSentimentRate: number;
 };
 
-export type DeanProgramOption = {
+export type ScopedProgramOption = {
   id: string | null;
   code: string | null;
   label: string;
 };
 
-export type DeanOverallSentimentDatum = {
+export type ScopedOverallSentimentDatum = {
   label: string;
   value: number;
   color: string;
 };
 
-export type DeanDashboardViewModel = {
-  semesters: DeanSemesterOption[];
+export type ScopedDashboardViewModel = {
+  semesters: ScopedSemesterOption[];
   selectedSemesterId: string | null;
   selectedSemesterLabel: string;
   lastUpdatedLabel: string;
-  summary: DeanSummaryMetrics;
-  overallSentiment: DeanOverallSentimentDatum[];
+  summary: ScopedSummaryMetrics;
+  overallSentiment: ScopedOverallSentimentDatum[];
 };
 
 function toSentimentRate(count: number, total: number) {
@@ -48,7 +48,7 @@ function toSentimentRate(count: number, total: number) {
 
 export function mapSemesterOptionsToViewModel(
   semesters: SemesterOptionDto[]
-): DeanSemesterOption[] {
+): ScopedSemesterOption[] {
   return semesters.map((semester) => ({
     id: semester.id,
     label: semester.label ?? [semester.code, semester.academicYear].filter(Boolean).join(" • "),
@@ -56,7 +56,7 @@ export function mapSemesterOptionsToViewModel(
   }));
 }
 
-export function mapProgramOptionsToViewModel(programs: ProgramOptionDto[]): DeanProgramOption[] {
+export function mapProgramOptionsToViewModel(programs: ProgramOptionDto[]): ScopedProgramOption[] {
   return [
     { id: null, code: null, label: ALL_PROGRAMS_LABEL },
     ...programs.map((program) => ({
@@ -74,10 +74,10 @@ export function mapDepartmentOverviewToDashboardViewModel({
   lastUpdatedLabel,
 }: {
   overview: DepartmentOverviewResponseDto;
-  semesters: DeanSemesterOption[];
+  semesters: ScopedSemesterOption[];
   selectedSemesterId: string | null;
   lastUpdatedLabel: string;
-}): DeanDashboardViewModel {
+}): ScopedDashboardViewModel {
   const totalSentiment =
     overview.summary.positiveCount + overview.summary.negativeCount + overview.summary.neutralCount;
   const selectedSemester =

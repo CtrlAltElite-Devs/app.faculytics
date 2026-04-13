@@ -2,13 +2,13 @@
 
 import { Loader2 } from "lucide-react";
 
-type DeanAnalyticsLoadingStateProps = {
+type ScopedAnalyticsLoadingStateProps = {
   message?: string;
 };
 
-export function DeanAnalyticsLoadingState({
+export function ScopedAnalyticsLoadingState({
   message = "Loading analytics...",
-}: DeanAnalyticsLoadingStateProps) {
+}: ScopedAnalyticsLoadingStateProps) {
   return (
     <div className="flex min-h-44 flex-col items-center justify-center px-6 text-center">
       <Loader2 className="size-6 animate-spin text-muted-foreground" />

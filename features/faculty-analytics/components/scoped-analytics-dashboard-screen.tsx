@@ -1,13 +1,15 @@
 "use client";
 
-import { DeanDashboardHeader } from "@/features/faculty-analytics/components/dean-dashboard-header";
-import { DeanAttentionCard } from "@/features/faculty-analytics/components/dean-attention-card";
-import { DeanOverallSentimentBarChart } from "@/features/faculty-analytics/components/dean-charts";
-import { DeanAnalyticsAsyncContent } from "@/features/faculty-analytics/components/dean-analytics-async-content";
-import { DeanMetricsGrid } from "@/features/faculty-analytics/components/dean-metrics-grid";
-import { useDeanDashboardViewModel } from "@/features/faculty-analytics/hooks/use-dean-dashboard-view-model";
+import { ScopedDashboardHeader } from "@/features/faculty-analytics/components/scoped-dashboard-header";
+import { ScopedAttentionCard } from "@/features/faculty-analytics/components/scoped-attention-card";
+import { ScopedOverallSentimentBarChart } from "@/features/faculty-analytics/components/scoped-charts";
+import { ScopedAnalyticsAsyncContent } from "@/features/faculty-analytics/components/scoped-analytics-async-content";
+import { ScopedMetricsGrid } from "@/features/faculty-analytics/components/scoped-metrics-grid";
+import { useScopedAnalyticsDashboardViewModel } from "@/features/faculty-analytics/hooks/use-scoped-analytics-dashboard-view-model";
 
-export function DeanDashboardScreen() {
+export type ScopeLabel = "Campus" | "Department";
+
+export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: ScopeLabel }) {
   const {
     semesters,
     programs,
@@ -26,23 +28,26 @@ export function DeanDashboardScreen() {
     isAttentionLoading,
     isError,
     retry,
-  } = useDeanDashboardViewModel();
+  } = useScopedAnalyticsDashboardViewModel();
 
+  const scopeLower = scopeLabel.toLowerCase();
+  const facultiesHref = scopeLabel === "Campus" ? "/campus-head/faculties" : "/dean/faculties";
   const emptyStateDescription =
     semesters.length === 0
       ? "Semester options will appear here once academic terms are available."
-      : "No analyzed faculty data is available for the selected semester yet.";
+      : `No analyzed faculty data is available for the selected semester yet.`;
 
   return (
-    <DeanAnalyticsAsyncContent
+    <ScopedAnalyticsAsyncContent
       isLoading={isLoading}
       isError={isError}
       onRetry={retry}
-      loadingMessage="Loading department analytics..."
-      errorMessage="Unable to load the department analytics overview."
+      loadingMessage={`Loading ${scopeLower} analytics...`}
+      errorMessage={`Unable to load the ${scopeLower} analytics overview.`}
     >
       <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
-        <DeanDashboardHeader
+        <ScopedDashboardHeader
+          scopeLabel={scopeLabel}
           semesters={semesters}
           programs={programs}
           selectedSemesterId={selectedSemesterId}
@@ -62,19 +67,21 @@ export function DeanDashboardScreen() {
           </div>
         ) : (
           <>
-            <DeanMetricsGrid summary={summary} />
+            <ScopedMetricsGrid summary={summary} />
 
             <div className="grid gap-6 min-[900px]:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]">
-              <DeanOverallSentimentBarChart overallSentiment={overallSentiment} />
-              <DeanAttentionCard
+              <ScopedOverallSentimentBarChart overallSentiment={overallSentiment} />
+              <ScopedAttentionCard
                 items={attentionItems}
                 isLoading={isAttentionLoading}
                 hasAnalyticsData={overview?.lastRefreshedAt !== null}
+                scopeLabel={scopeLabel}
+                facultiesHref={facultiesHref}
               />
             </div>
           </>
         )}
       </section>
-    </DeanAnalyticsAsyncContent>
+    </ScopedAnalyticsAsyncContent>
   );
 }

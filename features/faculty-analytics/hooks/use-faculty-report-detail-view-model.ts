@@ -13,6 +13,8 @@ import { useFacultyReportComments } from "@/features/faculty-analytics/hooks/use
 import { useFacultyReport } from "@/features/faculty-analytics/hooks/use-faculty-report";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { resolvePageSizeOption } from "@/lib/pagination";
+import { useActiveRole } from "@/features/auth/hooks/use-active-role";
+import { getRoleConfig } from "@/features/auth/lib/role-route";
 
 type UseFacultyReportDetailViewModelParams = {
   facultyId: string;
@@ -113,8 +115,12 @@ export function useFacultyReportDetailViewModel({
     void commentsQuery.refetch();
   };
 
+  const { activeRole } = useActiveRole();
+  const routePrefix = activeRole ? getRoleConfig(activeRole).routePrefix : "/dean";
+  const backHref = `${routePrefix}/faculties`;
+
   return {
-    backHref: "/dean/faculties",
+    backHref,
     facultyId,
     semesterId,
     report,
@@ -156,7 +162,7 @@ export function useFacultyReportDetailViewModel({
     },
     retryAll: refreshAll,
     goBackToFaculties: () => {
-      router.push("/dean/faculties");
+      router.push(backHref);
     },
   };
 }

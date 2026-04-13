@@ -1,4 +1,4 @@
-import type { DeanDashboardViewModel } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+import type { ScopedDashboardViewModel } from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 function formatMetric(value: number, suffix?: string) {
@@ -9,7 +9,7 @@ function formatMetric(value: number, suffix?: string) {
   return suffix ? `${formattedValue}${suffix}` : formattedValue;
 }
 
-function DeanMetricCard({
+function ScopedMetricCard({
   title,
   value,
   description,
@@ -35,25 +35,25 @@ function DeanMetricCard({
   );
 }
 
-export function DeanMetricsGrid({ summary }: { summary: DeanDashboardViewModel["summary"] }) {
+export function ScopedMetricsGrid({ summary }: { summary: ScopedDashboardViewModel["summary"] }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <DeanMetricCard
+      <ScopedMetricCard
         title="Total Faculty"
         value={formatMetric(summary.totalFaculty)}
         description="Faculty included in the selected semester overview"
       />
-      <DeanMetricCard
+      <ScopedMetricCard
         title="Total Submissions"
         value={formatMetric(summary.totalSubmissions)}
         description="Submitted evaluation responses in the selected semester"
       />
-      <DeanMetricCard
+      <ScopedMetricCard
         title="Total Analyzed"
         value={formatMetric(summary.totalAnalyzed)}
         description="Faculty records with generated analytics available"
       />
-      <DeanMetricCard
+      <ScopedMetricCard
         title="Positive Sentiment Rate"
         value={formatMetric(summary.positiveSentimentRate, "%")}
         description="Share of analyzed sentiment marked positive in the selected semester"

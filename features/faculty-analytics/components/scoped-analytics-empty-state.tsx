@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button";
 
-type DeanAnalyticsEmptyStateProps = {
+type ScopedAnalyticsEmptyStateProps = {
   description: string;
   actionLabel?: string;
   onAction?: () => void;
 };
 
-export function DeanAnalyticsEmptyState({
+export function ScopedAnalyticsEmptyState({
   description,
   actionLabel,
   onAction,
-}: DeanAnalyticsEmptyStateProps) {
+}: ScopedAnalyticsEmptyStateProps) {
   return (
     <div className="flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed px-6 text-center">
       <p className="max-w-xl font-sans text-sm text-muted-foreground">{description}</p>

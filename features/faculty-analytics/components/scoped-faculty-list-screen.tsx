@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 
-import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
-import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
-import { DeanAnalyticsLoadingState } from "@/features/faculty-analytics/components/dean-analytics-loading-state";
-import { DeanFacultyAnalysisTable } from "@/features/faculty-analytics/components/dean-faculty-analysis-table";
+import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
+import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
+import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
+import { ScopedFacultyAnalysisTable } from "@/features/faculty-analytics/components/scoped-faculty-analysis-table";
 import { BatchReportExportDialog } from "@/features/faculty-analytics/components/batch-report-export-dialog";
 import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
-import { useDeanFacultyAnalyticsListViewModel } from "@/features/faculty-analytics/hooks/use-dean-faculty-analytics-list-view-model";
+import { useScopedFacultyAnalyticsListViewModel } from "@/features/faculty-analytics/hooks/use-scoped-faculty-analytics-list-view-model";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,8 +19,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-analytics-dashboard-screen";
 
-export function DeanFacultyAnalyticsScreen() {
+export function ScopedFacultyListScreen({ scopeLabel }: { scopeLabel: ScopeLabel }) {
   const [isBatchExportDialogOpen, setIsBatchExportDialogOpen] = useState(false);
   const {
     semesters,
@@ -40,7 +41,7 @@ export function DeanFacultyAnalyticsScreen() {
     setSearchValue,
     setCurrentPage,
     setRowsPerPage,
-  } = useDeanFacultyAnalyticsListViewModel();
+  } = useScopedFacultyAnalyticsListViewModel();
 
   return (
     <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
@@ -140,30 +141,31 @@ export function DeanFacultyAnalyticsScreen() {
         </div>
       </div>
 
-      {isLoading ? <DeanAnalyticsLoadingState message="Loading faculties..." /> : null}
+      {isLoading ? <ScopedAnalyticsLoadingState message="Loading faculties..." /> : null}
 
       {!isLoading && isError ? (
-        <DeanAnalyticsErrorState onRetry={retry} message="Unable to load the faculties list." />
+        <ScopedAnalyticsErrorState onRetry={retry} message="Unable to load the faculties list." />
       ) : null}
 
       {!isLoading && !isError && facultyList.length === 0 ? (
-        <DeanAnalyticsEmptyState
+        <ScopedAnalyticsEmptyState
           description={
             selectedSemesterId && searchValue.trim().length > 0
               ? "No faculty records matched your search for the selected semester."
-              : "Faculty records will appear here once teaching assignments are available for the selected semester."
+              : `Faculty records will appear here once teaching assignments are available for the selected semester.`
           }
         />
       ) : null}
 
       {!isLoading && !isError && facultyList.length > 0 ? (
-        <DeanFacultyAnalysisTable
+        <ScopedFacultyAnalysisTable
           facultyList={facultyList}
           pagination={pagination}
           selectedSemesterId={selectedSemesterId ?? ""}
           selectedSemesterLabel={selectedSemesterLabel}
           onPageChange={setCurrentPage}
           onRowsPerPageChange={setRowsPerPage}
+          scopeLabel={scopeLabel}
         />
       ) : null}
 

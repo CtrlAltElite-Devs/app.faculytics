@@ -4,9 +4,9 @@ import { ChevronDown } from "lucide-react";
 
 import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
 import type {
-  DeanProgramOption,
-  DeanSemesterOption,
-} from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+  ScopedProgramOption,
+  ScopedSemesterOption,
+} from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,9 +16,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type DeanDashboardHeaderProps = {
-  semesters: readonly DeanSemesterOption[];
-  programs: readonly DeanProgramOption[];
+type ScopedDashboardHeaderProps = {
+  semesters: readonly ScopedSemesterOption[];
+  programs: readonly ScopedProgramOption[];
   selectedSemesterId: string | null;
   selectedSemesterLabel: string;
   onSemesterChange: (value: string) => void;
@@ -26,9 +26,10 @@ type DeanDashboardHeaderProps = {
   selectedProgramLabel: string;
   onProgramChange: (value: string) => void;
   lastUpdatedLabel: string;
+  scopeLabel: "Campus" | "Department";
 };
 
-export function DeanDashboardHeader({
+export function ScopedDashboardHeader({
   semesters,
   programs,
   selectedSemesterId,
@@ -38,15 +39,17 @@ export function DeanDashboardHeader({
   selectedProgramLabel,
   onProgramChange,
   lastUpdatedLabel,
-}: DeanDashboardHeaderProps) {
+  scopeLabel,
+}: ScopedDashboardHeaderProps) {
+  const scopeLower = scopeLabel.toLowerCase();
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0">
         <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-          Department Analytics Overview
+          {scopeLabel} Analytics Overview
         </h1>
         <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground sm:mt-5">
-          Monitor response volume and department-level sentiment for the selected semester.
+          Monitor response volume and {scopeLower}-level sentiment for the selected semester.
         </p>
       </div>
       <div className="w-full md:w-auto md:text-right">
