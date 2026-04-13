@@ -46,6 +46,8 @@ export enum Endpoints {
   // Faculty Analytics
   analyticsOverview = "/api/v1/analytics/overview",
   analyticsAttention = "/api/v1/analytics/attention",
+  analyticsFacultyReport = "/api/v1/analytics/faculty/:facultyId/report",
+  analyticsFacultyReportComments = "/api/v1/analytics/faculty/:facultyId/report/comments",
 
   // Faculty
   faculty = "/api/v1/faculty",

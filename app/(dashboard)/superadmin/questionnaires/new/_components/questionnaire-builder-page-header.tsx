@@ -8,10 +8,10 @@ export function QuestionnaireBuilderPageHeader({ onBack }: QuestionnaireBuilderP
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="font-playfair text-2xl font-semibold">Questionnaire Builder</h1>
+        <h1 className="font-playfair text-2xl font-semibold">Questionnaire builder</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Build a quantitative questionnaire, add an optional final comment section, and save it as
-          a draft version.
+          Build the questionnaire structure, add an optional qualitative section, and save changes
+          as a draft.
         </p>
       </div>
       <Button type="button" variant="outline" className="sm:self-start" onClick={onBack}>

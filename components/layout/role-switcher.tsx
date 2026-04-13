@@ -22,10 +22,10 @@ type RoleSwitcherProps = {
 
 export function RoleSwitcher({ align = "end", className }: RoleSwitcherProps) {
   const router = useRouter();
-  const { activeRole, availableRoles, setActiveRole } = useActiveRole();
-  const setPendingRoleHome = useAuthStore((state) => state.setPendingRoleHome);
+  const { activeRole, roles, setActiveRole } = useActiveRole();
+  const setPendingRedirectPath = useAuthStore((state) => state.setPendingRedirectPath);
 
-  if (!activeRole || !availableRoles.length) {
+  if (!activeRole || !roles.length) {
     return null;
   }
 
@@ -37,7 +37,7 @@ export function RoleSwitcher({ align = "end", className }: RoleSwitcherProps) {
       return;
     }
 
-    setPendingRoleHome(nextHomePath);
+    setPendingRedirectPath(nextHomePath);
     setActiveRole(nextActiveRole);
     router.replace(nextHomePath);
   };
@@ -52,7 +52,7 @@ export function RoleSwitcher({ align = "end", className }: RoleSwitcherProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align={align} className="min-w-40">
         <DropdownMenuRadioGroup value={activeRole} onValueChange={handleRoleChange}>
-          {availableRoles.map((role) => (
+          {roles.map((role) => (
             <DropdownMenuRadioItem key={role} value={role}>
               {getRoleLabel(role)}
             </DropdownMenuRadioItem>

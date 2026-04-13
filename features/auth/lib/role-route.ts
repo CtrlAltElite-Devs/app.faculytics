@@ -5,6 +5,7 @@ import {
   ChartNoAxesColumn,
   LayoutDashboard,
   ListChecks,
+  NotebookPen,
   Shield,
   Tags,
   type LucideIcon,
@@ -48,6 +49,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     navItems: [
       { title: "Dashboard", url: "/dean/dashboard", icon: LayoutDashboard },
       { title: "Faculties", url: "/dean/faculties", icon: ChartNoAxesColumn },
+      { title: "Evaluation", url: "/dean/evaluation", icon: NotebookPen },
     ],
   },
   [APP_ROLES.CHAIRPERSON]: {
@@ -57,6 +59,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     navItems: [
       { title: "Dashboard", url: "/chairperson/dashboard", icon: LayoutDashboard },
       { title: "Faculties", url: "/chairperson/faculties", icon: Building2 },
+      { title: "Evaluation", url: "/chairperson/evaluation", icon: NotebookPen },
     ],
   },
   [APP_ROLES.ADMIN]: {
@@ -96,14 +99,14 @@ export function getAvailableRoles(roles?: readonly string[] | null): AppRole[] {
 }
 
 export function resolveActiveRole(roles?: readonly AppRole[] | null, activeRole?: AppRole | null) {
-  const availableRoles = roles ?? [];
-  if (!availableRoles.length) return null;
+  const resolvedRoles = roles ?? [];
+  if (!resolvedRoles.length) return null;
 
-  if (activeRole && availableRoles.includes(activeRole)) {
+  if (activeRole && resolvedRoles.includes(activeRole)) {
     return activeRole;
   }
 
-  return availableRoles[0];
+  return resolvedRoles[0];
 }
 
 export function resolveHomeFromRoles(

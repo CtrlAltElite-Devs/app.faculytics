@@ -27,9 +27,9 @@ export function QuestionnaireRatingScaleInstructions() {
   return (
     <Card className="border-brand-yellow/90 bg-brand-yellow/30">
       <CardHeader>
-        <CardTitle className="font-playfair text-lg">Rating Scale Instructions</CardTitle>
+        <CardTitle className="font-playfair text-lg">Rating scale</CardTitle>
         <CardDescription className="text-primary">
-          Please rate each statement using the following scale:
+          Use this scale when reviewing each quantitative statement.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-5">

@@ -161,6 +161,8 @@ export function DeanFacultyAnalyticsScreen() {
         <DeanFacultyAnalysisTable
           facultyList={facultyList}
           pagination={pagination}
+          selectedSemesterId={selectedSemesterId ?? ""}
+          selectedSemesterLabel={selectedSemesterLabel}
           onPageChange={setCurrentPage}
           onRowsPerPageChange={setRowsPerPage}
         />

@@ -2,7 +2,7 @@
 
 import { AppLoadingScreen } from "@/components/shared/app-loading-screen";
 import type { AppRole } from "@/constants/roles";
-import { useActiveRole } from "@/features/auth/hooks/use-active-role";
+import { useAuthSessionState } from "@/features/auth/hooks/use-auth-session-state";
 import { useAuthStore } from "@/stores/auth-store";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -17,67 +17,59 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const clearSession = useAuthStore((state) => state.clearSession);
-  const pendingRoleHome = useAuthStore((state) => state.pendingRoleHome);
-  const setPendingRoleHome = useAuthStore((state) => state.setPendingRoleHome);
-  const {
-    activeRole,
-    roleHome,
-    roles,
-    isPending: isMePending,
-    isError: isMeError,
-  } = useActiveRole();
+  const pendingRedirectPath = useAuthStore((state) => state.pendingRedirectPath);
+  const setPendingRedirectPath = useAuthStore((state) => state.setPendingRedirectPath);
+  const { activeRole, roleHome, roles, status } = useAuthSessionState();
   const hasAnyAllowedRole = roles.some((role) => allowedRoles.includes(role));
   const isAllowed = Boolean(activeRole && allowedRoles.includes(activeRole));
+  const authenticatedHome = status === "authenticated" ? roleHome : null;
 
   useEffect(() => {
-    if (isMePending) return;
+    if (status === "hydrating" || status === "loading-profile") return;
 
-    if (pendingRoleHome && roleHome === pendingRoleHome) {
-      if (pathname === pendingRoleHome) {
-        setPendingRoleHome(null);
+    if (pendingRedirectPath && authenticatedHome === pendingRedirectPath) {
+      if (pathname === pendingRedirectPath) {
+        setPendingRedirectPath(null);
       }
 
       return;
     }
 
-    if (isMeError) {
+    if (status === "signed-out" || status === "invalid-session" || status === "unsupported-role") {
       clearSession();
       router.replace("/auth");
       return;
     }
 
-    if (!roleHome) {
-      clearSession();
-      router.replace("/auth");
+    if (!authenticatedHome) {
       return;
     }
 
     if (!hasAnyAllowedRole) {
-      router.replace(roleHome);
+      router.replace(authenticatedHome);
       return;
     }
 
-    if (!isAllowed && pathname !== roleHome) {
-      router.replace(roleHome);
+    if (!isAllowed && pathname !== authenticatedHome) {
+      router.replace(authenticatedHome);
     }
   }, [
+    authenticatedHome,
     clearSession,
     hasAnyAllowedRole,
     isAllowed,
-    isMeError,
-    isMePending,
     pathname,
-    pendingRoleHome,
-    roleHome,
+    pendingRedirectPath,
     router,
-    setPendingRoleHome,
+    setPendingRedirectPath,
+    status,
   ]);
 
-  if (isMePending || !roleHome) {
+  if (status === "hydrating" || status === "loading-profile") {
     return <AppLoadingScreen message="Checking access..." />;
   }
 
-  if (isMeError || !isAllowed) {
+  if (status !== "authenticated" || !isAllowed) {
     return null;
   }
 

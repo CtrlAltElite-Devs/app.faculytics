@@ -53,13 +53,13 @@ export function QuestionnaireTypeListScreen({
   const emptyState = useMemo(() => {
     if (rows.length === 0) {
       return {
-        description: "No questionnaire types found yet.",
+        description: "No questionnaire types have been added yet.",
       };
     }
 
     if (filteredRows.length === 0) {
       return {
-        description: "No matching questionnaire types.",
+        description: "No questionnaire types match the current search or filter.",
         actionLabel: "Clear filters",
         onAction: () => {
           setSearchValue("");

@@ -11,7 +11,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/features/auth/hooks/use-login";
 import { loginRequestSchema } from "@/features/auth/schemas";
-import type { AuthErrorResponse, LoginRequest } from "@/features/auth/types";
+import type { AuthErrorPayload, LoginRequest } from "@/features/auth/types";
 
 type AuthLoginFormProps = {
   isAuthenticating: boolean;
@@ -32,7 +32,7 @@ export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginForm
 
   const isBusy = isPending || isAuthenticating;
   const loginErrorMessage =
-    (error as AxiosError<AuthErrorResponse> | null)?.response?.data?.message ?? null;
+    (error as AxiosError<AuthErrorPayload> | null)?.response?.data?.message ?? null;
   const feedbackMessage = loginErrorMessage ?? statusMessage;
 
   const onSubmit = (values: LoginRequest) => {
@@ -43,7 +43,9 @@ export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginForm
     <div className="w-full max-w-md space-y-6">
       <div className="text-center">
         <h2 className="font-playfair text-3xl font-bold">Welcome</h2>
-        <p className="mt-2 text-sm">Sign in using your student portal account</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Use your institutional account to continue.
+        </p>
       </div>
 
       {feedbackMessage ? (
@@ -60,13 +62,7 @@ export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginForm
             render={({ field, fieldState }) => (
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input
-                  {...field}
-                  id="username"
-                  type="text"
-                  placeholder="john@gmail.com"
-                  disabled={isBusy}
-                />
+                <Input {...field} id="username" type="text" placeholder="" disabled={isBusy} />
                 {fieldState.error ? <FieldError>{fieldState.error.message}</FieldError> : null}
               </Field>
             )}
@@ -119,7 +115,7 @@ export function AuthLoginForm({ isAuthenticating, statusMessage }: AuthLoginForm
               Signing in...
             </>
           ) : (
-            "Login"
+            "Sign in"
           )}
         </Button>
       </form>

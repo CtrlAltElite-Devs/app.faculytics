@@ -72,7 +72,7 @@ export function QuestionnaireTypeEditDialog({
       form.reset();
       onOpenChange(false);
     } catch (error) {
-      toast.error(resolveApiErrorMessage(error, "Unable to update questionnaire type."));
+      toast.error(resolveApiErrorMessage(error, "The questionnaire type could not be updated."));
     }
   };
 
@@ -88,10 +88,10 @@ export function QuestionnaireTypeEditDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Questionnaire Type</DialogTitle>
+          <DialogTitle>Edit questionnaire type</DialogTitle>
           <DialogDescription>
-            Update the metadata for <strong>{questionnaireType?.code}</strong>. The type code is
-            immutable after creation.
+            Update the metadata for <strong>{questionnaireType?.code}</strong>. The type code cannot
+            be changed after creation.
           </DialogDescription>
         </DialogHeader>
 
@@ -152,7 +152,7 @@ export function QuestionnaireTypeEditDialog({
                   Saving...
                 </>
               ) : (
-                "Save"
+                "Save changes"
               )}
             </Button>
           </DialogFooter>

@@ -15,7 +15,7 @@ export default function SuperAdminDimensionsPage() {
       <div>
         <h1 className="font-playfair text-2xl font-semibold">Dimensions</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Manage dimension codes used across questionnaire types.
+          Manage the dimension codes used in questionnaire sections across each questionnaire type.
         </p>
       </div>
 
@@ -34,6 +34,7 @@ export default function SuperAdminDimensionsPage() {
         onTypeFilterChange={page.onTypeFilterChange}
         onStatusFilterChange={page.onStatusFilterChange}
         onSearchChange={page.onSearchChange}
+        onClearFilters={page.onClearFilters}
         onCreateClick={() => page.setCreateOpen(true)}
         onPageSizeChange={page.onPageSizeChange}
         onEdit={(row) => page.setEditDimension(row)}

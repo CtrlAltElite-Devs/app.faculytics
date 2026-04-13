@@ -64,15 +64,16 @@ export function QuestionnaireListScreen({
   const hasFilters = normalizedSearch.length > 0 || statusFilter !== "ALL";
   const emptyState = !hasQuestionnaire
     ? {
-        description: "No questionnaire for this type yet.",
+        description:
+          "No questionnaire has been created for this type yet. Create a draft to start building one.",
       }
     : rows.length === 0
       ? {
-          description: "No versions yet.",
+          description: "No versions have been created for this questionnaire yet.",
         }
       : filteredRows.length === 0 && hasFilters
         ? {
-            description: "No matching versions.",
+            description: "No questionnaire versions match the current filters.",
             actionLabel: "Clear filters",
             onAction: () => {
               setSearchValue("");
