@@ -132,7 +132,6 @@ export function useFacultyReportDetailViewModel({
     commentsQuery,
     questionnaireTypesQuery,
     isQuestionnaireTypeLoading: questionnaireTypesQuery.isLoading,
-    isRefreshing: reportQuery.isFetching || commentsQuery.isFetching,
     hasSemesterContext: Boolean(semesterId),
     updateQuestionnaireType: (value: string) => {
       updateSearchParams({
