@@ -1,5 +1,6 @@
 export * from "@/features/auth/api/auth.requests";
 export * from "@/features/auth/hooks/use-active-role";
+export * from "@/features/auth/hooks/use-auth-session-state";
 export * from "@/features/auth/hooks/use-login";
 export * from "@/features/auth/hooks/use-logout";
 export * from "@/features/auth/hooks/use-me";

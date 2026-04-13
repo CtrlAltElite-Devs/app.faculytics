@@ -5,6 +5,4 @@ export { DeanFacultyAnalyticsScreen } from "@/features/faculty-analytics/compone
 export {
   mapDepartmentOverviewToDashboardViewModel,
   mapSemesterOptionsToViewModel,
-  getDeanFacultyAnalysisDetailViewModel,
 } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
-export type { DeanFacultyAnalysisRecord } from "@/features/faculty-analytics/lib/analytics-sample-data";

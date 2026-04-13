@@ -28,7 +28,7 @@ export default function QuestionnaireBuilderPreviewPage() {
         backHref={`/superadmin/questionnaires/new?type=${requestedType}`}
         backLabel="Back to builder"
       >
-        <QuestionnairePreviewLoadingCard message="Loading preview draft..." />
+        <QuestionnairePreviewLoadingCard message="Loading the current draft preview..." />
       </QuestionnairePreviewShell>
     );
   }
@@ -36,14 +36,12 @@ export default function QuestionnaireBuilderPreviewPage() {
   if (!draft || !hasPreviewContent) {
     return (
       <QuestionnairePreviewShell
-        title="Preview unavailable"
-        description="There is no active builder draft to preview. Return to the questionnaire builder and start a draft first."
         backHref={`/superadmin/questionnaires/new?type=${requestedType}`}
         backLabel="Back to builder"
       >
         <QuestionnairePreviewStateCard
           title="Preview unavailable"
-          description="There is no active builder draft to preview. Return to the questionnaire builder and start a draft first."
+          description="There is no draft available to preview yet. Return to the builder and add questionnaire content first."
         />
       </QuestionnairePreviewShell>
     );
@@ -55,7 +53,7 @@ export default function QuestionnaireBuilderPreviewPage() {
   return (
     <QuestionnairePreviewShell
       title={model.title}
-      description="Builder preview. Review the questionnaire structure and wording before saving or publishing."
+      description="Review the questionnaire structure and wording before saving or publishing."
       backHref={backHref}
       backLabel="Back to builder"
     >

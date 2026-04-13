@@ -8,8 +8,6 @@ export type QuantitativeMetricScore = {
 
 export type SemesterKey = "firstSemester" | "secondSemester" | "summerSemester";
 
-export type FacultyAnalysisSemesterKey = SemesterKey;
-
 export type QualitativeTheme = {
   label: string;
   mentions: number;
@@ -160,4 +158,79 @@ export type AttentionItemDto = {
 export type AttentionListResponseDto = {
   items: AttentionItemDto[];
   lastRefreshedAt: string | null;
+};
+
+export type FacultyReportQuery = {
+  facultyId: string;
+  semesterId: string;
+  questionnaireTypeCode: string;
+  courseId?: string;
+};
+
+export type FacultyReportCommentsQuery = FacultyReportQuery & {
+  page?: number;
+  limit?: number;
+};
+
+export type FacultyReportFacultyDto = {
+  id: string;
+  name: string;
+};
+
+export type FacultyReportSemesterDto = {
+  id: string;
+  code: string;
+  label: string;
+  academicYear: string;
+};
+
+export type FacultyReportQuestionnaireTypeDto = {
+  code: string;
+  name: string;
+};
+
+export type FacultyReportCourseFilterDto = {
+  id: string;
+  code: string;
+  title: string;
+};
+
+export type FacultyReportQuestionDto = {
+  questionId: string;
+  order: number;
+  text: string;
+  average: number;
+  responseCount: number;
+  interpretation: string;
+};
+
+export type FacultyReportSectionDto = {
+  sectionId: string;
+  title: string;
+  order: number;
+  weight: number;
+  questions: FacultyReportQuestionDto[];
+  sectionAverage: number;
+  sectionInterpretation: string;
+};
+
+export type FacultyReportResponseDto = {
+  faculty: FacultyReportFacultyDto;
+  semester: FacultyReportSemesterDto;
+  questionnaireType: FacultyReportQuestionnaireTypeDto;
+  courseFilter: FacultyReportCourseFilterDto | null;
+  submissionCount: number;
+  sections: FacultyReportSectionDto[];
+  overallRating: number | null;
+  overallInterpretation: string | null;
+};
+
+export type FacultyReportCommentDto = {
+  text: string;
+  submittedAt: string;
+};
+
+export type FacultyReportCommentsResponseDto = {
+  items: FacultyReportCommentDto[];
+  meta: PaginationMetaDto;
 };

@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { resolveQuestionnaireActionErrorMessage } from "@/features/questionnaires/lib/action-errors";
-import {
-  buildQuestionnaireTypeOptions,
-  resolveActiveQuestionnaireType,
-} from "@/features/questionnaires/lib/questionnaire-type-options";
 import { normalizeTypeSearchParam } from "@/features/questionnaires/lib/questionnaire-type-routing";
 import { useDeprecateQuestionnaireVersion } from "@/features/questionnaires/hooks/use-deprecate-questionnaire-version";
 import { usePublishQuestionnaireVersion } from "@/features/questionnaires/hooks/use-publish-questionnaire-version";
-import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import { useQuestionnaireTypeResolution } from "@/features/questionnaires/hooks/use-questionnaire-type-resolution";
 import { useQuestionnaireVersions } from "@/features/questionnaires/hooks/use-questionnaire-versions";
 import {
-  resolveQuestionnaireType,
   type QuestionnaireTypeCode,
   type QuestionnaireVersionItem,
   type VersionLifecycleAction,
@@ -21,25 +16,17 @@ import {
 
 export function useQuestionnaireListPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [versionAction, setVersionAction] = useState<VersionLifecycleAction>(null);
-  const selectedType = resolveQuestionnaireType(searchParams.get("type"));
-
-  const questionnaireTypesQuery = useQuestionnaireTypes();
+  const {
+    searchParams,
+    questionnaireTypesQuery,
+    availableTypeOptions,
+    activeType,
+    activeTypeSummary,
+    activeTypeId,
+  } = useQuestionnaireTypeResolution();
   const publishVersionMutation = usePublishQuestionnaireVersion();
   const deprecateVersionMutation = useDeprecateQuestionnaireVersion();
-  const typeSummaries = questionnaireTypesQuery.data ?? [];
-  const availableTypeOptions = buildQuestionnaireTypeOptions(typeSummaries);
-  const activeType = resolveActiveQuestionnaireType({
-    requestedType: selectedType,
-    availableTypeOptions,
-    isResolved: questionnaireTypesQuery.isSuccess,
-  });
-  const activeTypeSummary =
-    availableTypeOptions.find((summary) => summary.code === activeType) ?? null;
-
-  // Resolve code → UUID for the API call
-  const activeTypeId = typeSummaries.find((s) => s.code === activeType)?.id ?? null;
 
   const questionnaireVersionsQuery = useQuestionnaireVersions(activeTypeId, {
     enabled: questionnaireTypesQuery.isSuccess && activeTypeId !== null,
@@ -54,7 +41,7 @@ export function useQuestionnaireListPage() {
       searchParams,
       router,
     });
-  }, [activeType, questionnaireTypesQuery.isSuccess, router, searchParams, selectedType]);
+  }, [activeType, questionnaireTypesQuery.isSuccess, router, searchParams]);
 
   useEffect(() => {
     const builderStatus = searchParams.get("builder");
@@ -86,7 +73,7 @@ export function useQuestionnaireListPage() {
   };
 
   const handleViewVersion = (row: QuestionnaireVersionItem) => {
-    router.push(`/superadmin/questionnaires/preview?versionId=${row.id}`);
+    router.push(`/superadmin/questionnaires/preview?type=${activeType}&versionId=${row.id}`);
   };
 
   const isVersionActionPending =

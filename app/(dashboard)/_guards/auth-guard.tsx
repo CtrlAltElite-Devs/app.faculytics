@@ -1,7 +1,7 @@
 "use client";
 
 import { AppLoadingScreen } from "@/components/shared/app-loading-screen";
-import { useActiveRole } from "@/features/auth/hooks/use-active-role";
+import { useAuthSessionState } from "@/features/auth/hooks/use-auth-session-state";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -13,42 +13,29 @@ type AuthGuardProps = {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
-  const hydrated = useAuthStore((state) => state.hydrated);
-  const token = useAuthStore((state) => state.token);
   const clearSession = useAuthStore((state) => state.clearSession);
-  const { activeRole, roleHome, isPending: isMePending, isError: isMeError } = useActiveRole();
+  const { status } = useAuthSessionState();
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (status === "hydrating" || status === "loading-profile") return;
 
-    if (!token) {
+    if (status === "signed-out") {
       router.replace("/auth");
       return;
     }
 
-    if (isMePending) return;
-
-    if (isMeError) {
+    if (status === "invalid-session" || status === "unsupported-role") {
       clearSession();
       router.replace("/auth");
       return;
     }
+  }, [clearSession, router, status]);
 
-    if (!activeRole || !roleHome) {
-      clearSession();
-      router.replace("/auth");
-    }
-  }, [activeRole, clearSession, hydrated, isMeError, isMePending, roleHome, router, token]);
-
-  if (!hydrated || isMePending) {
+  if (status === "hydrating" || status === "loading-profile") {
     return <AppLoadingScreen message="Restoring your session..." />;
   }
 
-  if (token && !isMeError && (!activeRole || !roleHome)) {
-    return <AppLoadingScreen message="Loading your dashboard..." />;
-  }
-
-  if (!token || isMeError || !activeRole || !roleHome) {
+  if (status !== "authenticated") {
     return null;
   }
 

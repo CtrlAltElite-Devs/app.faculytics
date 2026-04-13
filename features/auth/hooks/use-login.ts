@@ -6,10 +6,6 @@ import { login } from "@/features/auth/api/auth.requests";
 import { useAuthStore } from "@/stores/auth-store";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 
-/**
- * Login mutation hook.
- * Handles API call, validation of token payload, and session persistence to Zustand.
- */
 export function useLogin() {
   const queryClient = useQueryClient();
   const setSession = useAuthStore((state) => state.setSession);

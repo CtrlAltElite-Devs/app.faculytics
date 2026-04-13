@@ -27,22 +27,20 @@ const STATUS_FILTER_LABELS: Record<DimensionStatusFilter, string> = {
   INACTIVE: "Inactive",
 };
 
-type TypeFilter = QuestionnaireTypeCode;
-
 type DimensionTypeOption = Pick<QuestionnaireTypeSummary, "code" | "name">;
 
 type DimensionToolbarProps = {
   typeOptions: DimensionTypeOption[];
-  typeFilter: TypeFilter;
+  typeFilter: QuestionnaireTypeCode;
   statusFilter: DimensionStatusFilter;
   searchValue: string;
-  onTypeFilterChange: (value: TypeFilter) => void;
+  onTypeFilterChange: (value: QuestionnaireTypeCode) => void;
   onStatusFilterChange: (value: DimensionStatusFilter) => void;
   onSearchChange: (value: string) => void;
   onCreateClick: () => void;
 };
 
-export type { DimensionStatusFilter, TypeFilter };
+export type { DimensionStatusFilter };
 
 export function DimensionToolbar({
   typeOptions,
@@ -76,7 +74,7 @@ export function DimensionToolbar({
           <DropdownMenuContent align="start" className="min-w-56">
             <DropdownMenuRadioGroup
               value={typeFilter}
-              onValueChange={(v) => onTypeFilterChange(v as TypeFilter)}
+              onValueChange={(v) => onTypeFilterChange(v as QuestionnaireTypeCode)}
             >
               {typeOptions.map((type) => (
                 <DropdownMenuRadioItem key={type.code} value={type.code}>
@@ -125,7 +123,7 @@ export function DimensionToolbar({
           </DropdownMenu>
 
           <Button type="button" variant="brand" className="w-full min-w-0" onClick={onCreateClick}>
-            Create Dimension
+            New dimension
           </Button>
         </div>
       </div>
@@ -151,7 +149,7 @@ export function DimensionToolbar({
           <DropdownMenuContent align="start" className="min-w-[18rem] max-w-[24rem]">
             <DropdownMenuRadioGroup
               value={typeFilter}
-              onValueChange={(v) => onTypeFilterChange(v as TypeFilter)}
+              onValueChange={(v) => onTypeFilterChange(v as QuestionnaireTypeCode)}
             >
               {typeOptions.map((type) => (
                 <DropdownMenuRadioItem key={type.code} value={type.code}>
@@ -166,7 +164,7 @@ export function DimensionToolbar({
 
         <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
           <Button type="button" variant="brand" className="shrink-0" onClick={onCreateClick}>
-            Create Dimension
+            New dimension
           </Button>
 
           <div className="relative min-w-[15rem] flex-1 lg:max-w-xs xl:max-w-sm">

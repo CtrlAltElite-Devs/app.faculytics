@@ -10,19 +10,14 @@ export default function QuestionnaireBuilderPage() {
   const {
     activePageType,
     hydrated,
-    resolvedVersionId,
     showBuilderLoading,
     showBuilderError,
     emptyState,
     discardDialogOpen,
     setDiscardDialogOpen,
-    questionnaireListHref,
-    questionnaireTypesQuery,
-    questionnaireVersionsQuery,
-    questionnaireVersionQuery,
-    resetActiveDraft,
     handleBackToQuestionnaires,
-    router,
+    handleRetry,
+    handleConfirmDiscard,
   } = useQuestionnairePageState();
 
   return (
@@ -35,23 +30,13 @@ export default function QuestionnaireBuilderPage() {
         isLoading={showBuilderLoading}
         isError={showBuilderError}
         emptyState={emptyState}
-        onRetry={() => {
-          void questionnaireTypesQuery.refetch();
-          void questionnaireVersionsQuery.refetch();
-          if (resolvedVersionId) {
-            void questionnaireVersionQuery.refetch();
-          }
-        }}
+        onRetry={handleRetry}
       />
 
       <QuestionnaireBuilderDiscardDialog
         open={discardDialogOpen}
         onOpenChange={setDiscardDialogOpen}
-        onConfirm={() => {
-          resetActiveDraft();
-          setDiscardDialogOpen(false);
-          router.push(questionnaireListHref);
-        }}
+        onConfirm={handleConfirmDiscard}
       />
     </section>
   );

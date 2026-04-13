@@ -5,6 +5,10 @@ import type {
   AttentionListResponseDto,
   DepartmentOverviewQuery,
   DepartmentOverviewResponseDto,
+  FacultyReportCommentsQuery,
+  FacultyReportCommentsResponseDto,
+  FacultyReportQuery,
+  FacultyReportResponseDto,
   FacultyListQuery,
   FacultyListResponseDto,
   ListProgramsQuery,
@@ -25,6 +29,27 @@ export async function fetchAttentionList(params: AttentionListQuery) {
   const response = await apiClient.get<AttentionListResponseDto>(Endpoints.analyticsAttention, {
     params,
   });
+
+  return response.data;
+}
+
+export async function fetchFacultyReport({ facultyId, ...params }: FacultyReportQuery) {
+  const response = await apiClient.get<FacultyReportResponseDto>(
+    Endpoints.analyticsFacultyReport.replace(":facultyId", facultyId),
+    { params }
+  );
+
+  return response.data;
+}
+
+export async function fetchFacultyReportComments({
+  facultyId,
+  ...params
+}: FacultyReportCommentsQuery) {
+  const response = await apiClient.get<FacultyReportCommentsResponseDto>(
+    Endpoints.analyticsFacultyReportComments.replace(":facultyId", facultyId),
+    { params }
+  );
 
   return response.data;
 }

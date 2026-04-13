@@ -15,6 +15,7 @@ export * from "@/features/questionnaires/hooks/use-save-draft";
 export * from "@/features/questionnaires/hooks/use-check-submission";
 export * from "@/features/questionnaires/hooks/use-create-questionnaire-type-management";
 export * from "@/features/questionnaires/hooks/use-questionnaire-list-page";
+export * from "@/features/questionnaires/hooks/use-questionnaire-type-resolution";
 export * from "@/features/questionnaires/hooks/use-questionnaire-type-management";
 export * from "@/features/questionnaires/hooks/use-questionnaire-type-management-page";
 export * from "@/features/questionnaires/types";
