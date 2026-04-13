@@ -160,6 +160,61 @@ export type AttentionListResponseDto = {
   lastRefreshedAt: string | null;
 };
 
+export type GenerateSingleReportRequest = {
+  facultyId: string;
+  semesterId: string;
+  questionnaireTypeCode: string;
+};
+
+export type GenerateSingleReportResponse = {
+  jobId: string;
+};
+
+export type ReportJobStatus = "waiting" | "active" | "completed" | "failed" | "skipped";
+
+export type ReportStatusResponseDto = {
+  jobId: string;
+  status: ReportJobStatus;
+  facultyName: string;
+  downloadUrl?: string;
+  expiresAt?: string;
+  error?: string;
+  message?: string;
+  createdAt: string;
+  completedAt?: string;
+};
+
+export type GenerateBatchReportRequest = {
+  semesterId: string;
+  questionnaireTypeCode: string;
+  departmentId?: string;
+  programId?: string;
+};
+
+export type GenerateBatchReportResponse = {
+  batchId: string;
+  jobCount: number;
+  skippedCount: number;
+};
+
+export type BatchReportStatusQuery = {
+  batchId: string;
+  page?: number;
+  limit?: number;
+};
+
+export type BatchStatusResponseDto = {
+  batchId: string;
+  total: number;
+  completed: number;
+  failed: number;
+  skipped: number;
+  active: number;
+  waiting: number;
+  jobs: ReportStatusResponseDto[];
+  meta: PaginationMetaDto;
+};
+
 export type FacultyReportQuery = {
   facultyId: string;
   semesterId: string;
