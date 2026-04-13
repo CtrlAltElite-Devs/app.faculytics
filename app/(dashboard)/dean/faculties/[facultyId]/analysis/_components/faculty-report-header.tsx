@@ -47,7 +47,8 @@ export function FacultyReportHeader({
           {facultyName}
         </h1>
         <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground">
-          Review per-question faculty evaluation results for {semesterLabel}.
+          Review per-question faculty evaluation results for{" "}
+          <span className="font-bold text-foreground">{semesterLabel}</span>.
         </p>
       </div>
 

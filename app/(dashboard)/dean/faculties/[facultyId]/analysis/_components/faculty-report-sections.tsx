@@ -18,8 +18,8 @@ type FacultyReportSectionsProps = {
 
 function FacultyReportSectionTable({ section }: { section: FacultyReportSectionDto }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
-      <div className="px-5 py-4">
+    <article className="overflow-hidden">
+      <div className="px-2 py-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="font-sans text-sm text-muted-foreground">Section {section.order}</p>

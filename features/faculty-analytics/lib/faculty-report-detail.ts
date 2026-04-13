@@ -2,6 +2,7 @@ import {
   resolveQuestionnaireType,
   resolveQuestionnaireTypeLabel,
 } from "@/features/questionnaires/types";
+import type { FacultyReportResponseDto } from "@/features/faculty-analytics/types";
 
 export function buildFacultyReportHref(
   pathname: string,
@@ -45,4 +46,21 @@ export function resolveFacultyReportQuestionnaireTypeCode(value: string | null) 
 
 export function resolveFacultyReportQuestionnaireTypeLabel(code: string, name?: string | null) {
   return resolveQuestionnaireTypeLabel(code, name ?? undefined);
+}
+
+export function hasFacultyReportAnalyticsData(
+  report: FacultyReportResponseDto,
+  commentsCount: number
+) {
+  const hasInterpretation =
+    typeof report.overallInterpretation === "string" &&
+    report.overallInterpretation.trim().length > 0;
+
+  return (
+    report.submissionCount > 0 ||
+    report.sections.length > 0 ||
+    commentsCount > 0 ||
+    report.overallRating !== null ||
+    hasInterpretation
+  );
 }

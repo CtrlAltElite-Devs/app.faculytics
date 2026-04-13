@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
 import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
 import { DeanAnalyticsLoadingState } from "@/features/faculty-analytics/components/dean-analytics-loading-state";
 import { useFacultyReportDetailViewModel } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
+import { hasFacultyReportAnalyticsData } from "@/features/faculty-analytics/lib/faculty-report-detail";
 
 import { FacultyReportComments } from "./faculty-report-comments";
 import { FacultyReportHeader } from "./faculty-report-header";
+import { FacultyReportSectionPerformanceChart } from "./faculty-report-section-performance-chart";
 import { FacultyReportSections } from "./faculty-report-sections";
 import { FacultyReportSummaryCards } from "./faculty-report-summary-cards";
 
@@ -68,6 +71,8 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
     );
   }
 
+  const hasAnalyticsData = hasFacultyReportAnalyticsData(viewModel.report, viewModel.commentsCount);
+
   return (
     <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
       <FacultyReportHeader
@@ -83,26 +88,34 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         onRefresh={viewModel.retryAll}
       />
 
-      <FacultyReportSummaryCards
-        submissionCount={viewModel.report.submissionCount}
-        overallRating={viewModel.report.overallRating}
-        commentsCount={viewModel.commentsCount}
-        overallInterpretation={viewModel.report.overallInterpretation}
-      />
+      {!hasAnalyticsData ? (
+        <DeanAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected semester and questionnaire type yet." />
+      ) : (
+        <>
+          <FacultyReportSummaryCards
+            submissionCount={viewModel.report.submissionCount}
+            overallRating={viewModel.report.overallRating}
+            commentsCount={viewModel.commentsCount}
+            overallInterpretation={viewModel.report.overallInterpretation}
+          />
 
-      <FacultyReportSections sections={viewModel.report.sections} />
+          <FacultyReportSectionPerformanceChart sections={viewModel.report.sections} />
 
-      <FacultyReportComments
-        comments={viewModel.comments}
-        commentsMeta={viewModel.commentsMeta}
-        commentsPage={viewModel.commentsPage}
-        commentsLimit={viewModel.commentsLimit}
-        isLoading={viewModel.commentsQuery.isLoading}
-        isError={viewModel.commentsQuery.isError}
-        onRetry={viewModel.retryComments}
-        onPageChange={viewModel.updateCommentsPage}
-        onRowsPerPageChange={viewModel.updateCommentsLimit}
-      />
+          <FacultyReportSections sections={viewModel.report.sections} />
+
+          <FacultyReportComments
+            comments={viewModel.comments}
+            commentsMeta={viewModel.commentsMeta}
+            commentsPage={viewModel.commentsPage}
+            commentsLimit={viewModel.commentsLimit}
+            isLoading={viewModel.commentsQuery.isLoading}
+            isError={viewModel.commentsQuery.isError}
+            onRetry={viewModel.retryComments}
+            onPageChange={viewModel.updateCommentsPage}
+            onRowsPerPageChange={viewModel.updateCommentsLimit}
+          />
+        </>
+      )}
     </section>
   );
 }
