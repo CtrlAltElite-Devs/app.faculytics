@@ -1,7 +1,3 @@
-import {
-  deanAnalyticsSampleData,
-  getDeanFacultyAnalysisBySlug,
-} from "@/features/faculty-analytics/lib/analytics-sample-data";
 import { ALL_PROGRAMS_LABEL } from "@/features/faculty-analytics/constants/filters";
 import type {
   DepartmentOverviewResponseDto,
@@ -44,10 +40,6 @@ export type DeanDashboardViewModel = {
   lastUpdatedLabel: string;
   summary: DeanSummaryMetrics;
   overallSentiment: DeanOverallSentimentDatum[];
-};
-
-export type DeanFacultyAnalysisDetailViewModel = {
-  faculty: (typeof deanAnalyticsSampleData.facultyAnalysis)[number];
 };
 
 function toSentimentRate(count: number, total: number) {
@@ -123,16 +115,4 @@ export function mapDepartmentOverviewToDashboardViewModel({
       },
     ],
   };
-}
-
-export function getDeanFacultyAnalysisDetailViewModel(
-  facultySlug: string
-): DeanFacultyAnalysisDetailViewModel | null {
-  const faculty = getDeanFacultyAnalysisBySlug(facultySlug);
-
-  if (!faculty) {
-    return null;
-  }
-
-  return { faculty };
 }
