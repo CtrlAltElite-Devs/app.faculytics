@@ -87,7 +87,7 @@ export function FacultyEvaluationListScreen({ role }: { role: FacultyEvaluationR
     );
 
   return (
-    <section className="md:px-16 md:py-12">
+    <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
       <div>
         <div>
           <h1 className="font-playfair text-3xl font-bold">Evaluation</h1>
@@ -114,8 +114,8 @@ export function FacultyEvaluationListScreen({ role }: { role: FacultyEvaluationR
       <div
         className={
           viewMode === "card"
-            ? "mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6"
-            : "mt-8 space-y-4"
+            ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6"
+            : "space-y-4"
         }
       >
         {content}
