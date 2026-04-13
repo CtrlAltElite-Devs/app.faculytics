@@ -6,7 +6,7 @@ import { PaginationFooter } from "@/components/shared/pagination-footer";
 import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
 import { buildDeanFacultyAnalysisHref } from "@/features/faculty-analytics/lib/faculty-analysis-routes";
 import type { FacultyListItemDto, PaginationMetaDto } from "@/features/faculty-analytics/types";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -66,6 +66,9 @@ export function DeanFacultyAnalysisTable({
                 <TableCell className="data-table-cell px-2 md:px-3 lg:px-5">
                   <div className="flex min-w-0 items-center gap-3">
                     <Avatar size="default" className="hidden border border-border/70 xl:flex">
+                      {faculty.profilePicture ? (
+                        <AvatarImage src={faculty.profilePicture} alt={faculty.fullName} />
+                      ) : null}
                       <AvatarFallback className="bg-slate-100 font-sans text-xs font-semibold text-slate-700">
                         {getFacultyInitials(faculty.fullName)}
                       </AvatarFallback>
