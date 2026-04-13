@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, RefreshCw, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
 import { DeanAnalyticsErrorState } from "@/features/faculty-analytics/components/dean-analytics-error-state";
@@ -10,7 +10,6 @@ import { DeanFacultyAnalysisTable } from "@/features/faculty-analytics/component
 import { BatchReportExportDialog } from "@/features/faculty-analytics/components/batch-report-export-dialog";
 import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
 import { useDeanFacultyAnalyticsListViewModel } from "@/features/faculty-analytics/hooks/use-dean-faculty-analytics-list-view-model";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -35,9 +34,7 @@ export function DeanFacultyAnalyticsScreen() {
     searchValue,
     isLoading,
     isError,
-    isFetching,
     retry,
-    refresh,
     setSelectedSemesterId,
     setSelectedProgramId,
     setSearchValue,
@@ -139,16 +136,6 @@ export function DeanFacultyAnalyticsScreen() {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full px-4 py-2.5 font-sans text-sm md:w-auto md:shrink-0"
-              onClick={refresh}
-              disabled={isFetching}
-            >
-              <RefreshCw className={cn("mr-2 size-4", isFetching && "animate-spin")} />
-              Refresh
-            </Button>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, RefreshCw } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -23,9 +23,7 @@ type FacultyReportHeaderProps = {
     label: string;
   }>;
   isQuestionnaireTypeLoading: boolean;
-  isRefreshing: boolean;
   onQuestionnaireTypeChange: (value: string) => void;
-  onRefresh: () => void;
   onExport: () => void;
 };
 
@@ -37,9 +35,7 @@ export function FacultyReportHeader({
   questionnaireTypeCode,
   availableQuestionnaireTypes,
   isQuestionnaireTypeLoading,
-  isRefreshing,
   onQuestionnaireTypeChange,
-  onRefresh,
   onExport,
 }: FacultyReportHeaderProps) {
   return (
@@ -94,17 +90,6 @@ export function FacultyReportHeader({
           onClick={onExport}
         >
           Export PDF
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
-          onClick={onRefresh}
-          disabled={isRefreshing}
-        >
-          <RefreshCw className={`mr-2 size-4 ${isRefreshing ? "animate-spin" : ""}`} />
-          Refresh
         </Button>
 
         <Button

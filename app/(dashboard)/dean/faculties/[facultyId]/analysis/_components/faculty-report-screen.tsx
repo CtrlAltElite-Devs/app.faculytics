@@ -86,9 +86,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         questionnaireTypeCode={viewModel.questionnaireTypeCode}
         availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
         isQuestionnaireTypeLoading={viewModel.isQuestionnaireTypeLoading}
-        isRefreshing={viewModel.isRefreshing}
         onQuestionnaireTypeChange={viewModel.updateQuestionnaireType}
-        onRefresh={viewModel.retryAll}
         onExport={() => setIsExportDialogOpen(true)}
       />
 

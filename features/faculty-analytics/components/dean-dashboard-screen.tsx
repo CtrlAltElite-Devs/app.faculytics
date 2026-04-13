@@ -24,9 +24,7 @@ export function DeanDashboardScreen() {
     overview,
     isLoading,
     isAttentionLoading,
-    isRefreshing,
     isError,
-    refresh,
     retry,
   } = useDeanDashboardViewModel();
 
@@ -55,8 +53,6 @@ export function DeanDashboardScreen() {
           selectedProgramLabel={selectedProgramLabel}
           onProgramChange={setSelectedProgramCode}
           lastUpdatedLabel={lastUpdatedLabel}
-          isRefreshing={isRefreshing}
-          onRefresh={refresh}
         />
 
         {semesters.length === 0 ? (

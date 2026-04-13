@@ -1,13 +1,12 @@
 "use client";
 
-import { ChevronDown, RefreshCw } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
 import type {
   DeanProgramOption,
   DeanSemesterOption,
 } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,8 +26,6 @@ type DeanDashboardHeaderProps = {
   selectedProgramLabel: string;
   onProgramChange: (value: string) => void;
   lastUpdatedLabel: string;
-  isRefreshing: boolean;
-  onRefresh: () => void;
 };
 
 export function DeanDashboardHeader({
@@ -41,8 +38,6 @@ export function DeanDashboardHeader({
   selectedProgramLabel,
   onProgramChange,
   lastUpdatedLabel,
-  isRefreshing,
-  onRefresh,
 }: DeanDashboardHeaderProps) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -118,16 +113,6 @@ export function DeanDashboardHeader({
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full px-4 py-2.5 font-sans text-sm md:w-auto"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-          >
-            <RefreshCw className={cn("mr-2 size-4", isRefreshing && "animate-spin")} />
-            Refresh
-          </Button>
         </div>
         <p className="mt-2 font-sans text-sm text-muted-foreground">
           Last updated: {lastUpdatedLabel}
