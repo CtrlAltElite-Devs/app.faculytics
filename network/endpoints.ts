@@ -56,4 +56,13 @@ export enum Endpoints {
   // Faculty
   faculty = "/api/v1/faculty",
   facultyEnrollments = "/api/v1/faculty/:facultyId/enrollments",
+
+  // Analysis Pipeline (FAC-132). `analysisPipelines` covers both the list
+  // (GET) and create (POST) calls since they share the same URL; HTTP verb
+  // distinguishes them at the call site.
+  analysisPipelines = "/api/v1/analysis/pipelines",
+  analysisPipelinesConfirm = "/api/v1/analysis/pipelines/:id/confirm",
+  analysisPipelinesCancel = "/api/v1/analysis/pipelines/:id/cancel",
+  analysisPipelinesStatus = "/api/v1/analysis/pipelines/:id/status",
+  analysisPipelinesRecommendations = "/api/v1/analysis/pipelines/:id/recommendations",
 }

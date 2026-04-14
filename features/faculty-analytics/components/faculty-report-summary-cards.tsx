@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  formatFacultyReportScore,
-  getFacultyReportInterpretationTextClass,
-} from "@/features/faculty-analytics/lib/faculty-report-detail";
+import { AnimatedNumber } from "@/components/animated-number";
+import { getFacultyReportInterpretationTextClass } from "@/features/faculty-analytics/lib/faculty-report-detail";
 
 type FacultyReportSummaryCardsProps = {
   submissionCount: number;
@@ -42,17 +40,19 @@ export function FacultyReportSummaryCards({
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <SummaryCard
         label="Submissions"
-        value={String(submissionCount)}
+        value={<AnimatedNumber value={submissionCount} />}
         description="Submitted evaluation responses included in this report context"
       />
       <SummaryCard
         label="Overall Rating"
-        value={formatFacultyReportScore(overallRating)}
+        value={
+          overallRating === null ? "N/A" : <AnimatedNumber value={overallRating} decimals={2} />
+        }
         description="Weighted average score across all sections in this report"
       />
       <SummaryCard
         label="Comments"
-        value={String(commentsCount)}
+        value={<AnimatedNumber value={commentsCount} />}
         description="Qualitative comments submitted for this faculty report"
       />
       <SummaryCard
