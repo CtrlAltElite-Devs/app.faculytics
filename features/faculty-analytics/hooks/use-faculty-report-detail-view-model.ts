@@ -5,14 +5,19 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import {
   buildFacultyReportHref,
+  formatFacultyReportCourseLabel,
   resolveFacultyReportQuestionnaireTypeCode,
   resolveFacultyReportQuestionnaireTypeLabel,
   resolvePositiveIntegerParam,
 } from "@/features/faculty-analytics/lib/faculty-report-detail";
+import { useFacultyEnrollments } from "@/features/faculty-analytics/hooks/use-faculty-enrollments";
 import { useFacultyReportComments } from "@/features/faculty-analytics/hooks/use-faculty-report-comments";
 import { useFacultyReport } from "@/features/faculty-analytics/hooks/use-faculty-report";
+import type { FacultyReportCourseOption } from "@/features/faculty-analytics/types";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { resolvePageSizeOption } from "@/lib/pagination";
+import { useActiveRole } from "@/features/auth/hooks/use-active-role";
+import { getRoleConfig } from "@/features/auth/lib/role-route";
 
 type UseFacultyReportDetailViewModelParams = {
   facultyId: string;
@@ -33,6 +38,7 @@ export function useFacultyReportDetailViewModel({
   const facultyNameParam = searchParams.get("facultyName") ?? "";
   const semesterId = searchParams.get("semesterId") ?? "";
   const semesterLabelParam = searchParams.get("semesterLabel") ?? "Selected semester";
+  const courseId = searchParams.get("courseId") ?? "";
   const questionnaireTypeCode = resolveFacultyReportQuestionnaireTypeCode(
     searchParams.get("questionnaireTypeCode")
   );
@@ -50,20 +56,57 @@ export function useFacultyReportDetailViewModel({
     code: type.code,
     label: resolveFacultyReportQuestionnaireTypeLabel(type.code, type.name),
   }));
+  const facultyEnrollmentsQuery = useFacultyEnrollments(
+    {
+      facultyId,
+      semesterId,
+      page: 1,
+      limit: 100,
+    },
+    { enabled: Boolean(semesterId) }
+  );
+  const availableCourses = useMemo<FacultyReportCourseOption[]>(() => {
+    const uniqueCourses = new Map<string, FacultyReportCourseOption>();
+
+    for (const enrollment of facultyEnrollmentsQuery.data?.data ?? []) {
+      const course = enrollment.course;
+      if (!uniqueCourses.has(course.id)) {
+        uniqueCourses.set(course.id, {
+          id: course.id,
+          label: formatFacultyReportCourseLabel(course.shortname, course.fullname),
+        });
+      }
+    }
+
+    return [...uniqueCourses.values()].sort((left, right) => left.label.localeCompare(right.label));
+  }, [facultyEnrollmentsQuery.data?.data]);
 
   const reportQuery = useFacultyReport(
     {
       facultyId,
       semesterId,
       questionnaireTypeCode,
+      courseId: courseId || undefined,
     },
     { enabled: Boolean(semesterId) }
   );
+  const selectedCourse =
+    availableCourses.find((course) => course.id === courseId) ??
+    (courseId && reportQuery.data?.courseFilter
+      ? {
+          id: reportQuery.data.courseFilter.id,
+          label: formatFacultyReportCourseLabel(
+            reportQuery.data.courseFilter.code,
+            reportQuery.data.courseFilter.title
+          ),
+        }
+      : null);
   const commentsQuery = useFacultyReportComments(
     {
       facultyId,
       semesterId,
       questionnaireTypeCode,
+      courseId: courseId || undefined,
       page: commentsPage,
       limit: commentsLimit,
     },
@@ -89,6 +132,31 @@ export function useFacultyReportDetailViewModel({
     router.replace(nextHref, { scroll: false });
   }, [currentSearchParams, pathname, questionnaireTypeCode, questionnaireTypes, router]);
 
+  useEffect(() => {
+    if (!courseId || !facultyEnrollmentsQuery.isSuccess) {
+      return;
+    }
+
+    const hasSelectedCourse = availableCourses.some((course) => course.id === courseId);
+    if (hasSelectedCourse) {
+      return;
+    }
+
+    const nextHref = buildFacultyReportHref(pathname, currentSearchParams, {
+      courseId: null,
+      page: "1",
+    });
+
+    router.replace(nextHref, { scroll: false });
+  }, [
+    availableCourses,
+    courseId,
+    currentSearchParams,
+    facultyEnrollmentsQuery.isSuccess,
+    pathname,
+    router,
+  ]);
+
   const updateSearchParams = (updates: Record<string, string | null>) => {
     const nextHref = buildFacultyReportHref(pathname, currentSearchParams, updates);
     router.replace(nextHref, { scroll: false });
@@ -108,15 +176,23 @@ export function useFacultyReportDetailViewModel({
   const commentsCount = commentsMeta?.totalItems ?? comments.length;
 
   const refreshAll = () => {
+    void facultyEnrollmentsQuery.refetch();
     void questionnaireTypesQuery.refetch();
     void reportQuery.refetch();
     void commentsQuery.refetch();
   };
 
+  const { activeRole } = useActiveRole();
+  const routePrefix = activeRole ? getRoleConfig(activeRole).routePrefix : "/dean";
+  const backHref = `${routePrefix}/faculties`;
+
   return {
-    backHref: "/dean/faculties",
+    backHref,
     facultyId,
     semesterId,
+    courseId,
+    selectedCourseLabel: selectedCourse?.label ?? "All courses",
+    availableCourses,
     report,
     reportTitle,
     semesterLabel,
@@ -131,12 +207,19 @@ export function useFacultyReportDetailViewModel({
     reportQuery,
     commentsQuery,
     questionnaireTypesQuery,
+    facultyEnrollmentsQuery,
     isQuestionnaireTypeLoading: questionnaireTypesQuery.isLoading,
-    isRefreshing: reportQuery.isFetching || commentsQuery.isFetching,
+    isCourseLoading: facultyEnrollmentsQuery.isLoading,
     hasSemesterContext: Boolean(semesterId),
     updateQuestionnaireType: (value: string) => {
       updateSearchParams({
         questionnaireTypeCode: value,
+        page: "1",
+      });
+    },
+    updateCourse: (value: string) => {
+      updateSearchParams({
+        courseId: value === "ALL" ? null : value,
         page: "1",
       });
     },
@@ -157,7 +240,7 @@ export function useFacultyReportDetailViewModel({
     },
     retryAll: refreshAll,
     goBackToFaculties: () => {
-      router.push("/dean/faculties");
+      router.push(backHref);
     },
   };
 }

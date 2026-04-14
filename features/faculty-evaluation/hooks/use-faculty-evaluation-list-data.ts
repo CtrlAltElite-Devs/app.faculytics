@@ -6,7 +6,7 @@ import { useMe } from "@/features/auth/hooks/use-me";
 import {
   mapProgramOptionsToViewModel,
   mapSemesterOptionsToViewModel,
-} from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+} from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
 import { useScopedFacultyList } from "@/features/faculty-evaluation/hooks/use-scoped-faculty-list";

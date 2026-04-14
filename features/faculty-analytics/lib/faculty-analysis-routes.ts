@@ -1,20 +1,22 @@
 import { DEFAULT_QUESTIONNAIRE_TYPE } from "@/features/questionnaires/constants";
 
-type BuildDeanFacultyAnalysisHrefOptions = {
+type BuildScopedFacultyAnalysisHrefOptions = {
   facultyId: string;
   facultyName: string;
   semesterId: string;
   semesterLabel: string;
   questionnaireTypeCode?: string;
+  scopeLabel: "Campus" | "Department";
 };
 
-export function buildDeanFacultyAnalysisHref({
+export function buildScopedFacultyAnalysisHref({
   facultyId,
   facultyName,
   semesterId,
   semesterLabel,
   questionnaireTypeCode = DEFAULT_QUESTIONNAIRE_TYPE,
-}: BuildDeanFacultyAnalysisHrefOptions) {
+  scopeLabel,
+}: BuildScopedFacultyAnalysisHrefOptions) {
   const params = new URLSearchParams({
     facultyName,
     semesterId,
@@ -22,5 +24,6 @@ export function buildDeanFacultyAnalysisHref({
     questionnaireTypeCode,
   });
 
-  return `/dean/faculties/${facultyId}/analysis?${params.toString()}`;
+  const basePath = scopeLabel === "Campus" ? "/campus-head/faculties" : "/dean/faculties";
+  return `${basePath}/${facultyId}/analysis?${params.toString()}`;
 }

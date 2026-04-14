@@ -3,6 +3,8 @@ import { Endpoints } from "@/network/endpoints";
 import type {
   AttentionListQuery,
   AttentionListResponseDto,
+  BatchReportStatusQuery,
+  BatchStatusResponseDto,
   DepartmentOverviewQuery,
   DepartmentOverviewResponseDto,
   FacultyReportCommentsQuery,
@@ -11,11 +13,17 @@ import type {
   FacultyReportResponseDto,
   FacultyListQuery,
   FacultyListResponseDto,
+  GenerateBatchReportRequest,
+  GenerateBatchReportResponse,
+  GenerateSingleReportRequest,
+  GenerateSingleReportResponse,
   ListProgramsQuery,
   ListSemestersQuery,
   ProgramListResponseDto,
+  ReportStatusResponseDto,
   SemesterListResponseDto,
 } from "@/features/faculty-analytics/types";
+import type { MyEnrollmentsResponseDto } from "@/features/enrollments/types";
 
 export async function fetchDepartmentOverview(params: DepartmentOverviewQuery) {
   const response = await apiClient.get<DepartmentOverviewResponseDto>(Endpoints.analyticsOverview, {
@@ -29,6 +37,41 @@ export async function fetchAttentionList(params: AttentionListQuery) {
   const response = await apiClient.get<AttentionListResponseDto>(Endpoints.analyticsAttention, {
     params,
   });
+
+  return response.data;
+}
+
+export async function generateSingleReport(payload: GenerateSingleReportRequest) {
+  const response = await apiClient.post<GenerateSingleReportResponse>(
+    Endpoints.reportsGenerate,
+    payload
+  );
+
+  return response.data;
+}
+
+export async function fetchReportStatus(jobId: string) {
+  const response = await apiClient.get<ReportStatusResponseDto>(
+    Endpoints.reportsStatus.replace(":jobId", jobId)
+  );
+
+  return response.data;
+}
+
+export async function generateBatchReport(payload: GenerateBatchReportRequest) {
+  const response = await apiClient.post<GenerateBatchReportResponse>(
+    Endpoints.reportsGenerateBatch,
+    payload
+  );
+
+  return response.data;
+}
+
+export async function fetchBatchReportStatus({ batchId, ...params }: BatchReportStatusQuery) {
+  const response = await apiClient.get<BatchStatusResponseDto>(
+    Endpoints.reportsBatchStatus.replace(":batchId", batchId),
+    { params }
+  );
 
   return response.data;
 }
@@ -58,6 +101,25 @@ export async function fetchFacultyList(params: FacultyListQuery) {
   const response = await apiClient.get<FacultyListResponseDto>(Endpoints.faculty, {
     params,
   });
+
+  return response.data;
+}
+
+type FetchFacultyEnrollmentsParams = {
+  facultyId: string;
+  semesterId: string;
+  page?: number;
+  limit?: number;
+};
+
+export async function fetchFacultyEnrollments({
+  facultyId,
+  ...params
+}: FetchFacultyEnrollmentsParams) {
+  const response = await apiClient.get<MyEnrollmentsResponseDto>(
+    Endpoints.facultyEnrollments.replace(":facultyId", facultyId),
+    { params }
+  );
 
   return response.data;
 }
