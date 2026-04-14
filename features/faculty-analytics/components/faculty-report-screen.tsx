@@ -96,7 +96,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
       />
 
       {!hasAnalyticsData ? (
-        <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected semester and questionnaire type yet." />
+        <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected filters." />
       ) : (
         <>
           <FacultyReportSummaryCards
