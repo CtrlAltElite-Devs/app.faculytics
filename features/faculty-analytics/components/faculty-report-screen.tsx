@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
 import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
 import { ReportExportDialog } from "@/features/faculty-analytics/components/report-export-dialog";
+import { PipelineStatusBadge } from "@/features/faculty-analytics/components/pipeline-status-badge";
+import { RecommendationsCard } from "@/features/faculty-analytics/components/recommendations-card";
+import { ThemesChipList } from "@/features/faculty-analytics/components/themes-chip-list";
 import { useFacultyReportDetailViewModel } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
+import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/use-latest-pipeline-for-scope";
+import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
+import { usePipelineStatus } from "@/features/faculty-analytics/hooks/use-pipeline-status";
+import { aggregateThemes } from "@/features/faculty-analytics/lib/pipeline-themes";
 import { hasFacultyReportAnalyticsData } from "@/features/faculty-analytics/lib/faculty-report-detail";
+import type { PipelineStatus } from "@/features/faculty-analytics/types";
 
 import { FacultyReportComments } from "./faculty-report-comments";
 import { FacultyReportHeader } from "./faculty-report-header";
@@ -20,9 +28,40 @@ type FacultyReportScreenProps = {
   facultyId: string;
 };
 
+const RUNNING_STATUSES: ReadonlySet<PipelineStatus> = new Set<PipelineStatus>([
+  "AWAITING_CONFIRMATION",
+  "EMBEDDING_CHECK",
+  "SENTIMENT_ANALYSIS",
+  "SENTIMENT_GATE",
+  "TOPIC_MODELING",
+  "GENERATING_RECOMMENDATIONS",
+]);
+
 export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
+
+  const pipelineScope = useMemo(
+    () => ({ semesterId: viewModel.semesterId ?? "", facultyId }),
+    [viewModel.semesterId, facultyId]
+  );
+  const { latestPipeline } = useLatestPipelineForScope(pipelineScope, {
+    enabled: Boolean(viewModel.semesterId),
+  });
+  // Poll live status — without this, a completed pipeline's themes+recs
+  // don't appear until the next list refetch or a page refresh.
+  const pipelineStatusQuery = usePipelineStatus(latestPipeline?.id ?? null, {
+    enabled: Boolean(latestPipeline?.id),
+  });
+  const livePipelineStatus = pipelineStatusQuery.data?.status ?? latestPipeline?.status;
+  const recommendationsQuery = usePipelineRecommendations(
+    latestPipeline?.id ?? null,
+    livePipelineStatus
+  );
+  const themes = useMemo(
+    () => (recommendationsQuery.data ? aggregateThemes(recommendationsQuery.data.actions) : []),
+    [recommendationsQuery.data]
+  );
 
   if (!viewModel.hasSemesterContext) {
     return (
@@ -75,6 +114,10 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   }
 
   const hasAnalyticsData = hasFacultyReportAnalyticsData(viewModel.report, viewModel.commentsCount);
+  const pipelineStatus = livePipelineStatus;
+  const isPipelineRunning = pipelineStatus ? RUNNING_STATUSES.has(pipelineStatus) : false;
+  const showCompletedAnalysis =
+    pipelineStatus === "COMPLETED" && recommendationsQuery.data !== undefined;
 
   return (
     <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
@@ -95,6 +138,17 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         onExport={() => setIsExportDialogOpen(true)}
       />
 
+      {pipelineStatus ? (
+        <div className="flex items-center gap-3">
+          <PipelineStatusBadge status={pipelineStatus} />
+          {isPipelineRunning ? (
+            <span className="font-sans text-xs text-muted-foreground">
+              Analysis in progress. Themes and recommendations will appear once complete.
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+
       {!hasAnalyticsData ? (
         <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected filters." />
       ) : (
@@ -105,6 +159,12 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
             commentsCount={viewModel.commentsCount}
             overallInterpretation={viewModel.report.overallInterpretation}
           />
+
+          {showCompletedAnalysis && themes.length > 0 ? <ThemesChipList themes={themes} /> : null}
+
+          {showCompletedAnalysis && recommendationsQuery.data ? (
+            <RecommendationsCard recommendations={recommendationsQuery.data} />
+          ) : null}
 
           <FacultyReportSectionPerformanceChart sections={viewModel.report.sections} />
 
