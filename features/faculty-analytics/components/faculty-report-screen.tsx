@@ -84,9 +84,14 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         semesterLabel={viewModel.semesterLabel}
         questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
         questionnaireTypeCode={viewModel.questionnaireTypeCode}
+        courseId={viewModel.courseId}
+        courseLabel={viewModel.selectedCourseLabel}
         availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
+        availableCourses={viewModel.availableCourses}
         isQuestionnaireTypeLoading={viewModel.isQuestionnaireTypeLoading}
+        isCourseLoading={viewModel.isCourseLoading}
         onQuestionnaireTypeChange={viewModel.updateQuestionnaireType}
+        onCourseChange={viewModel.updateCourse}
         onExport={() => setIsExportDialogOpen(true)}
       />
 
