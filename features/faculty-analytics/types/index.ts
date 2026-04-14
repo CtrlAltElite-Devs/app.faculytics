@@ -289,3 +289,8 @@ export type FacultyReportCommentsResponseDto = {
   items: FacultyReportCommentDto[];
   meta: PaginationMetaDto;
 };
+
+export type FacultyReportCourseOption = {
+  id: string;
+  label: string;
+};

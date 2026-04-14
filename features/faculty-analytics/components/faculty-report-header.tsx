@@ -18,12 +18,20 @@ type FacultyReportHeaderProps = {
   semesterLabel: string;
   questionnaireTypeLabel: string;
   questionnaireTypeCode: string;
+  courseId: string;
+  courseLabel: string;
   availableQuestionnaireTypes: Array<{
     code: string;
     label: string;
   }>;
+  availableCourses: Array<{
+    id: string;
+    label: string;
+  }>;
   isQuestionnaireTypeLoading: boolean;
+  isCourseLoading: boolean;
   onQuestionnaireTypeChange: (value: string) => void;
+  onCourseChange: (value: string) => void;
   onExport: () => void;
 };
 
@@ -33,9 +41,14 @@ export function FacultyReportHeader({
   semesterLabel,
   questionnaireTypeLabel,
   questionnaireTypeCode,
+  courseId,
+  courseLabel,
   availableQuestionnaireTypes,
+  availableCourses,
   isQuestionnaireTypeLoading,
+  isCourseLoading,
   onQuestionnaireTypeChange,
+  onCourseChange,
   onExport,
 }: FacultyReportHeaderProps) {
   return (
@@ -77,6 +90,38 @@ export function FacultyReportHeader({
                   className="font-sans text-sm"
                 >
                   {type.label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm sm:w-72"
+              disabled={isCourseLoading || availableCourses.length === 0}
+            >
+              <span className="truncate">{courseLabel}</span>
+              <ChevronDown className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+          >
+            <DropdownMenuRadioGroup value={courseId || "ALL"} onValueChange={onCourseChange}>
+              <DropdownMenuRadioItem value="ALL" className="font-sans text-sm">
+                All courses
+              </DropdownMenuRadioItem>
+              {availableCourses.map((course) => (
+                <DropdownMenuRadioItem
+                  key={course.id}
+                  value={course.id}
+                  className="font-sans text-sm"
+                >
+                  {course.label}
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>

@@ -55,4 +55,5 @@ export enum Endpoints {
 
   // Faculty
   faculty = "/api/v1/faculty",
+  facultyEnrollments = "/api/v1/faculty/:facultyId/enrollments",
 }

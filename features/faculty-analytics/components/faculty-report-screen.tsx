@@ -84,14 +84,19 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         semesterLabel={viewModel.semesterLabel}
         questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
         questionnaireTypeCode={viewModel.questionnaireTypeCode}
+        courseId={viewModel.courseId}
+        courseLabel={viewModel.selectedCourseLabel}
         availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
+        availableCourses={viewModel.availableCourses}
         isQuestionnaireTypeLoading={viewModel.isQuestionnaireTypeLoading}
+        isCourseLoading={viewModel.isCourseLoading}
         onQuestionnaireTypeChange={viewModel.updateQuestionnaireType}
+        onCourseChange={viewModel.updateCourse}
         onExport={() => setIsExportDialogOpen(true)}
       />
 
       {!hasAnalyticsData ? (
-        <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected semester and questionnaire type yet." />
+        <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected filters." />
       ) : (
         <>
           <FacultyReportSummaryCards

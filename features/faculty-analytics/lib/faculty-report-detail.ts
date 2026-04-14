@@ -75,6 +75,21 @@ export function resolveFacultyReportQuestionnaireTypeLabel(code: string, name?: 
   return resolveQuestionnaireTypeLabel(code, name ?? undefined);
 }
 
+export function formatFacultyReportCourseLabel(code?: string | null, title?: string | null) {
+  const normalizedTitle = title?.trim() ?? "";
+  const normalizedCode = code?.trim() ?? "";
+
+  if (normalizedTitle) {
+    return normalizedTitle;
+  }
+
+  if (normalizedCode) {
+    return normalizedCode;
+  }
+
+  return "Unnamed course";
+}
+
 export function hasFacultyReportAnalyticsData(
   report: FacultyReportResponseDto,
   commentsCount: number

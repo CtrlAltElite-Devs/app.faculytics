@@ -23,6 +23,7 @@ import type {
   ReportStatusResponseDto,
   SemesterListResponseDto,
 } from "@/features/faculty-analytics/types";
+import type { MyEnrollmentsResponseDto } from "@/features/enrollments/types";
 
 export async function fetchDepartmentOverview(params: DepartmentOverviewQuery) {
   const response = await apiClient.get<DepartmentOverviewResponseDto>(Endpoints.analyticsOverview, {
@@ -100,6 +101,25 @@ export async function fetchFacultyList(params: FacultyListQuery) {
   const response = await apiClient.get<FacultyListResponseDto>(Endpoints.faculty, {
     params,
   });
+
+  return response.data;
+}
+
+type FetchFacultyEnrollmentsParams = {
+  facultyId: string;
+  semesterId: string;
+  page?: number;
+  limit?: number;
+};
+
+export async function fetchFacultyEnrollments({
+  facultyId,
+  ...params
+}: FetchFacultyEnrollmentsParams) {
+  const response = await apiClient.get<MyEnrollmentsResponseDto>(
+    Endpoints.facultyEnrollments.replace(":facultyId", facultyId),
+    { params }
+  );
 
   return response.data;
 }
