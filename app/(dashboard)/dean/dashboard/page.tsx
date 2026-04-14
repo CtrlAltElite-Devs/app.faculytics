@@ -1,5 +1,5 @@
-import { DeanDashboardScreen } from "@/features/faculty-analytics";
+import { ScopedAnalyticsDashboardScreen } from "@/features/faculty-analytics";
 
 export default function DeanDashboardPage() {
-  return <DeanDashboardScreen />;
+  return <ScopedAnalyticsDashboardScreen scopeLabel="Department" />;
 }

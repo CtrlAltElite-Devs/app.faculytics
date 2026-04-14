@@ -62,6 +62,15 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
       { title: "Evaluation", url: "/chairperson/evaluation", icon: NotebookPen },
     ],
   },
+  [APP_ROLES.CAMPUS_HEAD]: {
+    label: "Campus Head",
+    homePath: "/campus-head/dashboard",
+    routePrefix: "/campus-head",
+    navItems: [
+      { title: "Dashboard", url: "/campus-head/dashboard", icon: LayoutDashboard },
+      { title: "Faculties", url: "/campus-head/faculties", icon: ChartNoAxesColumn },
+    ],
+  },
   [APP_ROLES.ADMIN]: {
     label: "Admin",
     homePath: "/admin",
