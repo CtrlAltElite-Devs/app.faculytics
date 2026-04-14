@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DeanAnalyticsEmptyState } from "@/features/faculty-analytics/components/dean-analytics-empty-state";
+import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import {
   formatFacultyReportScore,
   getFacultyReportInterpretationBadgeClass,
@@ -83,7 +83,7 @@ function FacultyReportSectionTable({ section }: { section: FacultyReportSectionD
 export function FacultyReportSections({ sections }: FacultyReportSectionsProps) {
   if (sections.length === 0) {
     return (
-      <DeanAnalyticsEmptyState description="No report sections are available for the selected faculty, semester, and questionnaire type." />
+      <ScopedAnalyticsEmptyState description="No report sections are available for the selected faculty, semester, and questionnaire type." />
     );
   }
 

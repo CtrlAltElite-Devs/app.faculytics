@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { PaginationFooter } from "@/components/shared/pagination-footer";
 import { FacultySubjects } from "@/features/faculty-analytics/components/faculty-subjects";
-import { buildDeanFacultyAnalysisHref } from "@/features/faculty-analytics/lib/faculty-analysis-routes";
+import { buildScopedFacultyAnalysisHref } from "@/features/faculty-analytics/lib/faculty-analysis-routes";
 import type { FacultyListItemDto, PaginationMetaDto } from "@/features/faculty-analytics/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type DeanFacultyAnalysisTableProps = {
+type ScopedFacultyAnalysisTableProps = {
   facultyList: readonly FacultyListItemDto[];
   pagination: PaginationMetaDto;
   selectedSemesterId: string;
   selectedSemesterLabel: string;
   onPageChange: (page: number) => void;
   onRowsPerPageChange: (value: number) => void;
+  scopeLabel: "Campus" | "Department";
 };
 
 function getFacultyInitials(name: string) {
@@ -35,14 +36,15 @@ function getFacultyInitials(name: string) {
     .join("");
 }
 
-export function DeanFacultyAnalysisTable({
+export function ScopedFacultyAnalysisTable({
   facultyList,
   pagination,
   selectedSemesterId,
   selectedSemesterLabel,
   onPageChange,
   onRowsPerPageChange,
-}: DeanFacultyAnalysisTableProps) {
+  scopeLabel,
+}: ScopedFacultyAnalysisTableProps) {
   return (
     <div className="space-y-5">
       <div className="data-table-wrapper">
@@ -91,11 +93,12 @@ export function DeanFacultyAnalysisTable({
                     className="h-auto max-w-full whitespace-normal px-3 py-2 text-center font-sans leading-tight"
                   >
                     <Link
-                      href={buildDeanFacultyAnalysisHref({
+                      href={buildScopedFacultyAnalysisHref({
                         facultyId: faculty.id,
                         facultyName: faculty.fullName,
                         semesterId: selectedSemesterId,
                         semesterLabel: selectedSemesterLabel,
+                        scopeLabel,
                       })}
                       className="block whitespace-normal text-center leading-tight"
                     >

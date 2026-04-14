@@ -12,11 +12,11 @@ import { useFacultyList } from "@/features/faculty-analytics/hooks/use-faculty-l
 import {
   mapProgramOptionsToViewModel,
   mapSemesterOptionsToViewModel,
-} from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+} from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
 
-export function useDeanFacultyAnalyticsListViewModel() {
+export function useScopedFacultyAnalyticsListViewModel() {
   const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
   const [selectedProgramIdState, setSelectedProgramId] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState("");

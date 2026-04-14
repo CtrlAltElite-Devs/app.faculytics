@@ -1,14 +1,14 @@
 import { FacultyReportScreen } from "@/features/faculty-analytics";
 
-type FacultyAnalysisDetailPageProps = {
+type CampusHeadFacultyAnalysisPageProps = {
   params: Promise<{
     facultyId: string;
   }>;
 };
 
-export default async function FacultyAnalysisDetailPage({
+export default async function CampusHeadFacultyAnalysisPage({
   params,
-}: FacultyAnalysisDetailPageProps) {
+}: CampusHeadFacultyAnalysisPageProps) {
   const { facultyId } = await params;
 
   return <FacultyReportScreen facultyId={facultyId} />;

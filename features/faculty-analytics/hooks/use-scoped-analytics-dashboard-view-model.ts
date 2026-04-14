@@ -12,13 +12,13 @@ import {
   mapDepartmentOverviewToDashboardViewModel,
   mapProgramOptionsToViewModel,
   mapSemesterOptionsToViewModel,
-} from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+} from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import { useDepartmentOverview } from "@/features/faculty-analytics/hooks/use-department-overview";
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
 import { formatRelativeTime } from "@/lib/date";
 
-export function useDeanDashboardViewModel() {
+export function useScopedAnalyticsDashboardViewModel() {
   const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
   const [selectedProgramCodeState, setSelectedProgramCode] = useState<string | null>(null);
   const meQuery = useMe();

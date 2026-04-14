@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-type DeanAttentionCardProps = {
+type ScopedAttentionCardProps = {
   items: AttentionItemDto[];
   isLoading?: boolean;
   hasAnalyticsData: boolean;
+  scopeLabel: "Campus" | "Department";
+  facultiesHref: string;
 };
 
 const FLAG_STYLES: Record<
@@ -73,12 +75,15 @@ function AttentionCardEmptyState({ hasAnalyticsData }: { hasAnalyticsData: boole
   );
 }
 
-export function DeanAttentionCard({
+export function ScopedAttentionCard({
   items,
   isLoading = false,
   hasAnalyticsData,
-}: DeanAttentionCardProps) {
+  scopeLabel,
+  facultiesHref,
+}: ScopedAttentionCardProps) {
   const topItems = items.slice(0, 5);
+  const scopeLower = scopeLabel.toLowerCase();
 
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">
@@ -87,7 +92,7 @@ export function DeanAttentionCard({
           Faculty Requiring Attention
         </CardTitle>
         <p className="font-sans text-sm text-muted-foreground">
-          Faculty in your departments flagged for review in the selected semester.
+          Faculty in your {scopeLower} flagged for review in the selected semester.
         </p>
       </CardHeader>
       <CardContent>
@@ -128,7 +133,7 @@ export function DeanAttentionCard({
                         size="sm"
                         className="h-auto px-0 py-0 font-sans text-brand-blue hover:text-brand-blue"
                       >
-                        <Link href="/dean/faculties">
+                        <Link href={facultiesHref}>
                           View List
                           <ArrowRight className="size-4" />
                         </Link>
@@ -164,7 +169,7 @@ export function DeanAttentionCard({
             {items.length > 5 ? (
               <div className="flex justify-end pt-1">
                 <Button asChild variant="outline" size="sm" className="font-sans">
-                  <Link href="/dean/faculties">View all flagged faculty</Link>
+                  <Link href={facultiesHref}>View all flagged faculty</Link>
                 </Button>
               </div>
             ) : null}

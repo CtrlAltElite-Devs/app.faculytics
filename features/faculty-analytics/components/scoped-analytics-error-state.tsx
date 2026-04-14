@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 
-type DeanAnalyticsErrorStateProps = {
+type ScopedAnalyticsErrorStateProps = {
   onRetry: () => void;
   message?: string;
 };
 
-export function DeanAnalyticsErrorState({
+export function ScopedAnalyticsErrorState({
   onRetry,
   message = "Unable to load analytics right now.",
-}: DeanAnalyticsErrorStateProps) {
+}: ScopedAnalyticsErrorStateProps) {
   return (
     <div className="flex min-h-44 flex-col items-center justify-center px-6 text-center">
       <p className="max-w-xl font-sans text-sm text-muted-foreground">{message}</p>

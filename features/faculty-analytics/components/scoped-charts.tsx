@@ -2,7 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
-import type { DeanOverallSentimentDatum } from "@/features/faculty-analytics/lib/dean-analytics-view-model";
+import type { ScopedOverallSentimentDatum } from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import {
   ChartContainer,
   ChartTooltip,
@@ -27,10 +27,10 @@ const overallSentimentChartConfig = {
   },
 } satisfies ChartConfig;
 
-export function DeanOverallSentimentBarChart({
+export function ScopedOverallSentimentBarChart({
   overallSentiment,
 }: {
-  overallSentiment: DeanOverallSentimentDatum[];
+  overallSentiment: ScopedOverallSentimentDatum[];
 }) {
   const isMobile = useIsMobile();
   const overallSentimentData = overallSentiment.map((item) => ({
