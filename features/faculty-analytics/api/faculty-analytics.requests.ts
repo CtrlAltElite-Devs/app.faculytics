@@ -20,6 +20,8 @@ import type {
   ListProgramsQuery,
   ListSemestersQuery,
   ProgramListResponseDto,
+  QualitativeSummaryQuery,
+  QualitativeSummaryResponseDto,
   ReportStatusResponseDto,
   SemesterListResponseDto,
 } from "@/features/faculty-analytics/types";
@@ -91,6 +93,15 @@ export async function fetchFacultyReportComments({
 }: FacultyReportCommentsQuery) {
   const response = await apiClient.get<FacultyReportCommentsResponseDto>(
     Endpoints.analyticsFacultyReportComments.replace(":facultyId", facultyId),
+    { params }
+  );
+
+  return response.data;
+}
+
+export async function fetchQualitativeSummary({ facultyId, ...params }: QualitativeSummaryQuery) {
+  const response = await apiClient.get<QualitativeSummaryResponseDto>(
+    Endpoints.analyticsFacultyQualitativeSummary.replace(":facultyId", facultyId),
     { params }
   );
 
