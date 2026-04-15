@@ -54,10 +54,10 @@ export function ScopedFacultyAnalysisTable({
               <TableHead className="data-table-head w-[28%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
                 Faculty
               </TableHead>
-              <TableHead className="data-table-head w-[54%] px-2 text-[11px] md:px-3 md:text-xs lg:px-5">
+              <TableHead className="data-table-head w-[52%] px-2 text-[11px] md:w-[54%] md:px-3 md:text-xs lg:px-5">
                 Subjects
               </TableHead>
-              <TableHead className="data-table-head w-[18%] px-2 text-right text-[11px] md:px-3 md:text-xs lg:px-5">
+              <TableHead className="data-table-head w-[20%] px-2 text-right text-[11px] md:w-[18%] md:px-3 md:text-xs lg:px-5">
                 Action
               </TableHead>
             </TableRow>
@@ -67,7 +67,7 @@ export function ScopedFacultyAnalysisTable({
               <TableRow key={faculty.id} className="data-table-row w-full">
                 <TableCell className="data-table-cell px-2 md:px-3 lg:px-5">
                   <div className="flex min-w-0 items-center gap-3">
-                    <Avatar size="default" className="hidden border border-border/70 xl:flex">
+                    <Avatar size="default" className="border border-border/70">
                       {faculty.profilePicture ? (
                         <AvatarImage src={faculty.profilePicture} alt={faculty.fullName} />
                       ) : null}
@@ -90,7 +90,7 @@ export function ScopedFacultyAnalysisTable({
                     asChild
                     variant="secondary"
                     size="sm"
-                    className="h-auto max-w-full whitespace-normal px-3 py-2 text-center font-sans leading-tight"
+                    className="h-auto px-2 py-2 text-center font-sans text-xs leading-none md:px-3 md:text-sm"
                   >
                     <Link
                       href={buildScopedFacultyAnalysisHref({
@@ -100,9 +100,10 @@ export function ScopedFacultyAnalysisTable({
                         semesterLabel: selectedSemesterLabel,
                         scopeLabel,
                       })}
-                      className="block whitespace-normal text-center leading-tight"
+                      className="text-center leading-none"
                     >
-                      View Analysis
+                      <span className="sm:hidden">View</span>
+                      <span className="hidden sm:inline">View Analysis</span>
                     </Link>
                   </Button>
                 </TableCell>
