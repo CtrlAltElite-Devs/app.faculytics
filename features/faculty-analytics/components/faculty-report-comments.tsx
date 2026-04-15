@@ -1,12 +1,18 @@
 "use client";
 
+import { useMemo } from "react";
+
+import { Badge } from "@/components/ui/badge";
 import { PaginationFooter } from "@/components/shared/pagination-footer";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
 import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
+import { cn } from "@/lib/utils";
 import type {
   FacultyReportCommentDto,
   PaginationMetaDto,
+  QualitativeThemeDto,
+  SentimentLabel,
 } from "@/features/faculty-analytics/types";
 import { formatDateTime } from "@/lib/date";
 
@@ -20,6 +26,19 @@ type FacultyReportCommentsProps = {
   onRetry: () => void;
   onPageChange: (page: number) => void;
   onRowsPerPageChange: (value: number) => void;
+  themes?: QualitativeThemeDto[];
+};
+
+const SENTIMENT_CLASSES: Record<SentimentLabel, string> = {
+  positive: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
+  neutral: "bg-muted text-muted-foreground",
+  negative: "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300",
+};
+
+const SENTIMENT_LABELS: Record<SentimentLabel, string> = {
+  positive: "Positive",
+  neutral: "Neutral",
+  negative: "Negative",
 };
 
 export function FacultyReportComments({
@@ -32,7 +51,15 @@ export function FacultyReportComments({
   onRetry,
   onPageChange,
   onRowsPerPageChange,
+  themes,
 }: FacultyReportCommentsProps) {
+  const themeLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const theme of themes ?? []) {
+      map.set(theme.themeId, theme.label);
+    }
+    return map;
+  }, [themes]);
   return (
     <section className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
       <div className="border-b border-border/70 px-5 py-4">
@@ -67,21 +94,61 @@ export function FacultyReportComments({
 
       {!isLoading && !isError && comments.length > 0 ? (
         <div className="space-y-2 px-5 py-3">
-          {comments.map((comment, index) => (
-            <article
-              key={`${comment.submittedAt}-${index}`}
-              className="rounded-2xl border border-border/70 bg-background/60 px-4 py-2.5"
-            >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-                <p className="max-w-3xl font-sans text-sm leading-6 text-foreground">
-                  {comment.text}
-                </p>
-                <p className="shrink-0 font-sans text-xs text-muted-foreground sm:text-right">
-                  Submitted {formatDateTime(comment.submittedAt)}
-                </p>
-              </div>
-            </article>
-          ))}
+          {comments.map((comment, index) => {
+            const themeChipLabels = (comment.themeIds ?? [])
+              .map((id) => themeLookup.get(id))
+              .filter((label): label is string => Boolean(label));
+            const visibleThemes = themeChipLabels.slice(0, 2);
+            const overflowCount = themeChipLabels.length - visibleThemes.length;
+
+            return (
+              <article
+                key={`${comment.submittedAt}-${index}`}
+                className="rounded-2xl border border-border/70 bg-background/60 px-4 py-2.5"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {comment.sentiment ? (
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "rounded-full border-none px-2 py-0.5 font-sans text-[0.7rem] font-medium",
+                            SENTIMENT_CLASSES[comment.sentiment]
+                          )}
+                        >
+                          {SENTIMENT_LABELS[comment.sentiment]}
+                        </Badge>
+                      ) : null}
+                      {visibleThemes.map((label) => (
+                        <Badge
+                          key={label}
+                          variant="secondary"
+                          className="rounded-full px-2 py-0.5 font-sans text-[0.7rem]"
+                        >
+                          {label}
+                        </Badge>
+                      ))}
+                      {overflowCount > 0 ? (
+                        <Badge
+                          variant="outline"
+                          className="rounded-full px-2 py-0.5 font-sans text-[0.7rem] text-muted-foreground"
+                        >
+                          +{overflowCount} more
+                        </Badge>
+                      ) : null}
+                    </div>
+                    <p className="max-w-3xl font-sans text-sm leading-6 text-foreground">
+                      {comment.text}
+                    </p>
+                  </div>
+                  <p className="shrink-0 font-sans text-xs text-muted-foreground sm:text-right">
+                    Submitted {formatDateTime(comment.submittedAt)}
+                  </p>
+                </div>
+              </article>
+            );
+          })}
 
           <PaginationFooter
             itemCount={commentsMeta?.itemCount ?? 0}

@@ -48,6 +48,7 @@ export enum Endpoints {
   analyticsAttention = "/api/v1/analytics/attention",
   analyticsFacultyReport = "/api/v1/analytics/faculty/:facultyId/report",
   analyticsFacultyReportComments = "/api/v1/analytics/faculty/:facultyId/report/comments",
+  analyticsFacultyQualitativeSummary = "/api/v1/analytics/faculty/:facultyId/qualitative-summary",
   reportsGenerate = "/api/v1/reports/generate",
   reportsGenerateBatch = "/api/v1/reports/generate/batch",
   reportsStatus = "/api/v1/reports/status/:jobId",

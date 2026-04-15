@@ -13,8 +13,29 @@ import { ThemesRankedList } from "@/features/faculty-analytics/components/themes
 import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/use-latest-pipeline-for-scope";
 import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
 import { usePipelineStatus } from "@/features/faculty-analytics/hooks/use-pipeline-status";
-import { aggregateThemes } from "@/features/faculty-analytics/lib/pipeline-themes";
+import {
+  aggregateThemes,
+  type RankedTheme,
+} from "@/features/faculty-analytics/lib/pipeline-themes";
+import type { QualitativeThemeDto } from "@/features/faculty-analytics/types";
 import { useScopedAnalyticsDashboardViewModel } from "@/features/faculty-analytics/hooks/use-scoped-analytics-dashboard-view-model";
+
+function rankedThemesToQualitativeThemes(themes: RankedTheme[]): QualitativeThemeDto[] {
+  return themes.map((theme, index) => {
+    const total = theme.commentCount || 0;
+    return {
+      themeId: `ranked-${index}-${theme.topicLabel}`,
+      label: theme.topicLabel,
+      count: total,
+      sentimentSplit: {
+        positive: Math.round(theme.sentimentBreakdown.positive * total),
+        neutral: Math.round(theme.sentimentBreakdown.neutral * total),
+        negative: Math.round(theme.sentimentBreakdown.negative * total),
+      },
+      sampleQuotes: theme.sampleQuotes,
+    };
+  });
+}
 
 export type ScopeLabel = "Campus" | "Department";
 
@@ -58,7 +79,10 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
   const liveStatus = pipelineStatusQuery.data?.status ?? latestPipeline?.status;
   const recommendationsQuery = usePipelineRecommendations(latestPipeline?.id ?? null, liveStatus);
   const themes = useMemo(
-    () => (recommendationsQuery.data ? aggregateThemes(recommendationsQuery.data.actions) : []),
+    () =>
+      recommendationsQuery.data
+        ? rankedThemesToQualitativeThemes(aggregateThemes(recommendationsQuery.data.actions))
+        : [],
     [recommendationsQuery.data]
   );
 
