@@ -14,8 +14,6 @@ import {
 
 type FacultyReportHeaderProps = {
   backHref: string;
-  facultyName: string;
-  semesterLabel: string;
   questionnaireTypeLabel: string;
   questionnaireTypeCode: string;
   courseId: string;
@@ -37,8 +35,6 @@ type FacultyReportHeaderProps = {
 
 export function FacultyReportHeader({
   backHref,
-  facultyName,
-  semesterLabel,
   questionnaireTypeLabel,
   questionnaireTypeCode,
   courseId,
@@ -52,27 +48,30 @@ export function FacultyReportHeader({
   onExport,
 }: FacultyReportHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-      <div className="min-w-0">
-        <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-          {facultyName}
-        </h1>
-        <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground">
-          Review per-question faculty evaluation results for{" "}
-          <span className="font-bold text-foreground">{semesterLabel}</span>.
-        </p>
-      </div>
+    <nav
+      aria-label="Faculty report controls"
+      className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
+    >
+      <Button
+        asChild
+        variant="ghost"
+        size="sm"
+        className="w-fit px-2 font-sans text-xs uppercase tracking-[0.18em] text-stone-500 hover:text-stone-900"
+      >
+        <Link href={backHref}>← Back to faculties</Link>
+      </Button>
 
-      <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end xl:w-auto">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm sm:w-64"
+              size="sm"
+              className="w-full min-w-0 justify-between border-stone-200 bg-white px-3 py-2 font-sans text-xs sm:w-56"
               disabled={isQuestionnaireTypeLoading || availableQuestionnaireTypes.length === 0}
             >
-              <span className="truncate">{questionnaireTypeLabel}</span>
-              <ChevronDown className="size-4" />
+              <span className="truncate text-stone-700">{questionnaireTypeLabel}</span>
+              <ChevronDown className="size-3.5 text-stone-400" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -100,11 +99,12 @@ export function FacultyReportHeader({
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm sm:w-72"
+              size="sm"
+              className="w-full min-w-0 justify-between border-stone-200 bg-white px-3 py-2 font-sans text-xs sm:w-56"
               disabled={isCourseLoading || availableCourses.length === 0}
             >
-              <span className="truncate">{courseLabel}</span>
-              <ChevronDown className="size-4" />
+              <span className="truncate text-stone-700">{courseLabel}</span>
+              <ChevronDown className="size-3.5 text-stone-400" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -131,20 +131,13 @@ export function FacultyReportHeader({
         <Button
           type="button"
           variant="brand"
-          className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
+          size="sm"
+          className="w-full px-4 py-2 font-sans text-xs sm:w-auto"
           onClick={onExport}
         >
           Export PDF
         </Button>
-
-        <Button
-          asChild
-          variant="outline"
-          className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
-        >
-          <Link href={backHref}>Back to Faculties</Link>
-        </Button>
       </div>
-    </div>
+    </nav>
   );
 }
