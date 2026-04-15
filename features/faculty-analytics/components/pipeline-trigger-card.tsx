@@ -51,6 +51,29 @@ const TRIGGER_ROLES: ReadonlySet<AppRole> = new Set<AppRole>([
   APP_ROLES.SUPER_ADMIN,
 ]);
 
+// FAC-135 Phase C (Task C10): auto-schedule banner formatter.
+// Uses Intl.DateTimeFormat (no new deps). When `iso` is nullish, returns
+// null — caller renders the generic fallback copy.
+function formatNextScheduled(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function AutoScheduleBanner({ iso }: { iso: string | null | undefined }) {
+  const formatted = formatNextScheduled(iso);
+  const copy = formatted ? `Next scheduled refresh: ${formatted}` : "Refreshes weekly on Mondays.";
+  return (
+    <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+      {copy}
+    </p>
+  );
+}
+
 function extractErrorMessage(err: unknown): string {
   if (
     typeof err === "object" &&
@@ -150,24 +173,42 @@ export function PipelineTriggerCard({ scope, pipeline, onStatusChange }: Pipelin
     });
   };
 
+  const nextScheduledRunAt = statusQuery.data?.nextScheduledRunAt ?? null;
+
   // ─── Faculty view ───────────────────────────────────────────────────────
   if (!canTrigger) {
-    if (!pipeline || !liveStatus) return null;
-    return (
-      <section className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card px-5 py-4 shadow-sm">
-        <ActivityIcon className="size-4 text-muted-foreground" />
-        <div className="flex-1">
+    if (!pipeline || !liveStatus) {
+      // Still show the auto-schedule hint even when no pipeline exists yet.
+      return (
+        <section className="flex flex-col gap-1 rounded-2xl border border-border/70 bg-card px-5 py-4 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
             Analysis
           </p>
-          <p className="font-sans text-sm">
-            Last updated{" "}
-            <span className="font-mono tabular-nums">
-              {new Date(pipeline.updatedAt).toLocaleString()}
-            </span>
+          <p className="font-sans text-sm text-muted-foreground">
+            Your analysis will run automatically once student feedback is available.
           </p>
+          <AutoScheduleBanner iso={nextScheduledRunAt} />
+        </section>
+      );
+    }
+    return (
+      <section className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card px-5 py-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <ActivityIcon className="size-4 text-muted-foreground" />
+          <div className="flex-1">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Analysis
+            </p>
+            <p className="font-sans text-sm">
+              Last updated{" "}
+              <span className="font-mono tabular-nums">
+                {new Date(pipeline.updatedAt).toLocaleString()}
+              </span>
+            </p>
+          </div>
+          <PipelineStatusBadge status={liveStatus} />
         </div>
-        <PipelineStatusBadge status={liveStatus} />
+        <AutoScheduleBanner iso={nextScheduledRunAt} />
       </section>
     );
   }
@@ -314,11 +355,14 @@ export function PipelineTriggerCard({ scope, pipeline, onStatusChange }: Pipelin
         ) : null}
 
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 pb-5 pt-5">
-          <p className="font-mono text-[11px] tabular-nums text-muted-foreground">
-            {pipeline
-              ? `Last updated ${new Date(pipeline.updatedAt).toLocaleString()}`
-              : "No previous run"}
-          </p>
+          <div className="flex flex-col gap-0.5">
+            <p className="font-mono text-[11px] tabular-nums text-muted-foreground">
+              {pipeline
+                ? `Last updated ${new Date(pipeline.updatedAt).toLocaleString()}`
+                : "No previous run"}
+            </p>
+            <AutoScheduleBanner iso={nextScheduledRunAt} />
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             {/* Status dialog entry — available whenever a pipeline exists
                 (running OR terminal). Muted ghost style so it doesn't
@@ -383,6 +427,7 @@ export function PipelineTriggerCard({ scope, pipeline, onStatusChange }: Pipelin
         onCancel={handleCancelFromConfirm}
         isConfirming={confirmMutation.isPending}
         isCancelling={cancelMutation.isPending}
+        voiceBreakdown={statusQuery.data?.coverage.voiceBreakdown ?? null}
       />
 
       <PipelineStatusDialog

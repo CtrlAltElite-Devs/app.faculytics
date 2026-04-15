@@ -15,7 +15,11 @@ import { useFacultyEnrollments } from "@/features/faculty-analytics/hooks/use-fa
 import { useFacultyReportComments } from "@/features/faculty-analytics/hooks/use-faculty-report-comments";
 import { useFacultyReport } from "@/features/faculty-analytics/hooks/use-faculty-report";
 import { useQualitativeSummary } from "@/features/faculty-analytics/hooks/use-qualitative-summary";
-import type { FacultyReportCourseOption, SentimentLabel } from "@/features/faculty-analytics/types";
+import type {
+  Facet,
+  FacultyReportCourseOption,
+  SentimentLabel,
+} from "@/features/faculty-analytics/types";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { resolvePageSizeOption } from "@/lib/pagination";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
@@ -29,6 +33,21 @@ const VALID_SENTIMENTS: ReadonlySet<SentimentLabel> = new Set<SentimentLabel>([
 
 function isSentimentLabel(value: string | null): value is SentimentLabel {
   return Boolean(value) && VALID_SENTIMENTS.has(value as SentimentLabel);
+}
+
+// FAC-135 Phase C: URL-synced facet state. `overall` is the default; unknown
+// values fall back to `overall` silently. Scope narrowing for this param is
+// cosmetic — it only drives client-side filtering of pipeline recommendations
+// and derived theme facets; quantitative queries ignore it.
+const VALID_FACETS: ReadonlySet<Facet> = new Set<Facet>([
+  "overall",
+  "facultyFeedback",
+  "inClassroom",
+  "outOfClassroom",
+]);
+
+function resolveFacet(value: string | null): Facet {
+  return value && VALID_FACETS.has(value as Facet) ? (value as Facet) : "overall";
 }
 
 type UseFacultyReportDetailViewModelParams = {
@@ -54,6 +73,10 @@ export function useFacultyReportDetailViewModel({
   const questionnaireTypeCode = resolveFacultyReportQuestionnaireTypeCode(
     searchParams.get("questionnaireTypeCode")
   );
+  // FAC-135 Phase C (Task C5): URL-synced facet selection (param `facet`).
+  // Default `overall`. Drives pipeline recommendation filtering only —
+  // the quantitative/qualitative endpoints still key on questionnaireTypeCode.
+  const selectedFacet: Facet = resolveFacet(searchParams.get("facet"));
   const commentsPage = resolvePositiveIntegerParam(searchParams.get("page"), 1);
   const commentsLimit = resolvePageSizeOption(searchParams.get("limit"), [5, 10, 20]);
   const rawSentiment = searchParams.get("sentiment");
@@ -69,10 +92,6 @@ export function useFacultyReportDetailViewModel({
   );
   const selectedQuestionnaireType =
     questionnaireTypes.find((type) => type.code === questionnaireTypeCode) ?? null;
-  const availableQuestionnaireTypes = questionnaireTypes.map((type) => ({
-    code: type.code,
-    label: resolveFacultyReportQuestionnaireTypeLabel(type.code, type.name),
-  }));
   const facultyEnrollmentsQuery = useFacultyEnrollments(
     {
       facultyId,
@@ -118,12 +137,15 @@ export function useFacultyReportDetailViewModel({
           ),
         }
       : null);
+  // FAC-135 Phase C (Task C5 + C7): Qualitative summary is scope-wide (all
+  // courses) — course filter does NOT thread here, by design. Themes/feedback
+  // are analyzed across all courses to ensure reliable patterns; per-course
+  // breakdown is quantitative only.
   const qualitativeSummaryQuery = useQualitativeSummary(
     {
       facultyId,
       semesterId,
       questionnaireTypeCode,
-      courseId: courseId || undefined,
     },
     { enabled: Boolean(semesterId && questionnaireTypeCode) }
   );
@@ -138,12 +160,14 @@ export function useFacultyReportDetailViewModel({
 
   const resolvedThemeId = themeLabelFilter ? (labelToId.get(themeLabelFilter) ?? null) : null;
 
+  // FAC-135 Phase C (Task C5): Comments are drawn from the qualitative
+  // surface (themes/facets). Course filter is quantitative-only and does
+  // NOT thread into comments either.
   const commentsQuery = useFacultyReportComments(
     {
       facultyId,
       semesterId,
       questionnaireTypeCode,
-      courseId: courseId || undefined,
       page: commentsPage,
       limit: commentsLimit,
       sentiment: sentimentFilter ?? undefined,
@@ -218,6 +242,17 @@ export function useFacultyReportDetailViewModel({
     [updateSearchParams]
   );
 
+  const selectFacet = useCallback(
+    (next: Facet) => {
+      updateSearchParams({
+        // Omit default `overall` from URL for cleaner links; Facet resolver
+        // treats missing/invalid as overall.
+        facet: next === "overall" ? null : next,
+      });
+    },
+    [updateSearchParams]
+  );
+
   const clearAllFilters = useCallback(() => {
     updateSearchParams({ sentiment: null, themeLabel: null, page: null });
   }, [updateSearchParams]);
@@ -277,7 +312,8 @@ export function useFacultyReportDetailViewModel({
     semesterLabel,
     questionnaireTypeCode,
     questionnaireTypeLabel,
-    availableQuestionnaireTypes,
+    selectedFacet,
+    selectFacet,
     comments,
     commentsMeta,
     commentsPage,
@@ -297,12 +333,6 @@ export function useFacultyReportDetailViewModel({
     isQuestionnaireTypeLoading: questionnaireTypesQuery.isLoading,
     isCourseLoading: facultyEnrollmentsQuery.isLoading,
     hasSemesterContext: Boolean(semesterId),
-    updateQuestionnaireType: (value: string) => {
-      updateSearchParams({
-        questionnaireTypeCode: value,
-        page: "1",
-      });
-    },
     updateCourse: (value: string) => {
       updateSearchParams({
         courseId: value === "ALL" ? null : value,

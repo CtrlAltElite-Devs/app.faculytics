@@ -26,7 +26,6 @@ type ThemeExplorerCardProps = {
   facultyId: string;
   semesterId: string;
   questionnaireTypeCode: string;
-  courseId?: string;
   sentimentFilter: SentimentLabel | null;
   matchingAction: RecommendedActionDto | null;
 };
@@ -81,7 +80,6 @@ export function ThemeExplorerCard({
   facultyId,
   semesterId,
   questionnaireTypeCode,
-  courseId,
   sentimentFilter,
   matchingAction,
 }: ThemeExplorerCardProps) {
@@ -100,7 +98,6 @@ export function ThemeExplorerCard({
       facultyId,
       semesterId,
       questionnaireTypeCode,
-      courseId,
       themeId: theme.themeId,
       sentiment: sentimentFilter ?? undefined,
       page,
@@ -110,7 +107,12 @@ export function ThemeExplorerCard({
   );
 
   const dominant = dominantSentiment(theme);
-  const previewQuote = theme.sampleQuotes?.[0] ?? null;
+  // FAC-135 Phase C (Task C12): when `sampleQuotes` is empty (server-side
+  // redaction in Faculty self-view, or no quotes available) we don't render
+  // a preview and surface a subtle note in the expanded body. Server is the
+  // canonical gate; this is cosmetic handling of the empty shape.
+  const hasSampleQuotes = (theme.sampleQuotes?.length ?? 0) > 0;
+  const previewQuote = hasSampleQuotes ? theme.sampleQuotes![0] : null;
 
   const totalSplit =
     theme.sentimentSplit.positive + theme.sentimentSplit.neutral + theme.sentimentSplit.negative;
@@ -226,13 +228,13 @@ export function ThemeExplorerCard({
             <div className="grid gap-10 lg:grid-cols-[1fr_minmax(0,320px)]">
               {/* LEFT — sample quotes + comments */}
               <div className="min-w-0 space-y-8">
-                {theme.sampleQuotes && theme.sampleQuotes.length > 0 ? (
+                {hasSampleQuotes ? (
                   <section>
                     <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
                       What students say
                     </h4>
                     <ul className="mt-4 space-y-4">
-                      {theme.sampleQuotes.map((quote, idx) => (
+                      {theme.sampleQuotes!.map((quote, idx) => (
                         <li key={idx} className="relative border-l-2 border-foreground/20 pl-5">
                           <Quote
                             className="absolute -left-2 top-0 h-3.5 w-3.5 -translate-x-1/2 bg-muted px-0.5 text-muted-foreground"
@@ -243,7 +245,12 @@ export function ThemeExplorerCard({
                       ))}
                     </ul>
                   </section>
-                ) : null}
+                ) : (
+                  // FAC-135 Phase C (Task C12): redacted / no-quotes path.
+                  <p className="text-xs italic text-muted-foreground">
+                    Individual comments are not available in your view.
+                  </p>
+                )}
 
                 <section>
                   <div className="flex items-baseline justify-between gap-4">

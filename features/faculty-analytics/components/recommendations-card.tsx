@@ -13,17 +13,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  filterActionsByFacet,
+  formatFacetLabel,
+} from "@/features/faculty-analytics/lib/facet-filter";
 import { recommendationAnchorId } from "@/features/faculty-analytics/lib/theme-anchor";
 import type {
   ActionPriority,
+  Facet,
   RecommendationsResponse,
   RecommendedActionDto,
   TopicSource,
+  VoiceBreakdown,
 } from "@/features/faculty-analytics/types";
 
 type RecommendationsCardProps = {
   recommendations: RecommendationsResponse;
   onViewTheme?: (topicLabel: string) => void;
+  // FAC-135 Phase C (Task C8): facet selection + voice breakdown drive the
+  // three-way empty-state discrimination.
+  selectedFacet?: Facet;
+  voiceBreakdown?: VoiceBreakdown | null;
 };
 
 const PRIORITY_VARIANT: Record<
@@ -119,18 +129,71 @@ function ActionItem({
   );
 }
 
-export function RecommendationsCard({ recommendations, onViewTheme }: RecommendationsCardProps) {
+function EmptyStateCard({ title, body }: { title: string; body: string }) {
+  return (
+    <Card className="rounded-2xl border-border/70 shadow-sm">
+      <CardHeader>
+        <CardTitle className="font-playfair text-xl">Suggested Actions</CardTitle>
+        <CardDescription>{title}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="font-sans text-sm text-muted-foreground">{body}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function RecommendationsCard({
+  recommendations,
+  onViewTheme,
+  selectedFacet,
+  voiceBreakdown,
+}: RecommendationsCardProps) {
+  // FAC-135 Phase C (Task C8): filter actions by the selected facet.
+  // Default to 'overall' when the caller doesn't pass a facet (back-compat
+  // for the scoped dashboard which doesn't expose facet tabs yet).
+  const effectiveFacet: Facet = selectedFacet ?? "overall";
+  const filteredActions = useMemo(
+    () => filterActionsByFacet(recommendations.actions, effectiveFacet),
+    [recommendations.actions, effectiveFacet]
+  );
+
   const { strengths, improvements } = useMemo(() => {
     const strengths: RecommendedActionDto[] = [];
     const improvements: RecommendedActionDto[] = [];
-    for (const action of recommendations.actions) {
+    for (const action of filteredActions) {
       if (action.category === "STRENGTH") strengths.push(action);
       else improvements.push(action);
     }
     return { strengths, improvements };
-  }, [recommendations.actions]);
+  }, [filteredActions]);
 
-  if (recommendations.actions.length === 0) {
+  // Three-way empty-state discrimination (AC40):
+  // 1) Genuine empty — no submissions of this facet's questionnaire type.
+  // 2) Data present but no actions — analysis in progress or unavailable.
+  // 3) Data + actions present — normal render.
+  if (filteredActions.length === 0) {
+    // Distinguish (1) from (2) only when voiceBreakdown is available AND
+    // we're viewing a specific facet. For 'overall' or missing breakdown,
+    // fall back to the generic empty handling (return null, preserving
+    // existing pre-FAC-135 behaviour).
+    if (voiceBreakdown && effectiveFacet !== "overall") {
+      const submissionCount = voiceBreakdown[effectiveFacet].submissionCount;
+      if (submissionCount === 0) {
+        return (
+          <EmptyStateCard
+            title={`No ${formatFacetLabel(effectiveFacet)} data yet`}
+            body={`There are no ${formatFacetLabel(effectiveFacet)} submissions for this semester yet. Recommendations will appear once data is collected.`}
+          />
+        );
+      }
+      return (
+        <EmptyStateCard
+          title="Analysis still in progress or unavailable"
+          body="Submissions were received for this view, but no recommendations are available yet. If this persists, contact your administrator."
+        />
+      );
+    }
     return null;
   }
 

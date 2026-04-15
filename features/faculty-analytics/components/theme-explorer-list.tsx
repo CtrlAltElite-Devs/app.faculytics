@@ -20,7 +20,6 @@ type ThemeExplorerListProps = {
   facultyId: string;
   semesterId: string;
   questionnaireTypeCode: string;
-  courseId?: string;
   sentimentFilter: SentimentLabel | null;
   actions: RecommendedActionDto[];
 };
@@ -48,7 +47,6 @@ export function ThemeExplorerList({
   facultyId,
   semesterId,
   questionnaireTypeCode,
-  courseId,
   sentimentFilter,
   actions,
 }: ThemeExplorerListProps) {
@@ -107,7 +105,6 @@ export function ThemeExplorerList({
               facultyId={facultyId}
               semesterId={semesterId}
               questionnaireTypeCode={questionnaireTypeCode}
-              courseId={courseId}
               sentimentFilter={sentimentFilter}
               matchingAction={actionByTheme.get(theme.label) ?? null}
             />

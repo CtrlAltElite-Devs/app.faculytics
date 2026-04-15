@@ -357,20 +357,46 @@ export type PipelineStatus =
 
 export type RunStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 
-// IDs only — used for CreatePipelineRequest and ListPipelinesQuery inputs.
-// Every scope field is optional at the type level; the BACKEND enforces (per
-// TD-2) that non-SUPER_ADMIN callers supply at least one scope filter beyond
-// `semesterId`, else 400 Bad Request. Type-level branching by role is
-// deliberately avoided here — a clear comment + runtime contract is simpler.
+// FAC-135 Phase A: collapsed scope shape. The canonical pipeline scope now
+// consists of `{ scopeType, scopeId }` plus the mandatory `semesterId`.
+// Legacy fields (facultyId/departmentId/programId/campusId/courseId/
+// questionnaireTypeCode) are gone from the frontend surface entirely —
+// the API still accepts them via a backwards-compat preprocessor but we
+// switch to the canonical shape immediately (hard cutover per TD-2).
+export type ScopeType = "FACULTY" | "DEPARTMENT" | "CAMPUS";
+
+// POST /analysis/pipelines body: scopeType + scopeId are REQUIRED.
 export type PipelineScopeIds = {
   semesterId: string;
-  facultyId?: string;
-  departmentId?: string;
-  programId?: string;
-  campusId?: string;
-  courseId?: string;
+  scopeType: ScopeType;
+  scopeId: string;
   questionnaireVersionId?: string;
-  questionnaireTypeCode?: string;
+};
+
+// GET /analysis/pipelines query: scopeType + scopeId are OPTIONAL — the
+// backend resolves the caller's scope (Dean's department, Campus Head's
+// campus) when omitted. Faculty self-view still passes them explicitly.
+export type ListPipelinesQueryShape = {
+  semesterId: string;
+  scopeType?: ScopeType;
+  scopeId?: string;
+  questionnaireVersionId?: string;
+};
+
+// FAC-135 Phase C: the four recommendation facets. Backend enums are
+// camelCase for facet values (see recommendations.dto.ts) — match verbatim.
+export type Facet = "overall" | "facultyFeedback" | "inClassroom" | "outOfClassroom";
+
+export type CoverageSlice = {
+  submissionCount: number;
+  commentCount: number;
+};
+
+export type VoiceBreakdown = {
+  facultyFeedback: CoverageSlice;
+  inClassroom: CoverageSlice;
+  outOfClassroom: CoverageSlice;
+  other: CoverageSlice;
 };
 
 // IDs + display values paired — shape of pipeline.status response's `scope`
@@ -398,6 +424,9 @@ export type PipelineCoverage = {
   commentCount: number;
   responseRate: number;
   lastEnrollmentSyncAt: string | null;
+  // FAC-135 Phase A: per-questionnaire-type coverage slices. Optional for
+  // back-compat with pipelines cached before this field existed.
+  voiceBreakdown?: VoiceBreakdown | null;
 };
 
 export type PipelineStageStatus = {
@@ -415,6 +444,9 @@ export type PipelineSentimentGateStatus = PipelineStageStatus & {
 export type PipelineStatusResponse = {
   id: string;
   status: PipelineStatus;
+  // FAC-135 Phase A: non-optional human-readable scope label
+  // (e.g. "Faculty: Jane Cruz", "Department: CS", "Legacy scope").
+  scopeLabel: string;
   scope: PipelineScopeDisplay;
   coverage: PipelineCoverage;
   stages: {
@@ -431,11 +463,17 @@ export type PipelineStatusResponse = {
   updatedAt: string;
   confirmedAt: string | null;
   completedAt: string | null;
+  // FAC-135 Phase B: ISO timestamp of the next scheduled refresh from the
+  // tiered scheduler. Optional / nullable so the frontend falls back to
+  // generic copy if the registry lookup fails (R3 mitigation — AC38).
+  nextScheduledRunAt?: string | null;
 };
 
 export type PipelineSummary = {
   id: string;
   status: PipelineStatus;
+  // FAC-135 Phase A: non-optional human-readable scope label.
+  scopeLabel: string;
   scope: PipelineScopeDisplay;
   coverage: PipelineCoverage;
   warnings: string[];
@@ -445,7 +483,7 @@ export type PipelineSummary = {
 };
 
 export type CreatePipelineRequest = PipelineScopeIds;
-export type ListPipelinesQuery = PipelineScopeIds;
+export type ListPipelinesQuery = ListPipelinesQueryShape;
 
 // ─── Recommendations ──────────────────────────────────────────────────────
 
@@ -490,6 +528,10 @@ export type RecommendedActionDto = {
   priority: ActionPriority;
   supportingEvidence: SupportingEvidence;
   createdAt: string;
+  // FAC-135 Phase A: non-optional facet tagging so the frontend can filter
+  // actions per facet tab (Overall / Faculty Feedback / In-Classroom /
+  // Out-of-Classroom).
+  facet: Facet;
 };
 
 export type RecommendationsResponse = {

@@ -9,6 +9,7 @@ import { FacultyAnalysisStats } from "@/features/faculty-analytics/components/fa
 import { FacultyReportComments } from "@/features/faculty-analytics/components/faculty-report-comments";
 import { PipelineTriggerCard } from "@/features/faculty-analytics/components/pipeline-trigger-card";
 import { QuantitativeScoresSection } from "@/features/faculty-analytics/components/quantitative-scores-section";
+import { RecommendationsCard } from "@/features/faculty-analytics/components/recommendations-card";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
 import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
@@ -19,6 +20,10 @@ import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/us
 import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
 import { usePipelineStatus } from "@/features/faculty-analytics/hooks/use-pipeline-status";
 import { hasFacultyReportAnalyticsData } from "@/features/faculty-analytics/lib/faculty-report-detail";
+import {
+  deriveThemeFacets,
+  filterThemesByFacet,
+} from "@/features/faculty-analytics/lib/facet-filter";
 import type { PipelineStatus } from "@/features/faculty-analytics/types";
 
 import { FacultyReportHeader } from "./faculty-report-header";
@@ -38,17 +43,18 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
 
+  // FAC-135 Phase C (Task C2/C5): canonical scope shape is {scopeType, scopeId}
+  // plus semesterId. Faculty report always scopes to a single faculty.
   const pipelineScope = useMemo(
     () => ({
       semesterId: viewModel.semesterId ?? "",
-      facultyId,
-      questionnaireTypeCode: viewModel.questionnaireTypeCode || undefined,
-      courseId: viewModel.courseId || undefined,
+      scopeType: "FACULTY" as const,
+      scopeId: facultyId,
     }),
-    [viewModel.semesterId, viewModel.questionnaireTypeCode, viewModel.courseId, facultyId]
+    [viewModel.semesterId, facultyId]
   );
   const { latestPipeline } = useLatestPipelineForScope(pipelineScope, {
-    enabled: Boolean(viewModel.semesterId && viewModel.questionnaireTypeCode),
+    enabled: Boolean(viewModel.semesterId),
   });
   const pipelineStatusQuery = usePipelineStatus(latestPipeline?.id ?? null, {
     enabled: Boolean(latestPipeline?.id),
@@ -60,8 +66,25 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   );
 
   const qualitativeSummary = viewModel.qualitativeSummaryQuery.data;
-  const themes = qualitativeSummary?.themes ?? [];
-  const actions = recommendationsQuery.data?.actions ?? [];
+  const themes = useMemo(() => qualitativeSummary?.themes ?? [], [qualitativeSummary?.themes]);
+  const actions = useMemo(
+    () => recommendationsQuery.data?.actions ?? [],
+    [recommendationsQuery.data?.actions]
+  );
+
+  // FAC-135 Phase C: voiceBreakdown drives facet badge counts + empty-state
+  // discrimination. Pull from the status poll (freshest) with fallback.
+  const voiceBreakdown =
+    pipelineStatusQuery.data?.coverage.voiceBreakdown ??
+    latestPipeline?.coverage.voiceBreakdown ??
+    null;
+
+  // Client-side theme -> facet derivation via topic-label join.
+  const themeFacets = useMemo(() => deriveThemeFacets(themes, actions), [themes, actions]);
+  const visibleThemes = useMemo(
+    () => filterThemesByFacet(themes, themeFacets, viewModel.selectedFacet),
+    [themes, themeFacets, viewModel.selectedFacet]
+  );
 
   const showSentimentSurface = livePipelineStatus
     ? SENTIMENT_READY_STATUSES.has(livePipelineStatus)
@@ -139,17 +162,15 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
 
         <FacultyReportHeader
           backHref={viewModel.backHref}
-          questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
-          questionnaireTypeCode={viewModel.questionnaireTypeCode}
           courseId={viewModel.courseId}
           courseLabel={viewModel.selectedCourseLabel}
-          availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
           availableCourses={viewModel.availableCourses}
-          isQuestionnaireTypeLoading={viewModel.isQuestionnaireTypeLoading}
           isCourseLoading={viewModel.isCourseLoading}
-          onQuestionnaireTypeChange={viewModel.updateQuestionnaireType}
           onCourseChange={viewModel.updateCourse}
           onExport={() => setIsExportDialogOpen(true)}
+          selectedFacet={viewModel.selectedFacet}
+          onFacetChange={viewModel.selectFacet}
+          voiceBreakdown={voiceBreakdown}
         />
       </div>
 
@@ -163,7 +184,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         <>
           {/* Analysis pipeline status — surfaced prominently, same pattern as
               dashboard. Not hidden in a collapsible. */}
-          {viewModel.semesterId && viewModel.questionnaireTypeCode ? (
+          {viewModel.semesterId ? (
             <PipelineTriggerCard scope={pipelineScope} pipeline={latestPipeline} />
           ) : null}
 
@@ -191,18 +212,31 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
             />
           ) : null}
 
-          {showThemesSurface && themes.length > 0 ? (
-            <ThemeExplorerList
-              themes={themes}
-              expandedThemeLabel={viewModel.themeLabelFilter}
-              onToggleTheme={viewModel.updateThemeFilter}
-              facultyId={facultyId}
-              semesterId={viewModel.semesterId}
-              questionnaireTypeCode={viewModel.questionnaireTypeCode}
-              courseId={viewModel.courseId || undefined}
-              sentimentFilter={viewModel.sentimentFilter}
-              actions={actions}
-            />
+          {showThemesSurface && visibleThemes.length > 0 ? (
+            <section className="space-y-6">
+              {/* FAC-135 Phase C (Task C7): scope-narrowing subtext. */}
+              <p className="max-w-3xl text-xs text-muted-foreground">
+                Themes and feedback are analyzed across all your courses to ensure reliable
+                patterns. Per-course breakdowns show quantitative ratings only.
+              </p>
+              <ThemeExplorerList
+                themes={visibleThemes}
+                expandedThemeLabel={viewModel.themeLabelFilter}
+                onToggleTheme={viewModel.updateThemeFilter}
+                facultyId={facultyId}
+                semesterId={viewModel.semesterId}
+                questionnaireTypeCode={viewModel.questionnaireTypeCode}
+                sentimentFilter={viewModel.sentimentFilter}
+                actions={actions}
+              />
+              {recommendationsQuery.data ? (
+                <RecommendationsCard
+                  recommendations={recommendationsQuery.data}
+                  selectedFacet={viewModel.selectedFacet}
+                  voiceBreakdown={voiceBreakdown}
+                />
+              ) : null}
+            </section>
           ) : showThemesSurface && themes.length === 0 && viewModel.comments.length > 0 ? (
             <section>
               <div className="max-w-3xl">

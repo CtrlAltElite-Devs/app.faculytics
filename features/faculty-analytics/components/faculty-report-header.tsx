@@ -11,41 +11,52 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FACET_ORDER, formatFacetLabel } from "@/features/faculty-analytics/lib/facet-filter";
+import type { Facet, VoiceBreakdown } from "@/features/faculty-analytics/types";
 
 type FacultyReportHeaderProps = {
   backHref: string;
-  questionnaireTypeLabel: string;
-  questionnaireTypeCode: string;
   courseId: string;
   courseLabel: string;
-  availableQuestionnaireTypes: Array<{
-    code: string;
-    label: string;
-  }>;
   availableCourses: Array<{
     id: string;
     label: string;
   }>;
-  isQuestionnaireTypeLoading: boolean;
   isCourseLoading: boolean;
-  onQuestionnaireTypeChange: (value: string) => void;
   onCourseChange: (value: string) => void;
   onExport: () => void;
+  // FAC-135 Phase C (Task C6): facet tabs replace the old questionnaire-type
+  // dropdown. Count badges derived from `voiceBreakdown` (absent = no badges).
+  selectedFacet: Facet;
+  onFacetChange: (facet: Facet) => void;
+  voiceBreakdown?: VoiceBreakdown | null;
 };
+
+function countForFacet(voiceBreakdown: VoiceBreakdown | null | undefined, facet: Facet): number {
+  if (!voiceBreakdown) return 0;
+  if (facet === "overall") {
+    return (
+      voiceBreakdown.facultyFeedback.submissionCount +
+      voiceBreakdown.inClassroom.submissionCount +
+      voiceBreakdown.outOfClassroom.submissionCount +
+      voiceBreakdown.other.submissionCount
+    );
+  }
+  return voiceBreakdown[facet].submissionCount;
+}
 
 export function FacultyReportHeader({
   backHref,
-  questionnaireTypeLabel,
-  questionnaireTypeCode,
   courseId,
   courseLabel,
-  availableQuestionnaireTypes,
   availableCourses,
-  isQuestionnaireTypeLoading,
   isCourseLoading,
-  onQuestionnaireTypeChange,
   onCourseChange,
   onExport,
+  selectedFacet,
+  onFacetChange,
+  voiceBreakdown,
 }: FacultyReportHeaderProps) {
   return (
     <nav
@@ -62,38 +73,27 @@ export function FacultyReportHeader({
       </Button>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full min-w-0 justify-between border-stone-200 bg-white px-3 py-2 font-sans text-xs sm:w-56"
-              disabled={isQuestionnaireTypeLoading || availableQuestionnaireTypes.length === 0}
-            >
-              <span className="truncate text-stone-700">{questionnaireTypeLabel}</span>
-              <ChevronDown className="size-3.5 text-stone-400" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
-          >
-            <DropdownMenuRadioGroup
-              value={questionnaireTypeCode}
-              onValueChange={onQuestionnaireTypeChange}
-            >
-              {availableQuestionnaireTypes.map((type) => (
-                <DropdownMenuRadioItem
-                  key={type.code}
-                  value={type.code}
-                  className="font-sans text-sm"
-                >
-                  {type.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Tabs
+          value={selectedFacet}
+          onValueChange={(value) => onFacetChange(value as Facet)}
+          className="w-full sm:w-auto"
+        >
+          <TabsList className="flex h-auto w-full flex-wrap gap-1 sm:w-auto">
+            {FACET_ORDER.map((facet) => {
+              const count = countForFacet(voiceBreakdown, facet);
+              return (
+                <TabsTrigger key={facet} value={facet} className="font-sans text-xs">
+                  {formatFacetLabel(facet)}
+                  {voiceBreakdown ? (
+                    <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">
+                      · {count}
+                    </span>
+                  ) : null}
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+        </Tabs>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
