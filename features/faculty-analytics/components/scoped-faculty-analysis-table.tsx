@@ -24,7 +24,7 @@ type ScopedFacultyAnalysisTableProps = {
   selectedSemesterLabel: string;
   onPageChange: (page: number) => void;
   onRowsPerPageChange: (value: number) => void;
-  scopeLabel: "Campus" | "Department";
+  scopeLabel: "Campus" | "Department" | "Program";
 };
 
 function getFacultyInitials(name: string) {

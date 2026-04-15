@@ -31,6 +31,18 @@ export type Campus = {
   code: string;
 };
 
+export type Department = {
+  id: string;
+  name?: string;
+  code: string;
+};
+
+export type Program = {
+  id: string;
+  name?: string;
+  code: string;
+};
+
 export type MeResponse = {
   id: string;
   userName: string;
@@ -41,4 +53,6 @@ export type MeResponse = {
   fullName: string;
   roles: string[];
   campus?: Campus;
+  program?: Program;
+  department?: Department;
 };

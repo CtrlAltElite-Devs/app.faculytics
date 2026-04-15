@@ -26,8 +26,20 @@ type ScopedDashboardHeaderProps = {
   selectedProgramLabel: string;
   onProgramChange: (value: string) => void;
   lastUpdatedLabel: string;
-  scopeLabel: "Campus" | "Department";
+  scopeLabel: "Campus" | "Department" | "Program";
 };
+
+function getScopeDescription(scopeLabel: ScopedDashboardHeaderProps["scopeLabel"]) {
+  switch (scopeLabel) {
+    case "Campus":
+      return "Monitor response volume and campus-level sentiment for the selected semester.";
+    case "Program":
+      return "Monitor response volume and program-level sentiment for your assigned scope in the selected semester.";
+    case "Department":
+    default:
+      return "Monitor response volume and department-level sentiment for the selected semester.";
+  }
+}
 
 export function ScopedDashboardHeader({
   semesters,
@@ -41,7 +53,6 @@ export function ScopedDashboardHeader({
   lastUpdatedLabel,
   scopeLabel,
 }: ScopedDashboardHeaderProps) {
-  const scopeLower = scopeLabel.toLowerCase();
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0">
@@ -49,7 +60,7 @@ export function ScopedDashboardHeader({
           {scopeLabel} Analytics Overview
         </h1>
         <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground sm:mt-5">
-          Monitor response volume and {scopeLower}-level sentiment for the selected semester.
+          {getScopeDescription(scopeLabel)}
         </p>
       </div>
       <div className="w-full md:w-auto md:text-right">
