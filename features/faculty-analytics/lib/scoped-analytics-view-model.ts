@@ -57,14 +57,13 @@ export function mapSemesterOptionsToViewModel(
 }
 
 export function mapProgramOptionsToViewModel(programs: ProgramOptionDto[]): ScopedProgramOption[] {
-  return [
-    { id: null, code: null, label: ALL_PROGRAMS_LABEL },
-    ...programs.map((program) => ({
-      id: program.id,
-      code: program.code,
-      label: program.name?.trim() ? `${program.code} • ${program.name}` : program.code,
-    })),
-  ];
+  const mappedPrograms = programs.map((program) => ({
+    id: program.id,
+    code: program.code,
+    label: program.name?.trim() ? `${program.code} • ${program.name}` : program.code,
+  }));
+
+  return [{ id: null, code: null, label: ALL_PROGRAMS_LABEL }, ...mappedPrograms];
 }
 
 export function mapDepartmentOverviewToDashboardViewModel({

@@ -13,9 +13,21 @@ type ScopedAttentionCardProps = {
   items: AttentionItemDto[];
   isLoading?: boolean;
   hasAnalyticsData: boolean;
-  scopeLabel: "Campus" | "Department";
+  scopeLabel: "Campus" | "Department" | "Program";
   facultiesHref: string;
 };
+
+function getAttentionScopeCopy(scopeLabel: ScopedAttentionCardProps["scopeLabel"]) {
+  switch (scopeLabel) {
+    case "Campus":
+      return "Faculty in your campus flagged for review in the selected semester.";
+    case "Program":
+      return "Faculty in your assigned program scope flagged for review in the selected semester.";
+    case "Department":
+    default:
+      return "Faculty in your department flagged for review in the selected semester.";
+  }
+}
 
 const FLAG_STYLES: Record<
   AttentionFlagDto["type"],
@@ -83,7 +95,6 @@ export function ScopedAttentionCard({
   facultiesHref,
 }: ScopedAttentionCardProps) {
   const topItems = items.slice(0, 5);
-  const scopeLower = scopeLabel.toLowerCase();
 
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">
@@ -92,7 +103,7 @@ export function ScopedAttentionCard({
           Faculty Requiring Attention
         </CardTitle>
         <p className="font-sans text-sm text-muted-foreground">
-          Faculty in your {scopeLower} flagged for review in the selected semester.
+          {getAttentionScopeCopy(scopeLabel)}
         </p>
       </CardHeader>
       <CardContent>
