@@ -332,6 +332,37 @@ export type FacultyReportCourseOption = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Tri-view split (FAC-135) — view tabs and per-faculty questionnaire types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type ReportView = "insights" | "scores" | "feedback";
+
+export const REPORT_VIEW_ORDER: readonly ReportView[] = ["insights", "scores", "feedback"];
+
+export const DEFAULT_REPORT_VIEW: ReportView = "insights";
+
+export const REPORT_VIEW_LABELS: Record<ReportView, string> = {
+  insights: "Insights",
+  scores: "Scores",
+  feedback: "Feedback",
+};
+
+export type FacultyQuestionnaireTypeOptionDto = {
+  code: string;
+  name: string;
+  submissionCount: number;
+};
+
+export type FacultyQuestionnaireTypesResponseDto = {
+  items: FacultyQuestionnaireTypeOptionDto[];
+};
+
+export type FacultyQuestionnaireTypesQuery = {
+  facultyId: string;
+  semesterId: string;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Analysis Pipeline (FAC-132)
 //
 // Mirrors backend shapes from api.faculytics:

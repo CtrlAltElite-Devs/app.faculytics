@@ -2,7 +2,12 @@ import {
   resolveQuestionnaireType,
   resolveQuestionnaireTypeLabel,
 } from "@/features/questionnaires/types";
-import type { FacultyReportResponseDto } from "@/features/faculty-analytics/types";
+import {
+  DEFAULT_REPORT_VIEW,
+  REPORT_VIEW_ORDER,
+  type FacultyReportResponseDto,
+  type ReportView,
+} from "@/features/faculty-analytics/types";
 
 const FACULTY_REPORT_INTERPRETATION_STYLE_MAP = {
   "EXCELLENT PERFORMANCE": {
@@ -69,6 +74,21 @@ export function formatFacultyReportScore(value: number | null) {
 
 export function resolveFacultyReportQuestionnaireTypeCode(value: string | null) {
   return resolveQuestionnaireType(value);
+}
+
+export function resolveView(raw: string | null): ReportView {
+  if (!raw) return DEFAULT_REPORT_VIEW;
+  return REPORT_VIEW_ORDER.includes(raw as ReportView) ? (raw as ReportView) : DEFAULT_REPORT_VIEW;
+}
+
+/**
+ * Returns true when the raw URL value was provided but did not match any
+ * known view (case-sensitive). The view-model uses this signal to surface
+ * the auto-correction notice without re-running resolveView's fallback logic.
+ */
+export function isInvalidViewParam(raw: string | null): boolean {
+  if (!raw) return false;
+  return !REPORT_VIEW_ORDER.includes(raw as ReportView);
 }
 
 export function resolveFacultyReportQuestionnaireTypeLabel(code: string, name?: string | null) {

@@ -11,9 +11,6 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FACET_ORDER, formatFacetLabel } from "@/features/faculty-analytics/lib/facet-filter";
-import type { Facet, VoiceBreakdown } from "@/features/faculty-analytics/types";
 
 type FacultyReportHeaderProps = {
   backHref: string;
@@ -26,25 +23,7 @@ type FacultyReportHeaderProps = {
   isCourseLoading: boolean;
   onCourseChange: (value: string) => void;
   onExport: () => void;
-  // FAC-135 Phase C (Task C6): facet tabs replace the old questionnaire-type
-  // dropdown. Count badges derived from `voiceBreakdown` (absent = no badges).
-  selectedFacet: Facet;
-  onFacetChange: (facet: Facet) => void;
-  voiceBreakdown?: VoiceBreakdown | null;
 };
-
-function countForFacet(voiceBreakdown: VoiceBreakdown | null | undefined, facet: Facet): number {
-  if (!voiceBreakdown) return 0;
-  if (facet === "overall") {
-    return (
-      voiceBreakdown.facultyFeedback.submissionCount +
-      voiceBreakdown.inClassroom.submissionCount +
-      voiceBreakdown.outOfClassroom.submissionCount +
-      voiceBreakdown.other.submissionCount
-    );
-  }
-  return voiceBreakdown[facet].submissionCount;
-}
 
 export function FacultyReportHeader({
   backHref,
@@ -54,9 +33,6 @@ export function FacultyReportHeader({
   isCourseLoading,
   onCourseChange,
   onExport,
-  selectedFacet,
-  onFacetChange,
-  voiceBreakdown,
 }: FacultyReportHeaderProps) {
   return (
     <nav
@@ -73,28 +49,6 @@ export function FacultyReportHeader({
       </Button>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-        <Tabs
-          value={selectedFacet}
-          onValueChange={(value) => onFacetChange(value as Facet)}
-          className="w-full sm:w-auto"
-        >
-          <TabsList className="flex h-auto w-full flex-wrap gap-1 sm:w-auto">
-            {FACET_ORDER.map((facet) => {
-              const count = countForFacet(voiceBreakdown, facet);
-              return (
-                <TabsTrigger key={facet} value={facet} className="font-sans text-xs">
-                  {formatFacetLabel(facet)}
-                  {voiceBreakdown ? (
-                    <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">
-                      · {count}
-                    </span>
-                  ) : null}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-        </Tabs>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

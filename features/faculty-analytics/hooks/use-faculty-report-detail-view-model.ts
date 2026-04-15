@@ -1,24 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
 
 import {
   buildFacultyReportHref,
   formatFacultyReportCourseLabel,
+  isInvalidViewParam,
   resolveFacultyReportQuestionnaireTypeCode,
   resolveFacultyReportQuestionnaireTypeLabel,
   resolvePositiveIntegerParam,
+  resolveView,
 } from "@/features/faculty-analytics/lib/faculty-report-detail";
 import { useFacultyEnrollments } from "@/features/faculty-analytics/hooks/use-faculty-enrollments";
 import { useFacultyReportComments } from "@/features/faculty-analytics/hooks/use-faculty-report-comments";
 import { useFacultyReport } from "@/features/faculty-analytics/hooks/use-faculty-report";
+import { useFacultyQuestionnaireTypes } from "@/features/faculty-analytics/hooks/use-faculty-questionnaire-types";
 import { useQualitativeSummary } from "@/features/faculty-analytics/hooks/use-qualitative-summary";
-import type {
-  Facet,
-  FacultyReportCourseOption,
-  SentimentLabel,
+import {
+  DEFAULT_REPORT_VIEW,
+  type Facet,
+  type FacultyQuestionnaireTypeOptionDto,
+  type FacultyReportCourseOption,
+  type ReportView,
+  type SentimentLabel,
 } from "@/features/faculty-analytics/types";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { resolvePageSizeOption } from "@/lib/pagination";
@@ -35,10 +40,6 @@ function isSentimentLabel(value: string | null): value is SentimentLabel {
   return Boolean(value) && VALID_SENTIMENTS.has(value as SentimentLabel);
 }
 
-// FAC-135 Phase C: URL-synced facet state. `overall` is the default; unknown
-// values fall back to `overall` silently. Scope narrowing for this param is
-// cosmetic — it only drives client-side filtering of pipeline recommendations
-// and derived theme facets; quantitative queries ignore it.
 const VALID_FACETS: ReadonlySet<Facet> = new Set<Facet>([
   "overall",
   "facultyFeedback",
@@ -49,6 +50,11 @@ const VALID_FACETS: ReadonlySet<Facet> = new Set<Facet>([
 function resolveFacet(value: string | null): Facet {
   return value && VALID_FACETS.has(value as Facet) ? (value as Facet) : "overall";
 }
+
+export type ParamAutoCorrection = {
+  requested: string;
+  actual: string;
+};
 
 type UseFacultyReportDetailViewModelParams = {
   facultyId: string;
@@ -70,12 +76,9 @@ export function useFacultyReportDetailViewModel({
   const semesterId = searchParams.get("semesterId") ?? "";
   const semesterLabelParam = searchParams.get("semesterLabel") ?? "Selected semester";
   const courseId = searchParams.get("courseId") ?? "";
-  const questionnaireTypeCode = resolveFacultyReportQuestionnaireTypeCode(
-    searchParams.get("questionnaireTypeCode")
-  );
-  // FAC-135 Phase C (Task C5): URL-synced facet selection (param `facet`).
-  // Default `overall`. Drives pipeline recommendation filtering only —
-  // the quantitative/qualitative endpoints still key on questionnaireTypeCode.
+  const rawQuestionnaireTypeCode = searchParams.get("questionnaireTypeCode");
+  const rawViewParam = searchParams.get("view");
+  const selectedView: ReportView = resolveView(rawViewParam);
   const selectedFacet: Facet = resolveFacet(searchParams.get("facet"));
   const commentsPage = resolvePositiveIntegerParam(searchParams.get("page"), 1);
   const commentsLimit = resolvePageSizeOption(searchParams.get("limit"), [5, 10, 20]);
@@ -85,13 +88,46 @@ export function useFacultyReportDetailViewModel({
     : null;
   const themeLabelFilter = searchParams.get("themeLabel");
 
-  const questionnaireTypesQuery = useQuestionnaireTypes();
-  const questionnaireTypes = useMemo(
-    () => questionnaireTypesQuery.data ?? [],
-    [questionnaireTypesQuery.data]
+  const globalQuestionnaireTypesQuery = useQuestionnaireTypes();
+  const globalQuestionnaireTypes = useMemo(
+    () => globalQuestionnaireTypesQuery.data ?? [],
+    [globalQuestionnaireTypesQuery.data]
   );
+
+  // Per-faculty per-semester counts (Task 4 hook). Distinct from the global
+  // registry above — this drives the questionnaire-type secondary tabs.
+  const availableQuestionnaireTypesQuery = useFacultyQuestionnaireTypes(
+    { facultyId, semesterId },
+    { enabled: Boolean(semesterId) }
+  );
+  const availableQuestionnaireTypes = useMemo<FacultyQuestionnaireTypeOptionDto[]>(
+    () => availableQuestionnaireTypesQuery.data?.items ?? [],
+    [availableQuestionnaireTypesQuery.data]
+  );
+
+  // Derive the active questionnaire type from URL ⊕ default. Default
+  // (most-recent-with-data) is the first item returned by the per-faculty
+  // endpoint (already ordered by submissionCount DESC). Default is NOT
+  // written to the URL — only explicit selections are persisted.
+  const questionnaireTypeCode = useMemo(() => {
+    const fromUrl = resolveFacultyReportQuestionnaireTypeCode(rawQuestionnaireTypeCode);
+    if (fromUrl) {
+      const stillValid = availableQuestionnaireTypes.some((option) => option.code === fromUrl);
+      if (stillValid) return fromUrl;
+    }
+    return availableQuestionnaireTypes[0]?.code ?? null;
+  }, [rawQuestionnaireTypeCode, availableQuestionnaireTypes]);
+
+  const isQuestionnaireTypesResolving =
+    Boolean(semesterId) && availableQuestionnaireTypesQuery.isLoading;
+  const queriesReady =
+    Boolean(semesterId) && Boolean(questionnaireTypeCode) && !isQuestionnaireTypesResolving;
+
   const selectedQuestionnaireType =
-    questionnaireTypes.find((type) => type.code === questionnaireTypeCode) ?? null;
+    availableQuestionnaireTypes.find((type) => type.code === questionnaireTypeCode) ??
+    globalQuestionnaireTypes.find((type) => type.code === questionnaireTypeCode) ??
+    null;
+
   const facultyEnrollmentsQuery = useFacultyEnrollments(
     {
       facultyId,
@@ -121,10 +157,10 @@ export function useFacultyReportDetailViewModel({
     {
       facultyId,
       semesterId,
-      questionnaireTypeCode,
+      questionnaireTypeCode: questionnaireTypeCode ?? "",
       courseId: courseId || undefined,
     },
-    { enabled: Boolean(semesterId) }
+    { enabled: queriesReady }
   );
   const selectedCourse =
     availableCourses.find((course) => course.id === courseId) ??
@@ -137,17 +173,14 @@ export function useFacultyReportDetailViewModel({
           ),
         }
       : null);
-  // FAC-135 Phase C (Task C5 + C7): Qualitative summary is scope-wide (all
-  // courses) — course filter does NOT thread here, by design. Themes/feedback
-  // are analyzed across all courses to ensure reliable patterns; per-course
-  // breakdown is quantitative only.
+
   const qualitativeSummaryQuery = useQualitativeSummary(
     {
       facultyId,
       semesterId,
-      questionnaireTypeCode,
+      questionnaireTypeCode: questionnaireTypeCode ?? "",
     },
-    { enabled: Boolean(semesterId && questionnaireTypeCode) }
+    { enabled: queriesReady }
   );
 
   const labelToId = useMemo(() => {
@@ -160,41 +193,71 @@ export function useFacultyReportDetailViewModel({
 
   const resolvedThemeId = themeLabelFilter ? (labelToId.get(themeLabelFilter) ?? null) : null;
 
-  // FAC-135 Phase C (Task C5): Comments are drawn from the qualitative
-  // surface (themes/facets). Course filter is quantitative-only and does
-  // NOT thread into comments either.
   const commentsQuery = useFacultyReportComments(
     {
       facultyId,
       semesterId,
-      questionnaireTypeCode,
+      questionnaireTypeCode: questionnaireTypeCode ?? "",
       page: commentsPage,
       limit: commentsLimit,
       sentiment: sentimentFilter ?? undefined,
       themeId: resolvedThemeId ?? undefined,
     },
-    { enabled: Boolean(semesterId) }
+    { enabled: queriesReady }
   );
 
-  useEffect(() => {
-    if (questionnaireTypes.length === 0) {
-      return;
-    }
+  const updateSearchParams = useCallback(
+    (updates: Record<string, string | null>) => {
+      const nextHref = buildFacultyReportHref(pathname, currentSearchParams, updates);
+      router.replace(nextHref, { scroll: false });
+    },
+    [currentSearchParams, pathname, router]
+  );
 
-    const hasSelectedType = questionnaireTypes.some((type) => type.code === questionnaireTypeCode);
-    if (hasSelectedType) {
-      return;
-    }
+  // Auto-correction notices (Decision §16) are derived from the raw URL
+  // values + currently-available data — never written via setState inside an
+  // effect (React 19 `react-hooks/set-state-in-effect` rule). Dismissals are
+  // tracked per-requested-value so a different invalid value re-surfaces the
+  // notice. URL cleanup happens at dismiss time, not at notice-display time.
+  const [dismissedQuestionnaireTypeCode, setDismissedQuestionnaireTypeCode] = useState<
+    string | null
+  >(null);
+  const [dismissedView, setDismissedView] = useState<string | null>(null);
+  const [dismissedThemeLabel, setDismissedThemeLabel] = useState<string | null>(null);
 
-    const fallbackType = questionnaireTypes[0];
-    const nextHref = buildFacultyReportHref(pathname, currentSearchParams, {
-      questionnaireTypeCode: fallbackType?.code ?? null,
-      page: "1",
-    });
+  const questionnaireTypeCodeAutoCorrection: ParamAutoCorrection | null = useMemo(() => {
+    if (!availableQuestionnaireTypesQuery.isSuccess) return null;
+    if (!rawQuestionnaireTypeCode) return null;
+    if (availableQuestionnaireTypes.length === 0) return null;
+    if (dismissedQuestionnaireTypeCode === rawQuestionnaireTypeCode) return null;
 
-    router.replace(nextHref, { scroll: false });
-  }, [currentSearchParams, pathname, questionnaireTypeCode, questionnaireTypes, router]);
+    const isValid = availableQuestionnaireTypes.some(
+      (option) => option.code === rawQuestionnaireTypeCode
+    );
+    if (isValid) return null;
 
+    const fallbackCode = availableQuestionnaireTypes[0]?.code ?? null;
+    return {
+      requested: rawQuestionnaireTypeCode,
+      actual: fallbackCode ?? "(none)",
+    };
+  }, [
+    availableQuestionnaireTypes,
+    availableQuestionnaireTypesQuery.isSuccess,
+    rawQuestionnaireTypeCode,
+    dismissedQuestionnaireTypeCode,
+  ]);
+
+  const viewAutoCorrection: ParamAutoCorrection | null = useMemo(() => {
+    if (!isInvalidViewParam(rawViewParam)) return null;
+    if (dismissedView === rawViewParam) return null;
+    return {
+      requested: rawViewParam ?? "",
+      actual: DEFAULT_REPORT_VIEW,
+    };
+  }, [rawViewParam, dismissedView]);
+
+  // Course-id decay (unchanged behaviour, no auto-correction notice).
   useEffect(() => {
     if (!courseId || !facultyEnrollmentsQuery.isSuccess) {
       return;
@@ -205,28 +268,8 @@ export function useFacultyReportDetailViewModel({
       return;
     }
 
-    const nextHref = buildFacultyReportHref(pathname, currentSearchParams, {
-      courseId: null,
-      page: "1",
-    });
-
-    router.replace(nextHref, { scroll: false });
-  }, [
-    availableCourses,
-    courseId,
-    currentSearchParams,
-    facultyEnrollmentsQuery.isSuccess,
-    pathname,
-    router,
-  ]);
-
-  const updateSearchParams = useCallback(
-    (updates: Record<string, string | null>) => {
-      const nextHref = buildFacultyReportHref(pathname, currentSearchParams, updates);
-      router.replace(nextHref, { scroll: false });
-    },
-    [currentSearchParams, pathname, router]
-  );
+    updateSearchParams({ courseId: null, page: null });
+  }, [availableCourses, courseId, facultyEnrollmentsQuery.isSuccess, updateSearchParams]);
 
   const updateSentimentFilter = useCallback(
     (next: SentimentLabel | null) => {
@@ -244,11 +287,21 @@ export function useFacultyReportDetailViewModel({
 
   const selectFacet = useCallback(
     (next: Facet) => {
-      updateSearchParams({
-        // Omit default `overall` from URL for cleaner links; Facet resolver
-        // treats missing/invalid as overall.
-        facet: next === "overall" ? null : next,
-      });
+      updateSearchParams({ facet: next === "overall" ? null : next });
+    },
+    [updateSearchParams]
+  );
+
+  const selectView = useCallback(
+    (next: ReportView) => {
+      updateSearchParams({ view: next === DEFAULT_REPORT_VIEW ? null : next });
+    },
+    [updateSearchParams]
+  );
+
+  const selectQuestionnaireType = useCallback(
+    (code: string | null) => {
+      updateSearchParams({ questionnaireTypeCode: code, page: null });
     },
     [updateSearchParams]
   );
@@ -257,6 +310,26 @@ export function useFacultyReportDetailViewModel({
     updateSearchParams({ sentiment: null, themeLabel: null, page: null });
   }, [updateSearchParams]);
 
+  const dismissQuestionnaireTypeCodeAutoCorrection = useCallback(() => {
+    if (rawQuestionnaireTypeCode) {
+      setDismissedQuestionnaireTypeCode(rawQuestionnaireTypeCode);
+      // Strip the bad param so deep links self-clean on dismiss.
+      updateSearchParams({ questionnaireTypeCode: null, page: null });
+    }
+  }, [rawQuestionnaireTypeCode, updateSearchParams]);
+  const dismissThemeLabelAutoCorrection = useCallback(() => {
+    setDismissedThemeLabel(themeLabelFilter ?? null);
+    if (themeLabelFilter) {
+      updateSearchParams({ themeLabel: null, page: null });
+    }
+  }, [themeLabelFilter, updateSearchParams]);
+  const dismissViewAutoCorrection = useCallback(() => {
+    if (rawViewParam) {
+      setDismissedView(rawViewParam);
+      updateSearchParams({ view: null });
+    }
+  }, [rawViewParam, updateSearchParams]);
+
   // F4: Silently strip unknown sentiment values from the URL before any API call.
   useEffect(() => {
     if (rawSentiment && !isSentimentLabel(rawSentiment)) {
@@ -264,16 +337,17 @@ export function useFacultyReportDetailViewModel({
     }
   }, [rawSentiment, updateSentimentFilter]);
 
-  // Theme-label decay: clear when no match exists in the latest pipeline's themes.
-  useEffect(() => {
-    if (!themeLabelFilter || !qualitativeSummaryQuery.isSuccess) {
-      return;
-    }
-    if (!labelToId.has(themeLabelFilter)) {
-      updateThemeFilter(null);
-      toast.info("Theme not found in current analysis");
-    }
-  }, [themeLabelFilter, qualitativeSummaryQuery.isSuccess, labelToId, updateThemeFilter]);
+  // Theme-label decay surfaces as a derived auto-correction notice
+  // (Decision §16, Task 7a). The orphaned label stays in the URL until the
+  // user dismisses; this avoids set-state-in-effect and keeps the notice
+  // visible for the lifetime of that param.
+  const themeLabelAutoCorrection: ParamAutoCorrection | null = useMemo(() => {
+    if (!themeLabelFilter) return null;
+    if (!qualitativeSummaryQuery.isSuccess) return null;
+    if (labelToId.has(themeLabelFilter)) return null;
+    if (dismissedThemeLabel === themeLabelFilter) return null;
+    return { requested: themeLabelFilter, actual: "(no filter)" };
+  }, [themeLabelFilter, qualitativeSummaryQuery.isSuccess, labelToId, dismissedThemeLabel]);
 
   const report = reportQuery.data ?? null;
   const reportTitle = report?.faculty.name || facultyNameParam || "Faculty report";
@@ -281,7 +355,7 @@ export function useFacultyReportDetailViewModel({
     report?.semester.label ||
     (semesterLabelParam.trim().length > 0 ? semesterLabelParam : "Selected semester");
   const questionnaireTypeLabel = resolveFacultyReportQuestionnaireTypeLabel(
-    report?.questionnaireType.code ?? questionnaireTypeCode,
+    report?.questionnaireType.code ?? questionnaireTypeCode ?? "",
     report?.questionnaireType.name ?? selectedQuestionnaireType?.name
   );
   const comments = commentsQuery.data?.items ?? [];
@@ -290,7 +364,8 @@ export function useFacultyReportDetailViewModel({
 
   const refreshAll = () => {
     void facultyEnrollmentsQuery.refetch();
-    void questionnaireTypesQuery.refetch();
+    void globalQuestionnaireTypesQuery.refetch();
+    void availableQuestionnaireTypesQuery.refetch();
     void reportQuery.refetch();
     void commentsQuery.refetch();
     void qualitativeSummaryQuery.refetch();
@@ -314,6 +389,10 @@ export function useFacultyReportDetailViewModel({
     questionnaireTypeLabel,
     selectedFacet,
     selectFacet,
+    selectedView,
+    selectView,
+    availableQuestionnaireTypes,
+    selectQuestionnaireType,
     comments,
     commentsMeta,
     commentsPage,
@@ -322,7 +401,8 @@ export function useFacultyReportDetailViewModel({
     reportQuery,
     commentsQuery,
     qualitativeSummaryQuery,
-    questionnaireTypesQuery,
+    questionnaireTypesQuery: globalQuestionnaireTypesQuery,
+    availableQuestionnaireTypesQuery,
     facultyEnrollmentsQuery,
     sentimentFilter,
     themeLabelFilter,
@@ -330,7 +410,13 @@ export function useFacultyReportDetailViewModel({
     updateSentimentFilter,
     updateThemeFilter,
     clearAllFilters,
-    isQuestionnaireTypeLoading: questionnaireTypesQuery.isLoading,
+    questionnaireTypeCodeAutoCorrection,
+    themeLabelAutoCorrection,
+    viewAutoCorrection,
+    dismissQuestionnaireTypeCodeAutoCorrection,
+    dismissThemeLabelAutoCorrection,
+    dismissViewAutoCorrection,
+    isQuestionnaireTypeLoading: isQuestionnaireTypesResolving,
     isCourseLoading: facultyEnrollmentsQuery.isLoading,
     hasSemesterContext: Boolean(semesterId),
     updateCourse: (value: string) => {

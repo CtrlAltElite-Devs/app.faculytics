@@ -4,27 +4,28 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { FacultyAnalysisSentimentStrip } from "@/features/faculty-analytics/components/faculty-analysis-sentiment-strip";
-import { FacultyAnalysisStats } from "@/features/faculty-analytics/components/faculty-analysis-stats";
-import { FacultyReportComments } from "@/features/faculty-analytics/components/faculty-report-comments";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
+import { FeedbackTab } from "@/features/faculty-analytics/components/feedback-tab";
+import { HeadlineMetricsStrip } from "@/features/faculty-analytics/components/headline-metrics-strip";
+import { InsightsTab } from "@/features/faculty-analytics/components/insights-tab";
 import { PipelineTriggerCard } from "@/features/faculty-analytics/components/pipeline-trigger-card";
-import { QuantitativeScoresSection } from "@/features/faculty-analytics/components/quantitative-scores-section";
-import { RecommendationsCard } from "@/features/faculty-analytics/components/recommendations-card";
+import { ReportExportDialog } from "@/features/faculty-analytics/components/report-export-dialog";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
 import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
-import { ReportExportDialog } from "@/features/faculty-analytics/components/report-export-dialog";
-import { ThemeExplorerList } from "@/features/faculty-analytics/components/theme-explorer-list";
+import { ScoresTab } from "@/features/faculty-analytics/components/scores-tab";
 import { useFacultyReportDetailViewModel } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
 import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/use-latest-pipeline-for-scope";
 import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
 import { usePipelineStatus } from "@/features/faculty-analytics/hooks/use-pipeline-status";
 import { hasFacultyReportAnalyticsData } from "@/features/faculty-analytics/lib/faculty-report-detail";
 import {
-  deriveThemeFacets,
-  filterThemesByFacet,
-} from "@/features/faculty-analytics/lib/facet-filter";
-import type { PipelineStatus } from "@/features/faculty-analytics/types";
+  REPORT_VIEW_LABELS,
+  REPORT_VIEW_ORDER,
+  type PipelineStatus,
+  type ReportView,
+} from "@/features/faculty-analytics/types";
 
 import { FacultyReportHeader } from "./faculty-report-header";
 
@@ -43,8 +44,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
 
-  // FAC-135 Phase C (Task C2/C5): canonical scope shape is {scopeType, scopeId}
-  // plus semesterId. Faculty report always scopes to a single faculty.
   const pipelineScope = useMemo(
     () => ({
       semesterId: viewModel.semesterId ?? "",
@@ -66,30 +65,20 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   );
 
   const qualitativeSummary = viewModel.qualitativeSummaryQuery.data;
-  const themes = useMemo(() => qualitativeSummary?.themes ?? [], [qualitativeSummary?.themes]);
-  const actions = useMemo(
-    () => recommendationsQuery.data?.actions ?? [],
-    [recommendationsQuery.data?.actions]
-  );
 
-  // FAC-135 Phase C: voiceBreakdown drives facet badge counts + empty-state
-  // discrimination. Pull from the status poll (freshest) with fallback.
   const voiceBreakdown =
     pipelineStatusQuery.data?.coverage.voiceBreakdown ??
     latestPipeline?.coverage.voiceBreakdown ??
     null;
 
-  // Client-side theme -> facet derivation via topic-label join.
-  const themeFacets = useMemo(() => deriveThemeFacets(themes, actions), [themes, actions]);
-  const visibleThemes = useMemo(
-    () => filterThemesByFacet(themes, themeFacets, viewModel.selectedFacet),
-    [themes, themeFacets, viewModel.selectedFacet]
-  );
-
   const showSentimentSurface = livePipelineStatus
     ? SENTIMENT_READY_STATUSES.has(livePipelineStatus)
     : false;
   const showThemesSurface = livePipelineStatus === "COMPLETED";
+
+  // Stable disabled derivation: keyed on latestPipeline (not the polling
+  // status), so chips don't flicker mid-click.
+  const filtersDisabled = latestPipeline?.status !== "COMPLETED";
 
   const announcement = useMemo(() => {
     const parts: string[] = [];
@@ -168,112 +157,144 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
           isCourseLoading={viewModel.isCourseLoading}
           onCourseChange={viewModel.updateCourse}
           onExport={() => setIsExportDialogOpen(true)}
-          selectedFacet={viewModel.selectedFacet}
-          onFacetChange={viewModel.selectFacet}
-          voiceBreakdown={voiceBreakdown}
         />
       </div>
+
+      <HeadlineMetricsStrip
+        overallRating={viewModel.report.overallRating}
+        overallInterpretation={viewModel.report.overallInterpretation}
+        responseCount={viewModel.report.submissionCount}
+        sentimentDistribution={
+          showSentimentSurface && qualitativeSummary
+            ? qualitativeSummary.sentimentDistribution
+            : null
+        }
+      />
 
       <div role="status" aria-live="polite" className="sr-only">
         {announcement}
       </div>
 
+      {viewModel.viewAutoCorrection ? (
+        <AutoCorrectionNotice
+          requested={viewModel.viewAutoCorrection.requested}
+          actual={viewModel.viewAutoCorrection.actual}
+          paramLabel="view"
+          onDismiss={viewModel.dismissViewAutoCorrection}
+        />
+      ) : null}
+
       {!hasAnalyticsData ? (
         <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected filters." />
       ) : (
         <>
-          {/* Analysis pipeline status — surfaced prominently, same pattern as
-              dashboard. Not hidden in a collapsible. */}
           {viewModel.semesterId ? (
             <PipelineTriggerCard scope={pipelineScope} pipeline={latestPipeline} />
           ) : null}
 
-          <FacultyAnalysisStats
-            submissionCount={viewModel.report.submissionCount}
-            overallRating={viewModel.report.overallRating}
-            overallInterpretation={viewModel.report.overallInterpretation}
-            commentsCount={viewModel.commentsCount}
-            sentimentDistribution={
-              showSentimentSurface && qualitativeSummary
-                ? qualitativeSummary.sentimentDistribution
-                : null
-            }
-          />
+          <Tabs
+            value={viewModel.selectedView}
+            onValueChange={(value) => viewModel.selectView(value as ReportView)}
+            className="w-full"
+          >
+            <TabsList className="flex h-auto w-full flex-wrap gap-1 sm:w-auto">
+              {REPORT_VIEW_ORDER.map((view) => (
+                <TabsTrigger key={view} value={view} className="font-sans text-xs">
+                  {REPORT_VIEW_LABELS[view]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          {showSentimentSurface && qualitativeSummary ? (
-            <FacultyAnalysisSentimentStrip
-              distribution={qualitativeSummary.sentimentDistribution}
-              sentimentFilter={viewModel.sentimentFilter}
-              themeLabelFilter={viewModel.themeLabelFilter}
-              onSentimentClick={viewModel.updateSentimentFilter}
-              onClearSentiment={() => viewModel.updateSentimentFilter(null)}
-              onClearTheme={() => viewModel.updateThemeFilter(null)}
-              onClearAll={viewModel.clearAllFilters}
-            />
-          ) : null}
-
-          {showThemesSurface && visibleThemes.length > 0 ? (
-            <section className="space-y-6">
-              {/* FAC-135 Phase C (Task C7): scope-narrowing subtext. */}
-              <p className="max-w-3xl text-xs text-muted-foreground">
-                Themes and feedback are analyzed across all your courses to ensure reliable
-                patterns. Per-course breakdowns show quantitative ratings only.
-              </p>
-              <ThemeExplorerList
-                themes={visibleThemes}
-                expandedThemeLabel={viewModel.themeLabelFilter}
-                onToggleTheme={viewModel.updateThemeFilter}
+            <TabsContent value="insights" className="mt-6">
+              <InsightsTab
                 facultyId={facultyId}
                 semesterId={viewModel.semesterId}
                 questionnaireTypeCode={viewModel.questionnaireTypeCode}
+                selectedFacet={viewModel.selectedFacet}
+                onFacetChange={viewModel.selectFacet}
+                voiceBreakdown={voiceBreakdown}
+                qualitativeSummary={qualitativeSummary}
+                recommendations={recommendationsQuery.data}
+                livePipelineStatus={livePipelineStatus}
+                showSentimentSurface={showSentimentSurface}
+                showThemesSurface={showThemesSurface}
                 sentimentFilter={viewModel.sentimentFilter}
-                actions={actions}
+                themeLabelFilter={viewModel.themeLabelFilter}
+                onSentimentClick={viewModel.updateSentimentFilter}
+                onThemeClick={viewModel.updateThemeFilter}
+                onClearAllFilters={viewModel.clearAllFilters}
+                comments={viewModel.comments}
+                commentsMeta={viewModel.commentsMeta}
+                commentsPage={viewModel.commentsPage}
+                commentsLimit={viewModel.commentsLimit}
+                isCommentsLoading={viewModel.commentsQuery.isLoading}
+                isCommentsError={viewModel.commentsQuery.isError}
+                onCommentsRetry={viewModel.retryComments}
+                onCommentsPageChange={viewModel.updateCommentsPage}
+                onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
+                themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
+                onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
               />
-              {recommendationsQuery.data ? (
-                <RecommendationsCard
-                  recommendations={recommendationsQuery.data}
-                  selectedFacet={viewModel.selectedFacet}
-                  voiceBreakdown={voiceBreakdown}
-                />
-              ) : null}
-            </section>
-          ) : showThemesSurface && themes.length === 0 && viewModel.comments.length > 0 ? (
-            <section>
-              <div className="max-w-3xl">
-                <h2 className="font-playfair text-xl font-semibold tracking-tight text-foreground">
-                  Student comments
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  No themes clustered from this analysis. The raw comments are below.
-                </p>
-              </div>
-              <div className="mt-4">
-                <FacultyReportComments
-                  comments={viewModel.comments}
-                  commentsMeta={viewModel.commentsMeta}
-                  commentsPage={viewModel.commentsPage}
-                  commentsLimit={viewModel.commentsLimit}
-                  isLoading={viewModel.commentsQuery.isLoading}
-                  isError={viewModel.commentsQuery.isError}
-                  onRetry={viewModel.retryComments}
-                  onPageChange={viewModel.updateCommentsPage}
-                  onRowsPerPageChange={viewModel.updateCommentsLimit}
-                />
-              </div>
-            </section>
-          ) : showSentimentSurface ? (
-            <section className="rounded-2xl border border-dashed border-border bg-muted/30 px-6 py-10 text-center">
-              <p className="text-sm text-muted-foreground">
-                Sentiment analysis is ready. Themes and suggested actions will surface shortly.
-              </p>
-            </section>
-          ) : null}
+            </TabsContent>
 
-          <QuantitativeScoresSection
-            sections={viewModel.report.sections}
-            submissionCount={viewModel.report.submissionCount}
-            defaultOpen={false}
-          />
+            <TabsContent value="scores" className="mt-6">
+              <ScoresTab
+                report={viewModel.report}
+                semesterLabel={viewModel.semesterLabel}
+                questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
+                availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
+                selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
+                isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
+                onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
+                qualitativeSummary={qualitativeSummary}
+                showSentimentSurface={showSentimentSurface}
+                commentsCount={viewModel.commentsCount}
+                questionnaireTypeCodeAutoCorrection={viewModel.questionnaireTypeCodeAutoCorrection}
+                onDismissQuestionnaireTypeCodeAutoCorrection={
+                  viewModel.dismissQuestionnaireTypeCodeAutoCorrection
+                }
+                renderHeadlineStats={false}
+              />
+            </TabsContent>
+
+            <TabsContent value="feedback" className="mt-6">
+              <FeedbackTab
+                report={viewModel.report}
+                semesterLabel={viewModel.semesterLabel}
+                questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
+                availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
+                selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
+                isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
+                onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
+                qualitativeSummary={qualitativeSummary}
+                filtersDisabled={filtersDisabled}
+                filtersDisabledReason={
+                  filtersDisabled
+                    ? "Run qualitative analysis to enable sentiment and topic filters."
+                    : undefined
+                }
+                sentimentFilter={viewModel.sentimentFilter}
+                resolvedThemeId={viewModel.resolvedThemeId}
+                onSentimentChange={viewModel.updateSentimentFilter}
+                onThemeChange={viewModel.updateThemeFilter}
+                comments={viewModel.comments}
+                commentsMeta={viewModel.commentsMeta}
+                commentsPage={viewModel.commentsPage}
+                commentsLimit={viewModel.commentsLimit}
+                isCommentsLoading={viewModel.commentsQuery.isLoading}
+                isCommentsError={viewModel.commentsQuery.isError}
+                onCommentsRetry={viewModel.retryComments}
+                onCommentsPageChange={viewModel.updateCommentsPage}
+                onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
+                questionnaireTypeCodeAutoCorrection={viewModel.questionnaireTypeCodeAutoCorrection}
+                onDismissQuestionnaireTypeCodeAutoCorrection={
+                  viewModel.dismissQuestionnaireTypeCodeAutoCorrection
+                }
+                themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
+                onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
+              />
+            </TabsContent>
+          </Tabs>
         </>
       )}
 
@@ -284,7 +305,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         facultyName={viewModel.report.faculty.name}
         semesterId={viewModel.semesterId}
         semesterLabel={viewModel.semesterLabel}
-        questionnaireTypeCode={viewModel.questionnaireTypeCode}
+        questionnaireTypeCode={viewModel.questionnaireTypeCode ?? ""}
         questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
       />
     </section>
