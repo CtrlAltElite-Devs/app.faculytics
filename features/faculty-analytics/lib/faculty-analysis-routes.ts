@@ -6,7 +6,7 @@ type BuildScopedFacultyAnalysisHrefOptions = {
   semesterId: string;
   semesterLabel: string;
   questionnaireTypeCode?: string;
-  scopeLabel: "Campus" | "Department";
+  scopeLabel: "Campus" | "Department" | "Program";
 };
 
 export function buildScopedFacultyAnalysisHref({
@@ -24,6 +24,11 @@ export function buildScopedFacultyAnalysisHref({
     questionnaireTypeCode,
   });
 
-  const basePath = scopeLabel === "Campus" ? "/campus-head/faculties" : "/dean/faculties";
+  const basePath =
+    scopeLabel === "Campus"
+      ? "/campus-head/faculties"
+      : scopeLabel === "Program"
+        ? "/chairperson/faculties"
+        : "/dean/faculties";
   return `${basePath}/${facultyId}/analysis?${params.toString()}`;
 }
