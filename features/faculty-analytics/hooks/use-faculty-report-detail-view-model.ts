@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 import {
   buildFacultyReportHref,
@@ -13,11 +14,22 @@ import {
 import { useFacultyEnrollments } from "@/features/faculty-analytics/hooks/use-faculty-enrollments";
 import { useFacultyReportComments } from "@/features/faculty-analytics/hooks/use-faculty-report-comments";
 import { useFacultyReport } from "@/features/faculty-analytics/hooks/use-faculty-report";
-import type { FacultyReportCourseOption } from "@/features/faculty-analytics/types";
+import { useQualitativeSummary } from "@/features/faculty-analytics/hooks/use-qualitative-summary";
+import type { FacultyReportCourseOption, SentimentLabel } from "@/features/faculty-analytics/types";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
 import { resolvePageSizeOption } from "@/lib/pagination";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { getRoleConfig } from "@/features/auth/lib/role-route";
+
+const VALID_SENTIMENTS: ReadonlySet<SentimentLabel> = new Set<SentimentLabel>([
+  "positive",
+  "neutral",
+  "negative",
+]);
+
+function isSentimentLabel(value: string | null): value is SentimentLabel {
+  return Boolean(value) && VALID_SENTIMENTS.has(value as SentimentLabel);
+}
 
 type UseFacultyReportDetailViewModelParams = {
   facultyId: string;
@@ -44,6 +56,11 @@ export function useFacultyReportDetailViewModel({
   );
   const commentsPage = resolvePositiveIntegerParam(searchParams.get("page"), 1);
   const commentsLimit = resolvePageSizeOption(searchParams.get("limit"), [5, 10, 20]);
+  const rawSentiment = searchParams.get("sentiment");
+  const sentimentFilter: SentimentLabel | null = isSentimentLabel(rawSentiment)
+    ? rawSentiment
+    : null;
+  const themeLabelFilter = searchParams.get("themeLabel");
 
   const questionnaireTypesQuery = useQuestionnaireTypes();
   const questionnaireTypes = useMemo(
@@ -101,6 +118,26 @@ export function useFacultyReportDetailViewModel({
           ),
         }
       : null);
+  const qualitativeSummaryQuery = useQualitativeSummary(
+    {
+      facultyId,
+      semesterId,
+      questionnaireTypeCode,
+      courseId: courseId || undefined,
+    },
+    { enabled: Boolean(semesterId && questionnaireTypeCode) }
+  );
+
+  const labelToId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const theme of qualitativeSummaryQuery.data?.themes ?? []) {
+      map.set(theme.label, theme.themeId);
+    }
+    return map;
+  }, [qualitativeSummaryQuery.data]);
+
+  const resolvedThemeId = themeLabelFilter ? (labelToId.get(themeLabelFilter) ?? null) : null;
+
   const commentsQuery = useFacultyReportComments(
     {
       facultyId,
@@ -109,6 +146,8 @@ export function useFacultyReportDetailViewModel({
       courseId: courseId || undefined,
       page: commentsPage,
       limit: commentsLimit,
+      sentiment: sentimentFilter ?? undefined,
+      themeId: resolvedThemeId ?? undefined,
     },
     { enabled: Boolean(semesterId) }
   );
@@ -157,10 +196,49 @@ export function useFacultyReportDetailViewModel({
     router,
   ]);
 
-  const updateSearchParams = (updates: Record<string, string | null>) => {
-    const nextHref = buildFacultyReportHref(pathname, currentSearchParams, updates);
-    router.replace(nextHref, { scroll: false });
-  };
+  const updateSearchParams = useCallback(
+    (updates: Record<string, string | null>) => {
+      const nextHref = buildFacultyReportHref(pathname, currentSearchParams, updates);
+      router.replace(nextHref, { scroll: false });
+    },
+    [currentSearchParams, pathname, router]
+  );
+
+  const updateSentimentFilter = useCallback(
+    (next: SentimentLabel | null) => {
+      updateSearchParams({ sentiment: next, page: null });
+    },
+    [updateSearchParams]
+  );
+
+  const updateThemeFilter = useCallback(
+    (next: string | null) => {
+      updateSearchParams({ themeLabel: next, page: null });
+    },
+    [updateSearchParams]
+  );
+
+  const clearAllFilters = useCallback(() => {
+    updateSearchParams({ sentiment: null, themeLabel: null, page: null });
+  }, [updateSearchParams]);
+
+  // F4: Silently strip unknown sentiment values from the URL before any API call.
+  useEffect(() => {
+    if (rawSentiment && !isSentimentLabel(rawSentiment)) {
+      updateSentimentFilter(null);
+    }
+  }, [rawSentiment, updateSentimentFilter]);
+
+  // Theme-label decay: clear when no match exists in the latest pipeline's themes.
+  useEffect(() => {
+    if (!themeLabelFilter || !qualitativeSummaryQuery.isSuccess) {
+      return;
+    }
+    if (!labelToId.has(themeLabelFilter)) {
+      updateThemeFilter(null);
+      toast.info("Theme not found in current analysis");
+    }
+  }, [themeLabelFilter, qualitativeSummaryQuery.isSuccess, labelToId, updateThemeFilter]);
 
   const report = reportQuery.data ?? null;
   const reportTitle = report?.faculty.name || facultyNameParam || "Faculty report";
@@ -180,6 +258,7 @@ export function useFacultyReportDetailViewModel({
     void questionnaireTypesQuery.refetch();
     void reportQuery.refetch();
     void commentsQuery.refetch();
+    void qualitativeSummaryQuery.refetch();
   };
 
   const { activeRole } = useActiveRole();
@@ -206,8 +285,15 @@ export function useFacultyReportDetailViewModel({
     commentsCount,
     reportQuery,
     commentsQuery,
+    qualitativeSummaryQuery,
     questionnaireTypesQuery,
     facultyEnrollmentsQuery,
+    sentimentFilter,
+    themeLabelFilter,
+    resolvedThemeId,
+    updateSentimentFilter,
+    updateThemeFilter,
+    clearAllFilters,
     isQuestionnaireTypeLoading: questionnaireTypesQuery.isLoading,
     isCourseLoading: facultyEnrollmentsQuery.isLoading,
     hasSemesterContext: Boolean(semesterId),

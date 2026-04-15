@@ -222,9 +222,13 @@ export type FacultyReportQuery = {
   courseId?: string;
 };
 
+export type SentimentLabel = "positive" | "neutral" | "negative";
+
 export type FacultyReportCommentsQuery = FacultyReportQuery & {
   page?: number;
   limit?: number;
+  sentiment?: SentimentLabel;
+  themeId?: string;
 };
 
 export type FacultyReportFacultyDto = {
@@ -283,11 +287,43 @@ export type FacultyReportResponseDto = {
 export type FacultyReportCommentDto = {
   text: string;
   submittedAt: string;
+  sentiment?: SentimentLabel;
+  themeIds?: string[];
 };
 
 export type FacultyReportCommentsResponseDto = {
   items: FacultyReportCommentDto[];
   meta: PaginationMetaDto;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Qualitative Summary (FAC-134)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type SentimentDistributionDto = {
+  positive: number;
+  neutral: number;
+  negative: number;
+};
+
+export type QualitativeThemeDto = {
+  themeId: string;
+  label: string;
+  count: number;
+  sentimentSplit: SentimentDistributionDto;
+  sampleQuotes?: string[];
+};
+
+export type QualitativeSummaryResponseDto = {
+  sentimentDistribution: SentimentDistributionDto;
+  themes: QualitativeThemeDto[];
+};
+
+export type QualitativeSummaryQuery = {
+  facultyId: string;
+  semesterId: string;
+  questionnaireTypeCode: string;
+  courseId?: string;
 };
 
 export type FacultyReportCourseOption = {
@@ -334,6 +370,7 @@ export type PipelineScopeIds = {
   campusId?: string;
   courseId?: string;
   questionnaireVersionId?: string;
+  questionnaireTypeCode?: string;
 };
 
 // IDs + display values paired — shape of pipeline.status response's `scope`

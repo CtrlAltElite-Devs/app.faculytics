@@ -1,17 +1,12 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { RankedTheme } from "@/features/faculty-analytics/lib/pipeline-themes";
+import type { QualitativeThemeDto } from "@/features/faculty-analytics/types";
 
 type ThemesRankedListProps = {
-  themes: RankedTheme[];
+  themes: QualitativeThemeDto[];
   maxVisible?: number;
 };
-
-function clamp01(n: number) {
-  if (!Number.isFinite(n)) return 0;
-  return Math.min(1, Math.max(0, n));
-}
 
 export function ThemesRankedList({ themes, maxVisible = 10 }: ThemesRankedListProps) {
   if (themes.length === 0) return null;
@@ -27,17 +22,18 @@ export function ThemesRankedList({ themes, maxVisible = 10 }: ThemesRankedListPr
       <CardContent>
         <ul className="space-y-3">
           {visible.map((theme) => {
-            const pos = clamp01(theme.sentimentBreakdown.positive) * 100;
-            const neu = clamp01(theme.sentimentBreakdown.neutral) * 100;
-            const neg = clamp01(theme.sentimentBreakdown.negative) * 100;
+            const { positive, neutral, negative } = theme.sentimentSplit;
+            const pos = theme.count > 0 ? (positive / theme.count) * 100 : 0;
+            const neu = theme.count > 0 ? (neutral / theme.count) * 100 : 0;
+            const neg = theme.count > 0 ? (negative / theme.count) * 100 : 0;
             return (
-              <li key={theme.topicLabel} className="space-y-1.5">
+              <li key={theme.themeId} className="space-y-1.5">
                 <div className="flex items-center justify-between gap-4">
                   <span className="font-sans text-sm font-medium text-foreground">
-                    {theme.topicLabel}
+                    {theme.label}
                   </span>
                   <span className="font-sans text-xs text-muted-foreground">
-                    {theme.commentCount} mention{theme.commentCount === 1 ? "" : "s"}
+                    {theme.count} mention{theme.count === 1 ? "" : "s"}
                   </span>
                 </div>
                 <div className="flex h-2 overflow-hidden rounded-full bg-muted">
