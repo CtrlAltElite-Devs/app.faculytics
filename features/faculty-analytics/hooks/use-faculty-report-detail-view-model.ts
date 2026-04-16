@@ -371,9 +371,9 @@ export function useFacultyReportDetailViewModel({
   const roleConfig = activeRole ? getRoleConfig(activeRole) : null;
   const isFacultySelf = activeRole === APP_ROLES.FACULTY;
   const backHref = isFacultySelf
-    ? (roleConfig?.homePath ?? "/faculty/courses")
+    ? (roleConfig?.homePath ?? "/faculty/analytics")
     : `${roleConfig?.routePrefix ?? "/dean"}/faculties`;
-  const backLabel = isFacultySelf ? "Back to Courses" : "Back to Faculties";
+  const backLabel = "Back to Faculties";
 
   return {
     backHref,

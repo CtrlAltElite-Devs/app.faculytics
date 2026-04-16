@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 type FacultyReportHeaderProps = {
+  showBackButton?: boolean;
   backHref: string;
   courseId: string;
   courseLabel: string;
@@ -26,6 +27,7 @@ type FacultyReportHeaderProps = {
 };
 
 export function FacultyReportHeader({
+  showBackButton = true,
   backHref,
   courseId,
   courseLabel,
@@ -39,26 +41,26 @@ export function FacultyReportHeader({
       aria-label="Faculty report controls"
       className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
     >
-      <Button
-        asChild
-        variant="ghost"
-        size="sm"
-        className="w-fit px-2 font-sans text-xs uppercase tracking-[0.18em] text-stone-500 hover:text-stone-900"
-      >
-        <Link href={backHref}>← Back to faculties</Link>
-      </Button>
+      {showBackButton ? (
+        <Button
+          asChild
+          variant="outline"
+          className="w-full justify-center px-4 py-2.5 font-sans text-sm sm:w-auto sm:justify-start"
+        >
+          <Link href={backHref}>Back to faculties</Link>
+        </Button>
+      ) : null}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              size="sm"
-              className="w-full min-w-0 justify-between border-stone-200 bg-white px-3 py-2 font-sans text-xs sm:w-56"
+              className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm sm:w-56"
               disabled={isCourseLoading || availableCourses.length === 0}
             >
-              <span className="truncate text-stone-700">{courseLabel}</span>
-              <ChevronDown className="size-3.5 text-stone-400" />
+              <span className="truncate">{courseLabel}</span>
+              <ChevronDown className="size-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -85,8 +87,7 @@ export function FacultyReportHeader({
         <Button
           type="button"
           variant="brand"
-          size="sm"
-          className="w-full px-4 py-2 font-sans text-xs sm:w-auto"
+          className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
           onClick={onExport}
         >
           Export PDF

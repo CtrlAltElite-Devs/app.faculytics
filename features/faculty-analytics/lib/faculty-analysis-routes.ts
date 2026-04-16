@@ -9,6 +9,26 @@ type BuildScopedFacultyAnalysisHrefOptions = {
   scopeLabel: "Campus" | "Department" | "Program";
 };
 
+type BuildFacultySelfAnalysisHrefOptions = {
+  semesterId: string;
+  semesterLabel: string;
+  questionnaireTypeCode?: string;
+};
+
+export function buildFacultySelfAnalysisHref({
+  semesterId,
+  semesterLabel,
+  questionnaireTypeCode = DEFAULT_QUESTIONNAIRE_TYPE,
+}: BuildFacultySelfAnalysisHrefOptions) {
+  const params = new URLSearchParams({
+    semesterId,
+    semesterLabel,
+    questionnaireTypeCode,
+  });
+
+  return `/faculty/analytics?${params.toString()}`;
+}
+
 export function buildScopedFacultyAnalysisHref({
   facultyId,
   facultyName,
