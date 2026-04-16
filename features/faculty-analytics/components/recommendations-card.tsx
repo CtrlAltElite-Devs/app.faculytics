@@ -130,9 +130,7 @@ export function RecommendationsCard({ recommendations, onViewTheme }: Recommenda
     return { strengths, improvements };
   }, [recommendations.actions]);
 
-  if (recommendations.actions.length === 0) {
-    return null;
-  }
+  if (recommendations.actions.length === 0) return null;
 
   return (
     <Card className="rounded-2xl border-border/70 shadow-sm">

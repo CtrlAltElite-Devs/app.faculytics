@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 
+import { useMe } from "@/features/auth/hooks/use-me";
 import { ScopedDashboardHeader } from "@/features/faculty-analytics/components/scoped-dashboard-header";
 import { ScopedAttentionCard } from "@/features/faculty-analytics/components/scoped-attention-card";
 import { ScopedOverallSentimentBarChart } from "@/features/faculty-analytics/components/scoped-charts";
@@ -14,6 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/use-latest-pipeline-for-scope";
 import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
 import { usePipelineStatus } from "@/features/faculty-analytics/hooks/use-pipeline-status";
+import type { PipelineScopeIds } from "@/features/faculty-analytics/types";
 import {
   aggregateThemes,
   type RankedTheme,
@@ -116,8 +118,12 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
     retry,
   } = useScopedAnalyticsDashboardViewModel();
 
-  // No departmentId needed — the backend fills the DEAN/CAMPUS_HEAD's
-  // resolved scope per FAC-132 TD-2 List rules.
+  // FAC-135 Phase C: for LIST queries, scopeType/scopeId are optional — the
+  // backend resolves the DEAN/CAMPUS_HEAD's scope automatically. For CREATE
+  // we need an explicit scope (see `campusPipelineScope` below).
+  const meQuery = useMe();
+  const campusId = meQuery.data?.campus?.id ?? null;
+
   const pipelineQuery = useMemo(
     () => ({ semesterId: selectedSemesterId ?? "" }),
     [selectedSemesterId]
@@ -125,6 +131,20 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
   const { latestPipeline } = useLatestPipelineForScope(pipelineQuery, {
     enabled: Boolean(selectedSemesterId),
   });
+
+  // FAC-135 Phase C (Task C11): on Campus Head dashboards only, provide a
+  // CAMPUS scope for the trigger card so "Run campus-wide themes" posts the
+  // correct canonical shape. Dean dashboard suppresses the trigger card —
+  // AC26 ("Dean-on-/dean/dashboard must NOT see this button").
+  const campusPipelineScope: PipelineScopeIds | null = useMemo(() => {
+    if (scopeLabel !== "Campus") return null;
+    if (!selectedSemesterId || !campusId) return null;
+    return {
+      semesterId: selectedSemesterId,
+      scopeType: "CAMPUS",
+      scopeId: campusId,
+    };
+  }, [scopeLabel, selectedSemesterId, campusId]);
   // Poll status at the screen level so themes/recs gating reacts to the
   // live terminal transition — without this, `latestPipeline.status` comes
   // from the stale list cache and the completed-state UI doesn't appear
@@ -172,11 +192,12 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
           lastUpdatedLabel={lastUpdatedLabel}
         />
 
-        {selectedSemesterId ? (
-          <PipelineTriggerCard
-            scope={{ semesterId: selectedSemesterId }}
-            pipeline={latestPipeline}
-          />
+        {/* FAC-135 Phase C (Task C11 / AC26): campus-wide trigger only on
+            Campus Head dashboard. Dean dashboard intentionally omits this —
+            Dean-level pipelines are not supported under the current scope
+            tiers and trying to trigger one would 400 on the new DTO. */}
+        {campusPipelineScope ? (
+          <PipelineTriggerCard scope={campusPipelineScope} pipeline={latestPipeline} />
         ) : null}
 
         {semesters.length === 0 ? (
