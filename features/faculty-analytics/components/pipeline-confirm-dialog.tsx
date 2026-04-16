@@ -11,7 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { PipelineSummary } from "@/features/faculty-analytics/types";
+import { formatFacetLabel } from "@/features/faculty-analytics/lib/facet-filter";
+import type { Facet, PipelineSummary, VoiceBreakdown } from "@/features/faculty-analytics/types";
 
 type PipelineConfirmDialogProps = {
   open: boolean;
@@ -21,7 +22,28 @@ type PipelineConfirmDialogProps = {
   onCancel: () => void;
   isConfirming: boolean;
   isCancelling: boolean;
+  // FAC-135 Phase C (Task C9): optional composition row derived from
+  // coverage.voiceBreakdown. Hidden gracefully if absent.
+  voiceBreakdown?: VoiceBreakdown | null;
 };
+
+// Keys on VoiceBreakdown (deliberately narrower than Facet — excludes
+// `overall`, which is a UI-only aggregate label that has no coverage slice
+// on its own).
+type VoiceBreakdownKey = keyof VoiceBreakdown;
+
+const COMPOSITION_KEYS: readonly VoiceBreakdownKey[] = [
+  "facultyFeedback",
+  "inClassroom",
+  "outOfClassroom",
+  "other",
+];
+
+function compositionLabel(key: VoiceBreakdownKey): string {
+  if (key === "other") return "Other";
+  // All non-`other` keys are valid Facet values (overall excluded by design).
+  return formatFacetLabel(key as Facet);
+}
 
 function formatPercent(n: number): string {
   if (!Number.isFinite(n)) return "—";
@@ -36,12 +58,14 @@ export function PipelineConfirmDialog({
   onCancel,
   isConfirming,
   isCancelling,
+  voiceBreakdown,
 }: PipelineConfirmDialogProps) {
   if (!pipeline) return null;
 
   const coverage = pipeline.coverage;
   const warnings = pipeline.warnings ?? [];
   const busy = isConfirming || isCancelling;
+  const breakdown = voiceBreakdown ?? coverage.voiceBreakdown ?? null;
 
   return (
     <Dialog open={open} onOpenChange={busy ? undefined : onOpenChange}>
@@ -95,6 +119,25 @@ export function PipelineConfirmDialog({
             </p>
           </div>
         </div>
+
+        {breakdown ? (
+          <div className="rounded-xl border border-border/70 bg-muted/10 p-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Voice composition
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {COMPOSITION_KEYS.map((key) => (
+                <span
+                  key={key}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background px-2.5 py-1 font-sans text-[11px] text-muted-foreground"
+                >
+                  <span className="font-medium text-foreground">{compositionLabel(key)}</span>
+                  <span className="tabular-nums">{breakdown[key].submissionCount}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {warnings.length > 0 ? (
           <div className="rounded-xl border border-amber-500/40 bg-amber-50/70 p-4 dark:bg-amber-950/20">

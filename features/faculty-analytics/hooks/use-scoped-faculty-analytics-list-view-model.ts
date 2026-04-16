@@ -16,12 +16,19 @@ import {
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
 
-export function useScopedFacultyAnalyticsListViewModel() {
+type UseScopedFacultyAnalyticsListViewModelOptions = {
+  allowAllPrograms?: boolean;
+};
+
+export function useScopedFacultyAnalyticsListViewModel(
+  options?: UseScopedFacultyAnalyticsListViewModelOptions
+) {
   const [selectedSemesterIdState, setSelectedSemesterId] = useState<string | null>(null);
   const [selectedProgramIdState, setSelectedProgramId] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(DEFAULT_PAGE_SIZE);
+  const allowAllPrograms = options?.allowAllPrograms ?? true;
 
   const deferredSearchValue = useDeferredValue(searchValue.trim());
   const meQuery = useMe();
@@ -45,8 +52,8 @@ export function useScopedFacultyAnalyticsListViewModel() {
     { enabled: Boolean(selectedSemesterId) }
   );
   const programs = useMemo(
-    () => mapProgramOptionsToViewModel(programOptionsQuery.data?.data ?? []),
-    [programOptionsQuery.data]
+    () => mapProgramOptionsToViewModel(programOptionsQuery.data?.data ?? [], allowAllPrograms),
+    [allowAllPrograms, programOptionsQuery.data]
   );
   const selectedProgram =
     programs.find((program) => program.id === selectedProgramIdState) ?? programs[0] ?? null;
@@ -60,7 +67,7 @@ export function useScopedFacultyAnalyticsListViewModel() {
       page: currentPage,
       limit: rowsPerPage,
     },
-    { enabled: Boolean(selectedSemesterId) }
+    { enabled: Boolean(selectedSemesterId) && (allowAllPrograms || Boolean(selectedProgramId)) }
   );
 
   const selectedSemester =
@@ -72,7 +79,8 @@ export function useScopedFacultyAnalyticsListViewModel() {
     selectedSemesterId,
     selectedSemesterLabel: selectedSemester?.label ?? "Select semester",
     selectedProgramId,
-    selectedProgramLabel: selectedProgram?.label ?? ALL_PROGRAMS_LABEL,
+    selectedProgramLabel:
+      selectedProgram?.label ?? (allowAllPrograms ? ALL_PROGRAMS_LABEL : "Select program"),
     facultyList: facultyListQuery.data?.data ?? [],
     pagination: facultyListQuery.data?.meta ?? {
       totalItems: 0,
@@ -113,7 +121,7 @@ export function useScopedFacultyAnalyticsListViewModel() {
       setCurrentPage(1);
     },
     setSelectedProgramId: (value: string) => {
-      setSelectedProgramId(value === ALL_PROGRAMS_VALUE ? null : value);
+      setSelectedProgramId(value === ALL_PROGRAMS_VALUE && allowAllPrograms ? null : value);
       setCurrentPage(1);
     },
     setSearchValue: (value: string) => {

@@ -24,6 +24,8 @@ import type {
   QualitativeSummaryResponseDto,
   ReportStatusResponseDto,
   SemesterListResponseDto,
+  FacultyQuestionnaireTypesQuery,
+  FacultyQuestionnaireTypesResponseDto,
 } from "@/features/faculty-analytics/types";
 import type { MyEnrollmentsResponseDto } from "@/features/enrollments/types";
 
@@ -102,6 +104,18 @@ export async function fetchFacultyReportComments({
 export async function fetchQualitativeSummary({ facultyId, ...params }: QualitativeSummaryQuery) {
   const response = await apiClient.get<QualitativeSummaryResponseDto>(
     Endpoints.analyticsFacultyQualitativeSummary.replace(":facultyId", facultyId),
+    { params }
+  );
+
+  return response.data;
+}
+
+export async function getFacultyQuestionnaireTypes({
+  facultyId,
+  ...params
+}: FacultyQuestionnaireTypesQuery) {
+  const response = await apiClient.get<FacultyQuestionnaireTypesResponseDto>(
+    Endpoints.analyticsFacultyQuestionnaireTypes.replace(":facultyId", facultyId),
     { params }
   );
 

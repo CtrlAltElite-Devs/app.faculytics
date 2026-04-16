@@ -21,7 +21,15 @@ import {
 import { Input } from "@/components/ui/input";
 import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-analytics-dashboard-screen";
 
-export function ScopedFacultyListScreen({ scopeLabel }: { scopeLabel: ScopeLabel }) {
+type ScopedFacultyListScreenProps = {
+  scopeLabel: ScopeLabel;
+  allowAllPrograms?: boolean;
+};
+
+export function ScopedFacultyListScreen({
+  scopeLabel,
+  allowAllPrograms = true,
+}: ScopedFacultyListScreenProps) {
   const [isBatchExportDialogOpen, setIsBatchExportDialogOpen] = useState(false);
   const {
     semesters,
@@ -41,7 +49,8 @@ export function ScopedFacultyListScreen({ scopeLabel }: { scopeLabel: ScopeLabel
     setSearchValue,
     setCurrentPage,
     setRowsPerPage,
-  } = useScopedFacultyAnalyticsListViewModel();
+  } = useScopedFacultyAnalyticsListViewModel({ allowAllPrograms });
+  const selectedProgramValue = selectedProgramId ?? (allowAllPrograms ? ALL_PROGRAMS_VALUE : "");
 
   return (
     <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
@@ -91,7 +100,7 @@ export function ScopedFacultyListScreen({ scopeLabel }: { scopeLabel: ScopeLabel
                 className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
               >
                 <DropdownMenuRadioGroup
-                  value={selectedProgramId ?? ALL_PROGRAMS_VALUE}
+                  value={selectedProgramValue}
                   onValueChange={setSelectedProgramId}
                 >
                   {programs.map((program) => (
