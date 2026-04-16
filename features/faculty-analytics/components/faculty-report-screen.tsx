@@ -93,7 +93,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
       <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
         <div className="flex justify-end">
           <Button asChild variant="outline" className="font-sans">
-            <Link href={viewModel.backHref}>Back to Faculties</Link>
+            <Link href={viewModel.backHref}>{viewModel.backLabel}</Link>
           </Button>
         </div>
         <ScopedAnalyticsErrorState
@@ -117,7 +117,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
       <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
         <div className="flex justify-end">
           <Button asChild variant="outline" className="font-sans">
-            <Link href={viewModel.backHref}>Back to Faculties</Link>
+            <Link href={viewModel.backHref}>{viewModel.backLabel}</Link>
           </Button>
         </div>
         <ScopedAnalyticsErrorState

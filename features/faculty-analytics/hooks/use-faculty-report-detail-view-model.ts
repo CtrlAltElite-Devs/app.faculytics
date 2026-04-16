@@ -28,6 +28,7 @@ import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-quest
 import { resolvePageSizeOption } from "@/lib/pagination";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { getRoleConfig } from "@/features/auth/lib/role-route";
+import { APP_ROLES } from "@/constants/roles";
 
 const VALID_SENTIMENTS: ReadonlySet<SentimentLabel> = new Set<SentimentLabel>([
   "positive",
@@ -367,11 +368,16 @@ export function useFacultyReportDetailViewModel({
   };
 
   const { activeRole } = useActiveRole();
-  const routePrefix = activeRole ? getRoleConfig(activeRole).routePrefix : "/dean";
-  const backHref = `${routePrefix}/faculties`;
+  const roleConfig = activeRole ? getRoleConfig(activeRole) : null;
+  const isFacultySelf = activeRole === APP_ROLES.FACULTY;
+  const backHref = isFacultySelf
+    ? (roleConfig?.homePath ?? "/faculty/courses")
+    : `${roleConfig?.routePrefix ?? "/dean"}/faculties`;
+  const backLabel = isFacultySelf ? "Back to Courses" : "Back to Faculties";
 
   return {
     backHref,
+    backLabel,
     facultyId,
     semesterId,
     courseId,
