@@ -35,12 +35,9 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
   },
   [APP_ROLES.FACULTY]: {
     label: "Faculty",
-    homePath: "/faculty/courses",
+    homePath: "/faculty/analytics",
     routePrefix: "/faculty",
-    navItems: [
-      { title: "Courses", url: "/faculty/courses", icon: BookOpen },
-      { title: "Analytics", url: "/faculty/analytics", icon: BarChart3 },
-    ],
+    navItems: [{ title: "Analytics", url: "/faculty/analytics", icon: BarChart3 }],
   },
   [APP_ROLES.DEAN]: {
     label: "Dean",
