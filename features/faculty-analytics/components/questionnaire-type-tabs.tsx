@@ -41,7 +41,11 @@ export function QuestionnaireTypeTabs({
     <Tabs value={value} onValueChange={(next) => onSelect(next)} className="w-full sm:w-auto">
       <TabsList className="flex h-auto w-full flex-wrap gap-1 sm:w-auto">
         {types.map((type) => (
-          <TabsTrigger key={type.code} value={type.code} className="font-sans text-xs">
+          <TabsTrigger
+            key={type.code}
+            value={type.code}
+            className="font-sans text-xs data-[state=active]:bg-brand-blue/10 data-[state=active]:text-brand-blue dark:data-[state=active]:bg-brand-blue/15 dark:data-[state=active]:text-brand-blue"
+          >
             {type.name}
             <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">
               · {type.submissionCount}

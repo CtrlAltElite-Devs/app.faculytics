@@ -192,9 +192,13 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
             onValueChange={(value) => viewModel.selectView(value as ReportView)}
             className="w-full"
           >
-            <TabsList className="flex h-auto w-full flex-wrap gap-1 sm:w-auto">
+            <TabsList variant="line" className="w-full gap-0 border-b border-border/40">
               {REPORT_VIEW_ORDER.map((view) => (
-                <TabsTrigger key={view} value={view} className="font-sans text-xs">
+                <TabsTrigger
+                  key={view}
+                  value={view}
+                  className="px-4 py-2.5 font-sans text-sm tracking-tight after:bg-brand-blue data-[state=active]:text-brand-blue sm:px-5 dark:data-[state=active]:text-brand-blue"
+                >
                   {REPORT_VIEW_LABELS[view]}
                 </TabsTrigger>
               ))}
