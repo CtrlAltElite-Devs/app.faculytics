@@ -1,25 +1,33 @@
 "use client";
 
+import { memo } from "react";
+
 import { Progress } from "@/components/ui/progress";
 
+import { useAnsweredCountFor, useHasQualitativeContent } from "./questionnaire-form-store";
+
 type QuestionnaireFormProgressProps = {
-  answeredCount: number;
-  totalRequired: number;
-  isComplete: boolean;
+  requiredIds: string[];
+  qualitativeRequired: boolean;
   /** Optional slot rendered beside the percentage (e.g. draft status badge). */
   trailing?: React.ReactNode;
 };
 
-export function QuestionnaireFormProgress({
-  answeredCount,
-  totalRequired,
-  isComplete,
+function QuestionnaireFormProgressBase({
+  requiredIds,
+  qualitativeRequired,
   trailing,
 }: QuestionnaireFormProgressProps) {
+  const answeredCount = useAnsweredCountFor(requiredIds);
+  const hasQualitativeContent = useHasQualitativeContent();
+  const totalRequired = requiredIds.length;
+
+  const hasRequiredComment = !qualitativeRequired || hasQualitativeContent;
+  const isComplete = answeredCount === totalRequired && hasRequiredComment;
   const percentage = totalRequired > 0 ? Math.round((answeredCount / totalRequired) * 100) : 0;
 
   return (
-    <div className="sticky top-0 z-20 -mx-4 space-y-2 border-b border-border/60 bg-background/85 px-4 py-3 backdrop-blur-md sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+    <div className="sticky top-0 z-20 -mx-4 space-y-2 border-b border-border/60 bg-background px-4 py-3 sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
       <div className="flex items-center justify-between gap-3 text-sm">
         <p className="truncate text-muted-foreground">
           <span className="font-medium tabular-nums text-foreground">{answeredCount}</span>
@@ -43,3 +51,5 @@ export function QuestionnaireFormProgress({
     </div>
   );
 }
+
+export const QuestionnaireFormProgress = memo(QuestionnaireFormProgressBase);
