@@ -67,22 +67,45 @@ function QuestionnaireFormSectionBase({
   // All questions within a leaf section share the same type (enforced by the builder).
   const questionType = isLeaf ? (section.questions[0]?.type ?? "LIKERT_1_5") : "LIKERT_1_5";
 
+  const isSectionComplete = answeredCount === totalQuestions && totalQuestions > 0;
+
   return (
     <div
       className={
-        isChild ? "space-y-4 pl-4 sm:pl-6" : "space-y-4 rounded-2xl border bg-background p-4 sm:p-5"
+        isChild ? "space-y-4 pl-3 sm:pl-6" : "space-y-4 rounded-2xl border bg-background p-4 sm:p-5"
       }
     >
       {/* Section header: title + weight badge (preview) or progress count (interactive) */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div
+        className={
+          "flex flex-wrap items-center justify-between gap-x-3 gap-y-2 " +
+          (isChild ? "" : "border-b border-border/50 pb-3 sm:pb-4")
+        }
+      >
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="font-playfair text-lg font-semibold sm:text-xl">{section.title}</h3>
+          <h3 className="font-playfair text-xl leading-tight font-semibold tracking-tight text-foreground sm:text-2xl">
+            {section.title}
+          </h3>
           {section.weight !== null && mode === "preview" && (
             <Badge variant="outline">Weight: {section.weight}%</Badge>
           )}
         </div>
         {mode === "interactive" && totalQuestions > 0 && !hideCounter && (
-          <span className="text-xs text-muted-foreground">
+          <span
+            className={
+              "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] font-semibold tabular-nums transition-colors " +
+              (isSectionComplete
+                ? "border-brand-blue/40 bg-brand-blue/10 text-brand-blue"
+                : "border-border bg-muted/40 text-muted-foreground")
+            }
+          >
+            <span
+              aria-hidden="true"
+              className={
+                "size-1.5 rounded-full " +
+                (isSectionComplete ? "bg-brand-blue" : "bg-muted-foreground/40")
+              }
+            />
             {answeredCount} / {totalQuestions}
           </span>
         )}
