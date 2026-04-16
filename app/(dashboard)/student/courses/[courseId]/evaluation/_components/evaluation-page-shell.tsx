@@ -20,7 +20,7 @@ export function EvaluationPageShell({
   enrollmentSectionName,
 }: EvaluationPageShellProps) {
   return (
-    <section className="px-4 py-5 sm:px-6 md:px-10 md:py-10">
+    <section className="py-5 sm:px-6 md:px-10 md:py-10">
       <div className="mx-auto max-w-6xl">
         {/* Mobile: compact back link */}
         <Button
