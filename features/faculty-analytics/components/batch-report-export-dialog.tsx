@@ -164,7 +164,7 @@ export function BatchReportExportDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
+      <DialogContent className="max-h-[90vh] overflow-hidden sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Batch Report Export</DialogTitle>
           <DialogDescription>
@@ -172,7 +172,7 @@ export function BatchReportExportDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-5">
+        <div className="min-h-0 space-y-5 overflow-hidden">
           <div className="rounded-lg border border-border/70 bg-muted/20 p-4">
             <dl className="space-y-2 font-sans text-sm">
               <div className="flex items-center justify-between gap-4">
@@ -253,13 +253,13 @@ export function BatchReportExportDialog({
                           questionnaireTypesQuery.isLoading || questionnaireTypes.length === 0
                         }
                       >
-                      <span className="truncate">
-                        {effectiveQuestionnaireTypeCode
-                          ? resolveQuestionnaireTypeLabel(
-                              effectiveQuestionnaireTypeCode,
-                              selectedQuestionnaireTypeLabel
-                            )
-                          : "Select questionnaire type"}
+                        <span className="truncate">
+                          {effectiveQuestionnaireTypeCode
+                            ? resolveQuestionnaireTypeLabel(
+                                effectiveQuestionnaireTypeCode,
+                                selectedQuestionnaireTypeLabel
+                              )
+                            : "Select questionnaire type"}
                         </span>
                         <ChevronDown className="size-4" />
                       </Button>
@@ -271,7 +271,7 @@ export function BatchReportExportDialog({
                       <DropdownMenuRadioGroup
                         value={effectiveQuestionnaireTypeCode}
                         onValueChange={setSelectedQuestionnaireTypeCode}
-                    >
+                      >
                         {questionnaireTypes.map((type) => (
                           <DropdownMenuRadioItem
                             key={type.code}
@@ -380,90 +380,92 @@ export function BatchReportExportDialog({
 
               {!batchStatusQuery.isLoading && batchStatus && batchStatus.jobs.length > 0 ? (
                 <div className="space-y-4">
-                  <div className="data-table-wrapper">
-                    <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
-                      <TableHeader className="data-table-header">
-                        <TableRow>
-                          <TableHead className="data-table-head w-[24%]">Faculty</TableHead>
-                          <TableHead className="data-table-head w-[18%]">Status</TableHead>
-                          <TableHead className="data-table-head w-[38%]">Details</TableHead>
-                          <TableHead className="data-table-head w-[20%] text-right">
-                            Action
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {batchStatus.jobs.map((job) => {
-                          const expired = isPresignedUrlExpired(job.expiresAt);
+                  <div className="scrollbar-hidden max-h-[24rem] overflow-y-auto pr-1">
+                    <div className="data-table-wrapper">
+                      <Table className="w-full table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
+                        <TableHeader className="data-table-header">
+                          <TableRow>
+                            <TableHead className="data-table-head w-[24%]">Faculty</TableHead>
+                            <TableHead className="data-table-head w-[18%]">Status</TableHead>
+                            <TableHead className="data-table-head w-[38%]">Details</TableHead>
+                            <TableHead className="data-table-head w-[20%] text-right">
+                              Action
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {batchStatus.jobs.map((job) => {
+                            const expired = isPresignedUrlExpired(job.expiresAt);
 
-                          return (
-                            <TableRow key={job.jobId} className="data-table-row">
-                              <TableCell className="data-table-cell align-top">
-                                <div>
-                                  <p className="font-sans text-sm font-semibold text-foreground">
-                                    {job.facultyName}
-                                  </p>
-                                  <p className="mt-1 font-sans text-xs text-muted-foreground">
-                                    Created {formatRelativeTime(job.createdAt)}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell className="data-table-cell align-top">
-                                <Badge variant="outline">
-                                  {formatReportJobStatusLabel(job.status)}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="data-table-cell align-top">
-                                <div className="space-y-1 font-sans text-sm text-muted-foreground">
-                                  {job.status === "completed" ? (
-                                    <>
-                                      <p>
-                                        {expired
-                                          ? "Secure link expired. Refresh status to get a new URL."
-                                          : `Secure link expires ${formatRelativeTime(job.expiresAt ?? "")}.`}
-                                      </p>
-                                      {job.completedAt ? (
-                                        <p className="text-xs">
-                                          Completed {formatDateTime(job.completedAt)}
-                                        </p>
-                                      ) : null}
-                                    </>
-                                  ) : null}
-                                  {job.status === "failed" ? (
-                                    <p>{job.error ?? "Export failed."}</p>
-                                  ) : null}
-                                  {job.status === "skipped" ? (
-                                    <p>{job.message ?? "Export skipped for this faculty."}</p>
-                                  ) : null}
-                                  {(job.status === "waiting" || job.status === "active") && (
-                                    <p>Report generation is still in progress.</p>
-                                  )}
-                                </div>
-                              </TableCell>
-                              <TableCell className="data-table-cell align-top text-right">
-                                {job.status === "completed" ? (
-                                  <div className="flex flex-wrap justify-end gap-2">
-                                    <Button
-                                      asChild
-                                      size="sm"
-                                      disabled={!job.downloadUrl || expired}
-                                    >
-                                      <a href={job.downloadUrl} target="_blank" rel="noreferrer">
-                                        View
-                                      </a>
-                                    </Button>
+                            return (
+                              <TableRow key={job.jobId} className="data-table-row">
+                                <TableCell className="data-table-cell align-top">
+                                  <div>
+                                    <p className="font-sans text-sm font-semibold text-foreground">
+                                      {job.facultyName}
+                                    </p>
+                                    <p className="mt-1 font-sans text-xs text-muted-foreground">
+                                      Created {formatRelativeTime(job.createdAt)}
+                                    </p>
                                   </div>
-                                ) : (
-                                  <span className="font-sans text-xs text-muted-foreground">
-                                    No action
-                                  </span>
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
+                                </TableCell>
+                                <TableCell className="data-table-cell align-top">
+                                  <Badge variant="outline">
+                                    {formatReportJobStatusLabel(job.status)}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="data-table-cell align-top">
+                                  <div className="space-y-1 font-sans text-sm text-muted-foreground">
+                                    {job.status === "completed" ? (
+                                      <>
+                                        <p>
+                                          {expired
+                                            ? "Secure link expired. Refresh status to get a new URL."
+                                            : `Secure link expires ${formatRelativeTime(job.expiresAt ?? "")}.`}
+                                        </p>
+                                        {job.completedAt ? (
+                                          <p className="text-xs">
+                                            Completed {formatDateTime(job.completedAt)}
+                                          </p>
+                                        ) : null}
+                                      </>
+                                    ) : null}
+                                    {job.status === "failed" ? (
+                                      <p>{job.error ?? "Export failed."}</p>
+                                    ) : null}
+                                    {job.status === "skipped" ? (
+                                      <p>{job.message ?? "Export skipped for this faculty."}</p>
+                                    ) : null}
+                                    {(job.status === "waiting" || job.status === "active") && (
+                                      <p>Report generation is still in progress.</p>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="data-table-cell align-top text-right">
+                                  {job.status === "completed" ? (
+                                    <div className="flex flex-wrap justify-end gap-2">
+                                      <Button
+                                        asChild
+                                        size="sm"
+                                        disabled={!job.downloadUrl || expired}
+                                      >
+                                        <a href={job.downloadUrl} target="_blank" rel="noreferrer">
+                                          View
+                                        </a>
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <span className="font-sans text-xs text-muted-foreground">
+                                      No action
+                                    </span>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
 
                   <PaginationFooter
