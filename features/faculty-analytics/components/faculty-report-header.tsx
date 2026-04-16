@@ -14,36 +14,23 @@ import {
 
 type FacultyReportHeaderProps = {
   backHref: string;
-  questionnaireTypeLabel: string;
-  questionnaireTypeCode: string;
   courseId: string;
   courseLabel: string;
-  availableQuestionnaireTypes: Array<{
-    code: string;
-    label: string;
-  }>;
   availableCourses: Array<{
     id: string;
     label: string;
   }>;
-  isQuestionnaireTypeLoading: boolean;
   isCourseLoading: boolean;
-  onQuestionnaireTypeChange: (value: string) => void;
   onCourseChange: (value: string) => void;
   onExport: () => void;
 };
 
 export function FacultyReportHeader({
   backHref,
-  questionnaireTypeLabel,
-  questionnaireTypeCode,
   courseId,
   courseLabel,
-  availableQuestionnaireTypes,
   availableCourses,
-  isQuestionnaireTypeLoading,
   isCourseLoading,
-  onQuestionnaireTypeChange,
   onCourseChange,
   onExport,
 }: FacultyReportHeaderProps) {
@@ -62,39 +49,6 @@ export function FacultyReportHeader({
       </Button>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full min-w-0 justify-between border-stone-200 bg-white px-3 py-2 font-sans text-xs sm:w-56"
-              disabled={isQuestionnaireTypeLoading || availableQuestionnaireTypes.length === 0}
-            >
-              <span className="truncate text-stone-700">{questionnaireTypeLabel}</span>
-              <ChevronDown className="size-3.5 text-stone-400" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
-          >
-            <DropdownMenuRadioGroup
-              value={questionnaireTypeCode}
-              onValueChange={onQuestionnaireTypeChange}
-            >
-              {availableQuestionnaireTypes.map((type) => (
-                <DropdownMenuRadioItem
-                  key={type.code}
-                  value={type.code}
-                  className="font-sans text-sm"
-                >
-                  {type.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

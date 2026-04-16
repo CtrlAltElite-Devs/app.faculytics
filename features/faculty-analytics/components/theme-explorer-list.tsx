@@ -20,9 +20,9 @@ type ThemeExplorerListProps = {
   facultyId: string;
   semesterId: string;
   questionnaireTypeCode: string;
-  courseId?: string;
   sentimentFilter: SentimentLabel | null;
   actions: RecommendedActionDto[];
+  redactComments?: boolean;
 };
 
 const PRIORITY_VARIANT: Record<
@@ -48,9 +48,9 @@ export function ThemeExplorerList({
   facultyId,
   semesterId,
   questionnaireTypeCode,
-  courseId,
   sentimentFilter,
   actions,
+  redactComments,
 }: ThemeExplorerListProps) {
   const { actionByTheme, generalActions } = useMemo(() => {
     const byLabel = new Map<string, RecommendedActionDto>();
@@ -107,9 +107,9 @@ export function ThemeExplorerList({
               facultyId={facultyId}
               semesterId={semesterId}
               questionnaireTypeCode={questionnaireTypeCode}
-              courseId={courseId}
               sentimentFilter={sentimentFilter}
               matchingAction={actionByTheme.get(theme.label) ?? null}
+              redactComments={redactComments}
             />
           ))}
         </div>
