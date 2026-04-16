@@ -5,18 +5,16 @@ import { memo, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import type {
   QuestionnaireBuilderPreviewSection,
-  QuestionnaireFormAnswers,
   QuestionnaireFormMode,
 } from "@/features/questionnaires/types";
 
 import { QuestionnaireFormMatrix } from "./questionnaire-form-matrix";
 import { QuestionnaireFormStacked } from "./questionnaire-form-stacked";
+import { useAnsweredCountFor } from "./questionnaire-form-store";
 
 type QuestionnaireFormSectionProps = {
   section: QuestionnaireBuilderPreviewSection;
   mode: QuestionnaireFormMode;
-  answers: QuestionnaireFormAnswers;
-  onAnswer: (questionId: string, value: number) => void;
   /** Hide the question counter on child sections to avoid duplication with the parent. */
   hideCounter?: boolean;
   /** When true, renders without the card wrapper (border/bg/padding). Used for child sections. */
@@ -37,58 +35,61 @@ function collectQuestionIds(section: QuestionnaireBuilderPreviewSection): string
 function QuestionnaireFormSectionBase({
   section,
   mode,
-  answers,
-  onAnswer,
   hideCounter = false,
   isChild = false,
 }: QuestionnaireFormSectionProps) {
   const questionIds = useMemo(() => collectQuestionIds(section), [section]);
-
-  // Extract only the answers that belong to this section's questions.
-  // This prevents unnecessary re-renders of sibling sections when an answer changes.
-  const sectionAnswers = useMemo(() => {
-    const filtered: QuestionnaireFormAnswers = {};
-    for (const id of questionIds) {
-      if (id in answers) {
-        filtered[id] = answers[id];
-      }
-    }
-    return filtered;
-  }, [questionIds, answers]);
-
-  const answeredCount = Object.keys(sectionAnswers).length;
+  const answeredCount = useAnsweredCountFor(questionIds);
   const totalQuestions = questionIds.length;
 
-  // A "leaf" section contains questions directly.
-  // An "internal" section contains child sections (subsections) instead.
   const isLeaf = section.questions.length > 0;
   const isInternal = section.children.length > 0;
 
-  // All questions within a leaf section share the same type (enforced by the builder).
   const questionType = isLeaf ? (section.questions[0]?.type ?? "LIKERT_1_5") : "LIKERT_1_5";
+
+  const isSectionComplete = answeredCount === totalQuestions && totalQuestions > 0;
 
   return (
     <div
       className={
-        isChild ? "space-y-4 pl-4 sm:pl-6" : "space-y-4 rounded-2xl border bg-background p-4 sm:p-5"
+        isChild ? "space-y-4 pl-3 sm:pl-6" : "space-y-4 rounded-2xl border bg-background p-4 sm:p-5"
       }
     >
-      {/* Section header: title + weight badge (preview) or progress count (interactive) */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div
+        className={
+          "flex flex-wrap items-center justify-between gap-x-3 gap-y-2 " +
+          (isChild ? "" : "border-b border-border/50 pb-3 sm:pb-4")
+        }
+      >
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="font-playfair text-lg font-semibold sm:text-xl">{section.title}</h3>
+          <h3 className="font-playfair text-xl leading-tight font-semibold tracking-tight text-foreground sm:text-2xl">
+            {section.title}
+          </h3>
           {section.weight !== null && mode === "preview" && (
             <Badge variant="outline">Weight: {section.weight}%</Badge>
           )}
         </div>
         {mode === "interactive" && totalQuestions > 0 && !hideCounter && (
-          <span className="text-xs text-muted-foreground">
+          <span
+            className={
+              "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] font-semibold tabular-nums transition-colors " +
+              (isSectionComplete
+                ? "border-brand-blue/40 bg-brand-blue/10 text-brand-blue"
+                : "border-border bg-muted/40 text-muted-foreground")
+            }
+          >
+            <span
+              aria-hidden="true"
+              className={
+                "size-1.5 rounded-full " +
+                (isSectionComplete ? "bg-brand-blue" : "bg-muted-foreground/40")
+              }
+            />
             {answeredCount} / {totalQuestions}
           </span>
         )}
       </div>
 
-      {/* Leaf section: show matrix table on desktop, stacked pills on mobile */}
       {isLeaf && (
         <>
           <div className="hidden md:block">
@@ -96,8 +97,6 @@ function QuestionnaireFormSectionBase({
               questions={section.questions}
               questionType={questionType}
               mode={mode}
-              answers={sectionAnswers}
-              onAnswer={onAnswer}
             />
           </div>
           <div className="md:hidden">
@@ -105,14 +104,11 @@ function QuestionnaireFormSectionBase({
               questions={section.questions}
               questionType={questionType}
               mode={mode}
-              answers={sectionAnswers}
-              onAnswer={onAnswer}
             />
           </div>
         </>
       )}
 
-      {/* Internal section: recursively render child sections */}
       {isInternal && (
         <div className="space-y-4">
           {section.children.map((child) => (
@@ -120,8 +116,6 @@ function QuestionnaireFormSectionBase({
               key={child.id}
               section={child}
               mode={mode}
-              answers={answers}
-              onAnswer={onAnswer}
               hideCounter
               isChild
             />
