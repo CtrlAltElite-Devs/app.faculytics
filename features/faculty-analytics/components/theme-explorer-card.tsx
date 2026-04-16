@@ -386,42 +386,44 @@ export function ThemeExplorerCard({
                   </section>
                 )}
 
-                <section>
-                  <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-                    Sentiment breakdown
-                  </h4>
-                  <dl className="mt-4 space-y-3 text-sm">
-                    {(["negative", "neutral", "positive"] as SentimentLabel[]).map((s) => {
-                      const count = theme.sentimentSplit[s];
-                      const pct = totalSplit > 0 ? Math.round((count / totalSplit) * 100) : 0;
-                      return (
-                        <div key={s} className="space-y-1">
-                          <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="flex items-center gap-2">
+                {!redactComments ? (
+                  <section>
+                    <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+                      Sentiment breakdown
+                    </h4>
+                    <dl className="mt-4 space-y-3 text-sm">
+                      {(["negative", "neutral", "positive"] as SentimentLabel[]).map((s) => {
+                        const count = theme.sentimentSplit[s];
+                        const pct = totalSplit > 0 ? Math.round((count / totalSplit) * 100) : 0;
+                        return (
+                          <div key={s} className="space-y-1">
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span className="flex items-center gap-2">
+                                <span
+                                  className={cn(
+                                    "inline-block h-2 w-2 rounded-full",
+                                    SEGMENT_COLOR[s]
+                                  )}
+                                />
+                                {SENTIMENT_LABEL[s]}
+                              </span>
+                              <span className="tabular-nums">
+                                <span className="font-medium text-foreground">{count}</span>
+                                <span className="text-muted-foreground/70"> · {pct}%</span>
+                              </span>
+                            </div>
+                            <div className="h-1 overflow-hidden rounded-full bg-muted">
                               <span
-                                className={cn(
-                                  "inline-block h-2 w-2 rounded-full",
-                                  SEGMENT_COLOR[s]
-                                )}
+                                className={cn("block h-full", SEGMENT_COLOR[s])}
+                                style={{ width: `${pct}%` }}
                               />
-                              {SENTIMENT_LABEL[s]}
-                            </span>
-                            <span className="tabular-nums">
-                              <span className="font-medium text-foreground">{count}</span>
-                              <span className="text-muted-foreground/70"> · {pct}%</span>
-                            </span>
+                            </div>
                           </div>
-                          <div className="h-1 overflow-hidden rounded-full bg-muted">
-                            <span
-                              className={cn("block h-full", SEGMENT_COLOR[s])}
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </dl>
-                </section>
+                        );
+                      })}
+                    </dl>
+                  </section>
+                ) : null}
               </aside>
             </div>
           </div>
