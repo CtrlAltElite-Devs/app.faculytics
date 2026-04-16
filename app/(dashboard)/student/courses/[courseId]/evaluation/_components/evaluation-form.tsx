@@ -134,11 +134,11 @@ export function EvaluationForm({
       facultyName={facultyName}
       enrollmentSectionName={enrollmentSectionName}
     >
-      <div className="mt-8">
+      <div className="mt-5 sm:mt-8">
         <QuestionnaireRatingScaleInstructions />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-5 sm:mt-8">
         <QuestionnaireFormRenderer
           key={draftHydrationKey}
           model={model}
@@ -167,7 +167,13 @@ export function EvaluationForm({
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
-        <Button variant="brand" onClick={handleSubmit} disabled={isPending}>
+        <Button
+          variant="brand"
+          size="lg"
+          onClick={handleSubmit}
+          disabled={isPending}
+          className="w-full sm:w-auto"
+        >
           {isPending ? (
             <>
               <Loader2 className="mr-2 size-4 animate-spin" />
