@@ -378,6 +378,7 @@ export function useFacultyReportDetailViewModel({
   return {
     backHref,
     backLabel,
+    isFacultySelfView: isFacultySelf,
     facultyId,
     semesterId,
     courseId,

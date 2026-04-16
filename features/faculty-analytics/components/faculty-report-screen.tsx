@@ -188,12 +188,18 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
           ) : null}
 
           <Tabs
-            value={viewModel.selectedView}
+            value={
+              viewModel.isFacultySelfView && viewModel.selectedView === "feedback"
+                ? "insights"
+                : viewModel.selectedView
+            }
             onValueChange={(value) => viewModel.selectView(value as ReportView)}
             className="w-full"
           >
             <TabsList variant="line" className="w-full gap-0 border-b border-border/40">
-              {REPORT_VIEW_ORDER.map((view) => (
+              {REPORT_VIEW_ORDER.filter(
+                (view) => !(viewModel.isFacultySelfView && view === "feedback")
+              ).map((view) => (
                 <TabsTrigger
                   key={view}
                   value={view}
@@ -230,6 +236,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                 onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
                 themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
                 onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
+                redactComments={viewModel.isFacultySelfView}
               />
             </TabsContent>
 
@@ -253,43 +260,47 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
               />
             </TabsContent>
 
-            <TabsContent value="feedback" className="mt-6">
-              <FeedbackTab
-                report={viewModel.report}
-                semesterLabel={viewModel.semesterLabel}
-                questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
-                availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
-                selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
-                isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
-                onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
-                qualitativeSummary={qualitativeSummary}
-                filtersDisabled={filtersDisabled}
-                filtersDisabledReason={
-                  filtersDisabled
-                    ? "Run qualitative analysis to enable sentiment and topic filters."
-                    : undefined
-                }
-                sentimentFilter={viewModel.sentimentFilter}
-                resolvedThemeId={viewModel.resolvedThemeId}
-                onSentimentChange={viewModel.updateSentimentFilter}
-                onThemeChange={viewModel.updateThemeFilter}
-                comments={viewModel.comments}
-                commentsMeta={viewModel.commentsMeta}
-                commentsPage={viewModel.commentsPage}
-                commentsLimit={viewModel.commentsLimit}
-                isCommentsLoading={viewModel.commentsQuery.isLoading}
-                isCommentsError={viewModel.commentsQuery.isError}
-                onCommentsRetry={viewModel.retryComments}
-                onCommentsPageChange={viewModel.updateCommentsPage}
-                onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
-                questionnaireTypeCodeAutoCorrection={viewModel.questionnaireTypeCodeAutoCorrection}
-                onDismissQuestionnaireTypeCodeAutoCorrection={
-                  viewModel.dismissQuestionnaireTypeCodeAutoCorrection
-                }
-                themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
-                onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
-              />
-            </TabsContent>
+            {!viewModel.isFacultySelfView ? (
+              <TabsContent value="feedback" className="mt-6">
+                <FeedbackTab
+                  report={viewModel.report}
+                  semesterLabel={viewModel.semesterLabel}
+                  questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
+                  availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
+                  selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
+                  isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
+                  onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
+                  qualitativeSummary={qualitativeSummary}
+                  filtersDisabled={filtersDisabled}
+                  filtersDisabledReason={
+                    filtersDisabled
+                      ? "Run qualitative analysis to enable sentiment and topic filters."
+                      : undefined
+                  }
+                  sentimentFilter={viewModel.sentimentFilter}
+                  resolvedThemeId={viewModel.resolvedThemeId}
+                  onSentimentChange={viewModel.updateSentimentFilter}
+                  onThemeChange={viewModel.updateThemeFilter}
+                  comments={viewModel.comments}
+                  commentsMeta={viewModel.commentsMeta}
+                  commentsPage={viewModel.commentsPage}
+                  commentsLimit={viewModel.commentsLimit}
+                  isCommentsLoading={viewModel.commentsQuery.isLoading}
+                  isCommentsError={viewModel.commentsQuery.isError}
+                  onCommentsRetry={viewModel.retryComments}
+                  onCommentsPageChange={viewModel.updateCommentsPage}
+                  onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
+                  questionnaireTypeCodeAutoCorrection={
+                    viewModel.questionnaireTypeCodeAutoCorrection
+                  }
+                  onDismissQuestionnaireTypeCodeAutoCorrection={
+                    viewModel.dismissQuestionnaireTypeCodeAutoCorrection
+                  }
+                  themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
+                  onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
+                />
+              </TabsContent>
+            ) : null}
           </Tabs>
         </>
       )}

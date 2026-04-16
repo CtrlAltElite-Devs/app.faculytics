@@ -43,6 +43,7 @@ type InsightsTabProps = {
   onCommentsRowsPerPageChange: (value: number) => void;
   themeLabelAutoCorrection: ParamAutoCorrection | null;
   onDismissThemeLabelAutoCorrection: () => void;
+  redactComments?: boolean;
 };
 
 export function InsightsTab({
@@ -70,6 +71,7 @@ export function InsightsTab({
   onCommentsRowsPerPageChange,
   themeLabelAutoCorrection,
   onDismissThemeLabelAutoCorrection,
+  redactComments,
 }: InsightsTabProps) {
   const themes = useMemo(() => qualitativeSummary?.themes ?? [], [qualitativeSummary?.themes]);
   const actions = useMemo(() => recommendations?.actions ?? [], [recommendations?.actions]);
@@ -114,10 +116,11 @@ export function InsightsTab({
             questionnaireTypeCode={questionnaireTypeCode ?? ""}
             sentimentFilter={sentimentFilter}
             actions={actions}
+            redactComments={redactComments}
           />
           {recommendations ? <RecommendationsCard recommendations={recommendations} /> : null}
         </section>
-      ) : showThemesSurface && themes.length === 0 && comments.length > 0 ? (
+      ) : showThemesSurface && themes.length === 0 && comments.length > 0 && !redactComments ? (
         <section>
           <div className="max-w-3xl">
             <h2 className="font-playfair text-xl font-semibold tracking-tight text-foreground">

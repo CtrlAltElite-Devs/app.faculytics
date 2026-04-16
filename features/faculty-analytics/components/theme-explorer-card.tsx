@@ -28,6 +28,7 @@ type ThemeExplorerCardProps = {
   questionnaireTypeCode: string;
   sentimentFilter: SentimentLabel | null;
   matchingAction: RecommendedActionDto | null;
+  redactComments?: boolean;
 };
 
 const DOMINANT_ACCENT: Record<SentimentLabel, string> = {
@@ -82,6 +83,7 @@ export function ThemeExplorerCard({
   questionnaireTypeCode,
   sentimentFilter,
   matchingAction,
+  redactComments,
 }: ThemeExplorerCardProps) {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
@@ -103,7 +105,7 @@ export function ThemeExplorerCard({
       page,
       limit,
     },
-    { enabled: isExpanded }
+    { enabled: isExpanded && !redactComments }
   );
 
   const dominant = dominantSentiment(theme);
@@ -201,7 +203,7 @@ export function ThemeExplorerCard({
           </div>
 
           {/* Pull-quote preview (readable sans, not serif) */}
-          {previewQuote && !isExpanded ? (
+          {previewQuote && !isExpanded && !redactComments ? (
             <blockquote className="mt-4 border-l-2 border-border pl-4 text-sm leading-relaxed text-muted-foreground">
               &ldquo;{previewQuote}&rdquo;
             </blockquote>
@@ -225,116 +227,123 @@ export function ThemeExplorerCard({
       >
         <div className="overflow-hidden">
           <div className="border-t border-border/70 bg-muted/30 px-6 pl-8 pb-8 pt-6">
-            <div className="grid gap-10 lg:grid-cols-[1fr_minmax(0,320px)]">
-              {/* LEFT — sample quotes + comments */}
-              <div className="min-w-0 space-y-8">
-                {hasSampleQuotes ? (
-                  <section>
-                    <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-                      What students say
-                    </h4>
-                    <ul className="mt-4 space-y-4">
-                      {theme.sampleQuotes!.map((quote, idx) => (
-                        <li key={idx} className="relative border-l-2 border-foreground/20 pl-5">
-                          <Quote
-                            className="absolute -left-2 top-0 h-3.5 w-3.5 -translate-x-1/2 bg-muted px-0.5 text-muted-foreground"
-                            aria-hidden
-                          />
-                          <p className="text-sm leading-relaxed text-foreground">{quote}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                ) : (
-                  // FAC-135 Phase C (Task C12): redacted / no-quotes path.
-                  <p className="text-xs italic text-muted-foreground">
-                    Individual comments are not available in your view.
-                  </p>
-                )}
+            <div
+              className={cn(
+                "grid gap-10",
+                redactComments ? "lg:grid-cols-1" : "lg:grid-cols-[1fr_minmax(0,320px)]"
+              )}
+            >
+              {/* LEFT — sample quotes + comments (hidden for faculty self-view) */}
+              {!redactComments ? (
+                <div className="min-w-0 space-y-8">
+                  {hasSampleQuotes ? (
+                    <section>
+                      <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+                        What students say
+                      </h4>
+                      <ul className="mt-4 space-y-4">
+                        {theme.sampleQuotes!.map((quote, idx) => (
+                          <li key={idx} className="relative border-l-2 border-foreground/20 pl-5">
+                            <Quote
+                              className="absolute -left-2 top-0 h-3.5 w-3.5 -translate-x-1/2 bg-muted px-0.5 text-muted-foreground"
+                              aria-hidden
+                            />
+                            <p className="text-sm leading-relaxed text-foreground">{quote}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : (
+                    // FAC-135 Phase C (Task C12): redacted / no-quotes path.
+                    <p className="text-xs italic text-muted-foreground">
+                      Individual comments are not available in your view.
+                    </p>
+                  )}
 
-                <section>
-                  <div className="flex items-baseline justify-between gap-4">
-                    <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-                      All comments in this theme
-                      {sentimentFilter ? (
-                        <span className="ml-2 normal-case tracking-normal text-muted-foreground/70">
-                          · filtered to {SENTIMENT_LABEL[sentimentFilter]}
+                  <section>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+                        All comments in this theme
+                        {sentimentFilter ? (
+                          <span className="ml-2 normal-case tracking-normal text-muted-foreground/70">
+                            · filtered to {SENTIMENT_LABEL[sentimentFilter]}
+                          </span>
+                        ) : null}
+                      </h4>
+                      {meta ? (
+                        <span className="text-xs tabular-nums text-muted-foreground">
+                          {meta.totalItems} total
                         </span>
                       ) : null}
-                    </h4>
-                    {meta ? (
-                      <span className="text-xs tabular-nums text-muted-foreground">
-                        {meta.totalItems} total
-                      </span>
-                    ) : null}
-                  </div>
+                    </div>
 
-                  <div className="mt-4">
-                    {commentsQuery.isLoading ? (
-                      <ScopedAnalyticsLoadingState message="Loading comments..." />
-                    ) : commentsQuery.isError ? (
-                      <ScopedAnalyticsErrorState
-                        onRetry={() => void commentsQuery.refetch()}
-                        message="Unable to load comments for this theme."
-                      />
-                    ) : comments.length === 0 ? (
-                      <p className="rounded-xl border border-dashed border-border bg-background/60 px-4 py-6 text-center text-sm text-muted-foreground">
-                        No comments match the current filter in this theme.
-                      </p>
-                    ) : (
-                      <>
-                        <ul className="space-y-3">
-                          {comments.map((c, idx) => (
-                            <li
-                              key={`${c.submittedAt}-${idx}`}
-                              className="rounded-xl border border-border/70 bg-card px-4 py-3"
-                            >
-                              <div className="flex items-baseline justify-between gap-4">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  {c.sentiment ? (
-                                    <Badge
-                                      variant="outline"
-                                      className={cn(
-                                        "rounded-full px-2 py-0.5 text-[0.65rem] uppercase tracking-wider",
-                                        SENTIMENT_COMMENT_BADGE[c.sentiment]
-                                      )}
-                                    >
-                                      {SENTIMENT_LABEL[c.sentiment]}
-                                    </Badge>
-                                  ) : null}
+                    <div className="mt-4">
+                      {commentsQuery.isLoading ? (
+                        <ScopedAnalyticsLoadingState message="Loading comments..." />
+                      ) : commentsQuery.isError ? (
+                        <ScopedAnalyticsErrorState
+                          onRetry={() => void commentsQuery.refetch()}
+                          message="Unable to load comments for this theme."
+                        />
+                      ) : comments.length === 0 ? (
+                        <p className="rounded-xl border border-dashed border-border bg-background/60 px-4 py-6 text-center text-sm text-muted-foreground">
+                          No comments match the current filter in this theme.
+                        </p>
+                      ) : (
+                        <>
+                          <ul className="space-y-3">
+                            {comments.map((c, idx) => (
+                              <li
+                                key={`${c.submittedAt}-${idx}`}
+                                className="rounded-xl border border-border/70 bg-card px-4 py-3"
+                              >
+                                <div className="flex items-baseline justify-between gap-4">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    {c.sentiment ? (
+                                      <Badge
+                                        variant="outline"
+                                        className={cn(
+                                          "rounded-full px-2 py-0.5 text-[0.65rem] uppercase tracking-wider",
+                                          SENTIMENT_COMMENT_BADGE[c.sentiment]
+                                        )}
+                                      >
+                                        {SENTIMENT_LABEL[c.sentiment]}
+                                      </Badge>
+                                    ) : null}
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">
+                                    {formatDateTime(c.submittedAt)}
+                                  </span>
                                 </div>
-                                <span className="text-xs text-muted-foreground">
-                                  {formatDateTime(c.submittedAt)}
-                                </span>
-                              </div>
-                              <p className="mt-2 text-sm leading-relaxed text-foreground">
-                                {c.text}
-                              </p>
-                            </li>
-                          ))}
-                        </ul>
-                        {meta && meta.totalPages > 1 ? (
-                          <div className="mt-5">
-                            <PaginationFooter
-                              itemCount={meta.itemCount}
-                              totalItems={meta.totalItems}
-                              currentPage={meta.currentPage}
-                              totalPages={meta.totalPages}
-                              itemLabel="comments"
-                              rowsPerPage={limit}
-                              onRowsPerPageChange={(n) => {
-                                setLimit(n);
-                                setPage(1);
-                              }}
-                              onPageChange={setPage}
-                            />
-                          </div>
-                        ) : null}
-                      </>
-                    )}
-                  </div>
-                </section>
-              </div>
+                                <p className="mt-2 text-sm leading-relaxed text-foreground">
+                                  {c.text}
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                          {meta && meta.totalPages > 1 ? (
+                            <div className="mt-5">
+                              <PaginationFooter
+                                itemCount={meta.itemCount}
+                                totalItems={meta.totalItems}
+                                currentPage={meta.currentPage}
+                                totalPages={meta.totalPages}
+                                itemLabel="comments"
+                                rowsPerPage={limit}
+                                onRowsPerPageChange={(n) => {
+                                  setLimit(n);
+                                  setPage(1);
+                                }}
+                                onPageChange={setPage}
+                              />
+                            </div>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+                  </section>
+                </div>
+              ) : null}
 
               {/* RIGHT — suggested action + meta */}
               <aside className="space-y-6">

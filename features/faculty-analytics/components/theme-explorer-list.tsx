@@ -22,6 +22,7 @@ type ThemeExplorerListProps = {
   questionnaireTypeCode: string;
   sentimentFilter: SentimentLabel | null;
   actions: RecommendedActionDto[];
+  redactComments?: boolean;
 };
 
 const PRIORITY_VARIANT: Record<
@@ -49,6 +50,7 @@ export function ThemeExplorerList({
   questionnaireTypeCode,
   sentimentFilter,
   actions,
+  redactComments,
 }: ThemeExplorerListProps) {
   const { actionByTheme, generalActions } = useMemo(() => {
     const byLabel = new Map<string, RecommendedActionDto>();
@@ -107,6 +109,7 @@ export function ThemeExplorerList({
               questionnaireTypeCode={questionnaireTypeCode}
               sentimentFilter={sentimentFilter}
               matchingAction={actionByTheme.get(theme.label) ?? null}
+              redactComments={redactComments}
             />
           ))}
         </div>
