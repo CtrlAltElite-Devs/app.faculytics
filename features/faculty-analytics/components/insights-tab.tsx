@@ -8,22 +8,13 @@ import { FacultyReportComments } from "@/features/faculty-analytics/components/f
 import { RecommendationsCard } from "@/features/faculty-analytics/components/recommendations-card";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ThemeExplorerList } from "@/features/faculty-analytics/components/theme-explorer-list";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  FACET_ORDER,
-  deriveThemeFacets,
-  filterThemesByFacet,
-  formatFacetLabel,
-} from "@/features/faculty-analytics/lib/facet-filter";
 import type {
-  Facet,
   FacultyReportCommentDto,
   PaginationMetaDto,
   PipelineStatus,
   QualitativeSummaryResponseDto,
   RecommendationsResponse,
   SentimentLabel,
-  VoiceBreakdown,
 } from "@/features/faculty-analytics/types";
 import type { ParamAutoCorrection } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
 
@@ -31,9 +22,6 @@ type InsightsTabProps = {
   facultyId: string;
   semesterId: string;
   questionnaireTypeCode: string | null;
-  selectedFacet: Facet;
-  onFacetChange: (facet: Facet) => void;
-  voiceBreakdown: VoiceBreakdown | null;
   qualitativeSummary: QualitativeSummaryResponseDto | undefined;
   recommendations: RecommendationsResponse | undefined;
   livePipelineStatus: PipelineStatus | undefined;
@@ -57,26 +45,10 @@ type InsightsTabProps = {
   onDismissThemeLabelAutoCorrection: () => void;
 };
 
-function countForFacet(voiceBreakdown: VoiceBreakdown | null | undefined, facet: Facet): number {
-  if (!voiceBreakdown) return 0;
-  if (facet === "overall") {
-    return (
-      voiceBreakdown.facultyFeedback.submissionCount +
-      voiceBreakdown.inClassroom.submissionCount +
-      voiceBreakdown.outOfClassroom.submissionCount +
-      voiceBreakdown.other.submissionCount
-    );
-  }
-  return voiceBreakdown[facet].submissionCount;
-}
-
 export function InsightsTab({
   facultyId,
   semesterId,
   questionnaireTypeCode,
-  selectedFacet,
-  onFacetChange,
-  voiceBreakdown,
   qualitativeSummary,
   recommendations,
   livePipelineStatus,
@@ -101,11 +73,6 @@ export function InsightsTab({
 }: InsightsTabProps) {
   const themes = useMemo(() => qualitativeSummary?.themes ?? [], [qualitativeSummary?.themes]);
   const actions = useMemo(() => recommendations?.actions ?? [], [recommendations?.actions]);
-  const themeFacets = useMemo(() => deriveThemeFacets(themes, actions), [themes, actions]);
-  const visibleThemes = useMemo(
-    () => filterThemesByFacet(themes, themeFacets, selectedFacet),
-    [themes, themeFacets, selectedFacet]
-  );
 
   const pipelineNotRun = !livePipelineStatus;
 
@@ -120,28 +87,6 @@ export function InsightsTab({
         />
       ) : null}
 
-      <Tabs
-        value={selectedFacet}
-        onValueChange={(value) => onFacetChange(value as Facet)}
-        className="w-full"
-      >
-        <TabsList className="flex h-auto w-full flex-wrap gap-1 sm:w-auto">
-          {FACET_ORDER.map((facet) => {
-            const count = countForFacet(voiceBreakdown, facet);
-            return (
-              <TabsTrigger key={facet} value={facet} className="font-sans text-xs">
-                {formatFacetLabel(facet)}
-                {voiceBreakdown ? (
-                  <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">
-                    · {count}
-                  </span>
-                ) : null}
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
-      </Tabs>
-
       {showSentimentSurface && qualitativeSummary ? (
         <FacultyAnalysisSentimentStrip
           distribution={qualitativeSummary.sentimentDistribution}
@@ -154,14 +99,14 @@ export function InsightsTab({
         />
       ) : null}
 
-      {showThemesSurface && visibleThemes.length > 0 ? (
+      {showThemesSurface && themes.length > 0 ? (
         <section className="space-y-6">
           <p className="max-w-3xl text-xs text-muted-foreground">
             Themes and feedback are analyzed across all your courses to ensure reliable patterns.
             Per-course breakdowns show quantitative ratings only.
           </p>
           <ThemeExplorerList
-            themes={visibleThemes}
+            themes={themes}
             expandedThemeLabel={themeLabelFilter}
             onToggleTheme={onThemeClick}
             facultyId={facultyId}
@@ -170,13 +115,7 @@ export function InsightsTab({
             sentimentFilter={sentimentFilter}
             actions={actions}
           />
-          {recommendations ? (
-            <RecommendationsCard
-              recommendations={recommendations}
-              selectedFacet={selectedFacet}
-              voiceBreakdown={voiceBreakdown}
-            />
-          ) : null}
+          {recommendations ? <RecommendationsCard recommendations={recommendations} /> : null}
         </section>
       ) : showThemesSurface && themes.length === 0 && comments.length > 0 ? (
         <section>

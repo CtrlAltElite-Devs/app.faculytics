@@ -559,9 +559,7 @@ export type RecommendedActionDto = {
   priority: ActionPriority;
   supportingEvidence: SupportingEvidence;
   createdAt: string;
-  // FAC-135 Phase A: non-optional facet tagging so the frontend can filter
-  // actions per facet tab (Overall / Faculty Feedback / In-Classroom /
-  // Out-of-Classroom).
+  // Internal metadata only — no UI consumer post Step D. See tech-spec-insights-facet-removal-and-theme-action-relink.
   facet: Facet;
 };
 

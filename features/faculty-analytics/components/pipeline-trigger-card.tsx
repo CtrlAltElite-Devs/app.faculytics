@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   ActivityIcon,
@@ -103,15 +103,31 @@ export function PipelineTriggerCard({ scope, pipeline, onStatusChange }: Pipelin
     if (liveStatus) onStatusChange?.(liveStatus);
   }, [liveStatus, onStatusChange]);
 
-  // Reactivity fix: when polling detects a terminal transition, refresh the
-  // list-pipelines-for-scope cache so `latestPipeline.status` in the parent
-  // screen becomes COMPLETED/FAILED/CANCELLED — which in turn unlocks the
-  // recommendations query gate so themes + recs render without refresh.
+  const previousStatusRef = useRef<PipelineStatus | undefined>(undefined);
+
+  // Transition-only invalidation: fire when liveStatus actually transitions
+  // into a terminal state (not on every mount where it is already terminal).
+  // Qualitative-summary refetch is narrowed to COMPLETED because FAILED /
+  // CANCELLED produce no new themes — refetching would clobber the
+  // previously-good cache for no benefit. See tech-spec Step C.
   useEffect(() => {
-    if (liveStatus && TERMINAL_STATUSES.has(liveStatus)) {
+    const previous = previousStatusRef.current;
+    previousStatusRef.current = liveStatus;
+
+    if (
+      liveStatus &&
+      TERMINAL_STATUSES.has(liveStatus) &&
+      previous !== undefined &&
+      previous !== liveStatus
+    ) {
       queryClient.invalidateQueries({
         queryKey: ["analysis", "list-pipelines-for-scope"],
       });
+      if (liveStatus === "COMPLETED") {
+        queryClient.invalidateQueries({
+          queryKey: ["faculty-analytics", "qualitative-summary"],
+        });
+      }
     }
   }, [liveStatus, queryClient]);
 

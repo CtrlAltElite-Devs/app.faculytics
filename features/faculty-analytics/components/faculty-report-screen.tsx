@@ -66,11 +66,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
 
   const qualitativeSummary = viewModel.qualitativeSummaryQuery.data;
 
-  const voiceBreakdown =
-    pipelineStatusQuery.data?.coverage.voiceBreakdown ??
-    latestPipeline?.coverage.voiceBreakdown ??
-    null;
-
   const showSentimentSurface = livePipelineStatus
     ? SENTIMENT_READY_STATUSES.has(livePipelineStatus)
     : false;
@@ -210,9 +205,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                 facultyId={facultyId}
                 semesterId={viewModel.semesterId}
                 questionnaireTypeCode={viewModel.questionnaireTypeCode}
-                selectedFacet={viewModel.selectedFacet}
-                onFacetChange={viewModel.selectFacet}
-                voiceBreakdown={voiceBreakdown}
                 qualitativeSummary={qualitativeSummary}
                 recommendations={recommendationsQuery.data}
                 livePipelineStatus={livePipelineStatus}

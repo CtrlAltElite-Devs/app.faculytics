@@ -19,7 +19,6 @@ import { useFacultyQuestionnaireTypes } from "@/features/faculty-analytics/hooks
 import { useQualitativeSummary } from "@/features/faculty-analytics/hooks/use-qualitative-summary";
 import {
   DEFAULT_REPORT_VIEW,
-  type Facet,
   type FacultyQuestionnaireTypeOptionDto,
   type FacultyReportCourseOption,
   type ReportView,
@@ -38,17 +37,6 @@ const VALID_SENTIMENTS: ReadonlySet<SentimentLabel> = new Set<SentimentLabel>([
 
 function isSentimentLabel(value: string | null): value is SentimentLabel {
   return Boolean(value) && VALID_SENTIMENTS.has(value as SentimentLabel);
-}
-
-const VALID_FACETS: ReadonlySet<Facet> = new Set<Facet>([
-  "overall",
-  "facultyFeedback",
-  "inClassroom",
-  "outOfClassroom",
-]);
-
-function resolveFacet(value: string | null): Facet {
-  return value && VALID_FACETS.has(value as Facet) ? (value as Facet) : "overall";
 }
 
 export type ParamAutoCorrection = {
@@ -79,7 +67,6 @@ export function useFacultyReportDetailViewModel({
   const rawQuestionnaireTypeCode = searchParams.get("questionnaireTypeCode");
   const rawViewParam = searchParams.get("view");
   const selectedView: ReportView = resolveView(rawViewParam);
-  const selectedFacet: Facet = resolveFacet(searchParams.get("facet"));
   const commentsPage = resolvePositiveIntegerParam(searchParams.get("page"), 1);
   const commentsLimit = resolvePageSizeOption(searchParams.get("limit"), [5, 10, 20]);
   const rawSentiment = searchParams.get("sentiment");
@@ -87,6 +74,7 @@ export function useFacultyReportDetailViewModel({
     ? rawSentiment
     : null;
   const themeLabelFilter = searchParams.get("themeLabel");
+  const rawFacetParam = searchParams.get("facet");
 
   const globalQuestionnaireTypesQuery = useQuestionnaireTypes();
   const globalQuestionnaireTypes = useMemo(
@@ -105,17 +93,21 @@ export function useFacultyReportDetailViewModel({
     [availableQuestionnaireTypesQuery.data]
   );
 
-  // Derive the active questionnaire type from URL ⊕ default. Default
-  // (most-recent-with-data) is the first item returned by the per-faculty
-  // endpoint (already ordered by submissionCount DESC). Default is NOT
-  // written to the URL — only explicit selections are persisted.
-  const questionnaireTypeCode = useMemo(() => {
+  // Derive the active questionnaire type from URL ⊕ default. `fromUrl` is
+  // always a non-empty string (resolveFacultyReportQuestionnaireTypeCode
+  // falls back to DEFAULT_QUESTIONNAIRE_TYPE when the URL param is missing).
+  // We return `fromUrl` both while the available-types query is still loading
+  // AND when the URL's code simply isn't in the faculty's list — the outer
+  // `queriesReady` gate prevents premature fetches during loading, and
+  // returning `fromUrl` instead of `null` guarantees `params.questionnaireTypeCode`
+  // is NEVER the empty string at the hook site, which is the load-bearing
+  // invariant that keeps downstream queries from shipping `questionnaireTypeCode=`
+  // to the backend under any invalidation/refetch bypass of the `enabled` guard.
+  const questionnaireTypeCode = useMemo<string>(() => {
     const fromUrl = resolveFacultyReportQuestionnaireTypeCode(rawQuestionnaireTypeCode);
-    if (fromUrl) {
-      const stillValid = availableQuestionnaireTypes.some((option) => option.code === fromUrl);
-      if (stillValid) return fromUrl;
-    }
-    return availableQuestionnaireTypes[0]?.code ?? null;
+    const stillValid = availableQuestionnaireTypes.some((option) => option.code === fromUrl);
+    if (stillValid) return fromUrl;
+    return availableQuestionnaireTypes[0]?.code ?? fromUrl;
   }, [rawQuestionnaireTypeCode, availableQuestionnaireTypes]);
 
   const isQuestionnaireTypesResolving =
@@ -157,7 +149,7 @@ export function useFacultyReportDetailViewModel({
     {
       facultyId,
       semesterId,
-      questionnaireTypeCode: questionnaireTypeCode ?? "",
+      questionnaireTypeCode,
       courseId: courseId || undefined,
     },
     { enabled: queriesReady }
@@ -178,7 +170,7 @@ export function useFacultyReportDetailViewModel({
     {
       facultyId,
       semesterId,
-      questionnaireTypeCode: questionnaireTypeCode ?? "",
+      questionnaireTypeCode,
     },
     { enabled: queriesReady }
   );
@@ -197,7 +189,7 @@ export function useFacultyReportDetailViewModel({
     {
       facultyId,
       semesterId,
-      questionnaireTypeCode: questionnaireTypeCode ?? "",
+      questionnaireTypeCode,
       page: commentsPage,
       limit: commentsLimit,
       sentiment: sentimentFilter ?? undefined,
@@ -285,13 +277,6 @@ export function useFacultyReportDetailViewModel({
     [updateSearchParams]
   );
 
-  const selectFacet = useCallback(
-    (next: Facet) => {
-      updateSearchParams({ facet: next === "overall" ? null : next });
-    },
-    [updateSearchParams]
-  );
-
   const selectView = useCallback(
     (next: ReportView) => {
       updateSearchParams({ view: next === DEFAULT_REPORT_VIEW ? null : next });
@@ -336,6 +321,16 @@ export function useFacultyReportDetailViewModel({
       updateSentimentFilter(null);
     }
   }, [rawSentiment, updateSentimentFilter]);
+
+  // Active strip for the deprecated ?facet= URL param. Old bookmarked deep
+  // links self-clean on first load. Matches the primitive-dep pattern of
+  // the sentiment-cleanup effect above so we don't double-fire on unrelated
+  // URL changes.
+  useEffect(() => {
+    if (rawFacetParam !== null) {
+      updateSearchParams({ facet: null });
+    }
+  }, [rawFacetParam, updateSearchParams]);
 
   // Theme-label decay surfaces as a derived auto-correction notice
   // (Decision §16, Task 7a). The orphaned label stays in the URL until the
@@ -387,8 +382,6 @@ export function useFacultyReportDetailViewModel({
     semesterLabel,
     questionnaireTypeCode,
     questionnaireTypeLabel,
-    selectedFacet,
-    selectFacet,
     selectedView,
     selectView,
     availableQuestionnaireTypes,
