@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronLeft } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -47,10 +47,7 @@ export function FacultyReportHeader({
           variant="outline"
           className="w-full justify-center px-4 py-2.5 font-sans text-sm sm:w-auto sm:justify-start"
         >
-          <Link href={backHref}>
-            <ChevronLeft className="size-4" />
-            Back to faculties
-          </Link>
+          <Link href={backHref}>Back to faculties</Link>
         </Button>
       ) : null}
 
