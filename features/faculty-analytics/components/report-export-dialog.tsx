@@ -127,7 +127,7 @@ export function ReportExportDialog({
               tone="success"
               message={
                 urlExpired
-                  ? "The secure PDF link has expired. Refresh the link to access the report again."
+                  ? "The secure PDF link has expired. Close this dialog and generate a new PDF to access the report again."
                   : `Secure link expires ${formatRelativeTime(status?.expiresAt ?? "")}.`
               }
               meta={
@@ -190,27 +190,15 @@ export function ReportExportDialog({
             ) : null}
 
             {isCompleted ? (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    void statusQuery.refetch();
-                  }}
-                  className="w-full sm:w-auto"
-                >
-                  Refresh Link
-                </Button>
-                <Button
-                  asChild
-                  disabled={!status?.downloadUrl || urlExpired}
-                  className="w-full sm:w-auto"
-                >
-                  <a href={status?.downloadUrl} target="_blank" rel="noreferrer">
-                    View PDF
-                  </a>
-                </Button>
-              </>
+              <Button
+                asChild
+                disabled={!status?.downloadUrl || urlExpired}
+                className="w-full sm:w-auto"
+              >
+                <a href={status?.downloadUrl} target="_blank" rel="noreferrer">
+                  View PDF
+                </a>
+              </Button>
             ) : null}
           </div>
         </DialogFooter>
