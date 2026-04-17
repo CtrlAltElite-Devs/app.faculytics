@@ -57,6 +57,12 @@ export type ProgramOptionDto = {
   departmentId: string;
 };
 
+export type DepartmentOptionDto = {
+  id: string;
+  code: string;
+  name: string | null;
+};
+
 export type PaginationMetaDto = {
   totalItems: number;
   itemCount: number;
@@ -73,6 +79,18 @@ export type ProgramListResponseDto = {
 export type ListProgramsQuery = {
   semesterId: string;
   departmentId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type DepartmentListResponseDto = {
+  data: DepartmentOptionDto[];
+  meta: PaginationMetaDto;
+};
+
+export type ListDepartmentsQuery = {
+  semesterId: string;
   search?: string;
   page?: number;
   limit?: number;
@@ -401,19 +419,18 @@ export type PipelineStatus =
 
 export type RunStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 
-// FAC-135 Phase A: collapsed scope shape. The canonical pipeline scope now
-// consists of `{ scopeType, scopeId }` plus the mandatory `semesterId`.
-// Legacy fields (facultyId/departmentId/programId/campusId/courseId/
-// questionnaireTypeCode) are gone from the frontend surface entirely —
-// the API still accepts them via a backwards-compat preprocessor but we
-// switch to the canonical shape immediately (hard cutover per TD-2).
+// Canonical explicit scope is `{ scopeType, scopeId }` plus `semesterId`,
+// but scoped dashboards still rely on backend role inference and may send
+// only `semesterId` for create/list flows.
 export type ScopeType = "FACULTY" | "DEPARTMENT" | "CAMPUS";
 
-// POST /analysis/pipelines body: scopeType + scopeId are REQUIRED.
+// For scoped dashboards, `scopeType`/`scopeId` may be omitted and inferred
+// by the backend from the caller role. Faculty self-view still passes them
+// explicitly.
 export type PipelineScopeIds = {
   semesterId: string;
-  scopeType: ScopeType;
-  scopeId: string;
+  scopeType?: ScopeType;
+  scopeId?: string;
   questionnaireVersionId?: string;
 };
 

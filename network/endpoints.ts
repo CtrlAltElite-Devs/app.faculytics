@@ -12,6 +12,7 @@ export enum Endpoints {
   semesters = "/api/v1/semesters",
 
   // Curriculum
+  curriculumDepartments = "/api/v1/curriculum/departments",
   curriculumPrograms = "/api/v1/curriculum/programs",
 
   // Questionnaires
