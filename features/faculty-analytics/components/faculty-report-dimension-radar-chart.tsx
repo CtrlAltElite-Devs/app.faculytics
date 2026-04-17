@@ -94,7 +94,7 @@ export function FacultyReportDimensionRadarChart({
                           </span>
                         </div>
                         <div className="flex items-center justify-between gap-4">
-                          <span className="text-muted-foreground">Responses</span>
+                          <span className="text-muted-foreground">Ratings</span>
                           <span className="font-mono font-medium text-foreground">
                             {dimension.responseCount}
                           </span>

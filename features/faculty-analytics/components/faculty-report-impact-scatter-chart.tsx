@@ -11,17 +11,8 @@ import {
   ZAxis,
 } from "recharts";
 
-import {
-  ChartContainer,
-  type ChartConfig,
-} from "@/components/ui/chart";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatFacultyReportScore } from "@/features/faculty-analytics/lib/faculty-report-detail";
 import type { FacultyReportSectionDto } from "@/features/faculty-analytics/types";
 import { useIsMobile } from "@/lib/use-mobile";
@@ -52,8 +43,7 @@ export function FacultyReportImpactScatterChart({
     weight: section.weight,
     sectionAverage: Number(section.sectionAverage.toFixed(2)),
     responseCount:
-      section.responseCount ??
-      section.questions.reduce((sum, q) => sum + q.responseCount, 0),
+      section.responseCount ?? section.questions.reduce((sum, q) => sum + q.responseCount, 0),
     interpretation: section.sectionInterpretation,
   }));
 
@@ -61,7 +51,7 @@ export function FacultyReportImpactScatterChart({
 
   const maxResponses = chartData.reduce(
     (max, row) => (row.responseCount > max ? row.responseCount : max),
-    0,
+    0
   );
   const zRange: [number, number] = [80, Math.max(80, maxResponses > 0 ? 420 : 80)];
 
@@ -72,8 +62,8 @@ export function FacultyReportImpactScatterChart({
           Weight × Score Impact
         </CardTitle>
         <CardDescription>
-          Each bubble is a section — higher weight on the right, stronger
-          performance toward the top. Bubble size reflects response volume.
+          Each bubble is a section — higher weight on the right, stronger performance toward the
+          top. Bubble size reflects total ratings collected.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -128,23 +118,13 @@ export function FacultyReportImpactScatterChart({
                     }
               }
             />
-            <ZAxis
-              type="number"
-              dataKey="responseCount"
-              name="Responses"
-              range={zRange}
-            />
-            <ReferenceLine
-              y={3.5}
-              strokeDasharray="4 4"
-              stroke="var(--border)"
-            />
+            <ZAxis type="number" dataKey="responseCount" name="Ratings" range={zRange} />
+            <ReferenceLine y={3.5} strokeDasharray="4 4" stroke="var(--border)" />
             <RechartsTooltip
               cursor={{ strokeDasharray: "3 3" }}
               content={({ active, payload }) => {
                 if (!active || !payload || payload.length === 0) return null;
-                const section = payload[0]
-                  .payload as (typeof chartData)[number];
+                const section = payload[0].payload as (typeof chartData)[number];
                 return (
                   <div className="grid min-w-[12rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
                     <div className="font-medium">{section.title}</div>
@@ -161,7 +141,7 @@ export function FacultyReportImpactScatterChart({
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-4">
-                      <span className="text-muted-foreground">Responses</span>
+                      <span className="text-muted-foreground">Ratings</span>
                       <span className="font-mono font-medium text-foreground">
                         {section.responseCount}
                       </span>
