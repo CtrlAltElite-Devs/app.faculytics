@@ -58,10 +58,13 @@ export function useScopedAnalyticsDashboardViewModel(scopeLabel: ScopeLabel) {
       return accessibility.filter((item) => item.isAccessible).map((item) => item.semester);
     },
   });
-  const scopedSemesterOptionsSource =
-    scopeLabel === "Campus"
-      ? (campusHeadSemestersQuery.data ?? [])
-      : (profileSemestersQuery.data?.data ?? []);
+  const scopedSemesterOptionsSource = useMemo(
+    () =>
+      scopeLabel === "Campus"
+        ? (campusHeadSemestersQuery.data ?? [])
+        : (profileSemestersQuery.data?.data ?? []),
+    [campusHeadSemestersQuery.data, profileSemestersQuery.data?.data, scopeLabel]
+  );
 
   const semesters = useMemo(
     () => mapSemesterOptionsToViewModel(scopedSemesterOptionsSource),
@@ -71,10 +74,6 @@ export function useScopedAnalyticsDashboardViewModel(scopeLabel: ScopeLabel) {
     selectedSemesterIdState && semesters.some((semester) => semester.id === selectedSemesterIdState)
       ? selectedSemesterIdState
       : (semesters[0]?.id ?? null);
-  const selectedSemesterSource =
-    scopedSemesterOptionsSource.find((semester) => semester.id === selectedSemesterId) ??
-    scopedSemesterOptionsSource[0] ??
-    null;
 
   const departmentOptionsQuery = useQuery({
     queryKey: ["curriculum", "department-options", selectedSemesterId, token],
@@ -252,7 +251,6 @@ export function useScopedAnalyticsDashboardViewModel(scopeLabel: ScopeLabel) {
       setSelectedDepartmentId(value || null);
       setSelectedProgramCode(null);
     },
-    selectedSemesterCampusId: selectedSemesterSource?.campus.id ?? null,
     setSelectedProgramCode: (value: string) => {
       setSelectedProgramCode(value === ALL_PROGRAMS_VALUE ? null : value);
     },
