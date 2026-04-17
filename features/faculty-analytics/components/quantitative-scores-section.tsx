@@ -3,13 +3,20 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import { FacultyReportDimensionRadarChart } from "@/features/faculty-analytics/components/faculty-report-dimension-radar-chart";
+import { FacultyReportImpactScatterChart } from "@/features/faculty-analytics/components/faculty-report-impact-scatter-chart";
+import { FacultyReportRatingDistributionChart } from "@/features/faculty-analytics/components/faculty-report-rating-distribution-chart";
 import { FacultyReportSectionPerformanceChart } from "@/features/faculty-analytics/components/faculty-report-section-performance-chart";
 import { FacultyReportSections } from "@/features/faculty-analytics/components/faculty-report-sections";
 import { cn } from "@/lib/utils";
-import type { FacultyReportSectionDto } from "@/features/faculty-analytics/types";
+import type {
+  FacultyReportDimensionDto,
+  FacultyReportSectionDto,
+} from "@/features/faculty-analytics/types";
 
 type QuantitativeScoresSectionProps = {
   sections: FacultyReportSectionDto[];
+  dimensions: FacultyReportDimensionDto[];
   submissionCount: number;
   defaultOpen?: boolean;
   /**
@@ -20,8 +27,38 @@ type QuantitativeScoresSectionProps = {
   collapsible?: boolean;
 };
 
+function ChartsStack({
+  sections,
+  dimensions,
+}: {
+  sections: FacultyReportSectionDto[];
+  dimensions: FacultyReportDimensionDto[];
+}) {
+  const hasRadar = dimensions.length >= 3;
+
+  return (
+    <div className="space-y-6">
+      <FacultyReportSectionPerformanceChart sections={sections} />
+      <div
+        className={cn(
+          "grid gap-6",
+          hasRadar ? "lg:grid-cols-2" : "grid-cols-1",
+        )}
+      >
+        {hasRadar ? (
+          <FacultyReportDimensionRadarChart dimensions={dimensions} />
+        ) : null}
+        <FacultyReportImpactScatterChart sections={sections} />
+      </div>
+      <FacultyReportRatingDistributionChart sections={sections} />
+      <FacultyReportSections sections={sections} />
+    </div>
+  );
+}
+
 export function QuantitativeScoresSection({
   sections,
+  dimensions,
   submissionCount,
   defaultOpen = false,
   collapsible = true,
@@ -46,9 +83,8 @@ export function QuantitativeScoresSection({
             {submissionCount === 1 ? "" : "s"}.
           </p>
         </div>
-        <div className="space-y-6 border-t border-border/70 px-6 py-6">
-          <FacultyReportSectionPerformanceChart sections={sections} />
-          <FacultyReportSections sections={sections} />
+        <div className="border-t border-border/70 px-6 py-6">
+          <ChartsStack sections={sections} dimensions={dimensions} />
         </div>
       </section>
     );
@@ -90,9 +126,8 @@ export function QuantitativeScoresSection({
         className="grid transition-[grid-template-rows] duration-300 ease-out data-[state=closed]:grid-rows-[0fr] data-[state=open]:grid-rows-[1fr]"
       >
         <div className="overflow-hidden">
-          <div className="space-y-6 border-t border-border/70 px-6 py-6">
-            <FacultyReportSectionPerformanceChart sections={sections} />
-            <FacultyReportSections sections={sections} />
+          <div className="border-t border-border/70 px-6 py-6">
+            <ChartsStack sections={sections} dimensions={dimensions} />
           </div>
         </div>
       </div>
