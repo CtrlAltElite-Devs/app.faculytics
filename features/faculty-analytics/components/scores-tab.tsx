@@ -89,6 +89,7 @@ export function ScoresTab({
 
           <QuantitativeScoresSection
             sections={report.sections}
+            dimensions={report.dimensions ?? []}
             submissionCount={submissionCount}
             collapsible={false}
           />

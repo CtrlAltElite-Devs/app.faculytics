@@ -261,6 +261,9 @@ export type FacultyReportQuestionDto = {
   average: number;
   responseCount: number;
   interpretation: string;
+  // Counts keyed by the stringified numericValue ("1".."5" for Likert-5,
+  // "0"/"1" for YES_NO). Empty object when no responses were recorded.
+  ratingCounts: Record<string, number>;
 };
 
 export type FacultyReportSectionDto = {
@@ -271,6 +274,15 @@ export type FacultyReportSectionDto = {
   questions: FacultyReportQuestionDto[];
   sectionAverage: number;
   sectionInterpretation: string;
+  responseCount: number;
+};
+
+export type FacultyReportDimensionDto = {
+  code: string;
+  displayName: string;
+  average: number;
+  responseCount: number;
+  interpretation: string;
 };
 
 export type FacultyReportResponseDto = {
@@ -282,6 +294,7 @@ export type FacultyReportResponseDto = {
   sections: FacultyReportSectionDto[];
   overallRating: number | null;
   overallInterpretation: string | null;
+  dimensions: FacultyReportDimensionDto[];
 };
 
 export type FacultyReportCommentDto = {
