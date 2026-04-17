@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-} from "recharts";
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
 
 import {
   ChartContainer,
@@ -14,13 +8,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatFacultyReportScore } from "@/features/faculty-analytics/lib/faculty-report-detail";
 import type { FacultyReportDimensionDto } from "@/features/faculty-analytics/types";
 import { useIsMobile } from "@/lib/use-mobile";
@@ -84,23 +72,16 @@ export function FacultyReportDimensionRadarChart({
         >
           <RadarChart data={chartData} outerRadius="72%">
             <PolarGrid />
-            <PolarAngleAxis
-              dataKey="label"
-              tick={{ fontSize: isMobile ? 10 : 12 }}
-            />
-            <PolarRadiusAxis
-              angle={90}
-              domain={[0, 5]}
-              tick={{ fontSize: 10 }}
-            />
+            <PolarAngleAxis dataKey="label" tick={{ fontSize: isMobile ? 10 : 12 }} />
+            <PolarRadiusAxis angle={90} domain={[0, 5]} tick={{ fontSize: 10 }} />
             <ChartTooltip
               cursor={false}
               content={
                 <ChartTooltipContent
                   indicator="dot"
                   labelFormatter={(_, payload) => {
-                    const dimension = payload as unknown as (typeof chartData)[number];
-                    return dimension.fullLabel;
+                    const first = payload?.[0]?.payload as (typeof chartData)[number] | undefined;
+                    return first?.fullLabel ?? "";
                   }}
                   formatter={(_, __, item, ___, payload) => {
                     const dimension = payload as unknown as (typeof chartData)[number];
@@ -113,9 +94,7 @@ export function FacultyReportDimensionRadarChart({
                           </span>
                         </div>
                         <div className="flex items-center justify-between gap-4">
-                          <span className="text-muted-foreground">
-                            Responses
-                          </span>
+                          <span className="text-muted-foreground">Responses</span>
                           <span className="font-mono font-medium text-foreground">
                             {dimension.responseCount}
                           </span>

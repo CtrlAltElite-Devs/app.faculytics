@@ -8,13 +8,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { FacultyReportSectionDto } from "@/features/faculty-analytics/types";
 import { useIsMobile } from "@/lib/use-mobile";
 
@@ -89,9 +83,7 @@ export function FacultyReportRatingDistributionChart({
       presentKeys.add(key);
     }
   }
-  const orderedKeys = ["0", "1", "2", "3", "4", "5"].filter((k) =>
-    presentKeys.has(k),
-  );
+  const orderedKeys = ["0", "1", "2", "3", "4", "5"].filter((k) => presentKeys.has(k));
 
   // Convert to percentages so small-N sections stay visually comparable,
   // while raw counts remain in the tooltip.
@@ -127,8 +119,8 @@ export function FacultyReportRatingDistributionChart({
           Rating Distribution
         </CardTitle>
         <CardDescription>
-          Share of responses at each rating level, aggregated per section. Raw
-          counts appear in the tooltip.
+          Share of responses at each rating level, aggregated per section. Raw counts appear in the
+          tooltip.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -144,7 +136,6 @@ export function FacultyReportRatingDistributionChart({
             margin={{ top: 8, bottom: 8, right: isMobile ? 8 : 16, left: 0 }}
             barCategoryGap={isMobile ? 8 : 10}
             maxBarSize={isMobile ? 22 : 28}
-            stackOffset="expand"
           >
             <CartesianGrid horizontal={false} />
             <XAxis
@@ -167,8 +158,9 @@ export function FacultyReportRatingDistributionChart({
                 <ChartTooltipContent
                   indicator="dot"
                   labelFormatter={(_, payload) => {
-                    const row = payload as unknown as (typeof chartData)[number];
-                    return `${row.fullLabel} · ${row.total} responses`;
+                    const first = payload?.[0]?.payload as (typeof chartData)[number] | undefined;
+                    if (!first) return "";
+                    return `${first.fullLabel} · ${first.total} responses`;
                   }}
                   formatter={(value, _name, item, __, payload) => {
                     const row = payload as unknown as (typeof chartData)[number];
