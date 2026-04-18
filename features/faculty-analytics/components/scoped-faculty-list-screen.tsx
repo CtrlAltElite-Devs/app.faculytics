@@ -31,6 +31,10 @@ export function ScopedFacultyListScreen({
   allowAllPrograms = true,
 }: ScopedFacultyListScreenProps) {
   const [isBatchExportDialogOpen, setIsBatchExportDialogOpen] = useState(false);
+  const isCampusScope = scopeLabel === "Campus";
+  const filtersGridClassName = isCampusScope
+    ? "xl:grid-cols-[auto_minmax(18rem,1fr)_13rem_13rem_13rem]"
+    : "xl:grid-cols-[auto_minmax(18rem,1fr)_13rem_13rem]";
   const {
     departments,
     semesters,
@@ -68,7 +72,7 @@ export function ScopedFacultyListScreen({
           </p>
         </div>
         <div className="w-full xl:max-w-6xl">
-          <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[auto_minmax(18rem,1fr)_13rem_13rem_13rem]">
+          <div className={`grid w-full grid-cols-1 gap-3 md:grid-cols-2 ${filtersGridClassName}`}>
             <Button
               type="button"
               variant="brand"
@@ -88,7 +92,7 @@ export function ScopedFacultyListScreen({
                 aria-label="Search faculty name"
               />
             </div>
-            {scopeLabel === "Campus" ? (
+            {isCampusScope ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -220,8 +224,8 @@ export function ScopedFacultyListScreen({
         onOpenChange={setIsBatchExportDialogOpen}
         semesterId={selectedSemesterId}
         semesterLabel={selectedSemesterLabel}
-        departmentId={scopeLabel === "Campus" ? selectedDepartmentId : null}
-        departmentLabel={scopeLabel === "Campus" ? selectedDepartmentLabel : "All Departments"}
+        departmentId={isCampusScope ? selectedDepartmentId : null}
+        departmentLabel={isCampusScope ? selectedDepartmentLabel : "All Departments"}
         programId={selectedProgramId}
         programs={programs.map((program) => ({
           id: program.id,
