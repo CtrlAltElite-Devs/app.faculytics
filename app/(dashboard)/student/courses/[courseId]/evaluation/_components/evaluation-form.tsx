@@ -30,6 +30,7 @@ type EvaluationFormProps = {
   courseName: string;
   courseShortname: string;
   facultyName: string;
+  facultyProfilePicture?: string | null;
   enrollmentSectionName?: string;
   activeVersion: { id: string };
   faculty: { id: string };
@@ -44,6 +45,7 @@ export function EvaluationForm({
   courseName,
   courseShortname,
   facultyName,
+  facultyProfilePicture,
   enrollmentSectionName,
   activeVersion,
   faculty,
@@ -151,6 +153,7 @@ export function EvaluationForm({
       courseName={courseName}
       courseShortname={courseShortname}
       facultyName={facultyName}
+      facultyProfilePicture={facultyProfilePicture}
       enrollmentSectionName={enrollmentSectionName}
     >
       <div className="mt-5 sm:mt-8">
@@ -165,6 +168,7 @@ export function EvaluationForm({
           defaultValues={defaultValues}
           onChange={handleChange}
           facultyName={facultyName}
+          facultyProfilePicture={facultyProfilePicture}
           progressTrailing={
             draftStatus !== "idle" ? (
               <Badge

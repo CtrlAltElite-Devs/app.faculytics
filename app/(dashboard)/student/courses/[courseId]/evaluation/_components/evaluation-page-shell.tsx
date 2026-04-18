@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -9,14 +10,27 @@ type EvaluationPageShellProps = {
   courseName?: string;
   courseShortname?: string;
   facultyName?: string;
+  facultyProfilePicture?: string | null;
   enrollmentSectionName?: string;
 };
+
+function getInitials(fullName: string) {
+  return (
+    fullName
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "F"
+  );
+}
 
 export function EvaluationPageShell({
   children,
   courseName,
   courseShortname,
   facultyName,
+  facultyProfilePicture,
   enrollmentSectionName,
 }: EvaluationPageShellProps) {
   return (
@@ -60,9 +74,19 @@ export function EvaluationPageShell({
                 <p className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground sm:text-[0.68rem]">
                   Instructor
                 </p>
-                <p className="font-playfair text-base font-semibold leading-tight text-foreground sm:mt-2 sm:text-xl">
-                  {facultyName}
-                </p>
+                <div className="flex items-center gap-2.5 sm:mt-2 sm:flex-col sm:gap-2">
+                  <Avatar size="default" className="border border-border/70">
+                    {facultyProfilePicture ? (
+                      <AvatarImage src={facultyProfilePicture} alt={facultyName} />
+                    ) : null}
+                    <AvatarFallback className="bg-slate-100 text-xs font-semibold text-slate-700">
+                      {getInitials(facultyName ?? "")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="font-playfair text-base font-semibold leading-tight text-foreground sm:text-xl">
+                    {facultyName}
+                  </p>
+                </div>
               </div>
               <div className="flex flex-col items-start gap-0.5 border-t border-border/60 px-4 py-3.5 text-left sm:items-center sm:gap-0 sm:px-6 sm:py-5 sm:text-center md:border-t-0 md:border-l">
                 <p className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground sm:text-[0.68rem]">
