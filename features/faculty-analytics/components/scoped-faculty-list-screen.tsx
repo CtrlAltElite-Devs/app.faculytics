@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-analytics-dashboard-screen";
+import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
 
 type ScopedFacultyListScreenProps = {
   scopeLabel: ScopeLabel;
