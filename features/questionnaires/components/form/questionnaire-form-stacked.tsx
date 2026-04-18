@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
+  LIKERT_LABELS,
   LIKERT_OPTIONS,
   YES_NO_OPTIONS,
   YES_NO_VALUE_MAP,
@@ -22,14 +23,6 @@ type QuestionnaireFormStackedProps = {
   questions: QuestionnaireBuilderPreviewQuestion[];
   questionType: BuilderQuestionType;
   mode: QuestionnaireFormMode;
-};
-
-const LIKERT_LABELS: Record<string, string> = {
-  "1": "Strongly Disagree",
-  "2": "Disagree",
-  "3": "Neutral",
-  "4": "Agree",
-  "5": "Strongly Agree",
 };
 
 function getSelectedOptionKey(value: number | undefined, isLikert: boolean): string {
