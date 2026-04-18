@@ -1,5 +1,6 @@
 import { ALL_PROGRAMS_LABEL } from "@/features/faculty-analytics/constants/filters";
 import type {
+  DepartmentOptionDto,
   DepartmentOverviewResponseDto,
   ProgramOptionDto,
   SemesterOptionDto,
@@ -9,6 +10,12 @@ export type ScopedSemesterOption = {
   id: string;
   label: string;
   academicYear?: string;
+};
+
+export type ScopedDepartmentOption = {
+  id: string;
+  code: string;
+  label: string;
 };
 
 export type ScopedSummaryMetrics = {
@@ -54,6 +61,23 @@ export function mapSemesterOptionsToViewModel(
     label: semester.label ?? [semester.code, semester.academicYear].filter(Boolean).join(" • "),
     academicYear: semester.academicYear,
   }));
+}
+
+export function mapDepartmentOptionsToViewModel(
+  departments: DepartmentOptionDto[],
+  allowAllDepartments = true
+): ScopedDepartmentOption[] {
+  const mappedDepartments = departments.map((department) => ({
+    id: department.id,
+    code: department.code,
+    label: department.name?.trim() ? `${department.code} • ${department.name}` : department.code,
+  }));
+
+  if (!allowAllDepartments) {
+    return mappedDepartments;
+  }
+
+  return [{ id: "", code: "", label: "All Departments" }, ...mappedDepartments];
 }
 
 export function mapProgramOptionsToViewModel(

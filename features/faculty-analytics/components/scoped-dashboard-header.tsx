@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 
 import { ALL_PROGRAMS_VALUE } from "@/features/faculty-analytics/constants/filters";
 import type {
+  ScopedDepartmentOption,
   ScopedProgramOption,
   ScopedSemesterOption,
 } from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
@@ -17,6 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 type ScopedDashboardHeaderProps = {
+  departments: readonly ScopedDepartmentOption[];
+  selectedDepartmentId: string | null;
+  selectedDepartmentLabel: string;
+  onDepartmentChange: (value: string) => void;
   semesters: readonly ScopedSemesterOption[];
   programs: readonly ScopedProgramOption[];
   selectedSemesterId: string | null;
@@ -42,6 +47,10 @@ function getScopeDescription(scopeLabel: ScopedDashboardHeaderProps["scopeLabel"
 }
 
 export function ScopedDashboardHeader({
+  departments,
+  selectedDepartmentId,
+  selectedDepartmentLabel,
+  onDepartmentChange,
   semesters,
   programs,
   selectedSemesterId,
@@ -70,37 +79,6 @@ export function ScopedDashboardHeader({
               <Button
                 variant="outline"
                 className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-48 md:max-w-48"
-                disabled={programs.length === 0}
-              >
-                <span className="truncate">{selectedProgramLabel}</span>
-                <ChevronDown className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
-            >
-              <DropdownMenuRadioGroup
-                value={selectedProgramCode ?? ALL_PROGRAMS_VALUE}
-                onValueChange={onProgramChange}
-              >
-                {programs.map((program) => (
-                  <DropdownMenuRadioItem
-                    key={program.code ?? ALL_PROGRAMS_VALUE}
-                    value={program.code ?? ALL_PROGRAMS_VALUE}
-                    className="font-sans text-sm"
-                  >
-                    {program.label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-48 md:max-w-48"
                 disabled={semesters.length === 0}
               >
                 <span className="truncate">{selectedSemesterLabel}</span>
@@ -122,6 +100,70 @@ export function ScopedDashboardHeader({
                     className="font-sans text-sm"
                   >
                     {semester.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {scopeLabel === "Campus" ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-48 md:max-w-48"
+                  disabled={departments.length === 0}
+                >
+                  <span className="truncate">{selectedDepartmentLabel}</span>
+                  <ChevronDown className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+              >
+                <DropdownMenuRadioGroup
+                  value={selectedDepartmentId ?? ""}
+                  onValueChange={onDepartmentChange}
+                >
+                  {departments.map((department) => (
+                    <DropdownMenuRadioItem
+                      key={department.id || "all-departments"}
+                      value={department.id}
+                      className="font-sans text-sm"
+                    >
+                      {department.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-48 md:max-w-48"
+                disabled={programs.length === 0}
+              >
+                <span className="truncate">{selectedProgramLabel}</span>
+                <ChevronDown className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+            >
+              <DropdownMenuRadioGroup
+                value={selectedProgramCode ?? ALL_PROGRAMS_VALUE}
+                onValueChange={onProgramChange}
+              >
+                {programs.map((program) => (
+                  <DropdownMenuRadioItem
+                    key={program.code ?? ALL_PROGRAMS_VALUE}
+                    value={program.code ?? ALL_PROGRAMS_VALUE}
+                    className="font-sans text-sm"
+                  >
+                    {program.label}
                   </DropdownMenuRadioItem>
                 ))}
               </DropdownMenuRadioGroup>
