@@ -23,6 +23,7 @@ import { collectRequiredIds } from "@/features/questionnaires/lib/evaluation-val
 import type { QuestionnaireFormValues } from "@/features/questionnaires/types";
 
 import { EvaluationPageShell } from "./evaluation-page-shell";
+import { EvaluationReviewDialog } from "./evaluation-review-dialog";
 
 type EvaluationFormProps = {
   courseId: string;
@@ -53,6 +54,8 @@ export function EvaluationForm({
 }: EvaluationFormProps) {
   const formValuesRef = useRef<QuestionnaireFormValues | null>(null);
   const [draftStatus, setDraftStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [reviewValues, setReviewValues] = useState<QuestionnaireFormValues | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const meQuery = useMe();
@@ -74,12 +77,11 @@ export function EvaluationForm({
     [debouncedSave]
   );
 
-  const handleSubmit = useCallback(() => {
+  const handleOpenReview = useCallback(() => {
     const values = formValuesRef.current;
     if (!values) return;
 
-    const respondentId = meQuery.data?.id;
-    if (!respondentId) {
+    if (!meQuery.data?.id) {
       toast.error("Unable to identify your account. Please try again.");
       return;
     }
@@ -101,6 +103,20 @@ export function EvaluationForm({
       return;
     }
 
+    setReviewValues(values);
+    setShowReviewDialog(true);
+  }, [meQuery.data?.id, model]);
+
+  const handleConfirmSubmit = useCallback(() => {
+    const values = reviewValues;
+    if (!values) return;
+
+    const respondentId = meQuery.data?.id;
+    if (!respondentId) {
+      toast.error("Unable to identify your account. Please try again.");
+      return;
+    }
+
     cancelAutoSave();
     mutate(
       {
@@ -113,7 +129,10 @@ export function EvaluationForm({
         qualitativeComment: values.qualitativeComment || undefined,
       },
       {
-        onSuccess: () => setShowSuccessDialog(true),
+        onSuccess: () => {
+          setShowReviewDialog(false);
+          setShowSuccessDialog(true);
+        },
       }
     );
   }, [
@@ -122,7 +141,7 @@ export function EvaluationForm({
     semester.id,
     courseId,
     meQuery.data?.id,
-    model,
+    reviewValues,
     cancelAutoSave,
     mutate,
   ]);
@@ -170,7 +189,7 @@ export function EvaluationForm({
         <Button
           variant="brand"
           size="lg"
-          onClick={handleSubmit}
+          onClick={handleOpenReview}
           disabled={isPending}
           className="w-full sm:w-auto"
         >
@@ -184,6 +203,15 @@ export function EvaluationForm({
           )}
         </Button>
       </div>
+
+      <EvaluationReviewDialog
+        open={showReviewDialog}
+        onOpenChange={setShowReviewDialog}
+        model={model}
+        values={reviewValues}
+        isSubmitting={isPending}
+        onConfirm={handleConfirmSubmit}
+      />
 
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent
