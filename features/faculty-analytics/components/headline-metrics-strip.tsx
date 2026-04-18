@@ -2,6 +2,7 @@
 
 import { AnimatedNumber } from "@/components/animated-number";
 import { getFacultyReportInterpretationTextClass } from "@/features/faculty-analytics/lib/faculty-report-detail";
+import { SENTIMENT_SOLID_CLASS } from "@/features/faculty-analytics/lib/sentiment-colors";
 import { cn } from "@/lib/utils";
 import type { SentimentDistributionDto } from "@/features/faculty-analytics/types";
 
@@ -24,9 +25,18 @@ function SentimentMiniBar({ distribution }: { distribution: SentimentDistributio
       aria-label={`${distribution.positive} positive, ${distribution.neutral} neutral, ${distribution.negative} negative`}
       className="flex h-2 w-full max-w-xs overflow-hidden rounded-full bg-muted"
     >
-      <span className="block bg-emerald-400" style={{ width: pct(distribution.positive) }} />
-      <span className="block bg-amber-300" style={{ width: pct(distribution.neutral) }} />
-      <span className="block bg-rose-400" style={{ width: pct(distribution.negative) }} />
+      <span
+        className={cn("block", SENTIMENT_SOLID_CLASS.positive)}
+        style={{ width: pct(distribution.positive) }}
+      />
+      <span
+        className={cn("block", SENTIMENT_SOLID_CLASS.neutral)}
+        style={{ width: pct(distribution.neutral) }}
+      />
+      <span
+        className={cn("block", SENTIMENT_SOLID_CLASS.negative)}
+        style={{ width: pct(distribution.negative) }}
+      />
     </div>
   );
 }
