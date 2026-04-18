@@ -1,6 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SENTIMENT_SOLID_CLASS } from "@/features/faculty-analytics/lib/sentiment-colors";
+import { cn } from "@/lib/utils";
 import type { QualitativeThemeDto } from "@/features/faculty-analytics/types";
 
 type ThemesRankedListProps = {
@@ -38,17 +40,17 @@ export function ThemesRankedList({ themes, maxVisible = 10 }: ThemesRankedListPr
                 </div>
                 <div className="flex h-2 overflow-hidden rounded-full bg-muted">
                   <span
-                    className="h-full bg-emerald-500"
+                    className={cn("h-full", SENTIMENT_SOLID_CLASS.positive)}
                     style={{ width: `${pos}%` }}
                     aria-label={`positive ${pos.toFixed(0)}%`}
                   />
                   <span
-                    className="h-full bg-muted-foreground/40"
+                    className={cn("h-full", SENTIMENT_SOLID_CLASS.neutral)}
                     style={{ width: `${neu}%` }}
                     aria-label={`neutral ${neu.toFixed(0)}%`}
                   />
                   <span
-                    className="h-full bg-rose-500"
+                    className={cn("h-full", SENTIMENT_SOLID_CLASS.negative)}
                     style={{ width: `${neg}%` }}
                     aria-label={`negative ${neg.toFixed(0)}%`}
                   />

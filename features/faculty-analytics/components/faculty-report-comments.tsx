@@ -7,12 +7,15 @@ import { PaginationFooter } from "@/components/shared/pagination-footer";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
 import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
+import {
+  SENTIMENT_BADGE_CLASS,
+  SENTIMENT_LABEL,
+} from "@/features/faculty-analytics/lib/sentiment-colors";
 import { cn } from "@/lib/utils";
 import type {
   FacultyReportCommentDto,
   PaginationMetaDto,
   QualitativeThemeDto,
-  SentimentLabel,
 } from "@/features/faculty-analytics/types";
 import { formatDateTime } from "@/lib/date";
 
@@ -27,18 +30,6 @@ type FacultyReportCommentsProps = {
   onPageChange: (page: number) => void;
   onRowsPerPageChange: (value: number) => void;
   themes?: QualitativeThemeDto[];
-};
-
-const SENTIMENT_CLASSES: Record<SentimentLabel, string> = {
-  positive: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
-  neutral: "bg-muted text-muted-foreground",
-  negative: "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300",
-};
-
-const SENTIMENT_LABELS: Record<SentimentLabel, string> = {
-  positive: "Positive",
-  neutral: "Neutral",
-  negative: "Negative",
 };
 
 export function FacultyReportComments({
@@ -113,11 +104,11 @@ export function FacultyReportComments({
                         <Badge
                           variant="outline"
                           className={cn(
-                            "rounded-full border-none px-2 py-0.5 font-sans text-[0.7rem] font-medium",
-                            SENTIMENT_CLASSES[comment.sentiment]
+                            "rounded-full px-2 py-0.5 font-sans text-[0.7rem]",
+                            SENTIMENT_BADGE_CLASS[comment.sentiment]
                           )}
                         >
-                          {SENTIMENT_LABELS[comment.sentiment]}
+                          {SENTIMENT_LABEL[comment.sentiment]}
                         </Badge>
                       ) : null}
                       {visibleThemes.map((label) => (

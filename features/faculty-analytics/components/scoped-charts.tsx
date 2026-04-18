@@ -10,20 +10,21 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SENTIMENT_HEX } from "@/features/faculty-analytics/lib/sentiment-colors";
 import { useIsMobile } from "@/lib/use-mobile";
 
 const overallSentimentChartConfig = {
   positive: {
     label: "Positive",
-    color: "#5b8cff",
+    color: SENTIMENT_HEX.positive,
   },
   neutral: {
     label: "Neutral",
-    color: "#d1d5db",
+    color: SENTIMENT_HEX.neutral,
   },
   negative: {
     label: "Negative",
-    color: "#facc15",
+    color: SENTIMENT_HEX.negative,
   },
 } satisfies ChartConfig;
 

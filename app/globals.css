@@ -10,6 +10,15 @@
   --color-brand-neutral: var(--brand-neutral);
   --color-surface: var(--surface);
   --color-surface-alt: var(--surface-alt);
+  --color-sentiment-positive: var(--sentiment-positive);
+  --color-sentiment-positive-soft: var(--sentiment-positive-soft);
+  --color-sentiment-positive-fg: var(--sentiment-positive-fg);
+  --color-sentiment-neutral: var(--sentiment-neutral);
+  --color-sentiment-neutral-soft: var(--sentiment-neutral-soft);
+  --color-sentiment-neutral-fg: var(--sentiment-neutral-fg);
+  --color-sentiment-negative: var(--sentiment-negative);
+  --color-sentiment-negative-soft: var(--sentiment-negative-soft);
+  --color-sentiment-negative-fg: var(--sentiment-negative-fg);
   --font-playfair: var(--font-playfair);
 
   --color-background: var(--background);
@@ -68,6 +77,15 @@
   --brand-neutral: oklch(0.982 0.005 84.15);
   --surface: oklch(0.975 0.002 264.53);
   --surface-alt: oklch(0.96 0.004 264.53);
+  --sentiment-positive: oklch(0.72 0.17 152);
+  --sentiment-positive-soft: oklch(0.96 0.05 152);
+  --sentiment-positive-fg: oklch(0.42 0.14 152);
+  --sentiment-neutral: oklch(0.82 0.16 85);
+  --sentiment-neutral-soft: oklch(0.97 0.06 90);
+  --sentiment-neutral-fg: oklch(0.48 0.13 80);
+  --sentiment-negative: oklch(0.65 0.22 20);
+  --sentiment-negative-soft: oklch(0.96 0.04 20);
+  --sentiment-negative-fg: oklch(0.44 0.18 20);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -107,6 +125,15 @@
   --brand-neutral: oklch(0.2 0.006 264.53);
   --surface: oklch(0.195 0.008 264.53);
   --surface-alt: oklch(0.185 0.01 264.53);
+  --sentiment-positive: oklch(0.72 0.16 152);
+  --sentiment-positive-soft: oklch(0.3 0.06 152);
+  --sentiment-positive-fg: oklch(0.85 0.14 152);
+  --sentiment-neutral: oklch(0.8 0.16 85);
+  --sentiment-neutral-soft: oklch(0.3 0.06 85);
+  --sentiment-neutral-fg: oklch(0.88 0.14 85);
+  --sentiment-negative: oklch(0.7 0.2 22);
+  --sentiment-negative-soft: oklch(0.3 0.06 22);
+  --sentiment-negative-fg: oklch(0.82 0.14 22);
   --background: oklch(0.17 0.006 264.53);
   --foreground: oklch(0.93 0.005 264.53);
   --card: oklch(0.21 0.008 264.53);
@@ -205,6 +232,29 @@
 
   .badge-status-negative {
     @apply border-red-200 bg-red-50 px-2.5 py-1 font-medium text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300;
+  }
+
+  /* ── Faculytics: Sentiment pill variants ─────────────────────────── */
+
+  .badge-sentiment-positive {
+    border-color: color-mix(in oklab, var(--sentiment-positive) 35%, transparent);
+    background-color: var(--sentiment-positive-soft);
+    color: var(--sentiment-positive-fg);
+    @apply px-2.5 py-1 font-medium;
+  }
+
+  .badge-sentiment-neutral {
+    border-color: color-mix(in oklab, var(--sentiment-neutral) 40%, transparent);
+    background-color: var(--sentiment-neutral-soft);
+    color: var(--sentiment-neutral-fg);
+    @apply px-2.5 py-1 font-medium;
+  }
+
+  .badge-sentiment-negative {
+    border-color: color-mix(in oklab, var(--sentiment-negative) 35%, transparent);
+    background-color: var(--sentiment-negative-soft);
+    color: var(--sentiment-negative-fg);
+    @apply px-2.5 py-1 font-medium;
   }
 
   .badge-interpretation-excellent {
