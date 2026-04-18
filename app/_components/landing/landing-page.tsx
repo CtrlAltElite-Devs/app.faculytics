@@ -22,6 +22,7 @@ import {
   Users,
 } from "lucide-react";
 
+import { AppFooter } from "@/components/layout/app-footer";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 import styles from "./landing-page.module.css";
@@ -676,84 +677,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <div className={styles.footerGrid}>
-            <div className={styles.footerBrand}>
-              <div className={styles.navBrand}>
-                <Image
-                  src="/landing/faculytics-owl-logo.png"
-                  alt=""
-                  width={36}
-                  height={36}
-                  style={{ objectFit: "contain" }}
-                />
-                <span style={{ fontWeight: 600, fontSize: 16 }}>Faculytics</span>
-              </div>
-              <p>
-                An undergraduate thesis project by four computing students at the University of Cebu
-                — exploring sentiment analysis and topic modeling on Filipino student feedback. Not
-                a commercial product.
-              </p>
-            </div>
-            <div className={styles.footerCol}>
-              <h5>Product</h5>
-              <ul>
-                <li>
-                  <a href="#product">Analytics</a>
-                </li>
-                <li>
-                  <a href="#product">Sentiment engine</a>
-                </li>
-                <li>
-                  <a href="#product">Topic modeling</a>
-                </li>
-                <li>
-                  <a href="#product">Integrations</a>
-                </li>
-              </ul>
-            </div>
-            <div className={styles.footerCol}>
-              <h5>Institution</h5>
-              <ul>
-                <li>
-                  <a href="#roles">For deans</a>
-                </li>
-                <li>
-                  <a href="#roles">For faculty</a>
-                </li>
-                <li>
-                  <a href="#roles">For admins</a>
-                </li>
-                <li>
-                  <a href="#insights">Case studies</a>
-                </li>
-              </ul>
-            </div>
-            <div className={styles.footerCol}>
-              <h5>Company</h5>
-              <ul>
-                <li>
-                  <a href="#">About</a>
-                </li>
-                <li>
-                  <a href="#">Security</a>
-                </li>
-                <li>
-                  <a href="#">Privacy</a>
-                </li>
-                <li>
-                  <a href="#">Contact</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className={styles.footerBottom}>
-            <div>© 2026 Faculytics · CtrlAltElite Devs</div>
-            <div>Cebu, Philippines</div>
-          </div>
-        </div>
-      </footer>
+      <AppFooter />
     </>
   );
 }
