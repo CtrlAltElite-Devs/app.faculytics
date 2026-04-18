@@ -30,6 +30,8 @@ type QuestionnaireFormRendererProps = {
   progressTrailing?: React.ReactNode;
   /** Faculty being evaluated; surfaced inside the sticky progress header. */
   facultyName?: string;
+  /** Optional faculty profile picture URL for the progress header avatar. */
+  facultyProfilePicture?: string | null;
 };
 
 /**
@@ -52,6 +54,7 @@ export function QuestionnaireFormRenderer({
   onChange,
   progressTrailing,
   facultyName,
+  facultyProfilePicture,
 }: QuestionnaireFormRendererProps) {
   const isInteractive = mode === "interactive";
 
@@ -94,6 +97,7 @@ export function QuestionnaireFormRenderer({
             qualitativeRequired={model.qualitative.required}
             trailing={progressTrailing}
             facultyName={facultyName}
+            facultyProfilePicture={facultyProfilePicture}
           />
         )}
 
