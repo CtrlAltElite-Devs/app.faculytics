@@ -22,6 +22,8 @@ import {
   Users,
 } from "lucide-react";
 
+import { ThemeToggle } from "@/components/layout/theme-toggle";
+
 import styles from "./landing-page.module.css";
 
 const FEATURES = [
@@ -142,6 +144,33 @@ const SUBMISSIONS = [
   },
 ];
 
+const TEAM = [
+  {
+    photo: "/landing/umpar.png",
+    name: "Norhanah M. Umpar",
+    role: "UI/UX Lead & Project Manager",
+    bio: "Owns product direction, the evaluation instrument's interface, manuscript documentation, and ships frontend alongside the dev team.",
+  },
+  {
+    photo: "/landing/bandebas.png",
+    name: "Ethan Patrick G. Bandebas",
+    role: "Full-stack Developer",
+    bio: "Works across the frontend dashboards and backend services — from React components to NestJS endpoints and queue processors.",
+  },
+  {
+    photo: "/landing/purgatorio.png",
+    name: "Harvie S. Purgatorio",
+    role: "ML Engineer",
+    bio: "Fine-tunes the multilingual sentiment analyzer powering Faculytics, trained on English, Tagalog, and Cebuano feedback.",
+  },
+  {
+    photo: "/landing/lubguban.png",
+    name: "Leander Lorenz B. Lubguban",
+    role: "Full-stack Developer & ML Engineer",
+    bio: "Builds the frontend and backend, and fine-tuned the topic-modeling pipeline that surfaces themes across thousands of comments.",
+  },
+];
+
 const STATS = [
   { v: "2.4M+", l: "student comments analyzed" },
   { v: "94%", l: "sentiment classification accuracy" },
@@ -182,9 +211,10 @@ export function LandingPage() {
             <a href="#questionnaires">Questionnaires</a>
             <a href="#insights">Insights</a>
             <a href="#roles">For your team</a>
-            <a href="#support">Support</a>
+            <a href="#team">About us</a>
           </div>
           <div className={styles.navCta}>
+            <ThemeToggle />
             <Link href="/auth" className={`${styles.btn} ${styles.btnBrand}`}>
               Sign in <ArrowRight size={14} />
             </Link>
@@ -195,9 +225,14 @@ export function LandingPage() {
       <header className={styles.hero}>
         <div className={`${styles.container} ${styles.heroInner}`}>
           <div>
-            <span className={styles.eyebrow}>
-              <span className={styles.dot} /> For University of Cebu
-            </span>
+            <div
+              style={{ marginBottom: 22, display: "flex", flexWrap: "wrap", alignItems: "center" }}
+            >
+              <span className={styles.eyebrow} style={{ marginBottom: 0 }}>
+                <span className={styles.dot} /> For University of Cebu
+              </span>
+              <span className={styles.thesisBadge}>Undergraduate thesis</span>
+            </div>
             <h1 className={styles.heroTitle}>
               Faculty evaluation
               <br />
@@ -587,25 +622,33 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className={styles.testimonialWrap}>
+      <section id="team" className={styles.team}>
         <div className={styles.container}>
-          <div className={styles.testimonial}>
-            <blockquote className={styles.testimonialQuote}>
-              <span className={styles.open}>&ldquo;</span>
-              We used to read hundreds of open comments by hand every semester. Faculytics surfaced
-              the three themes that mattered in an afternoon — and told us where the signal was
-              strongest.
-              <span className={styles.close}>&rdquo;</span>
-            </blockquote>
-            <div className={styles.testimonialAuthor}>
-              <div className={styles.testimonialAvatar}>MR</div>
-              <div className={styles.testimonialWho}>
-                <div className={styles.testimonialName}>Dr. Maria Reyes</div>
-                <div className={styles.testimonialRole}>
-                  Dean, College of Computing · University of Cebu
+          <div className={styles.teamEyebrow}>About us</div>
+          <h2 className={styles.teamTitle}>The team behind Faculytics.</h2>
+          <p className={styles.teamSub}>
+            Faculytics is an undergraduate thesis project — not a commercial startup. Built by four
+            computing students at the University of Cebu as a real research artifact exploring
+            sentiment analysis and topic modeling on Filipino student feedback.
+          </p>
+
+          <div className={styles.teamGrid}>
+            {TEAM.map((member) => (
+              <div key={member.name} className={styles.teamCard}>
+                <div className={styles.teamAvatarWrap}>
+                  <Image
+                    src={member.photo}
+                    alt={`Portrait of ${member.name}`}
+                    width={96}
+                    height={96}
+                    className={styles.teamAvatar}
+                  />
                 </div>
+                <h4 className={styles.teamName}>{member.name}</h4>
+                <div className={styles.teamRole}>{member.role}</div>
+                <p className={styles.teamBio}>{member.bio}</p>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -648,8 +691,9 @@ export function LandingPage() {
                 <span style={{ fontWeight: 600, fontSize: 16 }}>Faculytics</span>
               </div>
               <p>
-                Faculty evaluation insights for academic teams — built by CtrlAltElite for
-                universities in the Philippines.
+                An undergraduate thesis project by four computing students at the University of Cebu
+                — exploring sentiment analysis and topic modeling on Filipino student feedback. Not
+                a commercial product.
               </p>
             </div>
             <div className={styles.footerCol}>

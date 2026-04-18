@@ -416,62 +416,6 @@
   line-height: 1.4;
 }
 
-/* ===== Testimonial ===== */
-.testimonialWrap {
-  padding: 100px 0;
-}
-.testimonial {
-  max-width: 820px;
-  margin: 0 auto;
-  text-align: center;
-}
-.testimonialQuote {
-  font-family: var(--font-playfair);
-  font-style: italic;
-  font-size: clamp(24px, 3vw, 34px);
-  line-height: 1.35;
-  font-weight: 500;
-  margin: 0 0 30px;
-  color: var(--foreground);
-  text-wrap: balance;
-}
-.testimonialQuote .open,
-.testimonialQuote .close {
-  color: var(--brand-blue);
-}
-.testimonialAuthor {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-}
-.testimonialAvatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    var(--brand-blue),
-    color-mix(in oklab, var(--brand-blue) 60%, black)
-  );
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 16px;
-}
-.testimonialWho {
-  text-align: left;
-}
-.testimonialName {
-  font-weight: 600;
-  font-size: 14px;
-}
-.testimonialRole {
-  font-size: 13px;
-  color: var(--muted-foreground);
-}
-
 /* ===== Workflow ===== */
 .workflow {
   background: linear-gradient(
@@ -819,13 +763,125 @@
   margin: 0;
 }
 
+/* ===== Team ===== */
+.team {
+  padding: 100px 0;
+}
+.teamEyebrow {
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brand-blue);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.teamTitle {
+  font-family: var(--font-playfair);
+  font-size: clamp(32px, 3.5vw, 44px);
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+  margin: 0 auto 16px;
+  max-width: 700px;
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+.teamSub {
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: 16px;
+  max-width: 640px;
+  margin: 0 auto 56px;
+  line-height: 1.6;
+}
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.teamCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 22px;
+  text-align: center;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+.teamCard:hover {
+  border-color: color-mix(in oklab, var(--brand-blue) 40%, var(--border));
+  transform: translateY(-2px);
+}
+.teamAvatarWrap {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--brand-blue) 10%, var(--muted));
+  border: 2px solid color-mix(in oklab, var(--brand-blue) 20%, var(--border));
+}
+.teamAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.teamName {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  line-height: 1.25;
+  color: var(--foreground);
+}
+.teamRole {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 12px;
+}
+.teamBio {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ===== Thesis badge (hero) ===== */
+.thesisBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--brand-yellow) 25%, white);
+  border: 1px solid color-mix(in oklab, var(--brand-yellow) 45%, white);
+  color: #8a6a08;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-left: 10px;
+}
+
+/* ===== Responsive team ===== */
+@media (max-width: 960px) {
+  .teamGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* ===== CTA ===== */
 .cta {
   padding: 100px 0;
 }
 .ctaInner {
-  background: var(--foreground);
-  color: var(--background);
+  background: oklch(0.145 0 0);
+  color: oklch(0.985 0 0);
   border-radius: 28px;
   padding: 80px 60px;
   text-align: center;
