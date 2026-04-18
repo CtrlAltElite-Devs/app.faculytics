@@ -7,6 +7,7 @@ import type { AttentionFlagDto, AttentionItemDto } from "@/features/faculty-anal
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { buildScopedFacultyAnalysisHref } from "@/features/faculty-analytics/lib/faculty-analysis-routes";
 import { cn } from "@/lib/utils";
 
 type ScopedAttentionCardProps = {
@@ -15,6 +16,8 @@ type ScopedAttentionCardProps = {
   hasAnalyticsData: boolean;
   scopeLabel: "Campus" | "Department" | "Program";
   facultiesHref: string;
+  semesterId: string;
+  semesterLabel: string;
 };
 
 function getAttentionScopeCopy(scopeLabel: ScopedAttentionCardProps["scopeLabel"]) {
@@ -93,6 +96,8 @@ export function ScopedAttentionCard({
   hasAnalyticsData,
   scopeLabel,
   facultiesHref,
+  semesterId,
+  semesterLabel,
 }: ScopedAttentionCardProps) {
   const topItems = items.slice(0, 5);
 
@@ -122,6 +127,13 @@ export function ScopedAttentionCard({
           <div className="space-y-3">
             {topItems.map((item) => {
               const primaryFlag = getPrimaryFlag(item.flags);
+              const analysisHref = buildScopedFacultyAnalysisHref({
+                facultyId: item.facultyId,
+                facultyName: item.facultyName,
+                semesterId,
+                semesterLabel,
+                scopeLabel,
+              });
 
               return (
                 <div
@@ -144,8 +156,8 @@ export function ScopedAttentionCard({
                         size="sm"
                         className="h-auto px-0 py-0 font-sans text-brand-blue hover:text-brand-blue"
                       >
-                        <Link href={facultiesHref}>
-                          View List
+                        <Link href={analysisHref}>
+                          View Faculty
                           <ArrowRight className="size-4" />
                         </Link>
                       </Button>

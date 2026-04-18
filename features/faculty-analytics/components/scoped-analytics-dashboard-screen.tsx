@@ -213,6 +213,8 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
                   hasAnalyticsData={overview?.lastRefreshedAt !== null}
                   scopeLabel={scopeLabel}
                   facultiesHref={facultiesHref}
+                  semesterId={selectedSemesterId ?? ""}
+                  semesterLabel={selectedSemesterLabel}
                 />
               )}
             </div>
