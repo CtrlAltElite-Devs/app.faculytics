@@ -1,6 +1,12 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  SENTIMENT_LABEL,
+  SENTIMENT_RING_ACTIVE_CLASS,
+  SENTIMENT_RING_HOVER_CLASS,
+  SENTIMENT_SOLID_CLASS,
+} from "@/features/faculty-analytics/lib/sentiment-colors";
 import { cn } from "@/lib/utils";
 import type { SentimentDistributionDto, SentimentLabel } from "@/features/faculty-analytics/types";
 
@@ -8,30 +14,6 @@ type SentimentStackedBarProps = {
   distribution: SentimentDistributionDto;
   activeSentiment: SentimentLabel | null;
   onSegmentClick: (sentiment: SentimentLabel | null) => void;
-};
-
-const SEGMENT_STYLES: Record<
-  SentimentLabel,
-  { fill: string; ringActive: string; ringInactive: string; label: string }
-> = {
-  positive: {
-    fill: "bg-emerald-500",
-    ringActive: "ring-2 ring-emerald-600 ring-offset-1",
-    ringInactive: "hover:ring-2 hover:ring-emerald-400/60",
-    label: "Positive",
-  },
-  neutral: {
-    fill: "bg-muted-foreground/40",
-    ringActive: "ring-2 ring-muted-foreground ring-offset-1",
-    ringInactive: "hover:ring-2 hover:ring-muted-foreground/60",
-    label: "Neutral",
-  },
-  negative: {
-    fill: "bg-rose-500",
-    ringActive: "ring-2 ring-rose-600 ring-offset-1",
-    ringInactive: "hover:ring-2 hover:ring-rose-400/60",
-    label: "Negative",
-  },
 };
 
 const SEGMENT_ORDER: SentimentLabel[] = ["positive", "neutral", "negative"];
@@ -68,7 +50,6 @@ export function SentimentStackedBar({
               const count = distribution[sentiment];
               if (count === 0) return null;
               const widthPct = (count / total) * 100;
-              const style = SEGMENT_STYLES[sentiment];
               const isActive = activeSentiment === sentiment;
 
               return (
@@ -78,13 +59,15 @@ export function SentimentStackedBar({
                   onClick={() => onSegmentClick(isActive ? null : sentiment)}
                   className={cn(
                     "h-full transition-all",
-                    style.fill,
-                    isActive ? style.ringActive : style.ringInactive,
+                    SENTIMENT_SOLID_CLASS[sentiment],
+                    isActive
+                      ? SENTIMENT_RING_ACTIVE_CLASS[sentiment]
+                      : SENTIMENT_RING_HOVER_CLASS[sentiment],
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                     "cursor-pointer"
                   )}
                   style={{ width: `${widthPct}%` }}
-                  aria-label={`Filter comments to ${style.label.toLowerCase()} sentiment, ${count} submissions`}
+                  aria-label={`Filter comments to ${SENTIMENT_LABEL[sentiment].toLowerCase()} sentiment, ${count} submissions`}
                   aria-pressed={isActive}
                 />
               );
@@ -93,16 +76,18 @@ export function SentimentStackedBar({
         )}
 
         <dl className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 font-sans text-xs tabular-nums text-muted-foreground">
-          {SEGMENT_ORDER.map((sentiment) => {
-            const style = SEGMENT_STYLES[sentiment];
-            return (
-              <div key={sentiment} className="flex items-center gap-2">
-                <span className={cn("inline-block h-2.5 w-2.5 rounded-full", style.fill)} />
-                <dt className="font-medium text-foreground">{style.label}</dt>
-                <dd>{distribution[sentiment]}</dd>
-              </div>
-            );
-          })}
+          {SEGMENT_ORDER.map((sentiment) => (
+            <div key={sentiment} className="flex items-center gap-2">
+              <span
+                className={cn(
+                  "inline-block h-2.5 w-2.5 rounded-full",
+                  SENTIMENT_SOLID_CLASS[sentiment]
+                )}
+              />
+              <dt className="font-medium text-foreground">{SENTIMENT_LABEL[sentiment]}</dt>
+              <dd>{distribution[sentiment]}</dd>
+            </div>
+          ))}
         </dl>
       </CardContent>
     </Card>

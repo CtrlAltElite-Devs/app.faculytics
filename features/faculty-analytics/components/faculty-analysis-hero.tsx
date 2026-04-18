@@ -9,6 +9,10 @@ import {
   formatFacultyReportScore,
   getFacultyReportInterpretationTextClass,
 } from "@/features/faculty-analytics/lib/faculty-report-detail";
+import {
+  SENTIMENT_LABEL,
+  SENTIMENT_SOLID_CLASS,
+} from "@/features/faculty-analytics/lib/sentiment-colors";
 import { cn } from "@/lib/utils";
 import type {
   PipelineStatus,
@@ -32,18 +36,6 @@ type FacultyAnalysisHeroProps = {
   onClearSentiment: () => void;
   onClearTheme: () => void;
   onClearAll: () => void;
-};
-
-const SENTIMENT_SWATCH: Record<SentimentLabel, string> = {
-  positive: "bg-emerald-600",
-  neutral: "bg-muted-foreground/50",
-  negative: "bg-rose-600",
-};
-
-const SENTIMENT_LABEL: Record<SentimentLabel, string> = {
-  positive: "Positive",
-  neutral: "Neutral",
-  negative: "Negative",
 };
 
 const SEGMENT_ORDER: SentimentLabel[] = ["positive", "neutral", "negative"];
@@ -163,7 +155,7 @@ export function FacultyAnalysisHero({
                     onClick={() => onSentimentClick(isActive ? null : sentiment)}
                     className={cn(
                       "h-full transition-all hover:brightness-110",
-                      SENTIMENT_SWATCH[sentiment],
+                      SENTIMENT_SOLID_CLASS[sentiment],
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                       isActive ? "brightness-110 ring-2 ring-ring ring-offset-1" : "",
                       sentimentFilter && !isActive ? "opacity-40" : ""
@@ -186,7 +178,7 @@ export function FacultyAnalysisHero({
                       <span
                         className={cn(
                           "inline-block h-2 w-2 rounded-full",
-                          SENTIMENT_SWATCH[sentiment]
+                          SENTIMENT_SOLID_CLASS[sentiment]
                         )}
                       />
                       <span>{SENTIMENT_LABEL[sentiment]}</span>
@@ -233,7 +225,7 @@ export function FacultyAnalysisHero({
               <span
                 className={cn(
                   "inline-block h-1.5 w-1.5 rounded-full",
-                  SENTIMENT_SWATCH[sentimentFilter]
+                  SENTIMENT_SOLID_CLASS[sentimentFilter]
                 )}
               />
               <span>Sentiment · {SENTIMENT_LABEL[sentimentFilter]}</span>
