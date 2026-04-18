@@ -23,7 +23,7 @@ type FacultyReportHeaderProps = {
   }>;
   isCourseLoading: boolean;
   onCourseChange: (value: string) => void;
-  onExport: () => void;
+  onExport?: () => void;
 };
 
 export function FacultyReportHeader({
@@ -84,14 +84,16 @@ export function FacultyReportHeader({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button
-          type="button"
-          variant="brand"
-          className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
-          onClick={onExport}
-        >
-          Export PDF
-        </Button>
+        {onExport ? (
+          <Button
+            type="button"
+            variant="brand"
+            className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
+            onClick={onExport}
+          >
+            Export PDF
+          </Button>
+        ) : null}
       </div>
     </nav>
   );
