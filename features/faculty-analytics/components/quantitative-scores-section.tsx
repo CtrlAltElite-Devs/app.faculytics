@@ -4,9 +4,7 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { FacultyReportDimensionRadarChart } from "@/features/faculty-analytics/components/faculty-report-dimension-radar-chart";
-import { FacultyReportImpactScatterChart } from "@/features/faculty-analytics/components/faculty-report-impact-scatter-chart";
 import { FacultyReportRatingDistributionChart } from "@/features/faculty-analytics/components/faculty-report-rating-distribution-chart";
-import { FacultyReportSectionPerformanceChart } from "@/features/faculty-analytics/components/faculty-report-section-performance-chart";
 import { FacultyReportSections } from "@/features/faculty-analytics/components/faculty-report-sections";
 import { cn } from "@/lib/utils";
 import type {
@@ -34,23 +32,12 @@ function ChartsStack({
   sections: FacultyReportSectionDto[];
   dimensions: FacultyReportDimensionDto[];
 }) {
-  const hasRadar = dimensions.length >= 3;
-
   return (
     <div className="space-y-6">
-      <FacultyReportSectionPerformanceChart sections={sections} />
-      <div
-        className={cn(
-          "grid gap-6",
-          hasRadar ? "lg:grid-cols-2" : "grid-cols-1",
-        )}
-      >
-        {hasRadar ? (
-          <FacultyReportDimensionRadarChart dimensions={dimensions} />
-        ) : null}
-        <FacultyReportImpactScatterChart sections={sections} />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <FacultyReportDimensionRadarChart dimensions={dimensions} />
+        <FacultyReportRatingDistributionChart sections={sections} />
       </div>
-      <FacultyReportRatingDistributionChart sections={sections} />
       <FacultyReportSections sections={sections} />
     </div>
   );
