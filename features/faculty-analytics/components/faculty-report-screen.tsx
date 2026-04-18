@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { APP_ROLES } from "@/constants/roles";
+import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
 import { FeedbackTab } from "@/features/faculty-analytics/components/feedback-tab";
 import { HeadlineMetricsStrip } from "@/features/faculty-analytics/components/headline-metrics-strip";
@@ -43,6 +45,8 @@ const SENTIMENT_READY_STATUSES: ReadonlySet<PipelineStatus> = new Set<PipelineSt
 export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
+  const { activeRole } = useActiveRole();
+  const showPipelineTrigger = activeRole !== APP_ROLES.CAMPUS_HEAD;
 
   const pipelineScope = useMemo(
     () => ({
@@ -184,7 +188,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected filters." />
       ) : (
         <>
-          {viewModel.semesterId ? (
+          {showPipelineTrigger && viewModel.semesterId ? (
             <PipelineTriggerCard scope={pipelineScope} pipeline={latestPipeline} />
           ) : null}
 

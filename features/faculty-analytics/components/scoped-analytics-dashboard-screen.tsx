@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 
-import { useMe } from "@/features/auth/hooks/use-me";
 import { ScopedDashboardHeader } from "@/features/faculty-analytics/components/scoped-dashboard-header";
 import { ScopedAttentionCard } from "@/features/faculty-analytics/components/scoped-attention-card";
 import { ScopedOverallSentimentBarChart } from "@/features/faculty-analytics/components/scoped-charts";
@@ -15,7 +14,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/use-latest-pipeline-for-scope";
 import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
 import { usePipelineStatus } from "@/features/faculty-analytics/hooks/use-pipeline-status";
-import type { PipelineScopeIds } from "@/features/faculty-analytics/types";
 import {
   aggregateThemes,
   type RankedTheme,
@@ -98,7 +96,12 @@ function EmptyInsightsPlaceholder() {
 }
 
 export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: ScopeLabel }) {
+  const isCampusScope = scopeLabel === "Campus";
   const {
+    departments,
+    selectedDepartmentId,
+    selectedDepartmentLabel,
+    setSelectedDepartmentId,
     semesters,
     programs,
     selectedSemesterId,
@@ -116,44 +119,24 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
     isAttentionLoading,
     isError,
     retry,
-  } = useScopedAnalyticsDashboardViewModel();
-
-  // FAC-135 Phase C: for LIST queries, scopeType/scopeId are optional — the
-  // backend resolves the DEAN/CAMPUS_HEAD's scope automatically. For CREATE
-  // we need an explicit scope (see `campusPipelineScope` below).
-  const meQuery = useMe();
-  const campusId = meQuery.data?.campus?.id ?? null;
-
+  } = useScopedAnalyticsDashboardViewModel(scopeLabel);
   const pipelineQuery = useMemo(
     () => ({ semesterId: selectedSemesterId ?? "" }),
     [selectedSemesterId]
   );
   const { latestPipeline } = useLatestPipelineForScope(pipelineQuery, {
-    enabled: Boolean(selectedSemesterId),
+    enabled: !isCampusScope && Boolean(selectedSemesterId),
   });
-
-  // FAC-135 Phase C (Task C11): on Campus Head dashboards only, provide a
-  // CAMPUS scope for the trigger card so "Run campus-wide themes" posts the
-  // correct canonical shape. Dean dashboard suppresses the trigger card —
-  // AC26 ("Dean-on-/dean/dashboard must NOT see this button").
-  const campusPipelineScope: PipelineScopeIds | null = useMemo(() => {
-    if (scopeLabel !== "Campus") return null;
-    if (!selectedSemesterId || !campusId) return null;
-    return {
-      semesterId: selectedSemesterId,
-      scopeType: "CAMPUS",
-      scopeId: campusId,
-    };
-  }, [scopeLabel, selectedSemesterId, campusId]);
-  // Poll status at the screen level so themes/recs gating reacts to the
-  // live terminal transition — without this, `latestPipeline.status` comes
-  // from the stale list cache and the completed-state UI doesn't appear
-  // until the next list refetch or page reload.
   const pipelineStatusQuery = usePipelineStatus(latestPipeline?.id ?? null, {
-    enabled: Boolean(latestPipeline?.id),
+    enabled: !isCampusScope && Boolean(latestPipeline?.id),
   });
-  const liveStatus = pipelineStatusQuery.data?.status ?? latestPipeline?.status;
-  const recommendationsQuery = usePipelineRecommendations(latestPipeline?.id ?? null, liveStatus);
+  const liveStatus = isCampusScope
+    ? undefined
+    : (pipelineStatusQuery.data?.status ?? latestPipeline?.status);
+  const recommendationsQuery = usePipelineRecommendations(
+    isCampusScope ? null : (latestPipeline?.id ?? null),
+    liveStatus
+  );
   const themes = useMemo(
     () =>
       recommendationsQuery.data
@@ -161,8 +144,10 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
         : [],
     [recommendationsQuery.data]
   );
-  const showRecommendationPanels = liveStatus === "COMPLETED" && themes.length > 0;
-  const showEmptyInsightsPlaceholder = Boolean(selectedSemesterId) && !showRecommendationPanels;
+  const showRecommendationPanels =
+    !isCampusScope && liveStatus === "COMPLETED" && themes.length > 0;
+  const showEmptyInsightsPlaceholder =
+    !isCampusScope && Boolean(selectedSemesterId) && !showRecommendationPanels;
 
   const { scopeLower, facultiesHref } = SCOPE_METADATA[scopeLabel];
   const emptyStateDescription =
@@ -181,6 +166,10 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
       <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
         <ScopedDashboardHeader
           scopeLabel={scopeLabel}
+          departments={departments}
+          selectedDepartmentId={selectedDepartmentId}
+          selectedDepartmentLabel={selectedDepartmentLabel}
+          onDepartmentChange={setSelectedDepartmentId}
           semesters={semesters}
           programs={programs}
           selectedSemesterId={selectedSemesterId}
@@ -192,12 +181,11 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
           lastUpdatedLabel={lastUpdatedLabel}
         />
 
-        {/* FAC-135 Phase C (Task C11 / AC26): campus-wide trigger only on
-            Campus Head dashboard. Dean dashboard intentionally omits this —
-            Dean-level pipelines are not supported under the current scope
-            tiers and trying to trigger one would 400 on the new DTO. */}
-        {campusPipelineScope ? (
-          <PipelineTriggerCard scope={campusPipelineScope} pipeline={latestPipeline} />
+        {!isCampusScope && selectedSemesterId ? (
+          <PipelineTriggerCard
+            scope={{ semesterId: selectedSemesterId }}
+            pipeline={latestPipeline}
+          />
         ) : null}
 
         {semesters.length === 0 ? (
@@ -210,15 +198,23 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
           <>
             <ScopedMetricsGrid summary={summary} />
 
-            <div className="grid gap-6 min-[900px]:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]">
+            <div
+              className={
+                isCampusScope
+                  ? "grid gap-6"
+                  : "grid gap-6 min-[900px]:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]"
+              }
+            >
               <ScopedOverallSentimentBarChart overallSentiment={overallSentiment} />
-              <ScopedAttentionCard
-                items={attentionItems}
-                isLoading={isAttentionLoading}
-                hasAnalyticsData={overview?.lastRefreshedAt !== null}
-                scopeLabel={scopeLabel}
-                facultiesHref={facultiesHref}
-              />
+              {isCampusScope ? null : (
+                <ScopedAttentionCard
+                  items={attentionItems}
+                  isLoading={isAttentionLoading}
+                  hasAnalyticsData={overview?.lastRefreshedAt !== null}
+                  scopeLabel={scopeLabel}
+                  facultiesHref={facultiesHref}
+                />
+              )}
             </div>
 
             {showRecommendationPanels ? (
