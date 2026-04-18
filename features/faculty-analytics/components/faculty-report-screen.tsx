@@ -155,9 +155,9 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const hasAnalyticsData = hasFacultyReportAnalyticsData(viewModel.report, viewModel.commentsCount);
 
   return (
-    <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
-      {/* Title row — mirrors the dashboard / faculty-list header pattern */}
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+    <section className="max-w-full space-y-6 overflow-x-clip px-1 pb-4 md:p-8">
+      {/* Title row — sticky so faculty context persists while scrolling */}
+      <div className="sticky top-0 z-20 -mx-1 flex flex-col gap-4 border-b border-border/40 bg-background/80 px-4 py-3 backdrop-blur-md supports-[backdrop-filter]:bg-background/75 md:-mx-8 md:px-8 xl:flex-row xl:items-center xl:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
             <Avatar size="lg" className="border border-border/70">
@@ -171,14 +171,12 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                 {getInitials(viewModel.report.faculty.name)}
               </AvatarFallback>
             </Avatar>
-            <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1
+              className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl"
+            >
               {viewModel.report.faculty.name}
             </h1>
           </div>
-          <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
-            Review per-question faculty evaluation results for{" "}
-            <span className="font-medium text-foreground">{viewModel.semesterLabel}</span>.
-          </p>
         </div>
 
         <FacultyReportHeader
@@ -192,6 +190,11 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
           onExport={canExportReport ? () => setIsExportDialogOpen(true) : undefined}
         />
       </div>
+
+      <p className="-mt-2 max-w-3xl text-sm text-muted-foreground">
+        Review per-question faculty evaluation results for{" "}
+        <span className="font-medium text-foreground">{viewModel.semesterLabel}</span>.
+      </p>
 
       <HeadlineMetricsStrip
         overallRating={viewModel.report.overallRating}
