@@ -43,17 +43,17 @@ const FLAG_STYLES: Record<
   declining_trend: {
     label: "Declining Trend",
     icon: TrendingDown,
-    className: "border-amber-500/30 bg-amber-500/10 text-amber-200",
+    className: "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-200",
   },
   quant_qual_gap: {
     label: "Quant-Qual Gap",
     icon: Waves,
-    className: "border-sky-500/30 bg-sky-500/10 text-sky-200",
+    className: "border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-200",
   },
   low_coverage: {
     label: "Low Coverage",
     icon: AlertTriangle,
-    className: "border-rose-500/30 bg-rose-500/10 text-rose-200",
+    className: "border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-200",
   },
 };
 
