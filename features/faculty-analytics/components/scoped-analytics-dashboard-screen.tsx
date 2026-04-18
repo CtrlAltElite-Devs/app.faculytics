@@ -99,7 +99,7 @@ function EmptyRecommendationsPlaceholder() {
 
 export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: ScopeLabel }) {
   const isCampusScope = scopeLabel === "Campus";
-  const showPipelineTrigger = scopeLabel === "Department";
+  const supportsAggregatePipeline = scopeLabel === "Department";
   const {
     departments,
     selectedDepartmentId,
@@ -128,16 +128,16 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
     [selectedSemesterId]
   );
   const { latestPipeline } = useLatestPipelineForScope(pipelineQuery, {
-    enabled: !isCampusScope && Boolean(selectedSemesterId),
+    enabled: supportsAggregatePipeline && Boolean(selectedSemesterId),
   });
   const pipelineStatusQuery = usePipelineStatus(latestPipeline?.id ?? null, {
-    enabled: !isCampusScope && Boolean(latestPipeline?.id),
+    enabled: supportsAggregatePipeline && Boolean(latestPipeline?.id),
   });
-  const liveStatus = isCampusScope
+  const liveStatus = !supportsAggregatePipeline
     ? undefined
     : (pipelineStatusQuery.data?.status ?? latestPipeline?.status);
   const recommendationsQuery = usePipelineRecommendations(
-    isCampusScope ? null : (latestPipeline?.id ?? null),
+    supportsAggregatePipeline ? (latestPipeline?.id ?? null) : null,
     liveStatus
   );
   const themes = useMemo(
@@ -148,9 +148,9 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
     [recommendationsQuery.data]
   );
   const showRecommendationPanels =
-    !isCampusScope && liveStatus === "COMPLETED" && themes.length > 0;
+    supportsAggregatePipeline && liveStatus === "COMPLETED" && themes.length > 0;
   const showEmptyInsightsPlaceholder =
-    !isCampusScope && Boolean(selectedSemesterId) && !showRecommendationPanels;
+    supportsAggregatePipeline && Boolean(selectedSemesterId) && !showRecommendationPanels;
 
   const { scopeLower, facultiesHref } = SCOPE_METADATA[scopeLabel];
   const emptyStateDescription =
@@ -184,7 +184,7 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
           lastUpdatedLabel={lastUpdatedLabel}
         />
 
-        {showPipelineTrigger && selectedSemesterId ? (
+        {supportsAggregatePipeline && selectedSemesterId ? (
           <PipelineTriggerCard
             scope={{ semesterId: selectedSemesterId }}
             pipeline={latestPipeline}
@@ -209,7 +209,7 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
               }
             >
               <ScopedOverallSentimentBarChart overallSentiment={overallSentiment} />
-              {isCampusScope ? null : showRecommendationPanels ? (
+              {!supportsAggregatePipeline ? null : showRecommendationPanels ? (
                 <ThemesRankedList themes={themes} />
               ) : showEmptyInsightsPlaceholder ? (
                 <EmptyThemesPlaceholder />
