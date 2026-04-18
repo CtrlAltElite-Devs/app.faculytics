@@ -99,6 +99,7 @@ function EmptyRecommendationsPlaceholder() {
 
 export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: ScopeLabel }) {
   const isCampusScope = scopeLabel === "Campus";
+  const showPipelineTrigger = scopeLabel === "Department";
   const {
     departments,
     selectedDepartmentId,
@@ -183,7 +184,7 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
           lastUpdatedLabel={lastUpdatedLabel}
         />
 
-        {!isCampusScope && selectedSemesterId ? (
+        {showPipelineTrigger && selectedSemesterId ? (
           <PipelineTriggerCard
             scope={{ semesterId: selectedSemesterId }}
             pipeline={latestPipeline}
