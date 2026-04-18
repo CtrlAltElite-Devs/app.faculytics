@@ -32,8 +32,11 @@ export function ScopedFacultyListScreen({
 }: ScopedFacultyListScreenProps) {
   const [isBatchExportDialogOpen, setIsBatchExportDialogOpen] = useState(false);
   const {
+    departments,
     semesters,
     programs,
+    selectedDepartmentId,
+    selectedDepartmentLabel,
     selectedSemesterId,
     selectedSemesterLabel,
     selectedProgramId,
@@ -44,12 +47,13 @@ export function ScopedFacultyListScreen({
     isLoading,
     isError,
     retry,
+    setSelectedDepartmentId,
     setSelectedSemesterId,
     setSelectedProgramId,
     setSearchValue,
     setCurrentPage,
     setRowsPerPage,
-  } = useScopedFacultyAnalyticsListViewModel({ allowAllPrograms });
+  } = useScopedFacultyAnalyticsListViewModel({ scopeLabel, allowAllPrograms });
   const selectedProgramValue = selectedProgramId ?? (allowAllPrograms ? ALL_PROGRAMS_VALUE : "");
 
   return (
@@ -63,18 +67,18 @@ export function ScopedFacultyListScreen({
             All faculties for the selected semester.
           </p>
         </div>
-        <div className="flex w-full flex-col gap-3 xl:max-w-5xl">
-          <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center md:justify-end">
+        <div className="w-full xl:max-w-6xl">
+          <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[auto_minmax(18rem,1fr)_13rem_13rem_13rem]">
             <Button
               type="button"
               variant="brand"
-              className="w-full px-4 py-2.5 font-sans text-sm md:w-auto md:shrink-0"
+              className="w-full px-4 py-2.5 font-sans text-sm xl:w-auto"
               onClick={() => setIsBatchExportDialogOpen(true)}
               disabled={!selectedSemesterId}
             >
               Batch Export PDF
             </Button>
-            <div className="relative w-full md:min-w-[18rem] md:flex-1">
+            <div className="relative w-full xl:min-w-[18rem]">
               <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={searchValue}
@@ -84,11 +88,44 @@ export function ScopedFacultyListScreen({
                 aria-label="Search faculty name"
               />
             </div>
+            {scopeLabel === "Campus" ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm"
+                    disabled={departments.length === 0}
+                  >
+                    <span className="truncate">{selectedDepartmentLabel}</span>
+                    <ChevronDown className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+                >
+                  <DropdownMenuRadioGroup
+                    value={selectedDepartmentId ?? ""}
+                    onValueChange={setSelectedDepartmentId}
+                  >
+                    {departments.map((department) => (
+                      <DropdownMenuRadioItem
+                        key={department.id || "all-departments"}
+                        value={department.id}
+                        className="font-sans text-sm"
+                      >
+                        {department.label}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-[13rem] md:shrink-0"
+                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm"
                   disabled={programs.length === 0}
                 >
                   <span className="truncate">{selectedProgramLabel}</span>
@@ -119,7 +156,7 @@ export function ScopedFacultyListScreen({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-[13rem] md:shrink-0"
+                  className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm"
                   disabled={semesters.length === 0}
                 >
                   <span className="truncate">{selectedSemesterLabel}</span>
@@ -183,6 +220,8 @@ export function ScopedFacultyListScreen({
         onOpenChange={setIsBatchExportDialogOpen}
         semesterId={selectedSemesterId}
         semesterLabel={selectedSemesterLabel}
+        departmentId={scopeLabel === "Campus" ? selectedDepartmentId : null}
+        departmentLabel={scopeLabel === "Campus" ? selectedDepartmentLabel : "All Departments"}
         programId={selectedProgramId}
         programs={programs.map((program) => ({
           id: program.id,

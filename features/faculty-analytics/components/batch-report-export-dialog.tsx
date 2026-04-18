@@ -53,6 +53,8 @@ type BatchReportExportDialogProps = {
   onOpenChange: (open: boolean) => void;
   semesterId: string | null;
   semesterLabel: string;
+  departmentId: string | null;
+  departmentLabel: string;
   programId: string | null;
   programs: Array<{
     id: string | null;
@@ -65,6 +67,8 @@ export function BatchReportExportDialog({
   onOpenChange,
   semesterId,
   semesterLabel,
+  departmentId,
+  departmentLabel,
   programId,
   programs,
 }: BatchReportExportDialogProps) {
@@ -125,6 +129,7 @@ export function BatchReportExportDialog({
       const response = await generateBatchReportMutation.mutateAsync({
         semesterId,
         questionnaireTypeCode: effectiveQuestionnaireTypeCode,
+        departmentId: departmentId ?? undefined,
         programId: selectedProgramId ?? undefined,
       });
 
@@ -181,6 +186,10 @@ export function BatchReportExportDialog({
               </div>
               {batchId ? (
                 <>
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-muted-foreground">Department</dt>
+                    <dd className="text-right font-medium">{departmentLabel}</dd>
+                  </div>
                   <div className="flex items-center justify-between gap-4">
                     <dt className="text-muted-foreground">Program</dt>
                     <dd className="text-right font-medium">{selectedProgramLabel}</dd>

@@ -108,6 +108,7 @@ export type AttentionListQuery = {
 
 export type FacultyListQuery = {
   semesterId: string;
+  departmentId?: string;
   programId?: string;
   search?: string;
   page?: number;
