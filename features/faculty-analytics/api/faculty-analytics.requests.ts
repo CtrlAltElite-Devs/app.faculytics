@@ -7,6 +7,7 @@ import type {
   BatchStatusResponseDto,
   DepartmentOverviewQuery,
   DepartmentOverviewResponseDto,
+  DepartmentListResponseDto,
   FacultyReportCommentsQuery,
   FacultyReportCommentsResponseDto,
   FacultyReportQuery,
@@ -18,6 +19,7 @@ import type {
   GenerateSingleReportRequest,
   GenerateSingleReportResponse,
   ListProgramsQuery,
+  ListDepartmentsQuery,
   ListSemestersQuery,
   ProgramListResponseDto,
   QualitativeSummaryQuery,
@@ -151,6 +153,14 @@ export async function fetchFacultyEnrollments({
 
 export async function fetchProgramOptions(params: ListProgramsQuery) {
   const response = await apiClient.get<ProgramListResponseDto>(Endpoints.curriculumPrograms, {
+    params,
+  });
+
+  return response.data;
+}
+
+export async function fetchDepartmentOptions(params: ListDepartmentsQuery) {
+  const response = await apiClient.get<DepartmentListResponseDto>(Endpoints.curriculumDepartments, {
     params,
   });
 
