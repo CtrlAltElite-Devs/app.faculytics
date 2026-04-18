@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 
 import { useAnsweredCountFor, useHasQualitativeContent } from "./questionnaire-form-store";
@@ -13,13 +14,27 @@ type QuestionnaireFormProgressProps = {
   trailing?: React.ReactNode;
   /** When provided, displays the faculty being evaluated above the progress row. */
   facultyName?: string;
+  /** Optional profile picture URL for the faculty being evaluated. */
+  facultyProfilePicture?: string | null;
 };
+
+function getInitials(fullName: string) {
+  return (
+    fullName
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "F"
+  );
+}
 
 function QuestionnaireFormProgressBase({
   requiredIds,
   qualitativeRequired,
   trailing,
   facultyName,
+  facultyProfilePicture,
 }: QuestionnaireFormProgressProps) {
   const answeredCount = useAnsweredCountFor(requiredIds);
   const hasQualitativeContent = useHasQualitativeContent();
@@ -32,13 +47,23 @@ function QuestionnaireFormProgressBase({
   return (
     <div className="sticky top-0 z-20 -mx-4 space-y-2 border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:mx-0">
       {facultyName && (
-        <div className="flex flex-col">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground sm:text-[0.68rem]">
-            Evaluating
-          </span>
-          <span className="truncate font-playfair text-sm font-semibold leading-tight text-foreground sm:text-base">
-            {facultyName}
-          </span>
+        <div className="flex items-center gap-2.5">
+          <Avatar size="sm" className="border border-border/70">
+            {facultyProfilePicture ? (
+              <AvatarImage src={facultyProfilePicture} alt={facultyName} />
+            ) : null}
+            <AvatarFallback className="bg-slate-100 text-[0.65rem] font-semibold text-slate-700">
+              {getInitials(facultyName)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex min-w-0 flex-col">
+            <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground sm:text-[0.68rem]">
+              Evaluating
+            </span>
+            <span className="truncate font-playfair text-sm font-semibold leading-tight text-foreground sm:text-base">
+              {facultyName}
+            </span>
+          </div>
         </div>
       )}
       <div className="flex items-center justify-between gap-3 text-sm">

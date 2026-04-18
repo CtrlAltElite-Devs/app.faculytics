@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { APP_ROLES, type AppRole } from "@/constants/roles";
@@ -48,6 +49,17 @@ const REPORT_EXPORT_ROLES: ReadonlySet<AppRole> = new Set([
   APP_ROLES.CHAIRPERSON,
   APP_ROLES.CAMPUS_HEAD,
 ]);
+
+function getInitials(fullName: string) {
+  return (
+    fullName
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "F"
+  );
+}
 
 export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
@@ -147,9 +159,22 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
       {/* Title row — mirrors the dashboard / faculty-list header pattern */}
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
-          <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-            {viewModel.report.faculty.name}
-          </h1>
+          <div className="flex items-center gap-3">
+            <Avatar size="lg" className="border border-border/70">
+              {viewModel.report.faculty.profilePicture ? (
+                <AvatarImage
+                  src={viewModel.report.faculty.profilePicture}
+                  alt={viewModel.report.faculty.name}
+                />
+              ) : null}
+              <AvatarFallback className="bg-slate-100 text-sm font-semibold text-slate-700">
+                {getInitials(viewModel.report.faculty.name)}
+              </AvatarFallback>
+            </Avatar>
+            <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
+              {viewModel.report.faculty.name}
+            </h1>
+          </div>
           <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
             Review per-question faculty evaluation results for{" "}
             <span className="font-medium text-foreground">{viewModel.semesterLabel}</span>.
