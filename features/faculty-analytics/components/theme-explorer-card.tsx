@@ -8,6 +8,11 @@ import { PaginationFooter } from "@/components/shared/pagination-footer";
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
 import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
 import { useFacultyReportComments } from "@/features/faculty-analytics/hooks/use-faculty-report-comments";
+import {
+  SENTIMENT_BADGE_CLASS,
+  SENTIMENT_LABEL,
+  SENTIMENT_SOLID_CLASS,
+} from "@/features/faculty-analytics/lib/sentiment-colors";
 import { themeRowAnchorId } from "@/features/faculty-analytics/lib/theme-anchor";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/lib/date";
@@ -29,32 +34,6 @@ type ThemeExplorerCardProps = {
   sentimentFilter: SentimentLabel | null;
   matchingAction: RecommendedActionDto | null;
   redactComments?: boolean;
-};
-
-const DOMINANT_ACCENT: Record<SentimentLabel, string> = {
-  negative: "bg-rose-600",
-  neutral: "bg-muted-foreground/50",
-  positive: "bg-emerald-600",
-};
-
-const SEGMENT_COLOR: Record<SentimentLabel, string> = {
-  negative: "bg-rose-600",
-  neutral: "bg-muted-foreground/50",
-  positive: "bg-emerald-600",
-};
-
-const SENTIMENT_LABEL: Record<SentimentLabel, string> = {
-  positive: "Positive",
-  neutral: "Neutral",
-  negative: "Negative",
-};
-
-const SENTIMENT_COMMENT_BADGE: Record<SentimentLabel, string> = {
-  positive:
-    "border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300",
-  neutral: "border-border bg-muted text-muted-foreground",
-  negative:
-    "border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300",
 };
 
 const PRIORITY_VARIANT: Record<
@@ -146,7 +125,7 @@ export function ThemeExplorerCard({
       {/* dominant-sentiment accent rail */}
       <div
         aria-hidden
-        className={cn("absolute left-0 top-0 h-full w-1", DOMINANT_ACCENT[dominant])}
+        className={cn("absolute left-0 top-0 h-full w-1", SENTIMENT_SOLID_CLASS[dominant])}
       />
 
       <button
@@ -179,7 +158,7 @@ export function ThemeExplorerCard({
                 s.count === 0 ? null : (
                   <span
                     key={s.key}
-                    className={cn("h-full", SEGMENT_COLOR[s.key])}
+                    className={cn("h-full", SENTIMENT_SOLID_CLASS[s.key])}
                     style={{ width: `${s.widthPct}%` }}
                     aria-label={`${SENTIMENT_LABEL[s.key]}: ${s.count}`}
                   />
@@ -188,15 +167,15 @@ export function ThemeExplorerCard({
             </div>
             <div className="flex gap-3 text-xs tabular-nums text-muted-foreground">
               <span className="flex items-center gap-1">
-                <span className={cn("h-1.5 w-1.5 rounded-full", SEGMENT_COLOR.negative)} />
+                <span className={cn("h-1.5 w-1.5 rounded-full", SENTIMENT_SOLID_CLASS.negative)} />
                 {theme.sentimentSplit.negative}
               </span>
               <span className="flex items-center gap-1">
-                <span className={cn("h-1.5 w-1.5 rounded-full", SEGMENT_COLOR.neutral)} />
+                <span className={cn("h-1.5 w-1.5 rounded-full", SENTIMENT_SOLID_CLASS.neutral)} />
                 {theme.sentimentSplit.neutral}
               </span>
               <span className="flex items-center gap-1">
-                <span className={cn("h-1.5 w-1.5 rounded-full", SEGMENT_COLOR.positive)} />
+                <span className={cn("h-1.5 w-1.5 rounded-full", SENTIMENT_SOLID_CLASS.positive)} />
                 {theme.sentimentSplit.positive}
               </span>
             </div>
@@ -304,7 +283,7 @@ export function ThemeExplorerCard({
                                         variant="outline"
                                         className={cn(
                                           "rounded-full px-2 py-0.5 text-[0.65rem] uppercase tracking-wider",
-                                          SENTIMENT_COMMENT_BADGE[c.sentiment]
+                                          SENTIMENT_BADGE_CLASS[c.sentiment]
                                         )}
                                       >
                                         {SENTIMENT_LABEL[c.sentiment]}
@@ -402,7 +381,7 @@ export function ThemeExplorerCard({
                                 <span
                                   className={cn(
                                     "inline-block h-2 w-2 rounded-full",
-                                    SEGMENT_COLOR[s]
+                                    SENTIMENT_SOLID_CLASS[s]
                                   )}
                                 />
                                 {SENTIMENT_LABEL[s]}
@@ -414,7 +393,7 @@ export function ThemeExplorerCard({
                             </div>
                             <div className="h-1 overflow-hidden rounded-full bg-muted">
                               <span
-                                className={cn("block h-full", SEGMENT_COLOR[s])}
+                                className={cn("block h-full", SENTIMENT_SOLID_CLASS[s])}
                                 style={{ width: `${pct}%` }}
                               />
                             </div>

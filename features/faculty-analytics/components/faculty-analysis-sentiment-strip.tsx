@@ -4,6 +4,10 @@ import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  SENTIMENT_LABEL,
+  SENTIMENT_SOLID_CLASS,
+} from "@/features/faculty-analytics/lib/sentiment-colors";
 import { cn } from "@/lib/utils";
 import type { SentimentDistributionDto, SentimentLabel } from "@/features/faculty-analytics/types";
 
@@ -15,18 +19,6 @@ type FacultyAnalysisSentimentStripProps = {
   onClearSentiment: () => void;
   onClearTheme: () => void;
   onClearAll: () => void;
-};
-
-const SWATCH: Record<SentimentLabel, string> = {
-  positive: "bg-emerald-600",
-  neutral: "bg-muted-foreground/50",
-  negative: "bg-rose-600",
-};
-
-const LABEL: Record<SentimentLabel, string> = {
-  positive: "Positive",
-  neutral: "Neutral",
-  negative: "Negative",
 };
 
 const ORDER: SentimentLabel[] = ["positive", "neutral", "negative"];
@@ -72,13 +64,13 @@ export function FacultyAnalysisSentimentStrip({
                   onClick={() => onSentimentClick(isActive ? null : s)}
                   className={cn(
                     "h-full transition-all hover:brightness-110",
-                    SWATCH[s],
+                    SENTIMENT_SOLID_CLASS[s],
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                     isActive ? "brightness-110 ring-2 ring-ring ring-offset-1" : "",
                     sentimentFilter && !isActive ? "opacity-40" : ""
                   )}
                   style={{ width: `${widthPct}%` }}
-                  aria-label={`Filter comments to ${LABEL[s].toLowerCase()} sentiment, ${count} submissions`}
+                  aria-label={`Filter comments to ${SENTIMENT_LABEL[s].toLowerCase()} sentiment, ${count} submissions`}
                   aria-pressed={isActive}
                 />
               );
@@ -91,8 +83,10 @@ export function FacultyAnalysisSentimentStrip({
               const pct = Math.round((count / total) * 100);
               return (
                 <div key={s} className="flex items-center gap-1.5">
-                  <span className={cn("inline-block h-2 w-2 rounded-full", SWATCH[s])} />
-                  <span>{LABEL[s]}</span>
+                  <span
+                    className={cn("inline-block h-2 w-2 rounded-full", SENTIMENT_SOLID_CLASS[s])}
+                  />
+                  <span>{SENTIMENT_LABEL[s]}</span>
                   <span className="tabular-nums text-foreground">{count}</span>
                   <span className="tabular-nums text-muted-foreground/70">({pct}%)</span>
                 </div>
@@ -127,14 +121,17 @@ export function FacultyAnalysisSentimentStrip({
               className="gap-1 rounded-full border-border bg-background px-3 py-1 text-xs"
             >
               <span
-                className={cn("inline-block h-1.5 w-1.5 rounded-full", SWATCH[sentimentFilter])}
+                className={cn(
+                  "inline-block h-1.5 w-1.5 rounded-full",
+                  SENTIMENT_SOLID_CLASS[sentimentFilter]
+                )}
               />
-              <span>Sentiment · {LABEL[sentimentFilter]}</span>
+              <span>Sentiment · {SENTIMENT_LABEL[sentimentFilter]}</span>
               <button
                 type="button"
                 onClick={onClearSentiment}
                 className="ml-1 rounded-full p-0.5 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label={`Clear sentiment filter ${LABEL[sentimentFilter]}`}
+                aria-label={`Clear sentiment filter ${SENTIMENT_LABEL[sentimentFilter]}`}
               >
                 <X className="h-3 w-3" />
               </button>

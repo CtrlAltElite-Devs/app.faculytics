@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SENTIMENT_SOLID_CLASS } from "@/features/faculty-analytics/lib/sentiment-colors";
 import { cn } from "@/lib/utils";
 import { themeRowAnchorId } from "@/features/faculty-analytics/lib/theme-anchor";
 import type { QualitativeThemeDto, SentimentLabel } from "@/features/faculty-analytics/types";
@@ -11,12 +12,6 @@ type ThemeSentimentMatrixProps = {
   activeThemeLabel: string | null;
   onCellClick: (themeLabel: string, sentiment: SentimentLabel | null) => void;
   onRowLabelClick?: (themeLabel: string) => void;
-};
-
-const SENTIMENT_COLORS: Record<SentimentLabel, string> = {
-  negative: "bg-rose-500",
-  neutral: "bg-muted-foreground/40",
-  positive: "bg-emerald-500",
 };
 
 const CELL_HEADERS: { key: SentimentLabel; label: string }[] = [
@@ -138,7 +133,7 @@ export function ThemeSentimentMatrix({
                             aria-hidden="true"
                             className={cn(
                               "h-1.5 w-full rounded-full",
-                              count > 0 ? SENTIMENT_COLORS[key] : "bg-muted"
+                              count > 0 ? SENTIMENT_SOLID_CLASS[key] : "bg-muted"
                             )}
                             style={{ width: count > 0 ? `${Math.max(10, width)}%` : "100%" }}
                           />

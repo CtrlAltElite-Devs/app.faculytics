@@ -10,6 +10,10 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  SENTIMENT_FILTER_CHIP_CLASS,
+  SENTIMENT_LABEL,
+} from "@/features/faculty-analytics/lib/sentiment-colors";
 import { cn } from "@/lib/utils";
 import type { QualitativeThemeDto, SentimentLabel } from "@/features/faculty-analytics/types";
 
@@ -23,26 +27,7 @@ type FeedbackFilterBarProps = {
   disabledReason?: string;
 };
 
-const SENTIMENT_OPTIONS: { value: SentimentLabel; label: string; chipClass: string }[] = [
-  {
-    value: "positive",
-    label: "Positive",
-    chipClass:
-      "data-[active=true]:bg-emerald-100 data-[active=true]:text-emerald-800 data-[active=true]:border-emerald-300",
-  },
-  {
-    value: "neutral",
-    label: "Neutral",
-    chipClass:
-      "data-[active=true]:bg-muted data-[active=true]:text-foreground data-[active=true]:border-border",
-  },
-  {
-    value: "negative",
-    label: "Negative",
-    chipClass:
-      "data-[active=true]:bg-rose-100 data-[active=true]:text-rose-800 data-[active=true]:border-rose-300",
-  },
-];
+const SENTIMENT_OPTIONS: SentimentLabel[] = ["positive", "neutral", "negative"];
 
 export function FeedbackFilterBar({
   themes,
@@ -83,22 +68,22 @@ export function FeedbackFilterBar({
         <span className="font-sans text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
           Sentiment
         </span>
-        {SENTIMENT_OPTIONS.map((option) => {
-          const isActive = sentimentFilter === option.value;
+        {SENTIMENT_OPTIONS.map((value) => {
+          const isActive = sentimentFilter === value;
           return (
             <button
-              key={option.value}
+              key={value}
               type="button"
               data-active={isActive}
               disabled={disabled}
-              onClick={() => handleSentimentClick(option.value)}
+              onClick={() => handleSentimentClick(value)}
               className={cn(
                 "rounded-full border border-border bg-background px-3 py-1 font-sans text-xs transition-colors",
                 "hover:bg-muted disabled:cursor-not-allowed disabled:hover:bg-background",
-                option.chipClass
+                SENTIMENT_FILTER_CHIP_CLASS[value]
               )}
             >
-              {option.label}
+              {SENTIMENT_LABEL[value]}
             </button>
           );
         })}

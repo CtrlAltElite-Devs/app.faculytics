@@ -1,4 +1,5 @@
 import { ALL_PROGRAMS_LABEL } from "@/features/faculty-analytics/constants/filters";
+import { SENTIMENT_HEX } from "@/features/faculty-analytics/lib/sentiment-colors";
 import type {
   DepartmentOptionDto,
   DepartmentOverviewResponseDto,
@@ -131,17 +132,17 @@ export function mapDepartmentOverviewToDashboardViewModel({
       {
         label: "Positive",
         value: toSentimentRate(overview.summary.positiveCount, totalSentiment),
-        color: "#5b8cff",
+        color: SENTIMENT_HEX.positive,
       },
       {
         label: "Neutral",
         value: toSentimentRate(overview.summary.neutralCount, totalSentiment),
-        color: "#d1d5db",
+        color: SENTIMENT_HEX.neutral,
       },
       {
         label: "Negative",
         value: toSentimentRate(overview.summary.negativeCount, totalSentiment),
-        color: "#facc15",
+        color: SENTIMENT_HEX.negative,
       },
     ],
   };
