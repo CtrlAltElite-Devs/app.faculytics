@@ -13,3 +13,11 @@ export const YES_NO_OPTIONS = ["Yes", "No"] as const;
 export const YES_NO_VALUE_MAP: Record<string, number> = { Yes: 5, No: 1 };
 
 export const YES_NO_REVERSE_MAP: Record<number, string> = { 5: "Yes", 1: "No" };
+
+export const LIKERT_LABELS: Record<string, string> = {
+  "1": "Strongly Disagree",
+  "2": "Disagree",
+  "3": "Neutral",
+  "4": "Agree",
+  "5": "Strongly Agree",
+};
