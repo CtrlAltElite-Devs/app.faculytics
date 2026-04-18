@@ -21,7 +21,7 @@ import {
 } from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
-import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-analytics-dashboard-screen";
+import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
 import { useAuthStore } from "@/stores/auth-store";
 
 type UseScopedFacultyAnalyticsListViewModelOptions = {

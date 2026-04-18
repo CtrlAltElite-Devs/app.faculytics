@@ -4,7 +4,8 @@ import type { useLatestPipelineForScope } from "@/features/faculty-analytics/hoo
 import type { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
 import type { useScopedAnalyticsDashboardViewModel } from "@/features/faculty-analytics/hooks/use-scoped-analytics-dashboard-view-model";
 import type { QualitativeThemeDto } from "@/features/faculty-analytics/types";
-import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-analytics-dashboard-screen";
+
+export type ScopeLabel = "Campus" | "Department" | "Program";
 
 export type DashboardCommonSectionProps = {
   summary: ReturnType<typeof useScopedAnalyticsDashboardViewModel>["summary"];

@@ -7,7 +7,10 @@ import { DepartmentDashboardSections } from "@/features/faculty-analytics/compon
 import { ProgramDashboardSections } from "@/features/faculty-analytics/components/program-dashboard-sections";
 import { ScopedDashboardHeader } from "@/features/faculty-analytics/components/scoped-dashboard-header";
 import { ScopedAnalyticsAsyncContent } from "@/features/faculty-analytics/components/scoped-analytics-async-content";
-import type { DashboardCommonSectionProps } from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
+import type {
+  DashboardCommonSectionProps,
+  ScopeLabel,
+} from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
 import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/use-latest-pipeline-for-scope";
 import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
 import { usePipelineStatus } from "@/features/faculty-analytics/hooks/use-pipeline-status";
@@ -34,8 +37,6 @@ function rankedThemesToQualitativeThemes(themes: RankedTheme[]): QualitativeThem
     };
   });
 }
-
-export type ScopeLabel = "Campus" | "Department" | "Program";
 
 const SCOPE_METADATA: Record<
   ScopeLabel,
