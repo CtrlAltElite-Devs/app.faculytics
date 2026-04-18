@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,6 +31,7 @@ import {
 } from "@/features/faculty-analytics/types";
 
 import { FacultyReportHeader } from "./faculty-report-header";
+import { FacultyReportStickyHeader } from "./faculty-report-sticky-header";
 
 type FacultyReportScreenProps = {
   facultyId: string;
@@ -63,7 +64,20 @@ function getInitials(fullName: string) {
 
 export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
+
+  useEffect(() => {
+    const el = titleRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyHeader(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   const { activeRole } = useActiveRole();
   const showPipelineTrigger = activeRole !== APP_ROLES.CAMPUS_HEAD;
   const canExportReport = activeRole ? REPORT_EXPORT_ROLES.has(activeRole) : false;
@@ -156,6 +170,18 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
 
   return (
     <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
+      <FacultyReportStickyHeader
+        show={showStickyHeader}
+        facultyName={viewModel.report.faculty.name}
+        profilePicture={viewModel.report.faculty.profilePicture}
+        courseId={viewModel.courseId}
+        courseLabel={viewModel.selectedCourseLabel}
+        availableCourses={viewModel.availableCourses}
+        isCourseLoading={viewModel.isCourseLoading}
+        onCourseChange={viewModel.updateCourse}
+        onExport={canExportReport ? () => setIsExportDialogOpen(true) : undefined}
+      />
+
       {/* Title row — mirrors the dashboard / faculty-list header pattern */}
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
@@ -171,7 +197,10 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                 {getInitials(viewModel.report.faculty.name)}
               </AvatarFallback>
             </Avatar>
-            <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1
+              ref={titleRef}
+              className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl"
+            >
               {viewModel.report.faculty.name}
             </h1>
           </div>
