@@ -28,6 +28,8 @@ type QuestionnaireFormRendererProps = {
   onChange?: (values: QuestionnaireFormValues) => void;
   /** Optional slot rendered beside the progress percentage (e.g. draft status badge). */
   progressTrailing?: React.ReactNode;
+  /** Faculty being evaluated; surfaced inside the sticky progress header. */
+  facultyName?: string;
 };
 
 /**
@@ -49,6 +51,7 @@ export function QuestionnaireFormRenderer({
   defaultValues,
   onChange,
   progressTrailing,
+  facultyName,
 }: QuestionnaireFormRendererProps) {
   const isInteractive = mode === "interactive";
 
@@ -90,6 +93,7 @@ export function QuestionnaireFormRenderer({
             requiredIds={requiredQuestionIds}
             qualitativeRequired={model.qualitative.required}
             trailing={progressTrailing}
+            facultyName={facultyName}
           />
         )}
 

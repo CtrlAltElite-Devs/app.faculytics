@@ -126,6 +126,7 @@ export function FacultyEvaluationForm({
           mode="interactive"
           defaultValues={data.defaultValues}
           onChange={handleChange}
+          facultyName={data.facultyName}
           progressTrailing={
             draftStatus !== "idle" ? (
               <Badge
