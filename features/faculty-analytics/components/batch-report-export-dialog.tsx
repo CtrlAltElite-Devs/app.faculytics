@@ -98,21 +98,13 @@ export function BatchReportExportDialog({
 
   const effectiveQuestionnaireTypeCode =
     selectedQuestionnaireTypeCode || questionnaireTypes[0]?.code || "";
-
-  function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) {
-      setBatchId(null);
-      setCurrentPage(1);
-      setRowsPerPage(DEFAULT_PAGE_SIZE);
-      setSetupMessage(null);
-      setBatchSummary(null);
-      setSelectedProgramId(programId);
-      setSelectedQuestionnaireTypeCode("");
-      generateBatchReportMutation.reset();
-    }
-
-    onOpenChange(nextOpen);
-  }
+  const effectiveQuestionnaireTypeLabel = effectiveQuestionnaireTypeCode
+    ? resolveQuestionnaireTypeLabel(
+        effectiveQuestionnaireTypeCode,
+        questionnaireTypes.find((type) => type.code === effectiveQuestionnaireTypeCode)?.name ??
+          null
+      )
+    : null;
 
   async function handleGenerate() {
     if (!semesterId) {
@@ -154,8 +146,6 @@ export function BatchReportExportDialog({
   }
 
   const batchStatus = batchStatusQuery.data;
-  const selectedQuestionnaireTypeLabel =
-    questionnaireTypes.find((type) => type.code === effectiveQuestionnaireTypeCode)?.name ?? null;
   const selectedProgramLabel =
     programs.find((program) => program.id === selectedProgramId)?.label ??
     programs[0]?.label ??
@@ -166,6 +156,21 @@ export function BatchReportExportDialog({
     batchStatus?.failed ?? 0,
     batchStatus?.skipped ?? 0
   );
+
+  function handleOpenChange(nextOpen: boolean) {
+    if (!nextOpen) {
+      setBatchId(null);
+      setCurrentPage(1);
+      setRowsPerPage(DEFAULT_PAGE_SIZE);
+      setSetupMessage(null);
+      setBatchSummary(null);
+      setSelectedProgramId(programId);
+      setSelectedQuestionnaireTypeCode("");
+      generateBatchReportMutation.reset();
+    }
+
+    onOpenChange(nextOpen);
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -197,12 +202,7 @@ export function BatchReportExportDialog({
                   <div className="flex items-center justify-between gap-4">
                     <dt className="text-muted-foreground">Questionnaire Type</dt>
                     <dd className="text-right font-medium">
-                      {selectedQuestionnaireTypeCode
-                        ? resolveQuestionnaireTypeLabel(
-                            selectedQuestionnaireTypeCode,
-                            selectedQuestionnaireTypeLabel
-                          )
-                        : "Not selected"}
+                      {effectiveQuestionnaireTypeLabel ?? "Not selected"}
                     </dd>
                   </div>
                 </>
@@ -263,12 +263,7 @@ export function BatchReportExportDialog({
                         }
                       >
                         <span className="truncate">
-                          {effectiveQuestionnaireTypeCode
-                            ? resolveQuestionnaireTypeLabel(
-                                effectiveQuestionnaireTypeCode,
-                                selectedQuestionnaireTypeLabel
-                              )
-                            : "Select questionnaire type"}
+                          {effectiveQuestionnaireTypeLabel ?? "Select questionnaire type"}
                         </span>
                         <ChevronDown className="size-4" />
                       </Button>

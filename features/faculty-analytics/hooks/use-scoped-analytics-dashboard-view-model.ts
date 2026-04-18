@@ -19,11 +19,11 @@ import {
   mapProgramOptionsToViewModel,
   mapSemesterOptionsToViewModel,
 } from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
+import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
 import { useDepartmentOverview } from "@/features/faculty-analytics/hooks/use-department-overview";
 import { useProgramOptions } from "@/features/faculty-analytics/hooks/use-program-options";
 import { useSemesterOptions } from "@/features/faculty-analytics/hooks/use-semester-options";
 import { formatRelativeTime } from "@/lib/date";
-import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-analytics-dashboard-screen";
 import { useAuthStore } from "@/stores/auth-store";
 
 export function useScopedAnalyticsDashboardViewModel(scopeLabel: ScopeLabel) {
