@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -65,18 +65,20 @@ function getInitials(fullName: string) {
 export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
 
-  useEffect(() => {
-    const el = titleRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
+  const titleRef = useCallback((node: HTMLHeadingElement | null) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+    if (!node) return;
+    observerRef.current = new IntersectionObserver(
       ([entry]) => setShowStickyHeader(!entry.isIntersecting),
       { threshold: 0 }
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    observerRef.current.observe(node);
   }, []);
   const { activeRole } = useActiveRole();
   const showPipelineTrigger = activeRole !== APP_ROLES.CAMPUS_HEAD;
