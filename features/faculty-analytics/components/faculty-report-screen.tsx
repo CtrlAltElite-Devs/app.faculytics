@@ -158,7 +158,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
 
         <FacultyReportHeader
           showBackButton={!viewModel.isFacultySelfView}
-          showExportButton={canExportReport}
           backHref={viewModel.backHref}
           courseId={viewModel.courseId}
           courseLabel={viewModel.selectedCourseLabel}

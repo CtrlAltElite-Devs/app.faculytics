@@ -14,7 +14,6 @@ import {
 
 type FacultyReportHeaderProps = {
   showBackButton?: boolean;
-  showExportButton?: boolean;
   backHref: string;
   courseId: string;
   courseLabel: string;
@@ -29,7 +28,6 @@ type FacultyReportHeaderProps = {
 
 export function FacultyReportHeader({
   showBackButton = true,
-  showExportButton = true,
   backHref,
   courseId,
   courseLabel,
@@ -86,7 +84,7 @@ export function FacultyReportHeader({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {showExportButton && onExport ? (
+        {onExport ? (
           <Button
             type="button"
             variant="brand"
