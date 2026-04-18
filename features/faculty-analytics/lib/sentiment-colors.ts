@@ -34,7 +34,7 @@ export const SENTIMENT_FILTER_CHIP_CLASS: Record<SentimentLabel, string> = {
 };
 
 export const SENTIMENT_HEX: Record<SentimentLabel, string> = {
-  positive: "#10b981",
+  positive: "#2f48d4",
   neutral: "#f59e0b",
   negative: "#f43f5e",
 };
