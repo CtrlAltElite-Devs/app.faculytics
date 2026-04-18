@@ -14,6 +14,7 @@ import {
 
 type FacultyReportHeaderProps = {
   showBackButton?: boolean;
+  showExportButton?: boolean;
   backHref: string;
   courseId: string;
   courseLabel: string;
@@ -23,11 +24,12 @@ type FacultyReportHeaderProps = {
   }>;
   isCourseLoading: boolean;
   onCourseChange: (value: string) => void;
-  onExport: () => void;
+  onExport?: () => void;
 };
 
 export function FacultyReportHeader({
   showBackButton = true,
+  showExportButton = true,
   backHref,
   courseId,
   courseLabel,
@@ -84,14 +86,16 @@ export function FacultyReportHeader({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button
-          type="button"
-          variant="brand"
-          className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
-          onClick={onExport}
-        >
-          Export PDF
-        </Button>
+        {showExportButton && onExport ? (
+          <Button
+            type="button"
+            variant="brand"
+            className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
+            onClick={onExport}
+          >
+            Export PDF
+          </Button>
+        ) : null}
       </div>
     </nav>
   );

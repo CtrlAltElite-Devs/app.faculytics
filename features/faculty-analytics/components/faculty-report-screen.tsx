@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { APP_ROLES } from "@/constants/roles";
+import { APP_ROLES, type AppRole } from "@/constants/roles";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
 import { FeedbackTab } from "@/features/faculty-analytics/components/feedback-tab";
@@ -42,11 +42,19 @@ const SENTIMENT_READY_STATUSES: ReadonlySet<PipelineStatus> = new Set<PipelineSt
   "COMPLETED",
 ]);
 
+const REPORT_EXPORT_ROLES: ReadonlySet<AppRole> = new Set([
+  APP_ROLES.SUPER_ADMIN,
+  APP_ROLES.DEAN,
+  APP_ROLES.CHAIRPERSON,
+  APP_ROLES.CAMPUS_HEAD,
+]);
+
 export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const viewModel = useFacultyReportDetailViewModel({ facultyId });
   const { activeRole } = useActiveRole();
   const showPipelineTrigger = activeRole !== APP_ROLES.CAMPUS_HEAD;
+  const canExportReport = activeRole ? REPORT_EXPORT_ROLES.has(activeRole) : false;
 
   const pipelineScope = useMemo(
     () => ({
@@ -150,13 +158,14 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
 
         <FacultyReportHeader
           showBackButton={!viewModel.isFacultySelfView}
+          showExportButton={canExportReport}
           backHref={viewModel.backHref}
           courseId={viewModel.courseId}
           courseLabel={viewModel.selectedCourseLabel}
           availableCourses={viewModel.availableCourses}
           isCourseLoading={viewModel.isCourseLoading}
           onCourseChange={viewModel.updateCourse}
-          onExport={() => setIsExportDialogOpen(true)}
+          onExport={canExportReport ? () => setIsExportDialogOpen(true) : undefined}
         />
       </div>
 
@@ -310,16 +319,18 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         </>
       )}
 
-      <ReportExportDialog
-        open={isExportDialogOpen}
-        onOpenChange={setIsExportDialogOpen}
-        facultyId={facultyId}
-        facultyName={viewModel.report.faculty.name}
-        semesterId={viewModel.semesterId}
-        semesterLabel={viewModel.semesterLabel}
-        questionnaireTypeCode={viewModel.questionnaireTypeCode ?? ""}
-        questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
-      />
+      {canExportReport ? (
+        <ReportExportDialog
+          open={isExportDialogOpen}
+          onOpenChange={setIsExportDialogOpen}
+          facultyId={facultyId}
+          facultyName={viewModel.report.faculty.name}
+          semesterId={viewModel.semesterId}
+          semesterLabel={viewModel.semesterLabel}
+          questionnaireTypeCode={viewModel.questionnaireTypeCode ?? ""}
+          questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
+        />
+      ) : null}
     </section>
   );
 }
