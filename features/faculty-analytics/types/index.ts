@@ -253,6 +253,7 @@ export type FacultyReportCommentsQuery = FacultyReportQuery & {
 export type FacultyReportFacultyDto = {
   id: string;
   name: string;
+  profilePicture?: string | null;
 };
 
 export type FacultyReportSemesterDto = {

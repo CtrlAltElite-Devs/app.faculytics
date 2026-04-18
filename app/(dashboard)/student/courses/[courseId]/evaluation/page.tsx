@@ -21,6 +21,7 @@ export default function FacultyEvaluationPage() {
         courseName={ctx?.courseName}
         courseShortname={ctx?.courseShortname}
         facultyName={ctx?.facultyName}
+        facultyProfilePicture={ctx?.faculty.profilePicture}
         enrollmentSectionName={ctx?.enrollmentSectionName}
       >
         <EvaluationLoading message={result.message} />
@@ -53,12 +54,14 @@ export default function FacultyEvaluationPage() {
   }
 
   if (result.status === "no-version") {
-    const { courseName, courseShortname, facultyName, enrollmentSectionName } = result.context;
+    const { courseName, courseShortname, facultyName, faculty, enrollmentSectionName } =
+      result.context;
     return (
       <EvaluationPageShell
         courseName={courseName}
         courseShortname={courseShortname}
         facultyName={facultyName}
+        facultyProfilePicture={faculty.profilePicture}
         enrollmentSectionName={enrollmentSectionName}
       >
         <EvaluationError message="No active questionnaire is available for evaluation at this time." />
@@ -73,6 +76,7 @@ export default function FacultyEvaluationPage() {
         courseName={context.courseName}
         courseShortname={context.courseShortname}
         facultyName={context.facultyName}
+        facultyProfilePicture={context.faculty.profilePicture}
         enrollmentSectionName={context.enrollmentSectionName}
       >
         <EvaluationAlreadySubmitted submittedAt={submittedAt} />
@@ -80,5 +84,11 @@ export default function FacultyEvaluationPage() {
     );
   }
 
-  return <EvaluationForm courseId={courseId} {...result.data} />;
+  return (
+    <EvaluationForm
+      courseId={courseId}
+      {...result.data}
+      facultyProfilePicture={result.data.faculty.profilePicture}
+    />
+  );
 }
