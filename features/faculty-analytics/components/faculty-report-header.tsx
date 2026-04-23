@@ -47,7 +47,7 @@ export function FacultyReportHeader({
           variant="outline"
           className="w-full justify-center px-4 py-2.5 font-sans text-sm sm:w-auto sm:justify-start"
         >
-          <Link href={backHref}>Back to faculties</Link>
+          <Link href={backHref}>Back to faculty</Link>
         </Button>
       ) : null}
 
