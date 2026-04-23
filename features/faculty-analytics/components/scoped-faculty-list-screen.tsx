@@ -65,10 +65,10 @@ export function ScopedFacultyListScreen({
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
           <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-            Faculties
+            Faculty
           </h1>
           <p className="mt-4 max-w-3xl font-sans text-sm text-muted-foreground sm:mt-5">
-            All faculties for the selected semester.
+            All faculty for the selected semester.
           </p>
         </div>
         <div className="w-full xl:max-w-6xl">
@@ -191,10 +191,10 @@ export function ScopedFacultyListScreen({
         </div>
       </div>
 
-      {isLoading ? <ScopedAnalyticsLoadingState message="Loading faculties..." /> : null}
+      {isLoading ? <ScopedAnalyticsLoadingState message="Loading faculty..." /> : null}
 
       {!isLoading && isError ? (
-        <ScopedAnalyticsErrorState onRetry={retry} message="Unable to load the faculties list." />
+        <ScopedAnalyticsErrorState onRetry={retry} message="Unable to load the faculty list." />
       ) : null}
 
       {!isLoading && !isError && facultyList.length === 0 ? (

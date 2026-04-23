@@ -122,7 +122,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         </div>
         <ScopedAnalyticsErrorState
           onRetry={viewModel.goBackToFaculties}
-          message="Missing semester context. Start from the faculties list to open a faculty report."
+          message="Missing semester context. Start from the faculty list to open a faculty report."
         />
       </section>
     );
@@ -171,9 +171,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                 {getInitials(viewModel.report.faculty.name)}
               </AvatarFallback>
             </Avatar>
-            <h1
-              className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl"
-            >
+            <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
               {viewModel.report.faculty.name}
             </h1>
           </div>
