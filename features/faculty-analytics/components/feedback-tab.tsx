@@ -3,6 +3,7 @@
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
 import { FacultyReportComments } from "@/features/faculty-analytics/components/faculty-report-comments";
 import { FeedbackFilterBar } from "@/features/faculty-analytics/components/feedback-filter-bar";
+import { HeadlineMetricsStrip } from "@/features/faculty-analytics/components/headline-metrics-strip";
 import { QuestionnaireTypeTabs } from "@/features/faculty-analytics/components/questionnaire-type-tabs";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import type {
@@ -24,6 +25,7 @@ type FeedbackTabProps = {
   isQuestionnaireTypesLoading: boolean;
   onQuestionnaireTypeSelect: (code: string) => void;
   qualitativeSummary: QualitativeSummaryResponseDto | undefined;
+  showSentimentSurface: boolean;
   /** Stable: derived from latestPipeline?.status, NOT the polling status. */
   filtersDisabled: boolean;
   filtersDisabledReason?: string;
@@ -55,6 +57,7 @@ export function FeedbackTab({
   isQuestionnaireTypesLoading,
   onQuestionnaireTypeSelect,
   qualitativeSummary,
+  showSentimentSurface,
   filtersDisabled,
   filtersDisabledReason,
   sentimentFilter,
@@ -77,6 +80,7 @@ export function FeedbackTab({
 }: FeedbackTabProps) {
   const submissionCount = report?.submissionCount ?? 0;
   const showEmpty = report !== null && submissionCount === 0;
+  const perTypeLabel = questionnaireTypeLabel ? `${questionnaireTypeLabel} rating` : "Rating";
 
   return (
     <div className="space-y-6">
@@ -111,6 +115,19 @@ export function FeedbackTab({
         />
       ) : (
         <>
+          {report ? (
+            <HeadlineMetricsStrip
+              label={perTypeLabel}
+              overallRating={report.overallRating}
+              overallInterpretation={report.overallInterpretation}
+              responseCount={report.submissionCount}
+              sentimentDistribution={
+                showSentimentSurface && qualitativeSummary
+                  ? qualitativeSummary.sentimentDistribution
+                  : null
+              }
+            />
+          ) : null}
           <FeedbackFilterBar
             themes={qualitativeSummary?.themes ?? []}
             sentimentFilter={sentimentFilter}

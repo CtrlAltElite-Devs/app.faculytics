@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { SentimentDistributionDto } from "@/features/faculty-analytics/types";
 
 type HeadlineMetricsStripProps = {
+  label: string;
   overallRating: number | null;
   overallInterpretation: string | null;
   responseCount: number | null;
@@ -42,6 +43,7 @@ function SentimentMiniBar({ distribution }: { distribution: SentimentDistributio
 }
 
 export function HeadlineMetricsStrip({
+  label,
   overallRating,
   overallInterpretation,
   responseCount,
@@ -64,9 +66,7 @@ export function HeadlineMetricsStrip({
     <div className="flex flex-wrap items-center gap-x-8 gap-y-3 rounded-2xl border border-border/70 bg-card px-5 py-4">
       {ratingCell ? (
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-            Overall rating
-          </p>
+          <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="font-playfair text-2xl font-semibold tabular-nums text-foreground">
               <AnimatedNumber value={overallRating!} decimals={2} />

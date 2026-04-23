@@ -1,7 +1,7 @@
 "use client";
 
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
-import { FacultyAnalysisStats } from "@/features/faculty-analytics/components/faculty-analysis-stats";
+import { HeadlineMetricsStrip } from "@/features/faculty-analytics/components/headline-metrics-strip";
 import { QuantitativeScoresSection } from "@/features/faculty-analytics/components/quantitative-scores-section";
 import { QuestionnaireTypeTabs } from "@/features/faculty-analytics/components/questionnaire-type-tabs";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
@@ -22,13 +22,8 @@ type ScoresTabProps = {
   onQuestionnaireTypeSelect: (code: string) => void;
   qualitativeSummary: QualitativeSummaryResponseDto | undefined;
   showSentimentSurface: boolean;
-  commentsCount: number;
   questionnaireTypeCodeAutoCorrection: ParamAutoCorrection | null;
   onDismissQuestionnaireTypeCodeAutoCorrection: () => void;
-  /** When true, render FacultyAnalysisStats here (Phase A). When false, the
-   *  HeadlineMetricsStrip in the screen header carries headline metrics
-   *  (Phase B). */
-  renderHeadlineStats?: boolean;
 };
 
 export function ScoresTab({
@@ -41,13 +36,12 @@ export function ScoresTab({
   onQuestionnaireTypeSelect,
   qualitativeSummary,
   showSentimentSurface,
-  commentsCount,
   questionnaireTypeCodeAutoCorrection,
   onDismissQuestionnaireTypeCodeAutoCorrection,
-  renderHeadlineStats = true,
 }: ScoresTabProps) {
   const submissionCount = report?.submissionCount ?? 0;
   const showEmpty = report !== null && submissionCount === 0;
+  const perTypeLabel = questionnaireTypeLabel ? `${questionnaireTypeLabel} rating` : "Rating";
 
   return (
     <div className="space-y-6">
@@ -73,19 +67,17 @@ export function ScoresTab({
         />
       ) : report ? (
         <>
-          {renderHeadlineStats ? (
-            <FacultyAnalysisStats
-              submissionCount={submissionCount}
-              overallRating={report.overallRating}
-              overallInterpretation={report.overallInterpretation}
-              commentsCount={commentsCount}
-              sentimentDistribution={
-                showSentimentSurface && qualitativeSummary
-                  ? qualitativeSummary.sentimentDistribution
-                  : null
-              }
-            />
-          ) : null}
+          <HeadlineMetricsStrip
+            label={perTypeLabel}
+            overallRating={report.overallRating}
+            overallInterpretation={report.overallInterpretation}
+            responseCount={report.submissionCount}
+            sentimentDistribution={
+              showSentimentSurface && qualitativeSummary
+                ? qualitativeSummary.sentimentDistribution
+                : null
+            }
+          />
 
           <QuantitativeScoresSection
             sections={report.sections}

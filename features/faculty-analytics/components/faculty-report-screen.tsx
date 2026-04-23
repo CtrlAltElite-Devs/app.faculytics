@@ -9,8 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { APP_ROLES, type AppRole } from "@/constants/roles";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
+import { CompositeRatingSummaryStrip } from "@/features/faculty-analytics/components/composite-rating-summary-strip";
 import { FeedbackTab } from "@/features/faculty-analytics/components/feedback-tab";
-import { HeadlineMetricsStrip } from "@/features/faculty-analytics/components/headline-metrics-strip";
 import { InsightsTab } from "@/features/faculty-analytics/components/insights-tab";
 import { PipelineTriggerCard } from "@/features/faculty-analytics/components/pipeline-trigger-card";
 import { ReportExportDialog } from "@/features/faculty-analytics/components/report-export-dialog";
@@ -18,6 +18,7 @@ import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/componen
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
 import { ScopedAnalyticsLoadingState } from "@/features/faculty-analytics/components/scoped-analytics-loading-state";
 import { ScoresTab } from "@/features/faculty-analytics/components/scores-tab";
+import { useFacultyOverview } from "@/features/faculty-analytics/hooks/use-faculty-overview";
 import { useFacultyReportDetailViewModel } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
 import { useLatestPipelineForScope } from "@/features/faculty-analytics/hooks/use-latest-pipeline-for-scope";
 import { usePipelineRecommendations } from "@/features/faculty-analytics/hooks/use-pipeline-recommendations";
@@ -76,6 +77,15 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
     }),
     [viewModel.semesterId, facultyId]
   );
+
+  const overviewQuery = useFacultyOverview(
+    {
+      facultyId,
+      semesterId: viewModel.semesterId ?? "",
+      courseId: viewModel.courseId || undefined,
+    },
+    { enabled: Boolean(viewModel.semesterId) }
+  );
   const { latestPipeline } = useLatestPipelineForScope(pipelineScope, {
     enabled: Boolean(viewModel.semesterId),
   });
@@ -128,51 +138,48 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
     );
   }
 
-  if (viewModel.reportQuery.isLoading) {
-    return (
-      <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
-        <ScopedAnalyticsLoadingState message="Loading faculty report..." />
-      </section>
-    );
-  }
+  const reportIsLoading = viewModel.reportQuery.isLoading;
+  const reportIsError = viewModel.reportQuery.isError || !viewModel.report;
+  const report = viewModel.report;
+  const hasAnalyticsData =
+    report !== null ? hasFacultyReportAnalyticsData(report, viewModel.commentsCount) : false;
 
-  if (viewModel.reportQuery.isError || !viewModel.report) {
-    return (
-      <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
-        <div className="flex justify-end">
-          <Button asChild variant="outline" className="font-sans">
-            <Link href={viewModel.backHref}>{viewModel.backLabel}</Link>
-          </Button>
-        </div>
-        <ScopedAnalyticsErrorState
-          onRetry={viewModel.retryAll}
-          message="Unable to load the faculty evaluation report."
-        />
-      </section>
-    );
-  }
+  const shellFaculty = report?.faculty ?? overviewQuery.data?.faculty ?? null;
+  // When neither query has any data and both errored, don't pretend to have
+  // faculty context — fall back to a differentiated placeholder so the user
+  // sees a clear "unavailable" state instead of a generic "Faculty report"
+  // heading (F6).
+  const bothQueriesUnresolved =
+    !report && !overviewQuery.data && reportIsError && overviewQuery.isError;
+  const shellFacultyName = shellFaculty?.name
+    ? shellFaculty.name
+    : bothQueriesUnresolved
+      ? "Faculty details unavailable"
+      : viewModel.reportTitle;
+  const shellFacultyPicture = shellFaculty?.profilePicture ?? null;
 
-  const hasAnalyticsData = hasFacultyReportAnalyticsData(viewModel.report, viewModel.commentsCount);
+  const isNoDataComposite = overviewQuery.data?.composite.coverageStatus === "NO_DATA";
+  const emptyStateDescription = isNoDataComposite
+    ? "No per-tab breakdown available."
+    : "No evaluation analytics are available for this faculty in the selected filters.";
 
   return (
     <section className="max-w-full space-y-6 overflow-x-clip px-1 pb-4 md:p-8">
-      {/* Title row — sticky so faculty context persists while scrolling */}
+      {/* Always-rendered shell (F12): sticky title row + semester label +
+          composite strip stay visible even when /report is loading/erroring. */}
       <div className="sticky top-0 z-20 -mx-1 flex flex-col gap-4 border-b border-border/40 bg-background/80 px-4 py-3 backdrop-blur-md supports-[backdrop-filter]:bg-background/75 md:-mx-8 md:px-8 xl:flex-row xl:items-center xl:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
             <Avatar size="lg" className="border border-border/70">
-              {viewModel.report.faculty.profilePicture ? (
-                <AvatarImage
-                  src={viewModel.report.faculty.profilePicture}
-                  alt={viewModel.report.faculty.name}
-                />
+              {shellFacultyPicture ? (
+                <AvatarImage src={shellFacultyPicture} alt={shellFacultyName} />
               ) : null}
               <AvatarFallback className="bg-slate-100 text-sm font-semibold text-slate-700">
-                {getInitials(viewModel.report.faculty.name)}
+                {getInitials(shellFacultyName)}
               </AvatarFallback>
             </Avatar>
             <h1 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
-              {viewModel.report.faculty.name}
+              {shellFacultyName}
             </h1>
           </div>
         </div>
@@ -185,7 +192,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
           availableCourses={viewModel.availableCourses}
           isCourseLoading={viewModel.isCourseLoading}
           onCourseChange={viewModel.updateCourse}
-          onExport={canExportReport ? () => setIsExportDialogOpen(true) : undefined}
+          onExport={canExportReport && report ? () => setIsExportDialogOpen(true) : undefined}
         />
       </div>
 
@@ -194,162 +201,172 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         <span className="font-medium text-foreground">{viewModel.semesterLabel}</span>.
       </p>
 
-      <HeadlineMetricsStrip
-        overallRating={viewModel.report.overallRating}
-        overallInterpretation={viewModel.report.overallInterpretation}
-        responseCount={viewModel.report.submissionCount}
-        sentimentDistribution={
-          showSentimentSurface && qualitativeSummary
-            ? qualitativeSummary.sentimentDistribution
-            : null
-        }
+      <CompositeRatingSummaryStrip
+        data={overviewQuery.data}
+        isLoading={overviewQuery.isLoading}
+        isError={overviewQuery.isError}
+        onRetry={() => {
+          void overviewQuery.refetch();
+        }}
       />
 
-      <div role="status" aria-live="polite" className="sr-only">
-        {announcement}
-      </div>
-
-      {viewModel.viewAutoCorrection ? (
-        <AutoCorrectionNotice
-          requested={viewModel.viewAutoCorrection.requested}
-          actual={viewModel.viewAutoCorrection.actual}
-          paramLabel="view"
-          onDismiss={viewModel.dismissViewAutoCorrection}
+      {reportIsLoading ? (
+        <ScopedAnalyticsLoadingState message="Loading faculty report..." />
+      ) : reportIsError ? (
+        <ScopedAnalyticsErrorState
+          onRetry={viewModel.retryAll}
+          message="Unable to load the faculty evaluation report."
         />
-      ) : null}
-
-      {!hasAnalyticsData ? (
-        <ScopedAnalyticsEmptyState description="No evaluation analytics are available for this faculty in the selected filters." />
       ) : (
         <>
-          {showPipelineTrigger && viewModel.semesterId ? (
-            <PipelineTriggerCard scope={pipelineScope} pipeline={latestPipeline} />
+          <div role="status" aria-live="polite" className="sr-only">
+            {announcement}
+          </div>
+
+          {viewModel.viewAutoCorrection ? (
+            <AutoCorrectionNotice
+              requested={viewModel.viewAutoCorrection.requested}
+              actual={viewModel.viewAutoCorrection.actual}
+              paramLabel="view"
+              onDismiss={viewModel.dismissViewAutoCorrection}
+            />
           ) : null}
 
-          <Tabs
-            value={
-              viewModel.isFacultySelfView && viewModel.selectedView === "feedback"
-                ? "insights"
-                : viewModel.selectedView
-            }
-            onValueChange={(value) => viewModel.selectView(value as ReportView)}
-            className="w-full"
-          >
-            <TabsList variant="line" className="w-full gap-0 border-b border-border/40">
-              {REPORT_VIEW_ORDER.filter(
-                (view) => !(viewModel.isFacultySelfView && view === "feedback")
-              ).map((view) => (
-                <TabsTrigger
-                  key={view}
-                  value={view}
-                  className="px-4 py-2.5 font-sans text-sm tracking-tight after:bg-brand-blue data-[state=active]:text-brand-blue sm:px-5 dark:data-[state=active]:text-brand-blue"
-                >
-                  {REPORT_VIEW_LABELS[view]}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          {!hasAnalyticsData ? (
+            <ScopedAnalyticsEmptyState description={emptyStateDescription} />
+          ) : (
+            <>
+              {showPipelineTrigger && viewModel.semesterId ? (
+                <PipelineTriggerCard scope={pipelineScope} pipeline={latestPipeline} />
+              ) : null}
 
-            <TabsContent value="insights" className="mt-6">
-              <InsightsTab
-                facultyId={facultyId}
-                semesterId={viewModel.semesterId}
-                questionnaireTypeCode={viewModel.questionnaireTypeCode}
-                qualitativeSummary={qualitativeSummary}
-                recommendations={recommendationsQuery.data}
-                livePipelineStatus={livePipelineStatus}
-                showSentimentSurface={showSentimentSurface}
-                showThemesSurface={showThemesSurface}
-                sentimentFilter={viewModel.sentimentFilter}
-                themeLabelFilter={viewModel.themeLabelFilter}
-                onSentimentClick={viewModel.updateSentimentFilter}
-                onThemeClick={viewModel.updateThemeFilter}
-                onClearAllFilters={viewModel.clearAllFilters}
-                comments={viewModel.comments}
-                commentsMeta={viewModel.commentsMeta}
-                commentsPage={viewModel.commentsPage}
-                commentsLimit={viewModel.commentsLimit}
-                isCommentsLoading={viewModel.commentsQuery.isLoading}
-                isCommentsError={viewModel.commentsQuery.isError}
-                onCommentsRetry={viewModel.retryComments}
-                onCommentsPageChange={viewModel.updateCommentsPage}
-                onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
-                themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
-                onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
-                redactComments={viewModel.isFacultySelfView}
-              />
-            </TabsContent>
-
-            <TabsContent value="scores" className="mt-6">
-              <ScoresTab
-                report={viewModel.report}
-                semesterLabel={viewModel.semesterLabel}
-                questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
-                availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
-                selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
-                isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
-                onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
-                qualitativeSummary={qualitativeSummary}
-                showSentimentSurface={showSentimentSurface}
-                commentsCount={viewModel.commentsCount}
-                questionnaireTypeCodeAutoCorrection={viewModel.questionnaireTypeCodeAutoCorrection}
-                onDismissQuestionnaireTypeCodeAutoCorrection={
-                  viewModel.dismissQuestionnaireTypeCodeAutoCorrection
+              <Tabs
+                value={
+                  viewModel.isFacultySelfView && viewModel.selectedView === "feedback"
+                    ? "insights"
+                    : viewModel.selectedView
                 }
-                renderHeadlineStats={false}
-              />
-            </TabsContent>
+                onValueChange={(value) => viewModel.selectView(value as ReportView)}
+                className="w-full"
+              >
+                <TabsList variant="line" className="w-full gap-0 border-b border-border/40">
+                  {REPORT_VIEW_ORDER.filter(
+                    (view) => !(viewModel.isFacultySelfView && view === "feedback")
+                  ).map((view) => (
+                    <TabsTrigger
+                      key={view}
+                      value={view}
+                      className="px-4 py-2.5 font-sans text-sm tracking-tight after:bg-brand-blue data-[state=active]:text-brand-blue sm:px-5 dark:data-[state=active]:text-brand-blue"
+                    >
+                      {REPORT_VIEW_LABELS[view]}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
 
-            {!viewModel.isFacultySelfView ? (
-              <TabsContent value="feedback" className="mt-6">
-                <FeedbackTab
-                  report={viewModel.report}
-                  semesterLabel={viewModel.semesterLabel}
-                  questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
-                  availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
-                  selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
-                  isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
-                  onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
-                  qualitativeSummary={qualitativeSummary}
-                  filtersDisabled={filtersDisabled}
-                  filtersDisabledReason={
-                    filtersDisabled
-                      ? "Run qualitative analysis to enable sentiment and topic filters."
-                      : undefined
-                  }
-                  sentimentFilter={viewModel.sentimentFilter}
-                  resolvedThemeId={viewModel.resolvedThemeId}
-                  onSentimentChange={viewModel.updateSentimentFilter}
-                  onThemeChange={viewModel.updateThemeFilter}
-                  comments={viewModel.comments}
-                  commentsMeta={viewModel.commentsMeta}
-                  commentsPage={viewModel.commentsPage}
-                  commentsLimit={viewModel.commentsLimit}
-                  isCommentsLoading={viewModel.commentsQuery.isLoading}
-                  isCommentsError={viewModel.commentsQuery.isError}
-                  onCommentsRetry={viewModel.retryComments}
-                  onCommentsPageChange={viewModel.updateCommentsPage}
-                  onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
-                  questionnaireTypeCodeAutoCorrection={
-                    viewModel.questionnaireTypeCodeAutoCorrection
-                  }
-                  onDismissQuestionnaireTypeCodeAutoCorrection={
-                    viewModel.dismissQuestionnaireTypeCodeAutoCorrection
-                  }
-                  themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
-                  onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
-                />
-              </TabsContent>
-            ) : null}
-          </Tabs>
+                <TabsContent value="insights" className="mt-6">
+                  <InsightsTab
+                    facultyId={facultyId}
+                    semesterId={viewModel.semesterId}
+                    questionnaireTypeCode={viewModel.questionnaireTypeCode}
+                    qualitativeSummary={qualitativeSummary}
+                    recommendations={recommendationsQuery.data}
+                    livePipelineStatus={livePipelineStatus}
+                    showSentimentSurface={showSentimentSurface}
+                    showThemesSurface={showThemesSurface}
+                    sentimentFilter={viewModel.sentimentFilter}
+                    themeLabelFilter={viewModel.themeLabelFilter}
+                    onSentimentClick={viewModel.updateSentimentFilter}
+                    onThemeClick={viewModel.updateThemeFilter}
+                    onClearAllFilters={viewModel.clearAllFilters}
+                    comments={viewModel.comments}
+                    commentsMeta={viewModel.commentsMeta}
+                    commentsPage={viewModel.commentsPage}
+                    commentsLimit={viewModel.commentsLimit}
+                    isCommentsLoading={viewModel.commentsQuery.isLoading}
+                    isCommentsError={viewModel.commentsQuery.isError}
+                    onCommentsRetry={viewModel.retryComments}
+                    onCommentsPageChange={viewModel.updateCommentsPage}
+                    onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
+                    themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
+                    onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
+                    redactComments={viewModel.isFacultySelfView}
+                  />
+                </TabsContent>
+
+                <TabsContent value="scores" className="mt-6">
+                  <ScoresTab
+                    report={viewModel.report}
+                    semesterLabel={viewModel.semesterLabel}
+                    questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
+                    availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
+                    selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
+                    isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
+                    onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
+                    qualitativeSummary={qualitativeSummary}
+                    showSentimentSurface={showSentimentSurface}
+                    questionnaireTypeCodeAutoCorrection={
+                      viewModel.questionnaireTypeCodeAutoCorrection
+                    }
+                    onDismissQuestionnaireTypeCodeAutoCorrection={
+                      viewModel.dismissQuestionnaireTypeCodeAutoCorrection
+                    }
+                  />
+                </TabsContent>
+
+                {!viewModel.isFacultySelfView ? (
+                  <TabsContent value="feedback" className="mt-6">
+                    <FeedbackTab
+                      report={viewModel.report}
+                      semesterLabel={viewModel.semesterLabel}
+                      questionnaireTypeLabel={viewModel.questionnaireTypeLabel}
+                      availableQuestionnaireTypes={viewModel.availableQuestionnaireTypes}
+                      selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
+                      isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
+                      onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
+                      qualitativeSummary={qualitativeSummary}
+                      showSentimentSurface={showSentimentSurface}
+                      filtersDisabled={filtersDisabled}
+                      filtersDisabledReason={
+                        filtersDisabled
+                          ? "Run qualitative analysis to enable sentiment and topic filters."
+                          : undefined
+                      }
+                      sentimentFilter={viewModel.sentimentFilter}
+                      resolvedThemeId={viewModel.resolvedThemeId}
+                      onSentimentChange={viewModel.updateSentimentFilter}
+                      onThemeChange={viewModel.updateThemeFilter}
+                      comments={viewModel.comments}
+                      commentsMeta={viewModel.commentsMeta}
+                      commentsPage={viewModel.commentsPage}
+                      commentsLimit={viewModel.commentsLimit}
+                      isCommentsLoading={viewModel.commentsQuery.isLoading}
+                      isCommentsError={viewModel.commentsQuery.isError}
+                      onCommentsRetry={viewModel.retryComments}
+                      onCommentsPageChange={viewModel.updateCommentsPage}
+                      onCommentsRowsPerPageChange={viewModel.updateCommentsLimit}
+                      questionnaireTypeCodeAutoCorrection={
+                        viewModel.questionnaireTypeCodeAutoCorrection
+                      }
+                      onDismissQuestionnaireTypeCodeAutoCorrection={
+                        viewModel.dismissQuestionnaireTypeCodeAutoCorrection
+                      }
+                      themeLabelAutoCorrection={viewModel.themeLabelAutoCorrection}
+                      onDismissThemeLabelAutoCorrection={viewModel.dismissThemeLabelAutoCorrection}
+                    />
+                  </TabsContent>
+                ) : null}
+              </Tabs>
+            </>
+          )}
         </>
       )}
 
-      {canExportReport ? (
+      {canExportReport && report ? (
         <ReportExportDialog
           open={isExportDialogOpen}
           onOpenChange={setIsExportDialogOpen}
           facultyId={facultyId}
-          facultyName={viewModel.report.faculty.name}
+          facultyName={report.faculty.name}
           semesterId={viewModel.semesterId}
           semesterLabel={viewModel.semesterLabel}
           questionnaireTypeCode={viewModel.questionnaireTypeCode ?? ""}
