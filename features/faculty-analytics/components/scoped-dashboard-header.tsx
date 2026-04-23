@@ -78,7 +78,7 @@ export function ScopedDashboardHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-48 md:max-w-48"
+                className="w-full min-w-0 justify-between px-4 py-2.5 font-sans text-sm md:w-64 md:max-w-64"
                 disabled={semesters.length === 0}
               >
                 <span className="truncate">{selectedSemesterLabel}</span>

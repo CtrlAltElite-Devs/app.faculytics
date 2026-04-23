@@ -25,6 +25,7 @@ import {
   type SentimentLabel,
 } from "@/features/faculty-analytics/types";
 import { useQuestionnaireTypes } from "@/features/questionnaires/hooks/use-questionnaire-types";
+import { formatSemesterDisplay } from "@/lib/format-semester";
 import { resolvePageSizeOption } from "@/lib/pagination";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { getRoleConfig } from "@/features/auth/lib/role-route";
@@ -347,9 +348,9 @@ export function useFacultyReportDetailViewModel({
 
   const report = reportQuery.data ?? null;
   const reportTitle = report?.faculty.name || facultyNameParam || "Faculty report";
-  const semesterLabel =
-    report?.semester.label ||
-    (semesterLabelParam.trim().length > 0 ? semesterLabelParam : "Selected semester");
+  const reportDerivedLabel = report?.semester ? formatSemesterDisplay(report.semester) : null;
+  const urlDerivedLabel = semesterLabelParam.trim().length > 0 ? semesterLabelParam : null;
+  const semesterLabel = reportDerivedLabel ?? urlDerivedLabel ?? "Selected semester";
   const questionnaireTypeLabel = resolveFacultyReportQuestionnaireTypeLabel(
     report?.questionnaireType.code ?? questionnaireTypeCode ?? "",
     report?.questionnaireType.name ?? selectedQuestionnaireType?.name
