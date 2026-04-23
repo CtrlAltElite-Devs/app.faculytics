@@ -11,6 +11,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type FacultyReportHeaderProps = {
   showBackButton?: boolean;
@@ -85,14 +86,21 @@ export function FacultyReportHeader({
         </DropdownMenu>
 
         {onExport ? (
-          <Button
-            type="button"
-            variant="brand"
-            className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
-            onClick={onExport}
-          >
-            Export PDF
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="brand"
+                className="w-full px-4 py-2.5 font-sans text-sm sm:w-auto"
+                onClick={onExport}
+              >
+                Export PDF
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-xs">
+              PDF export shows per-track ratings; overall rating is in the dashboard view.
+            </TooltipContent>
+          </Tooltip>
         ) : null}
       </div>
     </nav>
