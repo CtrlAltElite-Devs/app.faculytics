@@ -6,11 +6,11 @@ import type {
   ProgramOptionDto,
   SemesterOptionDto,
 } from "@/features/faculty-analytics/types";
+import { formatSemesterDisplay } from "@/lib/format-semester";
 
 export type ScopedSemesterOption = {
   id: string;
   label: string;
-  academicYear?: string;
 };
 
 export type ScopedDepartmentOption = {
@@ -59,8 +59,7 @@ export function mapSemesterOptionsToViewModel(
 ): ScopedSemesterOption[] {
   return semesters.map((semester) => ({
     id: semester.id,
-    label: semester.label ?? [semester.code, semester.academicYear].filter(Boolean).join(" • "),
-    academicYear: semester.academicYear,
+    label: formatSemesterDisplay(semester),
   }));
 }
 
