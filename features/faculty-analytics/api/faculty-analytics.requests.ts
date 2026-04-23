@@ -12,6 +12,8 @@ import type {
   FacultyReportCommentsResponseDto,
   FacultyReportQuery,
   FacultyReportResponseDto,
+  FacultyOverviewQuery,
+  FacultyOverviewResponseDto,
   FacultyListQuery,
   FacultyListResponseDto,
   GenerateBatchReportRequest,
@@ -98,6 +100,19 @@ export async function fetchFacultyReportComments({
   const response = await apiClient.get<FacultyReportCommentsResponseDto>(
     Endpoints.analyticsFacultyReportComments.replace(":facultyId", facultyId),
     { params }
+  );
+
+  return response.data;
+}
+
+export async function fetchFacultyOverview({
+  facultyId,
+  semesterId,
+  courseId,
+}: FacultyOverviewQuery) {
+  const response = await apiClient.get<FacultyOverviewResponseDto>(
+    Endpoints.analyticsFacultyOverview.replace(":facultyId", facultyId),
+    { params: courseId ? { semesterId, courseId } : { semesterId } }
   );
 
   return response.data;
