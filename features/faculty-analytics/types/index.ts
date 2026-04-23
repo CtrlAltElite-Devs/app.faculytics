@@ -330,6 +330,65 @@ export type FacultyReportCommentsResponseDto = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Faculty Composite Overall Rating (50/25/25)
+//
+// Mirrors backend:
+//   api.faculytics/src/modules/analytics/lib/composite-rating.constants.ts
+//   api.faculytics/src/modules/analytics/dto/responses/faculty-overview.response.dto.ts
+// Keep CompositeCoverageStatus in sync if the backend enum changes.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type FacultyOverviewQuery = {
+  facultyId: string;
+  semesterId: string;
+  courseId?: string;
+};
+
+export type CompositeCoverageStatus =
+  | "FULL"
+  | "PARTIAL"
+  | "PARTIAL_NO_FEEDBACK"
+  | "FEEDBACK_ONLY"
+  | "INSUFFICIENT"
+  | "NO_DATA";
+
+export type CompositeQuestionnaireTypeCode =
+  | "FACULTY_FEEDBACK"
+  | "FACULTY_OUT_OF_CLASSROOM"
+  | "FACULTY_IN_CLASSROOM";
+
+export type FacultyOverviewCompositeDto = {
+  rating: number | null;
+  interpretation: string | null;
+  coverageStatus: CompositeCoverageStatus;
+  coverageWeight: number;
+};
+
+export type FacultyOverviewContributionDto = {
+  questionnaireTypeCode: string;
+  questionnaireTypeName: string;
+  rating: number | null;
+  weight: number;
+  effectiveWeight: number;
+  contribution: number | null;
+  submissionCount: number;
+};
+
+export type FacultyOverviewResponseDto = {
+  faculty: FacultyReportFacultyDto;
+  semester: FacultyReportSemesterDto;
+  composite: FacultyOverviewCompositeDto;
+  contributions: FacultyOverviewContributionDto[];
+};
+
+// Canonical display order of composite tracks — defensive client sort.
+export const COMPOSITE_TYPE_ORDER: readonly CompositeQuestionnaireTypeCode[] = [
+  "FACULTY_FEEDBACK",
+  "FACULTY_OUT_OF_CLASSROOM",
+  "FACULTY_IN_CLASSROOM",
+] as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Qualitative Summary (FAC-134)
 // ─────────────────────────────────────────────────────────────────────────────
 
