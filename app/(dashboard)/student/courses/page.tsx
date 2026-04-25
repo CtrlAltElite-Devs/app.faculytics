@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
+import { useCurrentStudentTerm } from "@/features/enrollments/hooks/use-current-student-term";
 import { useMyEnrollments } from "@/features/enrollments/hooks/use-my-enrollments";
 import { useSelectedCourseStore } from "@/stores/selected-course-store";
 
@@ -22,6 +23,13 @@ function getInitialCoursesViewMode(): CoursesViewMode {
   return storedView === "list" || storedView === "card" ? storedView : "card";
 }
 
+function formatTermLabel(semester: { label?: string; academicYear?: string; code: string }) {
+  const parts: string[] = [];
+  if (semester.label) parts.push(semester.label);
+  if (semester.academicYear) parts.push(`AY ${semester.academicYear}`);
+  return parts.length > 0 ? parts.join(", ") : semester.code;
+}
+
 export default function StudentCoursesPage() {
   const setSelectedCourse = useSelectedCourseStore((state) => state.setSelectedCourse);
   const [viewMode, setViewMode] = useState<CoursesViewMode>(getInitialCoursesViewMode);
@@ -29,24 +37,46 @@ export default function StudentCoursesPage() {
     page: 1,
     limit: 100,
   });
-  const enrolledCourses = data?.data ?? [];
-  const coursesState = isLoading
-    ? "loading"
-    : isError
-      ? "error"
-      : enrolledCourses.length === 0
-        ? "empty"
-        : "ready";
+  const term = useCurrentStudentTerm();
+
+  const allEnrollments = useMemo(() => data?.data ?? [], [data?.data]);
+  const currentTermEnrollments = useMemo(() => {
+    if (term.status !== "ready") return [];
+    return allEnrollments.filter((enrollment) => enrollment.semester?.id === term.semester.id);
+  }, [allEnrollments, term]);
+
+  const isTermLoading = term.status === "loading";
+  const isTermError = term.status === "error";
+
+  const coursesState =
+    isLoading || isTermLoading
+      ? "loading"
+      : isError || isTermError
+        ? "error"
+        : currentTermEnrollments.length === 0
+          ? "empty"
+          : "ready";
+
   const coursesContent =
     coursesState === "ready" ? (
       viewMode === "card" ? (
-        <CourseGrid enrollments={enrolledCourses} onSelectCourse={setSelectedCourse} />
+        <CourseGrid enrollments={currentTermEnrollments} onSelectCourse={setSelectedCourse} />
       ) : (
-        <CourseList enrollments={enrolledCourses} onSelectCourse={setSelectedCourse} />
+        <CourseList enrollments={currentTermEnrollments} onSelectCourse={setSelectedCourse} />
       )
     ) : (
       <CoursesState state={coursesState} />
     );
+
+  const termLabel = term.status === "ready" ? formatTermLabel(term.semester) : null;
+  const subtitle =
+    term.status === "loading" || isLoading
+      ? "Loading your current term..."
+      : termLabel
+        ? `You are currently enrolled in ${currentTermEnrollments.length} ${
+            currentTermEnrollments.length === 1 ? "course" : "courses"
+          } for ${termLabel}.`
+        : "We couldn't determine your current term.";
 
   function handleViewModeChange(nextView: CoursesViewMode) {
     setViewMode(nextView);
@@ -58,9 +88,7 @@ export default function StudentCoursesPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-bold font-playfair">Courses</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            You are currently enrolled in {enrolledCourses.length} courses this semester
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
         </div>
         {coursesState === "ready" ? (
           <CoursesViewToggle value={viewMode} onValueChange={handleViewModeChange} />
