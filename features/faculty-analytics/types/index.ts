@@ -35,6 +35,8 @@ export type SemesterOptionDto = {
   code: string;
   label?: string;
   academicYear?: string;
+  startDate: string;
+  endDate?: string;
   campus: {
     id: string;
     name: string;
