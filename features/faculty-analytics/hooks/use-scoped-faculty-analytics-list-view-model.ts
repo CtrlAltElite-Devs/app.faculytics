@@ -14,6 +14,7 @@ import {
   fetchSemesters,
 } from "@/features/faculty-analytics/api/faculty-analytics.requests";
 import { useFacultyList } from "@/features/faculty-analytics/hooks/use-faculty-list";
+import { isHiddenFaculty } from "@/features/faculty-analytics/lib/hidden-faculty";
 import {
   mapDepartmentOptionsToViewModel,
   mapProgramOptionsToViewModel,
@@ -147,7 +148,9 @@ export function useScopedFacultyAnalyticsListViewModel(
     selectedProgramId,
     selectedProgramLabel:
       selectedProgram?.label ?? (allowAllPrograms ? ALL_PROGRAMS_LABEL : "Select program"),
-    facultyList: facultyListQuery.data?.data ?? [],
+    facultyList: (facultyListQuery.data?.data ?? []).filter(
+      (faculty) => !isHiddenFaculty(faculty.id)
+    ),
     pagination: facultyListQuery.data?.meta ?? {
       totalItems: 0,
       itemCount: 0,
