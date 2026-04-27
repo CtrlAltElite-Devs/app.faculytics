@@ -10,6 +10,7 @@ import { APP_ROLES, type AppRole } from "@/constants/roles";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
 import { CompositeRatingSummaryStrip } from "@/features/faculty-analytics/components/composite-rating-summary-strip";
+import { FacultyPositiveSentimentCard } from "@/features/faculty-analytics/components/faculty-positive-sentiment-card";
 import { FeedbackTab } from "@/features/faculty-analytics/components/feedback-tab";
 import { InsightsTab } from "@/features/faculty-analytics/components/insights-tab";
 import { PipelineTriggerCard } from "@/features/faculty-analytics/components/pipeline-trigger-card";
@@ -201,14 +202,22 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         <span className="font-medium text-foreground">{viewModel.semesterLabel}</span>.
       </p>
 
-      <CompositeRatingSummaryStrip
-        data={overviewQuery.data}
-        isLoading={overviewQuery.isLoading}
-        isError={overviewQuery.isError}
-        onRetry={() => {
-          void overviewQuery.refetch();
-        }}
-      />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <CompositeRatingSummaryStrip
+          data={overviewQuery.data}
+          isLoading={overviewQuery.isLoading}
+          isError={overviewQuery.isError}
+          onRetry={() => {
+            void overviewQuery.refetch();
+          }}
+        />
+        <FacultyPositiveSentimentCard
+          distribution={qualitativeSummary?.sentimentDistribution ?? null}
+          isLoading={viewModel.qualitativeSummaryQuery.isLoading}
+          isError={viewModel.qualitativeSummaryQuery.isError}
+          isSentimentReady={showSentimentSurface}
+        />
+      </div>
 
       {reportIsLoading ? (
         <ScopedAnalyticsLoadingState message="Loading faculty report..." />
@@ -302,8 +311,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                     selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
                     isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
                     onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
-                    qualitativeSummary={qualitativeSummary}
-                    showSentimentSurface={showSentimentSurface}
                     questionnaireTypeCodeAutoCorrection={
                       viewModel.questionnaireTypeCodeAutoCorrection
                     }
@@ -324,7 +331,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                       isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
                       onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
                       qualitativeSummary={qualitativeSummary}
-                      showSentimentSurface={showSentimentSurface}
                       filtersDisabled={filtersDisabled}
                       filtersDisabledReason={
                         filtersDisabled
