@@ -164,7 +164,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
     : "No evaluation analytics are available for this faculty in the selected filters.";
 
   return (
-    <section className="faculty-analysis-bg max-w-full space-y-6 overflow-x-clip px-1 pb-4 md:p-8">
+    <section className="analytics-bg max-w-full space-y-6 overflow-x-clip px-1 pb-4 md:p-8">
       {/* Always-rendered shell (F12): sticky title row + semester label +
           composite strip stay visible even when /report is loading/erroring. */}
       <div className="sticky top-0 z-20 -mx-1 flex flex-col gap-4 px-4 py-3 backdrop-blur-md md:-mx-8 md:px-8 xl:flex-row xl:items-center xl:justify-between">

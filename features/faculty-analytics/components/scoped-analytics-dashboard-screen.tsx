@@ -143,7 +143,7 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
       loadingMessage={`Loading ${scopeLower} analytics...`}
       errorMessage={`Unable to load the ${scopeLower} analytics overview.`}
     >
-      <section className="max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
+      <section className="analytics-bg max-w-full space-y-6 overflow-x-hidden px-1 pb-4 md:p-8">
         <ScopedDashboardHeader
           scopeLabel={scopeLabel}
           departments={departments}

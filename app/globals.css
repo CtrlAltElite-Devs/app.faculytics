@@ -207,7 +207,7 @@
     @apply border-border/70 bg-surface/85 backdrop-blur-md;
   }
 
-  .faculty-analysis-bg {
+  .analytics-bg {
     background-image:
       radial-gradient(
         circle at top left,
