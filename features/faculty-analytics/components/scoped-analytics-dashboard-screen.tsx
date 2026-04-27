@@ -174,6 +174,9 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
             summary={summary}
             overallSentiment={overallSentiment}
             facultyRankings={facultyRankings}
+            scopeLabel={commonSectionProps.scopeLabel}
+            selectedSemesterId={commonSectionProps.selectedSemesterId}
+            selectedSemesterLabel={commonSectionProps.selectedSemesterLabel}
           />
         ) : (
           <DepartmentDashboardSections

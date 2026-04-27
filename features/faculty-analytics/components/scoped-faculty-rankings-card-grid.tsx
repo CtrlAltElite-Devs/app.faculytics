@@ -1,8 +1,10 @@
 import { ChevronRight, FileText, MessageSquare, Sparkles, Tags } from "lucide-react";
+import Link from "next/link";
 import { Fragment } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { buildScopedFacultyAnalysisHref } from "@/features/faculty-analytics/lib/faculty-analysis-routes";
 import {
   formatPercent,
   formatScore,
@@ -14,9 +16,13 @@ import {
 import { bandForScore } from "@/features/faculty-analytics/lib/score-bands";
 import type { ScopedFacultyRankingRow } from "@/features/faculty-analytics/lib/scoped-analytics-view-model";
 import { cn } from "@/lib/utils";
+import type { ScopeLabel } from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
 
 type ScopedFacultyRankingsCardGridProps = {
   facultyRankings: readonly ScopedFacultyRankingRow[];
+  scopeLabel: ScopeLabel;
+  selectedSemesterId: string;
+  selectedSemesterLabel: string;
 };
 
 type SentimentSlice = { pos: number; neu: number; neg: number };
@@ -94,13 +100,36 @@ const FUNNEL_STAGES = [
   { icon: Tags, label: "Topics", key: "topicCount" },
 ] as const;
 
-function FacultyRankingCard({ row }: { row: ScopedFacultyRankingRow }) {
+type FacultyRankingCardProps = {
+  row: ScopedFacultyRankingRow;
+  scopeLabel: ScopeLabel;
+  selectedSemesterId: string;
+  selectedSemesterLabel: string;
+};
+
+function FacultyRankingCard({
+  row,
+  scopeLabel,
+  selectedSemesterId,
+  selectedSemesterLabel,
+}: FacultyRankingCardProps) {
   const band = bandForScore(row.avgNormalizedScore);
   const isFirstTerm = row.scoreDelta === null && row.sentimentDelta === null;
   const slices = getSentimentSlices(row);
+  const href = buildScopedFacultyAnalysisHref({
+    facultyId: row.facultyId,
+    facultyName: row.facultyName,
+    semesterId: selectedSemesterId,
+    semesterLabel: selectedSemesterLabel,
+    scopeLabel,
+  });
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-shadow hover:shadow-md">
+    <Link
+      href={href}
+      aria-label={`View analysis for ${row.facultyName}`}
+      className="flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+    >
       <div className={cn("relative border-b px-5 pb-5 pt-4", band.hero, band.border)}>
         <div
           className={cn(
@@ -251,17 +280,26 @@ function FacultyRankingCard({ row }: { row: ScopedFacultyRankingRow }) {
           </Fragment>
         ))}
       </div>
-    </div>
+    </Link>
   );
 }
 
 export function ScopedFacultyRankingsCardGrid({
   facultyRankings,
+  scopeLabel,
+  selectedSemesterId,
+  selectedSemesterLabel,
 }: ScopedFacultyRankingsCardGridProps) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
       {facultyRankings.map((row) => (
-        <FacultyRankingCard key={row.facultyId} row={row} />
+        <FacultyRankingCard
+          key={row.facultyId}
+          row={row}
+          scopeLabel={scopeLabel}
+          selectedSemesterId={selectedSemesterId}
+          selectedSemesterLabel={selectedSemesterLabel}
+        />
       ))}
     </div>
   );
