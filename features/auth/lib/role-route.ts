@@ -65,7 +65,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     routePrefix: "/campus-head",
     navItems: [
       { title: "Dashboard", url: "/campus-head/dashboard", icon: LayoutDashboard },
-      { title: "Faculty", url: "/campus-head/faculties", icon: ChartNoAxesColumn },
+      { title: "Faculty", url: "/campus-head/faculty", icon: ChartNoAxesColumn },
     ],
   },
   [APP_ROLES.ADMIN]: {

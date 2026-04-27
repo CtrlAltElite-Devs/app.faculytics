@@ -47,7 +47,7 @@ const SCOPE_METADATA: Record<
 > = {
   Campus: {
     scopeLower: "campus",
-    facultiesHref: "/campus-head/faculties",
+    facultiesHref: "/campus-head/faculty",
   },
   Department: {
     scopeLower: "department",
