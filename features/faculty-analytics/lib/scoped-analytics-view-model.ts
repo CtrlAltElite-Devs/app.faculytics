@@ -1,4 +1,5 @@
 import { ALL_PROGRAMS_LABEL } from "@/features/faculty-analytics/constants/filters";
+import { isHiddenFaculty } from "@/features/faculty-analytics/lib/hidden-faculty";
 import { SENTIMENT_HEX } from "@/features/faculty-analytics/lib/sentiment-colors";
 import type {
   DepartmentOptionDto,
@@ -120,7 +121,8 @@ export function mapProgramOptionsToViewModel(
 export function mapDepartmentOverviewFacultyToRankingRows(
   faculty: readonly DepartmentOverviewFacultyDto[]
 ): ScopedFacultyRankingRow[] {
-  return [...faculty]
+  return faculty
+    .filter((item) => !isHiddenFaculty(item.facultyId))
     .sort((a, b) => {
       const percentileComparison = b.percentileRank - a.percentileRank;
 

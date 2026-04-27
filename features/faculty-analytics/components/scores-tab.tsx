@@ -8,7 +8,6 @@ import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/componen
 import type {
   FacultyQuestionnaireTypeOptionDto,
   FacultyReportResponseDto,
-  QualitativeSummaryResponseDto,
 } from "@/features/faculty-analytics/types";
 import type { ParamAutoCorrection } from "@/features/faculty-analytics/hooks/use-faculty-report-detail-view-model";
 
@@ -20,8 +19,6 @@ type ScoresTabProps = {
   selectedQuestionnaireTypeCode: string | null;
   isQuestionnaireTypesLoading: boolean;
   onQuestionnaireTypeSelect: (code: string) => void;
-  qualitativeSummary: QualitativeSummaryResponseDto | undefined;
-  showSentimentSurface: boolean;
   questionnaireTypeCodeAutoCorrection: ParamAutoCorrection | null;
   onDismissQuestionnaireTypeCodeAutoCorrection: () => void;
 };
@@ -34,8 +31,6 @@ export function ScoresTab({
   selectedQuestionnaireTypeCode,
   isQuestionnaireTypesLoading,
   onQuestionnaireTypeSelect,
-  qualitativeSummary,
-  showSentimentSurface,
   questionnaireTypeCodeAutoCorrection,
   onDismissQuestionnaireTypeCodeAutoCorrection,
 }: ScoresTabProps) {
@@ -72,11 +67,7 @@ export function ScoresTab({
             overallRating={report.overallRating}
             overallInterpretation={report.overallInterpretation}
             responseCount={report.submissionCount}
-            sentimentDistribution={
-              showSentimentSurface && qualitativeSummary
-                ? qualitativeSummary.sentimentDistribution
-                : null
-            }
+            sentimentDistribution={null}
           />
 
           <QuantitativeScoresSection

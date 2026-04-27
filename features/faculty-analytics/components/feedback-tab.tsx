@@ -25,7 +25,6 @@ type FeedbackTabProps = {
   isQuestionnaireTypesLoading: boolean;
   onQuestionnaireTypeSelect: (code: string) => void;
   qualitativeSummary: QualitativeSummaryResponseDto | undefined;
-  showSentimentSurface: boolean;
   /** Stable: derived from latestPipeline?.status, NOT the polling status. */
   filtersDisabled: boolean;
   filtersDisabledReason?: string;
@@ -57,7 +56,6 @@ export function FeedbackTab({
   isQuestionnaireTypesLoading,
   onQuestionnaireTypeSelect,
   qualitativeSummary,
-  showSentimentSurface,
   filtersDisabled,
   filtersDisabledReason,
   sentimentFilter,
@@ -121,11 +119,7 @@ export function FeedbackTab({
               overallRating={report.overallRating}
               overallInterpretation={report.overallInterpretation}
               responseCount={report.submissionCount}
-              sentimentDistribution={
-                showSentimentSurface && qualitativeSummary
-                  ? qualitativeSummary.sentimentDistribution
-                  : null
-              }
+              sentimentDistribution={null}
             />
           ) : null}
           <FeedbackFilterBar

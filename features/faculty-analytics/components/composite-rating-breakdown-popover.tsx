@@ -56,6 +56,8 @@ export function CompositeRatingBreakdownPopover({
 }: CompositeRatingBreakdownPopoverProps) {
   const sorted = sortByCanonicalOrder(contributions);
   const banner = COVERAGE_BANNER_COPY[composite.coverageStatus];
+  const contributingRows = sorted.filter((row) => row.contribution !== null && row.rating !== null);
+  const showFormula = composite.rating !== null && contributingRows.length > 1;
 
   return (
     <div className="flex flex-col gap-3">
@@ -117,25 +119,34 @@ export function CompositeRatingBreakdownPopover({
       </ul>
 
       {composite.rating !== null ? (
-        <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2">
-          <span className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-            Overall
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="font-playfair text-sm font-semibold tabular-nums text-foreground">
-              {composite.rating.toFixed(2)}
+        <div className="space-y-1.5 rounded-md bg-muted/50 px-3 py-2">
+          <div className="flex items-start justify-between gap-3">
+            <span className="pt-0.5 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Overall
             </span>
-            {composite.interpretation ? (
-              <span
-                className={cn(
-                  "text-[11px] font-medium",
-                  getFacultyReportInterpretationTextClass(composite.interpretation)
-                )}
-              >
-                {composite.interpretation}
+            <div className="flex min-w-0 flex-wrap items-baseline justify-end gap-x-2 gap-y-1 text-right">
+              <span className="font-playfair text-sm font-semibold tabular-nums text-foreground">
+                {composite.rating.toFixed(2)}
               </span>
-            ) : null}
+              {composite.interpretation ? (
+                <span
+                  className={cn(
+                    "text-[11px] font-medium",
+                    getFacultyReportInterpretationTextClass(composite.interpretation)
+                  )}
+                >
+                  {composite.interpretation}
+                </span>
+              ) : null}
+            </div>
           </div>
+          {showFormula ? (
+            <p className="border-t border-border/40 pt-1.5 text-[11px] tabular-nums text-muted-foreground">
+              {contributingRows.map((row) => row.contribution!.toFixed(2)).join(" + ")}
+              {" = "}
+              <span className="font-semibold text-foreground">{composite.rating.toFixed(2)}</span>
+            </p>
+          ) : null}
         </div>
       ) : null}
 

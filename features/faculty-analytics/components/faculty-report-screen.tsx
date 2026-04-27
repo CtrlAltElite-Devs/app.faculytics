@@ -9,10 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { APP_ROLES, type AppRole } from "@/constants/roles";
 import { useActiveRole } from "@/features/auth/hooks/use-active-role";
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
-import { CompositeRatingSummaryStrip } from "@/features/faculty-analytics/components/composite-rating-summary-strip";
+import { FacultyAnalysisKpiRail } from "@/features/faculty-analytics/components/faculty-analysis-kpi-rail";
+import { FacultyAnalysisStatusStrip } from "@/features/faculty-analytics/components/faculty-analysis-status-strip";
 import { FeedbackTab } from "@/features/faculty-analytics/components/feedback-tab";
 import { InsightsTab } from "@/features/faculty-analytics/components/insights-tab";
-import { PipelineTriggerCard } from "@/features/faculty-analytics/components/pipeline-trigger-card";
 import { ReportExportDialog } from "@/features/faculty-analytics/components/report-export-dialog";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ScopedAnalyticsErrorState } from "@/features/faculty-analytics/components/scoped-analytics-error-state";
@@ -164,10 +164,10 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
     : "No evaluation analytics are available for this faculty in the selected filters.";
 
   return (
-    <section className="max-w-full space-y-6 overflow-x-clip px-1 pb-4 md:p-8">
+    <section className="analytics-bg max-w-full space-y-6 overflow-x-clip px-1 pb-4 md:p-8">
       {/* Always-rendered shell (F12): sticky title row + semester label +
           composite strip stay visible even when /report is loading/erroring. */}
-      <div className="sticky top-0 z-20 -mx-1 flex flex-col gap-4 border-b border-border/40 bg-background/80 px-4 py-3 backdrop-blur-md supports-[backdrop-filter]:bg-background/75 md:-mx-8 md:px-8 xl:flex-row xl:items-center xl:justify-between">
+      <div className="sticky top-0 z-20 -mx-1 flex flex-col gap-4 px-4 py-3 backdrop-blur-md md:-mx-8 md:px-8 xl:flex-row xl:items-center xl:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
             <Avatar size="lg" className="border border-border/70">
@@ -196,18 +196,27 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         />
       </div>
 
-      <p className="-mt-2 max-w-3xl text-sm text-muted-foreground">
-        Review per-question faculty evaluation results for{" "}
-        <span className="font-medium text-foreground">{viewModel.semesterLabel}</span>.
-      </p>
+      <HeroDescription
+        semesterLabel={viewModel.semesterLabel}
+        commentCount={pipelineStatusQuery.data?.coverage.commentCount ?? null}
+        courseCount={viewModel.availableCourses.length}
+      />
 
-      <CompositeRatingSummaryStrip
-        data={overviewQuery.data}
-        isLoading={overviewQuery.isLoading}
-        isError={overviewQuery.isError}
-        onRetry={() => {
+      <FacultyAnalysisKpiRail
+        overview={overviewQuery.data}
+        isOverviewLoading={overviewQuery.isLoading}
+        isOverviewError={overviewQuery.isError}
+        onOverviewRetry={() => {
           void overviewQuery.refetch();
         }}
+        sentimentDistribution={qualitativeSummary?.sentimentDistribution ?? null}
+        isSentimentLoading={viewModel.qualitativeSummaryQuery.isLoading}
+        isSentimentReady={showSentimentSurface}
+        coverage={pipelineStatusQuery.data?.coverage ?? null}
+        courseCount={viewModel.availableCourses.length}
+        lastAnalyzedAt={
+          pipelineStatusQuery.data?.completedAt ?? latestPipeline?.completedAt ?? null
+        }
       />
 
       {reportIsLoading ? (
@@ -237,7 +246,7 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
           ) : (
             <>
               {showPipelineTrigger && viewModel.semesterId ? (
-                <PipelineTriggerCard scope={pipelineScope} pipeline={latestPipeline} />
+                <FacultyAnalysisStatusStrip scope={pipelineScope} pipeline={latestPipeline} />
               ) : null}
 
               <Tabs
@@ -302,8 +311,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                     selectedQuestionnaireTypeCode={viewModel.questionnaireTypeCode}
                     isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
                     onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
-                    qualitativeSummary={qualitativeSummary}
-                    showSentimentSurface={showSentimentSurface}
                     questionnaireTypeCodeAutoCorrection={
                       viewModel.questionnaireTypeCodeAutoCorrection
                     }
@@ -324,7 +331,6 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
                       isQuestionnaireTypesLoading={viewModel.isQuestionnaireTypeLoading}
                       onQuestionnaireTypeSelect={viewModel.selectQuestionnaireType}
                       qualitativeSummary={qualitativeSummary}
-                      showSentimentSurface={showSentimentSurface}
                       filtersDisabled={filtersDisabled}
                       filtersDisabledReason={
                         filtersDisabled
@@ -374,5 +380,42 @@ export function FacultyReportScreen({ facultyId }: FacultyReportScreenProps) {
         />
       ) : null}
     </section>
+  );
+}
+
+function HeroDescription({
+  semesterLabel,
+  commentCount,
+  courseCount,
+}: {
+  semesterLabel: string;
+  commentCount: number | null;
+  courseCount: number;
+}) {
+  const semesterFragment = <span className="font-medium text-foreground">{semesterLabel}</span>;
+
+  if (commentCount !== null && commentCount > 0) {
+    const responseLabel = commentCount === 1 ? "free-text response" : "free-text responses";
+    const courseLabel = courseCount === 1 ? "course" : "courses";
+    return (
+      <p className="-mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+        Per-question faculty evaluation results for {semesterFragment}. Themes and recommendations
+        below are drawn from <span className="font-medium text-foreground">{commentCount}</span>{" "}
+        {responseLabel}
+        {courseCount > 0 ? (
+          <>
+            {" "}
+            across <span className="font-medium text-foreground">{courseCount}</span> {courseLabel}
+          </>
+        ) : null}
+        .
+      </p>
+    );
+  }
+
+  return (
+    <p className="-mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+      Review per-question faculty evaluation results for {semesterFragment}.
+    </p>
   );
 }
