@@ -43,12 +43,19 @@ export function FacultyAnalysisSentimentStrip({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-4">
-            <p className="text-sm font-medium text-foreground">Sentiment distribution</p>
-            <p className="text-xs text-muted-foreground">Click a segment to filter comments</p>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Sentiment distribution</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Click a segment to filter the comments shown below.
+              </p>
+            </div>
+            <p className="font-mono text-[11px] tabular-nums text-muted-foreground">
+              {total} {total === 1 ? "response" : "responses"}
+            </p>
           </div>
 
           <div
-            className="mt-3 flex h-2 w-full overflow-hidden rounded-full bg-muted"
+            className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-muted"
             role="group"
             aria-label="Sentiment distribution"
           >

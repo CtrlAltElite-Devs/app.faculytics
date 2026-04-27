@@ -13,6 +13,7 @@ import {
   ALL_PROGRAMS_LABEL,
   ALL_PROGRAMS_VALUE,
 } from "@/features/faculty-analytics/constants/filters";
+import { isHiddenFaculty } from "@/features/faculty-analytics/lib/hidden-faculty";
 import {
   mapDepartmentOverviewFacultyToRankingRows,
   mapDepartmentOptionsToViewModel,
@@ -162,13 +163,14 @@ export function useScopedAnalyticsDashboardViewModel(scopeLabel: ScopeLabel) {
   }, [overviewQuery.data, scopeLabel, selectedDepartmentCode]);
 
   const filteredAttentionItems = useMemo(() => {
+    const base = attentionQuery.data?.items ?? [];
+    const visible = base.filter((item) => !isHiddenFaculty(item.facultyId));
+
     if (scopeLabel !== "Campus" || !selectedDepartmentCode) {
-      return attentionQuery.data?.items ?? [];
+      return visible;
     }
 
-    return (attentionQuery.data?.items ?? []).filter(
-      (item) => item.departmentCode === selectedDepartmentCode
-    );
+    return visible.filter((item) => item.departmentCode === selectedDepartmentCode);
   }, [attentionQuery.data?.items, scopeLabel, selectedDepartmentCode]);
   const facultyRankings = useMemo(
     () => mapDepartmentOverviewFacultyToRankingRows(filteredOverview?.faculty ?? []),
