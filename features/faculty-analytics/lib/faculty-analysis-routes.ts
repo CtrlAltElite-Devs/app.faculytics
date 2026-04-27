@@ -46,9 +46,9 @@ export function buildScopedFacultyAnalysisHref({
 
   const basePath =
     scopeLabel === "Campus"
-      ? "/campus-head/faculties"
+      ? "/campus-head/faculty"
       : scopeLabel === "Program"
-        ? "/chairperson/faculties"
-        : "/dean/faculties";
+        ? "/chairperson/faculty"
+        : "/dean/faculty";
   return `${basePath}/${facultyId}/analysis?${params.toString()}`;
 }

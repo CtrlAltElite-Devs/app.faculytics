@@ -1,5 +1,5 @@
 import { ScopedFacultyListScreen } from "@/features/faculty-analytics";
 
-export default function CampusHeadFacultiesPage() {
+export default function CampusHeadFacultyPage() {
   return <ScopedFacultyListScreen scopeLabel="Campus" />;
 }
