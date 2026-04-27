@@ -3,9 +3,9 @@
 import { useMemo } from "react";
 
 import { AutoCorrectionNotice } from "@/features/faculty-analytics/components/auto-correction-notice";
+import { FacultyAnalysisActionsTable } from "@/features/faculty-analytics/components/faculty-analysis-actions-table";
 import { FacultyAnalysisSentimentStrip } from "@/features/faculty-analytics/components/faculty-analysis-sentiment-strip";
 import { FacultyReportComments } from "@/features/faculty-analytics/components/faculty-report-comments";
-import { RecommendationsCard } from "@/features/faculty-analytics/components/recommendations-card";
 import { ScopedAnalyticsEmptyState } from "@/features/faculty-analytics/components/scoped-analytics-empty-state";
 import { ThemeExplorerList } from "@/features/faculty-analytics/components/theme-explorer-list";
 import type {
@@ -102,7 +102,7 @@ export function InsightsTab({
       ) : null}
 
       {showThemesSurface && themes.length > 0 ? (
-        <section className="space-y-6">
+        <section className="space-y-8">
           <p className="max-w-3xl text-xs text-muted-foreground">
             Themes and feedback are analyzed across all your courses to ensure reliable patterns.
             Per-course breakdowns show quantitative ratings only.
@@ -118,7 +118,26 @@ export function InsightsTab({
             actions={actions}
             redactComments={redactComments}
           />
-          {recommendations ? <RecommendationsCard recommendations={recommendations} /> : null}
+          {recommendations && actions.length > 0 ? (
+            <section className="space-y-3">
+              <div className="max-w-3xl">
+                <p className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+                  Suggested actions
+                </p>
+                <h2 className="mt-2 text-xl font-semibold tracking-tight text-foreground">
+                  Concrete next steps
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Concrete actions informed by the feedback themes above. Track each as you act on
+                  it.
+                </p>
+              </div>
+              <FacultyAnalysisActionsTable
+                actions={actions}
+                onViewTheme={(label) => onThemeClick(label)}
+              />
+            </section>
+          ) : null}
         </section>
       ) : showThemesSurface && themes.length === 0 && comments.length > 0 && !redactComments ? (
         <section>
