@@ -2,6 +2,7 @@
 
 import { ScopedAttentionCard } from "@/features/faculty-analytics/components/scoped-attention-card";
 import { ScopedOverallSentimentBarChart } from "@/features/faculty-analytics/components/scoped-charts";
+import { ScopedFacultyRankingsTable } from "@/features/faculty-analytics/components/scoped-faculty-rankings-table";
 import { ScopedMetricsGrid } from "@/features/faculty-analytics/components/scoped-metrics-grid";
 import type { DashboardCommonSectionProps } from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
 
@@ -9,6 +10,7 @@ export function ProgramDashboardSections({
   summary,
   overallSentiment,
   attentionItems,
+  facultyRankings,
   isAttentionLoading,
   hasAnalyticsData,
   scopeLabel,
@@ -32,6 +34,8 @@ export function ProgramDashboardSections({
           semesterLabel={selectedSemesterLabel}
         />
       </div>
+
+      <ScopedFacultyRankingsTable facultyRankings={facultyRankings} />
     </>
   );
 }

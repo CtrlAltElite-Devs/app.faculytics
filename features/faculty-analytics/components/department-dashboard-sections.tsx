@@ -5,6 +5,7 @@ import { PipelineTriggerCard } from "@/features/faculty-analytics/components/pip
 import { RecommendationsCard } from "@/features/faculty-analytics/components/recommendations-card";
 import { ScopedAttentionCard } from "@/features/faculty-analytics/components/scoped-attention-card";
 import { ScopedOverallSentimentBarChart } from "@/features/faculty-analytics/components/scoped-charts";
+import { ScopedFacultyRankingsTable } from "@/features/faculty-analytics/components/scoped-faculty-rankings-table";
 import { ScopedMetricsGrid } from "@/features/faculty-analytics/components/scoped-metrics-grid";
 import { ThemesRankedList } from "@/features/faculty-analytics/components/themes-ranked-list";
 import type { DepartmentDashboardSectionsProps } from "@/features/faculty-analytics/components/scoped-dashboard-section-types";
@@ -49,6 +50,7 @@ export function DepartmentDashboardSections({
   summary,
   overallSentiment,
   attentionItems,
+  facultyRankings,
   isAttentionLoading,
   hasAnalyticsData,
   scopeLabel,
@@ -95,6 +97,8 @@ export function DepartmentDashboardSections({
           <EmptyRecommendationsPlaceholder />
         ) : null}
       </div>
+
+      <ScopedFacultyRankingsTable facultyRankings={facultyRankings} />
     </>
   );
 }
