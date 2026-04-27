@@ -1,5 +1,5 @@
 import { ScopedFacultyListScreen } from "@/features/faculty-analytics";
 
-export default function ChairpersonFacultiesPage() {
+export default function ChairpersonFacultyPage() {
   return <ScopedFacultyListScreen scopeLabel="Program" allowAllPrograms={false} />;
 }

@@ -47,15 +47,15 @@ const SCOPE_METADATA: Record<
 > = {
   Campus: {
     scopeLower: "campus",
-    facultiesHref: "/campus-head/faculties",
+    facultiesHref: "/campus-head/faculty",
   },
   Department: {
     scopeLower: "department",
-    facultiesHref: "/dean/faculties",
+    facultiesHref: "/dean/faculty",
   },
   Program: {
     scopeLower: "program",
-    facultiesHref: "/chairperson/faculties",
+    facultiesHref: "/chairperson/faculty",
   },
 };
 
@@ -80,6 +80,7 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
     summary,
     overallSentiment,
     attentionItems,
+    facultyRankings,
     overview,
     isLoading,
     isAttentionLoading,
@@ -125,6 +126,7 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
     summary,
     overallSentiment,
     attentionItems,
+    facultyRankings,
     isAttentionLoading,
     hasAnalyticsData,
     scopeLabel,
@@ -168,7 +170,11 @@ export function ScopedAnalyticsDashboardScreen({ scopeLabel }: { scopeLabel: Sco
         ) : isProgramScope ? (
           <ProgramDashboardSections {...commonSectionProps} />
         ) : isCampusScope ? (
-          <CampusDashboardSections summary={summary} overallSentiment={overallSentiment} />
+          <CampusDashboardSections
+            summary={summary}
+            overallSentiment={overallSentiment}
+            facultyRankings={facultyRankings}
+          />
         ) : (
           <DepartmentDashboardSections
             {...commonSectionProps}

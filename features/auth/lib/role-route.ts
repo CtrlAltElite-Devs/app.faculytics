@@ -45,7 +45,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     routePrefix: "/dean",
     navItems: [
       { title: "Dashboard", url: "/dean/dashboard", icon: LayoutDashboard },
-      { title: "Faculty", url: "/dean/faculties", icon: ChartNoAxesColumn },
+      { title: "Faculty", url: "/dean/faculty", icon: ChartNoAxesColumn },
       { title: "Evaluation", url: "/dean/evaluation", icon: NotebookPen },
     ],
   },
@@ -55,7 +55,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     routePrefix: "/chairperson",
     navItems: [
       { title: "Dashboard", url: "/chairperson/dashboard", icon: LayoutDashboard },
-      { title: "Faculty", url: "/chairperson/faculties", icon: Building2 },
+      { title: "Faculty", url: "/chairperson/faculty", icon: Building2 },
       { title: "Evaluation", url: "/chairperson/evaluation", icon: NotebookPen },
     ],
   },
@@ -65,7 +65,7 @@ const ROLE_CONFIG: Record<AppRole, RoleConfig> = {
     routePrefix: "/campus-head",
     navItems: [
       { title: "Dashboard", url: "/campus-head/dashboard", icon: LayoutDashboard },
-      { title: "Faculty", url: "/campus-head/faculties", icon: ChartNoAxesColumn },
+      { title: "Faculty", url: "/campus-head/faculty", icon: ChartNoAxesColumn },
     ],
   },
   [APP_ROLES.ADMIN]: {
