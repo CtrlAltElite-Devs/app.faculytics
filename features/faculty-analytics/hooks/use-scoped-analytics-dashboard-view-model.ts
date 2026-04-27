@@ -14,6 +14,7 @@ import {
   ALL_PROGRAMS_VALUE,
 } from "@/features/faculty-analytics/constants/filters";
 import {
+  mapDepartmentOverviewFacultyToRankingRows,
   mapDepartmentOptionsToViewModel,
   mapDepartmentOverviewToDashboardViewModel,
   mapProgramOptionsToViewModel,
@@ -169,6 +170,10 @@ export function useScopedAnalyticsDashboardViewModel(scopeLabel: ScopeLabel) {
       (item) => item.departmentCode === selectedDepartmentCode
     );
   }, [attentionQuery.data?.items, scopeLabel, selectedDepartmentCode]);
+  const facultyRankings = useMemo(
+    () => mapDepartmentOverviewFacultyToRankingRows(filteredOverview?.faculty ?? []),
+    [filteredOverview?.faculty]
+  );
 
   const selectedSemester =
     semesters.find((semester) => semester.id === selectedSemesterId) ?? semesters[0] ?? null;
@@ -220,6 +225,7 @@ export function useScopedAnalyticsDashboardViewModel(scopeLabel: ScopeLabel) {
     },
     overallSentiment: dashboardViewModel?.overallSentiment ?? [],
     attentionItems: filteredAttentionItems,
+    facultyRankings,
     overview: filteredOverview ?? null,
     isAttentionLoading: Boolean(selectedSemesterId) && attentionQuery.isLoading,
     isLoading,

@@ -2,6 +2,7 @@ import { ALL_PROGRAMS_LABEL } from "@/features/faculty-analytics/constants/filte
 import { SENTIMENT_HEX } from "@/features/faculty-analytics/lib/sentiment-colors";
 import type {
   DepartmentOptionDto,
+  DepartmentOverviewFacultyDto,
   DepartmentOverviewResponseDto,
   ProgramOptionDto,
   SemesterOptionDto,
@@ -39,6 +40,25 @@ export type ScopedOverallSentimentDatum = {
   label: string;
   value: number;
   color: string;
+};
+
+export type ScopedFacultyRankingRow = {
+  displayRank: number;
+  facultyId: string;
+  facultyName: string;
+  departmentCode: string;
+  avgNormalizedScore: number;
+  percentileRank: number;
+  submissionCount: number;
+  commentCount: number;
+  analyzedCount: number;
+  positiveCount: number;
+  neutralCount: number;
+  negativeCount: number;
+  positiveSentimentRate: number;
+  topicCount: number;
+  scoreDelta: number | null;
+  sentimentDelta: number | null;
 };
 
 export type ScopedDashboardViewModel = {
@@ -95,6 +115,49 @@ export function mapProgramOptionsToViewModel(
   }
 
   return [{ id: null, code: null, label: ALL_PROGRAMS_LABEL }, ...mappedPrograms];
+}
+
+export function mapDepartmentOverviewFacultyToRankingRows(
+  faculty: readonly DepartmentOverviewFacultyDto[]
+): ScopedFacultyRankingRow[] {
+  return [...faculty]
+    .sort((a, b) => {
+      const percentileComparison = b.percentileRank - a.percentileRank;
+
+      if (percentileComparison !== 0) {
+        return percentileComparison;
+      }
+
+      const scoreComparison = b.avgNormalizedScore - a.avgNormalizedScore;
+
+      if (scoreComparison !== 0) {
+        return scoreComparison;
+      }
+
+      return a.facultyName.localeCompare(b.facultyName);
+    })
+    .map((item, index) => {
+      const sentimentTotal = item.positiveCount + item.neutralCount + item.negativeCount;
+
+      return {
+        displayRank: index + 1,
+        facultyId: item.facultyId,
+        facultyName: item.facultyName,
+        departmentCode: item.departmentCode,
+        avgNormalizedScore: item.avgNormalizedScore,
+        percentileRank: item.percentileRank,
+        submissionCount: item.submissionCount,
+        commentCount: item.commentCount,
+        analyzedCount: item.analyzedCount,
+        positiveCount: item.positiveCount,
+        neutralCount: item.neutralCount,
+        negativeCount: item.negativeCount,
+        positiveSentimentRate: toSentimentRate(item.positiveCount, sentimentTotal),
+        topicCount: item.topicCount,
+        scoreDelta: item.scoreDelta,
+        sentimentDelta: item.sentimentDelta,
+      };
+    });
 }
 
 export function mapDepartmentOverviewToDashboardViewModel({

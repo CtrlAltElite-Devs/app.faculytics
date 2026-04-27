@@ -11,6 +11,7 @@ export type DashboardCommonSectionProps = {
   summary: ReturnType<typeof useScopedAnalyticsDashboardViewModel>["summary"];
   overallSentiment: ReturnType<typeof useScopedAnalyticsDashboardViewModel>["overallSentiment"];
   attentionItems: ReturnType<typeof useScopedAnalyticsDashboardViewModel>["attentionItems"];
+  facultyRankings: ReturnType<typeof useScopedAnalyticsDashboardViewModel>["facultyRankings"];
   isAttentionLoading: boolean;
   hasAnalyticsData: boolean;
   scopeLabel: ScopeLabel;
