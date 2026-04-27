@@ -51,11 +51,11 @@ const SCOPE_METADATA: Record<
   },
   Department: {
     scopeLower: "department",
-    facultiesHref: "/dean/faculties",
+    facultiesHref: "/dean/faculty",
   },
   Program: {
     scopeLower: "program",
-    facultiesHref: "/chairperson/faculties",
+    facultiesHref: "/chairperson/faculty",
   },
 };
 
