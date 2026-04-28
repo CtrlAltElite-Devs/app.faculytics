@@ -26,15 +26,15 @@ type FacultyAnalysisActionsTableProps = {
 };
 
 type ActionTab = "improvements" | "strengths";
-type SortKey = "priority" | "mentions";
+type SortKey = "confidence" | "mentions";
 
-const PRIORITY_RANK: Record<ActionPriority, number> = {
+const CONFIDENCE_RANK: Record<ActionPriority, number> = {
   HIGH: 0,
   MEDIUM: 1,
   LOW: 2,
 };
 
-const PRIORITY_VARIANT: Record<
+const CONFIDENCE_VARIANT: Record<
   ActionPriority,
   "default" | "secondary" | "destructive" | "outline"
 > = {
@@ -92,7 +92,7 @@ export function FacultyAnalysisActionsTable({
   onViewTheme,
 }: FacultyAnalysisActionsTableProps) {
   const [tab, setTab] = useState<ActionTab>("improvements");
-  const [sortBy, setSortBy] = useState<SortKey>("priority");
+  const [sortBy, setSortBy] = useState<SortKey>("confidence");
 
   const { improvements, strengths } = useMemo(() => {
     const improvements: RecommendedActionDto[] = [];
@@ -108,9 +108,9 @@ export function FacultyAnalysisActionsTable({
 
   const sorted = useMemo(() => {
     const copy = [...visible];
-    if (sortBy === "priority") {
+    if (sortBy === "confidence") {
       copy.sort((a, b) => {
-        const r = PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority];
+        const r = CONFIDENCE_RANK[a.priority] - CONFIDENCE_RANK[b.priority];
         if (r !== 0) return r;
         return getMentions(b) - getMentions(a);
       });
@@ -156,7 +156,7 @@ export function FacultyAnalysisActionsTable({
                 value={sortBy}
                 onValueChange={(value) => setSortBy(value as SortKey)}
               >
-                <DropdownMenuRadioItem value="priority">Priority</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="confidence">Confidence</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="mentions">Mentions</DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
@@ -195,7 +195,7 @@ export function FacultyAnalysisActionsTable({
                   scope="col"
                   className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground"
                 >
-                  Priority
+                  Confidence
                 </th>
                 <th scope="col" className="px-4 py-3" />
               </tr>
@@ -221,7 +221,7 @@ export function FacultyAnalysisActionsTable({
                       {topic ? topic.topicLabel : "—"}
                     </td>
                     <td className="px-4 py-4">
-                      <Badge variant={PRIORITY_VARIANT[action.priority]}>{action.priority}</Badge>
+                      <Badge variant={CONFIDENCE_VARIANT[action.priority]}>{action.priority}</Badge>
                     </td>
                     <td className="px-4 py-4 text-right">
                       {topic ? (
