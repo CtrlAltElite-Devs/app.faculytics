@@ -406,6 +406,8 @@ export type QualitativeThemeDto = {
   count: number;
   sentimentSplit: SentimentDistributionDto;
   sampleQuotes?: string[];
+  rawLabel?: string;
+  keywords?: string[];
 };
 
 export type QualitativeSummaryResponseDto = {

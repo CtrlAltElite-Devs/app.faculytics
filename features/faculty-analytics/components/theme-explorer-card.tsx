@@ -326,6 +326,43 @@ export function ThemeExplorerCard({
 
               {/* RIGHT — suggested action + meta */}
               <aside className="space-y-6">
+                {theme.rawLabel || (theme.keywords && theme.keywords.length > 0) ? (
+                  <section>
+                    <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+                      Topic signal
+                    </h4>
+                    <div className="mt-3 space-y-3">
+                      {theme.rawLabel ? (
+                        <div className="space-y-1.5">
+                          <p className="text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground/80">
+                            Raw label
+                          </p>
+                          <code className="block break-all rounded-md bg-muted px-2 py-1 font-mono text-xs text-foreground">
+                            {theme.rawLabel}
+                          </code>
+                        </div>
+                      ) : null}
+                      {theme.keywords && theme.keywords.length > 0 ? (
+                        <div className="space-y-1.5">
+                          <p className="text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground/80">
+                            Keywords
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {theme.keywords.map((keyword) => (
+                              <Badge
+                                key={keyword}
+                                variant="secondary"
+                                className="font-mono text-[0.7rem]"
+                              >
+                                {keyword}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  </section>
+                ) : null}
                 {matchingAction ? (
                   <section className="rounded-2xl border border-border/70 bg-accent/40 p-5">
                     <div className="flex items-center gap-2">
