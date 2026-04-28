@@ -326,7 +326,8 @@ export function ThemeExplorerCard({
 
               {/* RIGHT — suggested action + meta */}
               <aside className="space-y-6">
-                {theme.rawLabel || (theme.keywords && theme.keywords.length > 0) ? (
+                {!redactComments &&
+                (theme.rawLabel || (theme.keywords && theme.keywords.length > 0)) ? (
                   <section>
                     <h4 className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
                       Topic signal
