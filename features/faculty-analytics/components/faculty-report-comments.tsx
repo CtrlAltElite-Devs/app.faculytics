@@ -51,6 +51,12 @@ export function FacultyReportComments({
     }
     return map;
   }, [themes]);
+
+  // TEMP: hide comments without sentiment client-side
+  const visibleComments = useMemo(
+    () => comments.filter((comment) => Boolean(comment.sentiment)),
+    [comments]
+  );
   return (
     <section className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
       <div className="border-b border-border/70 px-5 py-4">
@@ -77,15 +83,15 @@ export function FacultyReportComments({
         </div>
       ) : null}
 
-      {!isLoading && !isError && comments.length === 0 ? (
+      {!isLoading && !isError && visibleComments.length === 0 ? (
         <div className="px-5 py-8">
           <ScopedAnalyticsEmptyState description="No qualitative comments were submitted for this report context." />
         </div>
       ) : null}
 
-      {!isLoading && !isError && comments.length > 0 ? (
+      {!isLoading && !isError && visibleComments.length > 0 ? (
         <div className="space-y-2 px-5 py-3">
-          {comments.map((comment, index) => {
+          {visibleComments.map((comment, index) => {
             const themeChipLabels = (comment.themeIds ?? [])
               .map((id) => themeLookup.get(id))
               .filter((label): label is string => Boolean(label));
