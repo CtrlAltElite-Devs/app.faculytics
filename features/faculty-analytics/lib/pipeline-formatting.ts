@@ -19,7 +19,7 @@ export const STAGE_LABELS: Record<StageKey, string> = {
   embeddings: "Embedding check",
   sentiment: "Sentiment analysis",
   sentimentGate: "Sentiment gate",
-  topicModeling: "Topic modeling",
+  topicModeling: "Thematic analysis",
   recommendations: "Recommendations",
 };
 
